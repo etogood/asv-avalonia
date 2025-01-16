@@ -1,4 +1,1 @@
-﻿
-
-namespace Asv.Avalonia.Example.ViewModels;
-
+﻿namespace Asv.Avalonia.Example.ViewModels;

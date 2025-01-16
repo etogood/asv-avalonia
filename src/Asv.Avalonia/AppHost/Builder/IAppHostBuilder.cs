@@ -7,7 +7,11 @@ namespace Asv.Avalonia;
 public interface IAppHostBuilder
 {
     IAppHostBuilder WithConfiguration(IConfiguration configuration);
-    IAppHostBuilder WithJsonConfiguration(string fileName, bool createIfNotExist, TimeSpan? flushToFileDelayMs);
+    IAppHostBuilder WithJsonConfiguration(
+        string fileName,
+        bool createIfNotExist,
+        TimeSpan? flushToFileDelayMs
+    );
     IAppHostBuilder WithAppInfoFrom(Assembly assembly);
     IAppHostBuilder WithProductName(string appName);
     IAppHostBuilder WithProductName(Assembly assembly);
@@ -18,18 +22,21 @@ public interface IAppHostBuilder
     IAppHostBuilder WithCompanyName(string companyName);
     IAppHostBuilder WithCompanyName(Assembly assembly);
     IAppHostBuilder WithAvaloniaVersion(string avaloniaVersion);
-    
+
     IAppHostBuilder WithLogMinimumLevel(LogLevel logLevel);
     IAppHostBuilder WithLogMinimumLevel<TConfig>(Func<TConfig, LogLevel> fromConfig)
         where TConfig : new();
     IAppHostBuilder AddLog(Action<IConfiguration, ILoggingBuilder> logBuilderCallback);
-    IAppHostBuilder AddLogToJson<TConfig>(Func<TConfig,string> logFolder, Func<TConfig, int> rollingSizeKb)
+    IAppHostBuilder AddLogToJson<TConfig>(
+        Func<TConfig, string> logFolder,
+        Func<TConfig, int> rollingSizeKb
+    )
         where TConfig : new();
     IAppHostBuilder AddLogToJson<TConfig>(string logFolder, Func<TConfig, int> rollingSizeKb)
         where TConfig : new();
     IAppHostBuilder AddLogToJson(string logFolder, int rollingSizeKb);
     IAppHostBuilder AddLogToConsole();
-    
+
     IAppHostBuilder WithArguments(string[] args);
     IAppHostBuilder WithUserDataFolder(string userFolder);
 
@@ -42,7 +49,7 @@ public interface IAppHostBuilder
     /// <summary>
     /// Enables forwarding of command-line arguments to an already running instance of the application.
     /// If the application is not already running, the current instance will handle the arguments as usual.
-    /// Must be called with <see cref="EnforceSingleInstance"/>. 
+    /// Must be called with <see cref="EnforceSingleInstance"/>.
     /// </summary>
     IAppHostBuilder EnableArgumentForwarding(string? namedPipeName = null);
 }

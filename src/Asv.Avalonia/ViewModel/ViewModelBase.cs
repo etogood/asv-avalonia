@@ -5,20 +5,21 @@ namespace Asv.Avalonia;
 public abstract class ViewModelBase(string id) : IViewModel
 {
     private volatile int _isDisposed;
-    
+
     public string Id { get; } = id;
-    
+
     #region Dispose
-    
+
     public bool IsDisposed => _isDisposed != 0;
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void ThrowIfDisposed()
     {
-        if (_isDisposed == 0) return;
-        throw new ObjectDisposedException(this?.GetType().FullName); 
+        if (_isDisposed == 0)
+            return;
+        throw new ObjectDisposedException(this?.GetType().FullName);
     }
-    
+
     public void Dispose()
     {
         // Make sure we're the first call to Dispose
@@ -31,7 +32,6 @@ public abstract class ViewModelBase(string id) : IViewModel
     }
 
     protected abstract void Dispose(bool disposing);
-
 
     #endregion
 }

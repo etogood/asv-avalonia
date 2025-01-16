@@ -7,7 +7,7 @@ public class DisposableViewModel(string id) : ViewModelBase(id)
     private volatile CancellationTokenSource? _cancel;
     private volatile CompositeDisposable? _dispose;
     private readonly object _sync = new();
-    
+
     protected CancellationToken DisposeCancel
     {
         get
@@ -28,15 +28,17 @@ public class DisposableViewModel(string id) : ViewModelBase(id)
             }
         }
     }
-    
+
     protected CompositeDisposable Disposable
     {
         get
         {
-            if (_dispose != null) return _dispose;
+            if (_dispose != null)
+                return _dispose;
             lock (_sync)
             {
-                if (_dispose != null) return _dispose;
+                if (_dispose != null)
+                    return _dispose;
                 var dispose = new CompositeDisposable();
                 _dispose = dispose;
                 return dispose;

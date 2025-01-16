@@ -14,8 +14,10 @@ namespace Asv.Avalonia
             : base(viewModelType.FullName, typeof(Control))
         {
             if (viewModelType.IsSubclassOf(typeof(Control)))
-                throw new ArgumentException($"{viewModelType} cannot be a View type. It must be ViewModel type", nameof(viewModelType));
+                throw new ArgumentException(
+                    $"{viewModelType} cannot be a View type. It must be ViewModel type",
+                    nameof(viewModelType)
+                );
         }
     }
-
 }

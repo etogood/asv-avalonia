@@ -2,10 +2,7 @@
 
 namespace Asv.Avalonia;
 
-public interface ILogService : ILoggerFactory
-{
-    
-}
+public interface ILogService : ILoggerFactory { }
 
 public class LogService : ILogService
 {

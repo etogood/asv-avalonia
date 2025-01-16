@@ -6,7 +6,8 @@ namespace Asv.Avalonia;
 
 public class CompositionViewLocator(CompositionHost container) : IDataTemplate
 {
-    private readonly CompositionHost _container = container ?? throw new ArgumentNullException(nameof(container));
+    private readonly CompositionHost _container =
+        container ?? throw new ArgumentNullException(nameof(container));
 
     public Control? Build(object? data)
     {
@@ -17,7 +18,8 @@ public class CompositionViewLocator(CompositionHost container) : IDataTemplate
         while (viewModelType != null)
         {
             var viewModelContract = data.GetType().FullName;
-            if (viewModelContract == null) break;
+            if (viewModelContract == null)
+                break;
             // try to find view by attribute
             if (_container.TryGetExport<Control>(viewModelContract, out var control))
             {
@@ -33,7 +35,6 @@ public class CompositionViewLocator(CompositionHost container) : IDataTemplate
             // try to find view for parent class
             viewModelType = viewModelType.BaseType;
         }
-        
 
         return new TextBlock { Text = data.GetType().FullName };
     }
