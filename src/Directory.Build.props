@@ -1,0 +1,10 @@
+<Project>
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <AvaloniaVersion>11.0.6</AvaloniaVersion>
+    <R3Version>1.2.9</R3Version>
+    <AsvCommonVersion>3.1.0</AsvCommonVersion>
+    <ZLoggerVersion>2.5.5</ZLoggerVersion>
+    <SystemCompositionVersion>9.0.0</SystemCompositionVersion>
+  </PropertyGroup>
+</Project>

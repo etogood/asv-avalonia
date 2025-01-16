@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
+        <PackageReference Include="R3Extensions.Avalonia" Version="$(R3Version)" />
+        <PackageReference Include="System.Composition" Version="$(SystemCompositionVersion)" />
+        <PackageReference Include="Asv.Common" Version="$(AsvCommonConfig)" />
+        <PackageReference Include="Asv.Cfg" Version="$(AsvCommonConfig)" />
+        <PackageReference Include="ZLogger" Version="$(ZLoggerVersion)" />
+    </ItemGroup>
+
+</Project>
