@@ -4,7 +4,6 @@ using Android.Content.PM;
 using Android.OS;
 using Avalonia;
 using Avalonia.Android;
-using Environment = System.Environment;
 
 namespace Asv.Avalonia.Example.Android;
 
@@ -21,9 +20,9 @@ public class MainActivity : AvaloniaMainActivity<App>
 {
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
-        using var host = AppHost.Initialize(builder =>
+        using var host = AppHost.Initialize(appHostBuilder =>
         {
-            builder
+            appHostBuilder
                 .WithJsonConfiguration("config.json", true, TimeSpan.FromMilliseconds(500))
                 .WithAppInfoFrom(typeof(App).Assembly)
                 .WithLogMinimumLevel<AppHostConfig>(cfg => cfg.LogMinLevel)

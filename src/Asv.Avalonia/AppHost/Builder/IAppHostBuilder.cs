@@ -44,6 +44,7 @@ public interface IAppHostBuilder
     /// Ensures that only a single instance of the application is running on the system.
     /// If another instance is already running, the current instance will not proceed further.
     /// </summary>
+    /// <returns></returns>
     IAppHostBuilder EnforceSingleInstance(string? mutexName = null);
 
     /// <summary>
@@ -51,5 +52,6 @@ public interface IAppHostBuilder
     /// If the application is not already running, the current instance will handle the arguments as usual.
     /// Must be called with <see cref="EnforceSingleInstance"/>.
     /// </summary>
+    /// <returns></returns>
     IAppHostBuilder EnableArgumentForwarding(string? namedPipeName = null);
 }

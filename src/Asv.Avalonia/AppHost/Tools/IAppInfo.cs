@@ -1,31 +1,29 @@
-using Asv.Common;
-
 namespace Asv.Avalonia;
 
 public interface IAppInfo
 {
     /// <summary>
-    /// Application name
+    /// Gets application name.
     /// </summary>
     string Title { get; }
 
     /// <summary>
-    /// Application name
+    /// Gets application name.
     /// </summary>
     string Name { get; }
 
     /// <summary>
-    /// Application version
+    /// Gets application version.
     /// </summary>
     string Version { get; }
 
     /// <summary>
-    /// Authors
+    /// Gets authors.
     /// </summary>
     string CompanyName { get; }
 
     /// <summary>
-    /// Avalonia UI package version
+    /// Gets avalonia UI package version.
     /// </summary>
     string AvaloniaVersion { get; }
 }

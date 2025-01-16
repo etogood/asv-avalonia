@@ -32,7 +32,9 @@ sealed class Program
 
         // If this is not the first instance, host have sent the arguments to the first instance and we can exit
         if (host.IsFirstInstance == false)
+        {
             return;
+        }
 
         try
         {
@@ -42,7 +44,10 @@ sealed class Program
         catch (Exception e)
         {
             if (Debugger.IsAttached)
+            {
                 Debugger.Break();
+            }
+
             Console.WriteLine(e);
             host.HandleApplicationCrash(e);
         }

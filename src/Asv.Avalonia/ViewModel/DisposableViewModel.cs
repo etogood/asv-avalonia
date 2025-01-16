@@ -23,6 +23,7 @@ public class DisposableViewModel(string id) : ViewModelBase(id)
                 {
                     return IsDisposed ? CancellationToken.None : _cancel.Token;
                 }
+
                 _cancel = new CancellationTokenSource();
                 return _cancel.Token;
             }
@@ -34,11 +35,17 @@ public class DisposableViewModel(string id) : ViewModelBase(id)
         get
         {
             if (_dispose != null)
+            {
                 return _dispose;
+            }
+
             lock (_sync)
             {
                 if (_dispose != null)
+                {
                     return _dispose;
+                }
+
                 var dispose = new CompositeDisposable();
                 _dispose = dispose;
                 return dispose;
@@ -51,7 +58,10 @@ public class DisposableViewModel(string id) : ViewModelBase(id)
         if (disposing)
         {
             if (_cancel?.Token.CanBeCanceled == true)
+            {
                 _cancel.Cancel(false);
+            }
+
             _cancel?.Dispose();
             _dispose?.Dispose();
         }
