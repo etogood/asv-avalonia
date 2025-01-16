@@ -16,8 +16,11 @@ public abstract class ViewModelBase(string id) : IViewModel
     protected void ThrowIfDisposed()
     {
         if (_isDisposed == 0)
+        {
             return;
-        throw new ObjectDisposedException(this?.GetType().FullName);
+        }
+
+        throw new ObjectDisposedException(GetType().FullName);
     }
 
     public void Dispose()
@@ -27,6 +30,7 @@ public abstract class ViewModelBase(string id) : IViewModel
         {
             return;
         }
+
         Dispose(true);
         GC.SuppressFinalize(this);
     }

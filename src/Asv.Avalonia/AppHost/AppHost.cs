@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO.Pipes;
 using Asv.Cfg;
-using Asv.Common;
-using Avalonia.Logging;
 using Microsoft.Extensions.Logging;
 using R3;
 using ZLogger;
@@ -25,9 +23,12 @@ public sealed class AppHost : IAppHost
         get
         {
             if (_instance == null)
+            {
                 throw new InvalidOperationException(
                     $"{nameof(AppHost)} not initialized. Please call {nameof(Initialize)} method first."
                 );
+            }
+
             return _instance;
         }
     }
@@ -35,7 +36,10 @@ public sealed class AppHost : IAppHost
     public static IAppHost Initialize(Action<IAppHostBuilder> configure)
     {
         if (_instance != null)
+        {
             throw new InvalidOperationException($"{nameof(AppHost)} already initialized.");
+        }
+
         var builder = new AppHostBuilder();
         configure(builder);
         _instance = builder.Create();
@@ -69,6 +73,7 @@ public sealed class AppHost : IAppHost
             _mutex = new Mutex(true, mutexName, out var isNewInstance);
             IsFirstInstance = isNewInstance;
         }
+
         if (argsPipeName != null)
         {
             if (_mutex == null)
@@ -78,6 +83,7 @@ public sealed class AppHost : IAppHost
                     "Named pipe can be used only with single instance mode."
                 );
             }
+
             if (IsFirstInstance)
             {
                 StartNamedPipeServer(argsPipeName, logger);
@@ -157,6 +163,7 @@ public sealed class AppHost : IAppHost
                     logger.LogError(ex, "Named pipe server error.");
                 }
             }
+
             // ReSharper disable once FunctionNeverReturns
         })
         {
@@ -164,7 +171,11 @@ public sealed class AppHost : IAppHost
         }.Start();
     }
 
-    private void SendArgumentsToRunningInstance(AppArgs args, string pipeName, ILogger logger)
+    private static void SendArgumentsToRunningInstance(
+        AppArgs args,
+        string pipeName,
+        ILogger logger
+    )
     {
         try
         {

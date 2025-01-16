@@ -12,19 +12,26 @@ public class CompositionViewLocator(CompositionHost container) : IDataTemplate
     public Control? Build(object? data)
     {
         if (data is null)
+        {
             return null;
+        }
+
         var viewModelType = data.GetType();
 
         while (viewModelType != null)
         {
             var viewModelContract = data.GetType().FullName;
             if (viewModelContract == null)
+            {
                 break;
+            }
+
             // try to find view by attribute
             if (_container.TryGetExport<Control>(viewModelContract, out var control))
             {
                 return control;
             }
+
             // try default Avalonia behaviour: rename and try to find view
             var type = Type.GetType(viewModelContract.Replace("ViewModel", "View"));
             if (type != null)
@@ -32,6 +39,7 @@ public class CompositionViewLocator(CompositionHost container) : IDataTemplate
                 // ReSharper disable once NullableWarningSuppressionIsUsed
                 return (Control)Activator.CreateInstance(type)!;
             }
+
             // try to find view for parent class
             viewModelType = viewModelType.BaseType;
         }

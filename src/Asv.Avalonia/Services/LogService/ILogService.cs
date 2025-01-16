@@ -2,7 +2,9 @@
 
 namespace Asv.Avalonia;
 
-public interface ILogService : ILoggerFactory { }
+#pragma warning disable SA1106
+public interface ILogService : ILoggerFactory;
+#pragma warning restore SA1106
 
 public class LogService : ILogService
 {

@@ -194,7 +194,8 @@ internal class AppHostBuilder : IAppHostBuilder
                             (in MessageTemplate template, in LogInfo info) =>
                                 template.Format(info.Timestamp, info.LogLevel, info.Category)
                         );
-                        //formatter.SetExceptionFormatter((writer, ex) => Utf8StringInterpolation.Utf8String.Format(writer, $"{ex.Message}"));
+
+                        // formatter.SetExceptionFormatter((writer, ex) => Utf8StringInterpolation.Utf8String.Format(writer, $"{ex.Message}"));
                     });
                 });
             }
@@ -267,8 +268,11 @@ internal class AppHostBuilder : IAppHostBuilder
         {
             var titleAttribute = (AssemblyTitleAttribute)attributes[0];
             if (titleAttribute.Title.Length > 0)
+            {
                 return titleAttribute.Title;
+            }
         }
+
         return src.GetName().Name ?? string.Empty;
     }
 
@@ -301,8 +305,11 @@ internal class AppHostBuilder : IAppHostBuilder
     private static string GetAppName(Assembly src)
     {
         var attributes = src.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
-        if (attributes.Length <= 0)
+        if (attributes.Length == 0)
+        {
             return src.GetName().Name ?? string.Empty;
+        }
+
         var titleAttribute = (AssemblyTitleAttribute)attributes[0];
         return titleAttribute.Title.Length > 0
             ? titleAttribute.Title
