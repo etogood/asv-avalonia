@@ -58,12 +58,9 @@ sealed class Program
         AppBuilder
             .Configure<App>()
             .UsePlatformDetect()
-            // Windows
-            .With(new Win32PlatformOptions { OverlayPopups = true })
-            // Unix/Linux
-            .With(new X11PlatformOptions { OverlayPopups = true, UseDBusFilePicker = false })
-            // Mac
-            .With(new AvaloniaNativePlatformOptions { OverlayPopups = true })
+            .With(new Win32PlatformOptions { OverlayPopups = true }) // Windows
+            .With(new X11PlatformOptions { OverlayPopups = true, UseDBusFilePicker = false }) // Unix/Linux
+            .With(new AvaloniaNativePlatformOptions { OverlayPopups = true }) // Mac
             .WithInterFont()
             .LogToTrace()
             .UseR3();
