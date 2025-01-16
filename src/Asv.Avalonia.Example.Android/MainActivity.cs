@@ -13,7 +13,10 @@ namespace Asv.Avalonia.Example.Android;
     Theme = "@style/MyTheme.NoActionBar",
     Icon = "@drawable/icon",
     MainLauncher = true,
-    ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode)]
+    ConfigurationChanges = ConfigChanges.Orientation
+        | ConfigChanges.ScreenSize
+        | ConfigChanges.UiMode
+)]
 public class MainActivity : AvaloniaMainActivity<App>
 {
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
@@ -28,15 +31,13 @@ public class MainActivity : AvaloniaMainActivity<App>
 #if DEBUG
                 .AddLogToConsole();
 #else
-
+            ;
 #endif
         });
-        
+
         // this is required to use the AndroidHttpClientHandler in main thread
         StrictMode.SetThreadPolicy(new StrictMode.ThreadPolicy.Builder().PermitAll().Build());
-        
-        return base.CustomizeAppBuilder(builder)
-            .WithInterFont()
-            .UseR3();
+
+        return base.CustomizeAppBuilder(builder).WithInterFont().UseR3();
     }
 }

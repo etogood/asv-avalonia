@@ -29,10 +29,11 @@ sealed class Program
                 .EnableArgumentForwarding()
                 .WithArguments(args);
         });
-        
+
         // If this is not the first instance, host have sent the arguments to the first instance and we can exit
-        if (host.IsFirstInstance == false) return;
-        
+        if (host.IsFirstInstance == false)
+            return;
+
         try
         {
             BuildAvaloniaApp()
@@ -40,20 +41,22 @@ sealed class Program
         }
         catch (Exception e)
         {
-            if (Debugger.IsAttached) Debugger.Break();
+            if (Debugger.IsAttached)
+                Debugger.Break();
             Console.WriteLine(e);
             host.HandleApplicationCrash(e);
         }
-    } 
+    }
 
     // Avalonia configuration, don't remove; also used by visual designer.
-    public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
+    public static AppBuilder BuildAvaloniaApp() =>
+        AppBuilder
+            .Configure<App>()
             .UsePlatformDetect()
             // Windows
             .With(new Win32PlatformOptions { OverlayPopups = true })
             // Unix/Linux
-            .With(new X11PlatformOptions { OverlayPopups = true, UseDBusFilePicker = false})
+            .With(new X11PlatformOptions { OverlayPopups = true, UseDBusFilePicker = false })
             // Mac
             .With(new AvaloniaNativePlatformOptions { OverlayPopups = true })
             .WithInterFont()

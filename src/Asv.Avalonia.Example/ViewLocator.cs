@@ -1,7 +1,7 @@
 using System;
+using Asv.Avalonia.Example.ViewModels;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using Asv.Avalonia.Example.ViewModels;
 
 namespace Asv.Avalonia.Example;
 

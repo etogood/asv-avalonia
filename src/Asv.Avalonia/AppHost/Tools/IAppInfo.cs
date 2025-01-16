@@ -8,6 +8,7 @@ public interface IAppInfo
     /// Application name
     /// </summary>
     string Title { get; }
+
     /// <summary>
     /// Application name
     /// </summary>

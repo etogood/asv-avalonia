@@ -16,24 +16,31 @@ internal class AppHostBuilder : IAppHostBuilder
     private string _companyName = string.Empty;
     private string _avaloniaVersion = ZeroVersion;
     private Func<IConfiguration, LogLevel> _setMinLevelCallback;
-    private readonly List<Action<IConfiguration,ILoggingBuilder>> _logBuilderCallbacks = new();
+    private readonly List<Action<IConfiguration, ILoggingBuilder>> _logBuilderCallbacks = new();
     private AppArgs _args = new([]);
-    private Func<IConfiguration,IAppInfo,string> _userDataFolder;
+    private Func<IConfiguration, IAppInfo, string> _userDataFolder;
     private string _productTitle = string.Empty;
     private readonly string _appFolder;
-    private Func<IAppInfo,string?> _mutexName;
-    private Func<IAppInfo,string?> _namedPipe;
+    private Func<IAppInfo, string?> _mutexName;
+    private Func<IAppInfo, string?> _namedPipe;
 
     public AppHostBuilder()
     {
-        _userDataFolder = (_, info) => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), info.Name);
-        _appFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
-        _createConfigCallback = () => new JsonOneFileConfiguration("config.json", true,null);
+        _userDataFolder = (_, info) =>
+            Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                info.Name
+            );
+        _appFolder =
+            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
+        _createConfigCallback = () => new JsonOneFileConfiguration("config.json", true, null);
         _setMinLevelCallback = _ => LogLevel.Information;
         _mutexName = _ => null;
         _namedPipe = _ => null;
         WithAppInfoFrom(Assembly.GetExecutingAssembly());
-        WithAvaloniaVersion(typeof(AppBuilder).Assembly.GetName().Version?.ToString() ?? ZeroVersion);
+        WithAvaloniaVersion(
+            typeof(AppBuilder).Assembly.GetName().Version?.ToString() ?? ZeroVersion
+        );
         WithLogMinimumLevel(LogLevel.Information);
     }
 
@@ -50,7 +57,7 @@ internal class AppHostBuilder : IAppHostBuilder
         };
         var appPath = new AppPath
         {
-            UserDataFolder = _userDataFolder(config,appInfo),
+            UserDataFolder = _userDataFolder(config, appInfo),
             AppFolder = _appFolder,
         };
         var logFactory = LoggerFactory.Create(builder =>
@@ -59,14 +66,22 @@ internal class AppHostBuilder : IAppHostBuilder
             builder.SetMinimumLevel(_setMinLevelCallback(config));
             foreach (var logBuilderCallback in _logBuilderCallbacks)
             {
-                logBuilderCallback(config,builder);
+                logBuilderCallback(config, builder);
             }
         });
-        return new AppHost(config,appPath,appInfo,logFactory,_args,_mutexName(appInfo), _namedPipe(appInfo));
+        return new AppHost(
+            config,
+            appPath,
+            appInfo,
+            logFactory,
+            _args,
+            _mutexName(appInfo),
+            _namedPipe(appInfo)
+        );
     }
-    
+
     #region SingleInstance
-    
+
     public IAppHostBuilder EnforceSingleInstance(string? mutexName = null)
     {
         _mutexName = _ => mutexName ?? _.Name;
@@ -83,88 +98,107 @@ internal class AppHostBuilder : IAppHostBuilder
 
     #region Logging
 
-    public IAppHostBuilder AddLog(Action<IConfiguration,ILoggingBuilder> logBuilderCallback)
+    public IAppHostBuilder AddLog(Action<IConfiguration, ILoggingBuilder> logBuilderCallback)
     {
         _logBuilderCallbacks.Add(logBuilderCallback);
         return this;
     }
-    
+
     public IAppHostBuilder WithLogMinimumLevel(LogLevel minLogLevel)
     {
-        _setMinLevelCallback = _=> minLogLevel;
+        _setMinLevelCallback = _ => minLogLevel;
         return this;
     }
 
-    public IAppHostBuilder WithLogMinimumLevel<TConfig>(Func<TConfig, LogLevel> fromConfig) 
+    public IAppHostBuilder WithLogMinimumLevel<TConfig>(Func<TConfig, LogLevel> fromConfig)
         where TConfig : new()
     {
         _setMinLevelCallback = x => fromConfig(x.Get<TConfig>());
         return this;
     }
 
-    public IAppHostBuilder AddLogToJson<TConfig>(Func<TConfig,string> logFolder, Func<TConfig, int> rollingSizeKb)
+    public IAppHostBuilder AddLogToJson<TConfig>(
+        Func<TConfig, string> logFolder,
+        Func<TConfig, int> rollingSizeKb
+    )
         where TConfig : new()
     {
-        _logBuilderCallbacks.Add((cfg, builder) =>
-        {
-            var config = cfg.Get<TConfig>();
-            var logsFolder = logFolder(config);
-            var size = rollingSizeKb(config);
-            builder.AddZLoggerRollingFile(options =>
+        _logBuilderCallbacks.Add(
+            (cfg, builder) =>
             {
-                options.FilePathSelector = (dt, index) => $"{logsFolder}/{dt:yyyy-MM-dd}_{index}.logs";
-                options.UseJsonFormatter();
-                options.RollingSizeKB = size;
-            });
-        });
+                var config = cfg.Get<TConfig>();
+                var logsFolder = logFolder(config);
+                var size = rollingSizeKb(config);
+                builder.AddZLoggerRollingFile(options =>
+                {
+                    options.FilePathSelector = (dt, index) =>
+                        $"{logsFolder}/{dt:yyyy-MM-dd}_{index}.logs";
+                    options.UseJsonFormatter();
+                    options.RollingSizeKB = size;
+                });
+            }
+        );
         return this;
     }
 
-    public IAppHostBuilder AddLogToJson<TConfig>(string logFolder, Func<TConfig, int> rollingSizeKb) where TConfig : new()
+    public IAppHostBuilder AddLogToJson<TConfig>(string logFolder, Func<TConfig, int> rollingSizeKb)
+        where TConfig : new()
     {
-        _logBuilderCallbacks.Add((cfg, builder) =>
-        {
-            var config = cfg.Get<TConfig>();
-            var size = rollingSizeKb(config);
-            builder.AddZLoggerRollingFile(options =>
+        _logBuilderCallbacks.Add(
+            (cfg, builder) =>
             {
-                options.FilePathSelector = (dt, index) => $"{logFolder}/{dt:yyyy-MM-dd}_{index}.logs";
-                options.UseJsonFormatter();
-                options.RollingSizeKB = size;
-            });
-        });
+                var config = cfg.Get<TConfig>();
+                var size = rollingSizeKb(config);
+                builder.AddZLoggerRollingFile(options =>
+                {
+                    options.FilePathSelector = (dt, index) =>
+                        $"{logFolder}/{dt:yyyy-MM-dd}_{index}.logs";
+                    options.UseJsonFormatter();
+                    options.RollingSizeKB = size;
+                });
+            }
+        );
         return this;
     }
-    
+
     public IAppHostBuilder AddLogToJson(string logFolder, int rollingSizeKb)
     {
-        _logBuilderCallbacks.Add((cfg, builder) =>
-        {
-            builder.AddZLoggerRollingFile(options =>
+        _logBuilderCallbacks.Add(
+            (cfg, builder) =>
             {
-                options.FilePathSelector = (dt, index) => $"{logFolder}/{dt:yyyy-MM-dd}_{index}.logs";
-                options.UseJsonFormatter();
-                options.RollingSizeKB = rollingSizeKb;
-            });
-        });
+                builder.AddZLoggerRollingFile(options =>
+                {
+                    options.FilePathSelector = (dt, index) =>
+                        $"{logFolder}/{dt:yyyy-MM-dd}_{index}.logs";
+                    options.UseJsonFormatter();
+                    options.RollingSizeKB = rollingSizeKb;
+                });
+            }
+        );
         return this;
     }
 
     public IAppHostBuilder AddLogToConsole()
     {
-        _logBuilderCallbacks.Add((cfg, builder) =>
-        {
-            builder.AddZLoggerConsole(options =>
+        _logBuilderCallbacks.Add(
+            (cfg, builder) =>
             {
-                options.IncludeScopes = true;
-                options.OutputEncodingToUtf8 = false;
-                options.UsePlainTextFormatter(formatter =>
+                builder.AddZLoggerConsole(options =>
                 {
-                    formatter.SetPrefixFormatter($"{0:HH:mm:ss.fff} | ={1:short}= | {2,-40} ", (in MessageTemplate template, in LogInfo info) => template.Format(info.Timestamp, info.LogLevel,info.Category));
-                    //formatter.SetExceptionFormatter((writer, ex) => Utf8StringInterpolation.Utf8String.Format(writer, $"{ex.Message}"));
+                    options.IncludeScopes = true;
+                    options.OutputEncodingToUtf8 = false;
+                    options.UsePlainTextFormatter(formatter =>
+                    {
+                        formatter.SetPrefixFormatter(
+                            $"{0:HH:mm:ss.fff} | ={1:short}= | {2, -40} ",
+                            (in MessageTemplate template, in LogInfo info) =>
+                                template.Format(info.Timestamp, info.LogLevel, info.Category)
+                        );
+                        //formatter.SetExceptionFormatter((writer, ex) => Utf8StringInterpolation.Utf8String.Format(writer, $"{ex.Message}"));
+                    });
                 });
-            });
-        });
+            }
+        );
         return this;
     }
 
@@ -176,14 +210,12 @@ internal class AppHostBuilder : IAppHostBuilder
 
     public IAppHostBuilder WithUserDataFolder(string userFolder)
     {
-        _userDataFolder = (_,_)=> userFolder;
+        _userDataFolder = (_, _) => userFolder;
         return this;
     }
 
-    
-
     #endregion
-    
+
     #region Configuration
 
     public IAppHostBuilder WithConfiguration(IConfiguration configuration)
@@ -191,10 +223,15 @@ internal class AppHostBuilder : IAppHostBuilder
         _createConfigCallback = () => configuration;
         return this;
     }
-        
-    public IAppHostBuilder WithJsonConfiguration(string fileName, bool createIfNotExist, TimeSpan? flushToFileDelayMs)
+
+    public IAppHostBuilder WithJsonConfiguration(
+        string fileName,
+        bool createIfNotExist,
+        TimeSpan? flushToFileDelayMs
+    )
     {
-        _createConfigCallback = ()=> new JsonOneFileConfiguration(fileName, createIfNotExist, flushToFileDelayMs);
+        _createConfigCallback = () =>
+            new JsonOneFileConfiguration(fileName, createIfNotExist, flushToFileDelayMs);
         return this;
     }
 
@@ -211,18 +248,17 @@ internal class AppHostBuilder : IAppHostBuilder
 
     #region ProductTitle
 
-    public IAppHostBuilder WithProductTitle(string productTitle)    
+    public IAppHostBuilder WithProductTitle(string productTitle)
     {
         _productTitle = productTitle;
         return this;
     }
-    
+
     public IAppHostBuilder WithProductTitle(Assembly assembly)
     {
         _productTitle = GetTitle(assembly);
         return this;
     }
-
 
     private static string GetTitle(Assembly src)
     {
@@ -230,22 +266,21 @@ internal class AppHostBuilder : IAppHostBuilder
         if (attributes.Length > 0)
         {
             var titleAttribute = (AssemblyTitleAttribute)attributes[0];
-            if (titleAttribute.Title.Length > 0) return titleAttribute.Title;
+            if (titleAttribute.Title.Length > 0)
+                return titleAttribute.Title;
         }
         return src.GetName().Name ?? string.Empty;
     }
-    
+
     #endregion
-    
+
     #region AvaloniaVersion
 
-    public IAppHostBuilder WithAvaloniaVersion(string avaloniaVersion)    
+    public IAppHostBuilder WithAvaloniaVersion(string avaloniaVersion)
     {
         _avaloniaVersion = avaloniaVersion;
         return this;
     }
-
-   
 
     #endregion
 
@@ -262,13 +297,16 @@ internal class AppHostBuilder : IAppHostBuilder
         _appName = GetAppName(assembly);
         return this;
     }
-    
+
     private static string GetAppName(Assembly src)
     {
         var attributes = src.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
-        if (attributes.Length <= 0) return src.GetName().Name ?? string.Empty;
+        if (attributes.Length <= 0)
+            return src.GetName().Name ?? string.Empty;
         var titleAttribute = (AssemblyTitleAttribute)attributes[0];
-        return titleAttribute.Title.Length > 0 ? titleAttribute.Title : src.GetName().Name ?? string.Empty;
+        return titleAttribute.Title.Length > 0
+            ? titleAttribute.Title
+            : src.GetName().Name ?? string.Empty;
     }
 
     #endregion
@@ -289,16 +327,19 @@ internal class AppHostBuilder : IAppHostBuilder
 
     private static string GetInformationalVersion(Assembly src)
     {
-        var attributes = src.GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false);
+        var attributes = src.GetCustomAttributes(
+            typeof(AssemblyInformationalVersionAttribute),
+            false
+        );
         return attributes.Length == 0
             ? ZeroVersion
             : ((AssemblyInformationalVersionAttribute)attributes[0]).InformationalVersion;
     }
-    
+
     #endregion
-    
+
     #region CompanyName
-    
+
     public IAppHostBuilder WithCompanyName(string companyName)
     {
         _companyName = companyName;
@@ -314,9 +355,10 @@ internal class AppHostBuilder : IAppHostBuilder
     private static string GetCompanyName(Assembly src)
     {
         var attributes = src.GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
-        return attributes.Length == 0 ? string.Empty : ((AssemblyCompanyAttribute)attributes[0]).Company;
+        return attributes.Length == 0
+            ? string.Empty
+            : ((AssemblyCompanyAttribute)attributes[0]).Company;
     }
-    
+
     #endregion
-    
 }

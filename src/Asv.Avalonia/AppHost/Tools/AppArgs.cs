@@ -4,15 +4,15 @@ using Newtonsoft.Json;
 
 namespace Asv.Avalonia;
 
-public partial class AppArgs:IAppArgs
+public partial class AppArgs : IAppArgs
 {
-    private readonly ImmutableDictionary<string,string> _args;
+    private readonly ImmutableDictionary<string, string> _args;
     private readonly ImmutableSortedSet<string> _tags;
 
     [GeneratedRegex(@"^--([^=]+)=(.*)$", RegexOptions.Compiled)]
     private static partial Regex ArgsParserRegex();
 
-    private AppArgs(ImmutableDictionary<string,string> keys, ImmutableSortedSet<string> values)
+    private AppArgs(ImmutableDictionary<string, string> keys, ImmutableSortedSet<string> values)
     {
         _args = keys;
         _tags = values;
@@ -41,16 +41,14 @@ public partial class AppArgs:IAppArgs
 
         _args = builder.ToImmutable();
         _tags = tagBuilder.ToImmutable();
-
     }
-
-    
 
     public IReadOnlyDictionary<string, string> Args => _args;
 
     public IReadOnlySet<string> Tags => _tags;
 
-    public string this[string key, string defaultValue] => _args.GetValueOrDefault(key, defaultValue);
+    public string this[string key, string defaultValue] =>
+        _args.GetValueOrDefault(key, defaultValue);
 
     #region Serialization
 
@@ -58,8 +56,9 @@ public partial class AppArgs:IAppArgs
     {
         // ReSharper disable once CollectionNeverUpdated.Local
         public Dictionary<string, string> Keys { get; set; } = new();
+
         // ReSharper disable once CollectionNeverUpdated.Local
-        public List<string> Tags { get; set; }  = [];
+        public List<string> Tags { get; set; } = [];
     }
 
     #endregion
@@ -84,13 +83,16 @@ public partial class AppArgs:IAppArgs
 
         return new AppArgs(builder.ToImmutable(), tagBuilder.ToImmutable());
     }
-    
+
     public string SerializeToString()
     {
-        return JsonConvert.SerializeObject(new SerializationModel
-        {
-            Keys = _args.ToDictionary(x => x.Key, x => x.Value),
-            Tags = _tags.ToList()
-        }, Formatting.Indented);
+        return JsonConvert.SerializeObject(
+            new SerializationModel
+            {
+                Keys = _args.ToDictionary(x => x.Key, x => x.Value),
+                Tags = _tags.ToList(),
+            },
+            Formatting.Indented
+        );
     }
 }

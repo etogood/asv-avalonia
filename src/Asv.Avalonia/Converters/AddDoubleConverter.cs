@@ -7,7 +7,12 @@ namespace Asv.Avalonia
     {
         public static IValueConverter Instance { get; } = new AddDoubleConverter();
 
-        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        public object? Convert(
+            object? value,
+            Type targetType,
+            object? parameter,
+            CultureInfo culture
+        )
         {
             if (parameter is string p && double.TryParse(p, out var add) && value is double v)
             {
@@ -17,7 +22,12 @@ namespace Asv.Avalonia
             return value;
         }
 
-        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        public object? ConvertBack(
+            object? value,
+            Type targetType,
+            object? parameter,
+            CultureInfo culture
+        )
         {
             if (parameter is string p && double.TryParse(p, out var add) && value is double v)
             {
