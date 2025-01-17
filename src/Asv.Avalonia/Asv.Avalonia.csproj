@@ -43,4 +43,10 @@
         <PackageReference Include="ZLogger" Version="$(ZLoggerVersion)" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Services\Navigation\" />
+      <Folder Include="Services\Navligation\" />
+      <Folder Include="Services\UnitService\Units\" />
+    </ItemGroup>
+
 </Project>

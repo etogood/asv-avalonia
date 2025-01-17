@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Asv.Avalonia.Example.ViewModels"
+             xmlns:avalonia="clr-namespace:Asv.Avalonia;assembly=Asv.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Asv.Avalonia.Example.Views.MainView"
              x:DataType="vm:MainViewModel">
@@ -12,5 +13,17 @@
     <vm:MainViewModel />
   </Design.DataContext>
 
-  <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+  <StackPanel MinWidth="100" HorizontalAlignment="Center" VerticalAlignment="Center">
+      <Button Command="{Binding Undo}">Undo</Button>
+      <Button Command="{Binding Redo}">Redo</Button>
+      <TextBox Focusable="True" DataContext="{Binding Property1}" 
+               IsFocused="{Binding IsSelected.Value, Mode=OneWayToSource}"
+               avalonia:NavigationHelper.IsSelected="{Binding IsSelected.Value, Mode=OneWay}"
+               Text="{Binding User.Value, UpdateSourceTrigger=LostFocus}"/>
+      
+      <TextBox Focusable="True" DataContext="{Binding Property2}" 
+               IsFocused="{Binding IsSelected.Value, Mode=OneWayToSource}"
+               avalonia:NavigationHelper.IsSelected="{Binding IsSelected.Value, Mode=TwoWay}"
+               Text="{Binding User.Value, UpdateSourceTrigger=LostFocus}"/>
+  </StackPanel>
 </UserControl>
