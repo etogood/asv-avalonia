@@ -15,24 +15,6 @@ public static class WellKnownUnits
     
 }
 
-public class ChangeUnitCommand : UndoRedoCommand
-{
-    public const string CommandId = "cmd:settings.unit.change";
-    private readonly IUnitService _service;
-
-    public ChangeUnitCommand(IUnitService service)
-    {
-        _service = service;
-    }
-    
-    public string Id => CommandId;
-    
-    public void Execute(object? parameter)
-    {
-        var unit = _service.GetUnit(WellKnownUnits.Distance);
-        
-    }
-}
 
 public interface IUnitService
 {

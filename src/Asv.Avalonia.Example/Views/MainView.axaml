@@ -14,8 +14,8 @@
   </Design.DataContext>
 
   <StackPanel MinWidth="100" HorizontalAlignment="Center" VerticalAlignment="Center">
-      <Button Command="{Binding Undo}">Undo</Button>
-      <Button Command="{Binding Redo}">Redo</Button>
+      <Button Command="{Binding History.Undo}">Undo</Button>
+      <Button Command="{Binding History.Redo}">Redo</Button>
       <TextBox Focusable="True" DataContext="{Binding Property1}" 
                IsFocused="{Binding IsSelected.Value, Mode=OneWayToSource}"
                avalonia:NavigationHelper.IsSelected="{Binding IsSelected.Value, Mode=OneWay}"
