@@ -10,7 +10,7 @@ public interface IAppHost : IDisposable
     IAppInfo AppInfo { get; }
     IAppPath AppPath { get; }
     IConfiguration Configuration { get; }
-    ILoggerFactory LoggerFactory { get; }
+    ILogService Logs { get; }
     void HandleApplicationCrash(Exception exception);
     bool AllowOnlyOneInstance { get; }
     bool IsFirstInstance { get; }

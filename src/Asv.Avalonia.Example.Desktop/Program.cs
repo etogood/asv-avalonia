@@ -19,9 +19,9 @@ sealed class Program
                 .WithJsonConfiguration("config.json", true, TimeSpan.FromMilliseconds(500))
                 .WithAppInfoFrom(typeof(App).Assembly)
                 .WithLogMinimumLevel<AppHostConfig>(cfg => cfg.LogMinLevel)
-                .AddLogToJson<AppHostConfig>("logs", cfg => cfg.RollingSizeKb)
+                .WithJsonLogFolder<AppHostConfig>("logs", cfg => cfg.RollingSizeKb)
 #if DEBUG
-                .AddLogToConsole()
+                .WithLogToConsole()
 #else
 
 #endif

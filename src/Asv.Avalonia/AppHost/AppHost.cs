@@ -56,17 +56,22 @@ public sealed class AppHost : IAppHost
         IConfiguration config,
         AppPath appPath,
         AppInfo appInfo,
-        ILoggerFactory logFactory,
+        ILogService logs,
         AppArgs args,
         string? mutexName,
         string? argsPipeName
     )
     {
+        ArgumentNullException.ThrowIfNull(config);
+        ArgumentNullException.ThrowIfNull(appPath);
+        ArgumentNullException.ThrowIfNull(appInfo);
+        ArgumentNullException.ThrowIfNull(logs);
+        ArgumentNullException.ThrowIfNull(args);
         Configuration = config;
         AppPath = appPath;
         AppInfo = appInfo;
-        LoggerFactory = logFactory;
-        var logger = logFactory.CreateLogger($"{nameof(AppHost)}[PID:{Environment.ProcessId}]");
+        Logs = logs;
+        var logger = logs.CreateLogger($"{nameof(AppHost)}[PID:{Environment.ProcessId}]");
         SetupExceptionHandlers(logger);
         if (mutexName != null)
         {
@@ -99,7 +104,7 @@ public sealed class AppHost : IAppHost
     public IAppInfo AppInfo { get; }
     public IAppPath AppPath { get; }
     public IConfiguration Configuration { get; }
-    public ILoggerFactory LoggerFactory { get; }
+    public ILogService Logs { get; }
 
     private void SetupExceptionHandlers(ILogger logger)
     {
@@ -212,6 +217,6 @@ public sealed class AppHost : IAppHost
         _args.Dispose();
         _errorHandler.Dispose();
         Configuration.Dispose();
-        LoggerFactory.Dispose();
+        Logs.Dispose();
     }
 }
