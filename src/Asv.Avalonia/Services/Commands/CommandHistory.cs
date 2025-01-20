@@ -1,4 +1,6 @@
 using System.Buffers;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using R3;
 
 namespace Asv.Avalonia;
@@ -14,16 +16,6 @@ public class CommandHistory : ICommandHistory
         Id = id;
         Undo = new ReactiveCommand((_, token) => UndoAsync(token));
         Redo = new ReactiveCommand((_, token) => RedoAsync(token));
-    }
-
-    public ValueTask Load(SequenceReader<byte> buffer)
-    {
-        return ValueTask.CompletedTask;
-    }
-
-    public ValueTask Save(IBufferWriter<byte> buffer)
-    {
-        return ValueTask.CompletedTask;
     }
 
     public string Id { get; }
@@ -60,12 +52,26 @@ public class CommandHistory : ICommandHistory
         }
     }
 
+    public ValueTask Execute(ICommandBase command, IViewModel context, object? param, CancellationToken cancel = default)
+    {
+        throw new NotImplementedException();
+    }
+
     public async ValueTask Execute(ICommandBase command, IViewModel context, CancellationToken cancel = default)
     {
         await command.Execute(context, cancel);
         if (command is IUndoableCommand withUndo)
         {
             _undoStack.Push((withUndo, context.Id));
+        }
+    }
+
+    public void Load(string[] data)
+    {
+        foreach (var command in data)
+        {
+            var commandUri = new Uri(command);
+                
         }
     }
 }

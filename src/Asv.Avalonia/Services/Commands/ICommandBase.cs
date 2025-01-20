@@ -1,5 +1,4 @@
 using System.Buffers;
-using System.Windows.Input;
 
 namespace Asv.Avalonia;
 
@@ -23,6 +22,7 @@ public abstract class UndoableCommandBase<TContext> : IUndoableCommand
 
     public ValueTask Execute(object context, CancellationToken cancel)
     {
+        
         if (context is TContext ctx)
         {
             return InternalExecute(ctx, cancel);

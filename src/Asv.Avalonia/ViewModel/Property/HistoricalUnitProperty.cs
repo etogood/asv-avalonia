@@ -12,11 +12,11 @@ public class HistoricalUnitProperty : ViewModelBase
     private readonly IDisposable _sub1;
     private readonly IDisposable _sub2;
     private readonly IDisposable _sub3;
+    private readonly IDisposable _sub4;
 
     public ReactiveProperty<double> Model => _model;
     public BindableReactiveProperty<string?> User { get; } = new();
     public BindableReactiveProperty<bool> IsSelected { get; } = new();
-    
     public IUnit Unit => _unit;
 
     public HistoricalUnitProperty(string id, ReactiveProperty<double> model, IUnit unit, ICommandHistory history, string? format = null)
@@ -31,6 +31,7 @@ public class HistoricalUnitProperty : ViewModelBase
         _sub2 = User.EnableValidation(ValidateValue).SubscribeAwait(OnChangedByUser, AwaitOperation.Drop);
         _internalChange = false;
         _sub3 = _model.Subscribe(OnChangeByModel);
+        _sub4 = unit.Current.Subscribe(_ => OnChangeByModel(model.CurrentValue));
     }
 
     private Exception? ValidateValue(string? userValue)
@@ -64,6 +65,7 @@ public class HistoricalUnitProperty : ViewModelBase
             _sub1.Dispose();
             _sub2.Dispose();
             _sub3.Dispose();
+            _sub4.Dispose();
             User.Dispose();
             IsSelected.Dispose();
         }

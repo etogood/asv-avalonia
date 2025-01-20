@@ -31,10 +31,11 @@ public class MainViewModel : DisposableViewModel
         _nav = nav;
         _model = new Model();
         History = command.CreateHistory(Id);
+        
         var distanceUnit = unit[WellKnownUnits.Distance] ?? throw new InvalidOperationException($"{WellKnownUnits.Distance} unit not found");
 
-        Property1 = new HistoricalUnitProperty("property1", _model.Value1, distanceUnit, History);
-        Property2 = new HistoricalUnitProperty("property2", _model.Value2, distanceUnit, History);
+        Property1 = new HistoricalUnitProperty(nameof(_model.Value1), _model.Value1, distanceUnit, History);
+        Property2 = new HistoricalUnitProperty(nameof(_model.Value2), _model.Value2, distanceUnit, History);
     }
 
     public IEnumerable<IViewModel> GetChildren()

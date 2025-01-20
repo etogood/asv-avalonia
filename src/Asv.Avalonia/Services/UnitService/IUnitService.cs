@@ -55,10 +55,6 @@ public interface IUnitItem
 
 public class SimpleUnitItem : IUnitItem
 {
-    public SimpleUnitItem()
-    {
-        
-    }
 
     public required IUnit Parent { get; set; }
     public required string Id { get; set; }
