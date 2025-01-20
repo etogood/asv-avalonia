@@ -13,15 +13,6 @@ public interface ICommandHistory
     ReactiveCommand Redo { get; }
     ValueTask RedoAsync(CancellationToken cancel = default);
     ValueTask Execute(ICommandBase command, IViewModel context, CancellationToken cancel = default);
-
 }
 
-public interface IQuickPick
-{
-    
-}
-
-
-
-
-
+public interface IQuickPick { }

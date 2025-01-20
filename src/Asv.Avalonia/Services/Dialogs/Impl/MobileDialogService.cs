@@ -7,12 +7,21 @@ public class MobileDialogService : IDialogService
     public bool IsImplementedShowSelectFolderDialog { get; } = false;
     public bool IsImplementedShowObserveFolderDialog { get; } = false;
 
-    public Task<string?> ShowOpenFileDialog(string title, string? typeFilter = null, string? initialDirectory = null)
+    public Task<string?> ShowOpenFileDialog(
+        string title,
+        string? typeFilter = null,
+        string? initialDirectory = null
+    )
     {
         throw new System.NotImplementedException();
     }
 
-    public Task<string?> ShowSaveFileDialog(string title, string? defaultExt = null, string? typeFilter = null, string? initialDirectory = null)
+    public Task<string?> ShowSaveFileDialog(
+        string title,
+        string? defaultExt = null,
+        string? typeFilter = null,
+        string? initialDirectory = null
+    )
     {
         throw new System.NotImplementedException();
     }

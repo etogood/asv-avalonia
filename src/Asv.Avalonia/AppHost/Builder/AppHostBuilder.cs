@@ -33,7 +33,8 @@ internal class AppHostBuilder : IAppHostBuilder
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 info.Name
             );
-        _appFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
+        _appFolder =
+            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
         _createConfigCallback = () => new JsonOneFileConfiguration("config.json", true, null);
         _setMinLevelCallback = _ => LogLevel.Information;
         _mutexName = _ => null;
@@ -42,7 +43,9 @@ internal class AppHostBuilder : IAppHostBuilder
         _rollingSizeKb = _ => 1024 * 10;
 
         WithAppInfoFrom(Assembly.GetExecutingAssembly());
-        WithAvaloniaVersion(typeof(AppBuilder).Assembly.GetName().Version?.ToString() ?? ZeroVersion);
+        WithAvaloniaVersion(
+            typeof(AppBuilder).Assembly.GetName().Version?.ToString() ?? ZeroVersion
+        );
         WithLogMinimumLevel(LogLevel.Information);
     }
 
@@ -110,7 +113,10 @@ internal class AppHostBuilder : IAppHostBuilder
         return this;
     }
 
-    public IAppHostBuilder WithJsonLogFolder<TConfig>(Func<TConfig, string> logFolder, Func<TConfig, int> rollingSizeKb)
+    public IAppHostBuilder WithJsonLogFolder<TConfig>(
+        Func<TConfig, string> logFolder,
+        Func<TConfig, int> rollingSizeKb
+    )
         where TConfig : new()
     {
         _logFolder = x => logFolder(x.Get<TConfig>());
@@ -118,7 +124,10 @@ internal class AppHostBuilder : IAppHostBuilder
         return this;
     }
 
-    public IAppHostBuilder WithJsonLogFolder<TConfig>(string logFolder, Func<TConfig, int> rollingSizeKb)
+    public IAppHostBuilder WithJsonLogFolder<TConfig>(
+        string logFolder,
+        Func<TConfig, int> rollingSizeKb
+    )
         where TConfig : new()
     {
         _logFolder = _ => logFolder;
@@ -261,9 +270,10 @@ internal class AppHostBuilder : IAppHostBuilder
             false
         );
 
-        _appVersion = attributes.Length == 0
-            ? ZeroVersion
-            : ((AssemblyInformationalVersionAttribute)attributes[0]).InformationalVersion;
+        _appVersion =
+            attributes.Length == 0
+                ? ZeroVersion
+                : ((AssemblyInformationalVersionAttribute)attributes[0]).InformationalVersion;
         return this;
     }
 
@@ -280,9 +290,10 @@ internal class AppHostBuilder : IAppHostBuilder
     public IAppHostBuilder WithCompanyName(Assembly assembly)
     {
         var attributes = assembly.GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
-        _companyName = attributes.Length == 0
-            ? string.Empty
-            : ((AssemblyCompanyAttribute)attributes[0]).Company;
+        _companyName =
+            attributes.Length == 0
+                ? string.Empty
+                : ((AssemblyCompanyAttribute)attributes[0]).Company;
         return this;
     }
 

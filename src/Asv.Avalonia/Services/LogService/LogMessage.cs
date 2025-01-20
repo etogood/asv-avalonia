@@ -2,7 +2,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia;
 
-public class LogMessage(DateTime timestamp, LogLevel logLevel, string category, string message, string? description)
+public class LogMessage(
+    DateTime timestamp,
+    LogLevel logLevel,
+    string category,
+    string message,
+    string? description
+)
 {
     public DateTime Timestamp { get; } = timestamp;
     public LogLevel LogLevel { get; } = logLevel;

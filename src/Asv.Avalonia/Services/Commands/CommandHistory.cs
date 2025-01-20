@@ -27,6 +27,7 @@ public class CommandHistory : ICommandHistory
     }
 
     public string Id { get; }
+
     public IDisposable Register(IViewModel context)
     {
         _context.Add(context.Id, context);
@@ -39,10 +40,13 @@ public class CommandHistory : ICommandHistory
     }
 
     public ReactiveCommand Undo { get; }
+
     public async ValueTask UndoAsync(CancellationToken cancel = default)
     {
-        if (_undoStack.TryPop(out var command)
-            && _context.TryGetValue(command.Item2, out var context))
+        if (
+            _undoStack.TryPop(out var command)
+            && _context.TryGetValue(command.Item2, out var context)
+        )
         {
             await command.Item1.Undo(context, cancel);
             _redoStack.Push(command);
@@ -50,17 +54,24 @@ public class CommandHistory : ICommandHistory
     }
 
     public ReactiveCommand Redo { get; }
+
     public async ValueTask RedoAsync(CancellationToken cancel = default)
     {
-        if (_redoStack.TryPop(out var command)
-            && _context.TryGetValue(command.Item2, out var context))
+        if (
+            _redoStack.TryPop(out var command)
+            && _context.TryGetValue(command.Item2, out var context)
+        )
         {
             await command.Item1.Redo(context, cancel);
             _undoStack.Push(command);
         }
     }
 
-    public async ValueTask Execute(ICommandBase command, IViewModel context, CancellationToken cancel = default)
+    public async ValueTask Execute(
+        ICommandBase command,
+        IViewModel context,
+        CancellationToken cancel = default
+    )
     {
         await command.Execute(context, cancel);
         if (command is IUndoableCommand withUndo)

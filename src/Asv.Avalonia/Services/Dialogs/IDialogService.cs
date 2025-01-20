@@ -29,7 +29,11 @@ public interface IDialogService
     /// <param name="typeFilter">extension filter, example: "txt, *, nupkg".</param>
     /// <param name="initialDirectory">directory where to start search.</param>
     /// <returns>File path or null if dialog was canceled.</returns>
-    Task<string?> ShowOpenFileDialog(string title, string? typeFilter = null, string? initialDirectory = null);
+    Task<string?> ShowOpenFileDialog(
+        string title,
+        string? typeFilter = null,
+        string? initialDirectory = null
+    );
 
     /// <summary>
     /// Opens dialog to save a file
@@ -39,7 +43,12 @@ public interface IDialogService
     /// <param name="typeFilter">extension filter, example: "txt, *, nupkg".</param>
     /// <param name="initialDirectory">directory where to start search.</param>
     /// <returns>File path or null if dialog was canceled.</returns>
-    Task<string?> ShowSaveFileDialog(string title, string? defaultExt = null, string? typeFilter = null, string? initialDirectory = null);
+    Task<string?> ShowSaveFileDialog(
+        string title,
+        string? defaultExt = null,
+        string? typeFilter = null,
+        string? initialDirectory = null
+    );
 
     /// <summary>
     /// Opens dialog to select a folder

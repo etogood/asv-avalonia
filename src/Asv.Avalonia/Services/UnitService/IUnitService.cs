@@ -9,12 +9,10 @@ public static class WellKnownUnits
     public static readonly char[] Kilo = ['K', 'k', 'К', 'k'];
     public static readonly char[] Mega = ['M', 'm', 'М', 'м'];
     public static readonly char[] Giga = ['B', 'b', 'G', 'g', 'Г', 'г'];
-    
+
     public const string Distance = "asv:unit/distance";
     public const string DistanceMeters = $"asv:unit.item/meters";
-    
 }
-
 
 public interface IUnitService
 {
@@ -48,17 +46,15 @@ public interface IUnitItem
     string Print(double value, string? format = null);
     string PrintFromSi(double value, string? format = null) => Print(ConvertFromSi(value));
     string PrintWithUnits(double value, string? format = null);
-    string PrintFromSiWithUnits(double value, string? format = null) => PrintWithUnits(ConvertFromSi(value));
+    string PrintFromSiWithUnits(double value, string? format = null) =>
+        PrintWithUnits(ConvertFromSi(value));
     double ConvertFromSi(double siValue);
     double ConvertToSi(double value);
 }
 
 public class SimpleUnitItem : IUnitItem
 {
-    public SimpleUnitItem()
-    {
-        
-    }
+    public SimpleUnitItem() { }
 
     public required IUnit Parent { get; set; }
     public required string Id { get; set; }
@@ -66,6 +62,7 @@ public class SimpleUnitItem : IUnitItem
     public required string Description { get; set; }
     public required string Symbol { get; set; }
     public required bool IsInternationalSystemUnit { get; set; }
+
     public virtual bool IsValid(string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -88,9 +85,9 @@ public class SimpleUnitItem : IUnitItem
         {
             return double.NaN;
         }
-        
+
         input = input.Trim().Replace(',', '.');
-        
+
         double multiplier = 1;
         if (WellKnownUnits.Kilo.Any(x => input.EndsWith(x)))
         {
@@ -107,7 +104,7 @@ public class SimpleUnitItem : IUnitItem
             multiplier = 1_000_000_000;
             input = input[..^1];
         }
-        
+
         return Double.NaN;
     }
 
