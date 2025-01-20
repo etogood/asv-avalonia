@@ -12,7 +12,9 @@ namespace Asv.Avalonia
             AvaloniaProperty.RegisterAttached<WindowHelper, Control, bool>("EnableDrag");
 
         public static readonly AttachedProperty<bool> DoubleTappedWindowStateProperty =
-            AvaloniaProperty.RegisterAttached<WindowHelper, Control, bool>("DoubleTappedWindowState");
+            AvaloniaProperty.RegisterAttached<WindowHelper, Control, bool>(
+                "DoubleTappedWindowState"
+            );
 
         public static readonly AttachedProperty<bool> IgnoreDragProperty =
             AvaloniaProperty.RegisterAttached<WindowHelper, Control, bool>("IgnoreDrag");
@@ -39,7 +41,9 @@ namespace Asv.Avalonia
 
         #region DoubleTappedWindowStateProperty
 
-        private static void OnChangedDoubleClickWindowState(AvaloniaPropertyChangedEventArgs<bool> source)
+        private static void OnChangedDoubleClickWindowState(
+            AvaloniaPropertyChangedEventArgs<bool> source
+        )
         {
             if (source.Sender is InputElement uiElement)
             {
@@ -99,7 +103,7 @@ namespace Asv.Avalonia
                 WindowState.Normal => WindowState.Maximized,
                 WindowState.Minimized => WindowState.Maximized,
                 WindowState.Maximized => WindowState.Normal,
-                _ => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException(),
             };
         }
 

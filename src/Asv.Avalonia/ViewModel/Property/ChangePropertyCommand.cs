@@ -3,8 +3,6 @@ using MemoryPack;
 
 namespace Asv.Avalonia;
 
-
-
 [MemoryPackable]
 public partial class ChangePropertyCommandState
 {
@@ -26,7 +24,9 @@ public class ChangePropertyCommand : UndoableCommandBase<HistoryProperty>
 
     public override ValueTask Load(ReadOnlySequence<byte> buffer)
     {
-        _state = MemoryPackSerializer.Deserialize<ChangePropertyCommandState>(buffer) ?? new ChangePropertyCommandState();
+        _state =
+            MemoryPackSerializer.Deserialize<ChangePropertyCommandState>(buffer)
+            ?? new ChangePropertyCommandState();
         return ValueTask.CompletedTask;
     }
 

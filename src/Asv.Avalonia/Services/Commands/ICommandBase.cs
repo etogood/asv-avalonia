@@ -45,8 +45,9 @@ public abstract class UndoableCommandBase<TContext> : IUndoableCommand
 
         return ValueTask.CompletedTask;
     }
-    
+
     protected abstract ValueTask InternalRedo(TContext context, CancellationToken cancel);
+
     public ValueTask Undo(object context, CancellationToken cancel)
     {
         if (context is TContext ctx)
