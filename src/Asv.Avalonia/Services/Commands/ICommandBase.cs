@@ -1,11 +1,12 @@
 using System.Buffers;
+using System.Windows.Input;
 
 namespace Asv.Avalonia;
 
 public interface ICommandBase
 {
     string Id { get; }
-    ValueTask Execute(object context, CancellationToken cancel);
+    ValueTask Execute(object context, object? parameter = null, CancellationToken cancel = default);
     ValueTask Load(ReadOnlySequence<byte> buffer);
     ValueTask Save(IBufferWriter<byte> buffer);
 }
@@ -18,7 +19,7 @@ public interface IUndoableCommand : ICommandBase
 
 public abstract class UndoableCommandBase<TContext> : IUndoableCommand
 {
-    public string Id { get; }
+    public abstract string Id { get; }
 
     public ValueTask Execute(object context, CancellationToken cancel)
     {
