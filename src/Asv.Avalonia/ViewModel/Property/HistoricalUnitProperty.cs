@@ -48,7 +48,9 @@ public class HistoricalUnitProperty : ViewModelBase
         }
 
         var modelValue = _unit.Current.CurrentValue.ParseToSi(userValue);
-        return _history.Execute(new ChangePropertyCommand(), this, modelValue, cancel);
+        
+        //return _history.Execute(new ChangePropertyCommand(), this, modelValue, cancel);
+        return ValueTask.CompletedTask;
     }
 
     private void OnChangeByModel(double modelValue)

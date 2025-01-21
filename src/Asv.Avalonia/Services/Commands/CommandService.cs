@@ -19,16 +19,16 @@ public interface ICommandFactory
 
 public class CommandService : ICommandService
 {
-    IDictionary<string, Func<>>
+    
     [ImportingConstructor]
     public CommandService(IEnumerable<ICommandFactory> factories)
     {
-        
+        throw new NotImplementedException();
     }
-    
+
     public ICommandBase Create(string id)
     {
-                        
+        throw new NotImplementedException();
     }
     
     public ICommandHistory CreateHistory(string id)

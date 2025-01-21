@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using R3;
 
 namespace Asv.Avalonia.Example.ViewModels;
@@ -22,13 +19,12 @@ public class Model : IDisposable
 
 public class MainViewModel : DisposableViewModel
 {
-    private readonly INavigationService _nav;
+    
     private readonly Model _model;
 
-    public MainViewModel(IUnitService unit, ICommandService command, INavigationService nav)
+    public MainViewModel(IUnitService unit, ICommandService command)
         : base("shell")
     {
-        _nav = nav;
         _model = new Model();
         History = command.CreateHistory(Id);
         

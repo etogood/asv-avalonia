@@ -33,6 +33,11 @@ public abstract class UndoableCommandBase<TContext> : IUndoableCommand
 
     protected abstract ValueTask InternalExecute(TContext context, CancellationToken cancel);
 
+    public ValueTask Execute(object context, object? parameter = null, CancellationToken cancel = default)
+    {
+        throw new NotImplementedException();
+    }
+
     public abstract ValueTask Load(ReadOnlySequence<byte> buffer);
 
     public abstract ValueTask Save(IBufferWriter<byte> buffer);
