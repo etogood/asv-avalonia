@@ -12,7 +12,7 @@ public interface ICommandHistory
     ValueTask UndoAsync(CancellationToken cancel = default);
     ReactiveCommand Redo { get; }
     ValueTask RedoAsync(CancellationToken cancel = default);
-    ValueTask Execute(ICommandBase command, IViewModel context, object? param, CancellationToken cancel = default);
+    ValueTask Execute(string commandId, IViewModel context, IMemento? param, CancellationToken cancel = default);
 }
 
 public interface IQuickPick

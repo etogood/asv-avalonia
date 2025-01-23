@@ -26,15 +26,14 @@
                avalonia:NavigationHelper.IsSelected="{Binding IsSelected.Value, Mode=TwoWay}"
                Text="{Binding User.Value, UpdateSourceTrigger=LostFocus}"/>-->
         </StackPanel>
-        <avalonia:DockControl>
-            
-            <TextBlock avalonia:DockControl.DockColumn="0" Text="Tab 1 in Column 0" />
-            <TextBlock avalonia:DockControl.DockColumn="0" Text="Tab 2 in Column 0" />
-            <TextBlock avalonia:DockControl.DockColumn="0" Text="Tab 2 in Column 0" />
-            <TextBlock avalonia:DockControl.DockColumn="1" Text="Tab 1 in Column 1" />
-            <TextBlock avalonia:DockControl.DockColumn="2" Text="Tab 1 in Column 2" />
-            <TextBlock avalonia:DockControl.DockColumn="3" Text="Tab 1 in Column 2" />
-        </avalonia:DockControl>
+        <TabControl ItemsSource="{Binding Pages}">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Title.Value}"></TextBlock>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+                
+        </TabControl>
         <!--<ItemsControl>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>

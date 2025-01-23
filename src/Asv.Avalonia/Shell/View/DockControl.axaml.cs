@@ -71,7 +71,7 @@ public class DockControl : SelectingItemsControl
         {
             // Создаем колонку
             _grid.ColumnDefinitions.Add(new ColumnDefinition(1, GridUnitType.Star));
-            TabControl
+            
             // Создаем TabControl для этой колонки
             var tabControl = new TabControl
             {

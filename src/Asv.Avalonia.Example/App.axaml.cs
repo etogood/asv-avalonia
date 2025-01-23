@@ -28,6 +28,7 @@ public partial class App : Application, IContainerHost, IShellHost
                 .WithExport(NullAppHost.Instance.AppPath)
                 .WithExport(NullAppHost.Instance.Configuration)
                 .WithExport(NullAppHost.Instance.Logs)
+                .WithExport<ILoggerFactory>(NullAppHost.Instance.Logs)
                 .WithExport(NullAppHost.Instance.Args)
                 .WithExport(NullAppHost.Instance);
         }
@@ -38,12 +39,12 @@ public partial class App : Application, IContainerHost, IShellHost
                 .WithExport(AppHost.Instance.AppPath)
                 .WithExport(AppHost.Instance.Configuration)
                 .WithExport(AppHost.Instance.Logs)
+                .WithExport<ILoggerFactory>(AppHost.Instance.Logs)
                 .WithExport(AppHost.Instance.Args)
                 .WithExport(AppHost.Instance);
         }
 
         containerCfg 
-            .WithExport<IThemeVariantHost>(this)
             .WithExport<IContainerHost>(this)
             .WithExport<IThemeVariantHost>(this)
             .WithExport<IDataTemplateHost>(this)
@@ -55,6 +56,7 @@ public partial class App : Application, IContainerHost, IShellHost
         
         // TODO: load plugin manager before creating container
         Host = containerCfg.CreateContainer();
+        DataTemplates.Add(new CompositionViewLocator(Host));
     }
 
     private IEnumerable<Assembly> DefaultAssemblies
@@ -83,6 +85,10 @@ public partial class App : Application, IContainerHost, IShellHost
         }
 
         base.OnFrameworkInitializationCompleted();
+        if (Design.IsDesignMode == false)
+        {
+            Shell.OpenPage(SettingsPage.PageId);  
+        }
     }
 
     public CompositionHost Host { get; }

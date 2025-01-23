@@ -1,15 +1,14 @@
+using System.Reflection.Metadata.Ecma335;
 using R3;
 
 namespace Asv.Avalonia;
 
-public class HistoricalUnitProperty : ViewModelBase
+public class HistoricalUnitProperty : RoutableViewModel, IOriginator
 {
     private readonly ReactiveProperty<double> _model;
     private readonly IUnit _unit;
-    private readonly ICommandHistory _history;
     private readonly string? _format;
     private bool _internalChange;
-    private readonly IDisposable _sub1;
     private readonly IDisposable _sub2;
     private readonly IDisposable _sub3;
     private readonly IDisposable _sub4;
@@ -19,14 +18,12 @@ public class HistoricalUnitProperty : ViewModelBase
     public BindableReactiveProperty<bool> IsSelected { get; } = new();
     public IUnit Unit => _unit;
 
-    public HistoricalUnitProperty(string id, ReactiveProperty<double> model, IUnit unit, ICommandHistory history, string? format = null)
+    public HistoricalUnitProperty(string id, ReactiveProperty<double> model, IUnit unit, string? format = null)
         : base(id)
     {
         _model = model;
         _unit = unit;
-        _history = history;
         _format = format;
-        _sub1 = _history.Register(this);
         _internalChange = true;
         _sub2 = User.EnableValidation(ValidateValue).SubscribeAwait(OnChangedByUser, AwaitOperation.Drop);
         _internalChange = false;
@@ -47,10 +44,8 @@ public class HistoricalUnitProperty : ViewModelBase
             return ValueTask.CompletedTask;
         }
 
-        var modelValue = _unit.Current.CurrentValue.ParseToSi(userValue);
-        
-        //return _history.Execute(new ChangePropertyCommand(), this, modelValue, cancel);
-        return ValueTask.CompletedTask;
+        var newValue = new Memento<double>(_unit.Current.CurrentValue.ParseToSi(userValue));
+        return this.ExecuteCommand(ChangeStateCommand<IOriginator>.CommandId, newValue);
     }
 
     private void OnChangeByModel(double modelValue)
@@ -64,7 +59,6 @@ public class HistoricalUnitProperty : ViewModelBase
     {
         if (disposing)
         {
-            _sub1.Dispose();
             _sub2.Dispose();
             _sub3.Dispose();
             _sub4.Dispose();
@@ -73,4 +67,22 @@ public class HistoricalUnitProperty : ViewModelBase
         }
     }
 
+    public override IEnumerable<IRoutableViewModel> Children => ArraySegment<IRoutableViewModel>.Empty;
+    protected override ValueTask InternalCatchEvent(AsyncRoutedEvent e)
+    {
+        return ValueTask.CompletedTask;
+    }
+
+    public IMemento Save()
+    {
+        return new Memento<double>(Model.Value);
+    }
+
+    public void Restore(IMemento state)
+    {
+        if (state is Memento<double> value)
+        {
+            Model.OnNext(value.Value);
+        }
+    }
 }

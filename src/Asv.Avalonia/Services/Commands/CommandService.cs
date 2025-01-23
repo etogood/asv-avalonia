@@ -1,39 +1,38 @@
+using System.Collections.Immutable;
 using System.Composition;
 
 namespace Asv.Avalonia;
 
-public interface ICommandMetadata
+public interface ICommandFactory
 {
-    string Id { get; }
+    string CommandId { get; }
     string Name { get; }
     string Description { get; }
     string Icon { get; }
     int Order { get; }
+    ICommandBase Create();
 }
 
-public interface ICommandFactory
-{
-    IEnumerable<ICommandMetadata> GetCommands();
-    ICommandBase Create(string id);
-}
-
+[Export(typeof(ICommandService))]
+[Shared]
 public class CommandService : ICommandService
 {
-    
+    private readonly ImmutableDictionary<string, ICommandFactory> _commands;
+
     [ImportingConstructor]
-    public CommandService(IEnumerable<ICommandFactory> factories)
+    public CommandService([ImportMany]IEnumerable<ICommandFactory> factories)
     {
-        throw new NotImplementedException();
+        _commands = factories.ToImmutableDictionary(x => x.CommandId);
     }
 
-    public ICommandBase Create(string id)
+    public ICommandBase? Create(string id)
     {
-        throw new NotImplementedException();
+        return _commands.TryGetValue(id, out var command) ? command.Create() : null;
     }
-    
+
     public ICommandHistory CreateHistory(string id)
     {
-        var history = new CommandHistory(id);
+        var history = new CommandHistory(id, this);
         var data = File.ReadAllLines($"{id}.undo.txt");
         history.Load(data);
         return history;

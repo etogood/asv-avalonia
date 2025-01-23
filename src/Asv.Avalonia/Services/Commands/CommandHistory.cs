@@ -7,12 +7,14 @@ namespace Asv.Avalonia;
 
 public class CommandHistory : ICommandHistory
 {
+    private readonly ICommandService _svc;
     private readonly Dictionary<string, IViewModel> _context = new();
     private readonly Stack<(IUndoableCommand, string)> _undoStack = new();
     private readonly Stack<(IUndoableCommand, string)> _redoStack = new();
 
-    public CommandHistory(string id)
+    public CommandHistory(string id, ICommandService svc)
     {
+        _svc = svc;
         Id = id;
         Undo = new ReactiveCommand((_, token) => UndoAsync(token));
         Redo = new ReactiveCommand((_, token) => RedoAsync(token));
@@ -52,20 +54,11 @@ public class CommandHistory : ICommandHistory
         }
     }
 
-    public ValueTask Execute(ICommandBase command, IViewModel context, object? param, CancellationToken cancel = default)
+    public ValueTask Execute(string commandId, IViewModel context, IMemento? param, CancellationToken cancel = default)
     {
-        throw new NotImplementedException();
+        return _svc.Create(commandId)?.Execute(context, param, cancel) ?? ValueTask.CompletedTask;
     }
-
-    public async ValueTask Execute(ICommandBase command, IViewModel context, CancellationToken cancel = default)
-    {
-        await command.Execute(context, cancel);
-        if (command is IUndoableCommand withUndo)
-        {
-            _undoStack.Push((withUndo, context.Id));
-        }
-    }
-
+    
     public void Load(string[] data)
     {
         foreach (var command in data)

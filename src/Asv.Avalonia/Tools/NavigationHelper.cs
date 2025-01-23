@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
+using R3;
 
 namespace Asv.Avalonia;
 
@@ -15,7 +16,7 @@ public class NavigationHelper
 
     static NavigationHelper()
     {
-        IsSelectedProperty.Changed.Subscribe(args =>
+        IsSelectedProperty.Changed.ToObservable().Subscribe(args =>
         {
             if (args.Sender is Control control && args.NewValue.GetValueOrDefault())
             {

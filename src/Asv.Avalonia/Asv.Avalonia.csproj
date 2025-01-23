@@ -40,14 +40,9 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="System.Composition" Version="$(SystemCompositionVersion)" />
-        <PackageReference Include="Asv.Common" Version="$(AsvCommonConfig)" />
-        <PackageReference Include="Asv.Cfg" Version="$(AsvCommonConfig)" />
+        <PackageReference Include="Asv.Common" Version="$(AsvCommonVersion)" />
+        <PackageReference Include="Asv.Cfg" Version="$(AsvCommonVersion)" />
         <PackageReference Include="ZLogger" Version="$(ZLoggerVersion)" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Services\Navigation\" />
-      <Folder Include="Shell\Events\" />
     </ItemGroup>
 
     <ItemGroup>

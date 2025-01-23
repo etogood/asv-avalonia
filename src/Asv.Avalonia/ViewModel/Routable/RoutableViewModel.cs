@@ -44,5 +44,5 @@ public abstract class RoutableViewModel(string id) : DisposableViewModel(id), IR
         }
     }
 
-    protected abstract ValueTask InternalCatchEvent(AsyncRoutedEvent asyncRoutedEvent);
+    protected abstract ValueTask InternalCatchEvent(AsyncRoutedEvent e);
 }

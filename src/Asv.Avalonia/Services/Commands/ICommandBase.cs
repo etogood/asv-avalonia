@@ -2,66 +2,65 @@ using System.Buffers;
 
 namespace Asv.Avalonia;
 
-public interface ICommandBase
+public interface ICommandBase : IOriginator
 {
     string Id { get; }
-    ValueTask Execute(object context, object? parameter = null, CancellationToken cancel = default);
-    ValueTask Load(ReadOnlySequence<byte> buffer);
-    ValueTask Save(IBufferWriter<byte> buffer);
+    ValueTask Execute(object? context, IMemento? parameter = null, CancellationToken cancel = default);
 }
 
 public interface IUndoableCommand : ICommandBase
 {
-    ValueTask Redo(object context, CancellationToken cancel);
-    ValueTask Undo(object context, CancellationToken cancel);
+    ValueTask Undo(object? context, CancellationToken cancel = default);
+    ValueTask Redo(object? context, CancellationToken cancel = default);
 }
 
-public abstract class UndoableCommandBase<TContext> : IUndoableCommand
+public class ChangeStateCommand<TContext> : IUndoableCommand
+    where TContext : IOriginator
 {
-    public abstract string Id { get; }
-
-    public ValueTask Execute(object context, CancellationToken cancel)
+    public const string CommandId = "cmd.edit.change-state";
+    
+    private IMemento _oldState;
+    private IMemento _newState;
+    public string Id { get; }
+    public ValueTask Execute(object? context, IMemento? parameter = null, CancellationToken cancel = default)
     {
-        
-        if (context is TContext ctx)
+        if (context is TContext ctx && parameter != null)
         {
-            return InternalExecute(ctx, cancel);
+            _oldState = ctx.Save();
+            _newState = parameter;
+            ctx.Restore(parameter);
         }
 
         return ValueTask.CompletedTask;
     }
 
-    protected abstract ValueTask InternalExecute(TContext context, CancellationToken cancel);
+    public ValueTask Redo(object? context, CancellationToken cancel)
+    {
+        if (context is TContext ctx)
+        {
+            ctx.Restore(_newState);
+        }
 
-    public ValueTask Execute(object context, object? parameter = null, CancellationToken cancel = default)
+        return ValueTask.CompletedTask;
+    }
+
+    public ValueTask Undo(object? context, CancellationToken cancel)
+    {
+        if (context is TContext ctx)
+        {
+            ctx.Restore(_oldState);
+        }
+
+        return ValueTask.CompletedTask;
+    }
+
+    public IMemento Save()
     {
         throw new NotImplementedException();
     }
 
-    public abstract ValueTask Load(ReadOnlySequence<byte> buffer);
-
-    public abstract ValueTask Save(IBufferWriter<byte> buffer);
-
-    public ValueTask Redo(object context, CancellationToken cancel)
+    public void Restore(IMemento state)
     {
-        if (context is TContext ctx)
-        {
-            return InternalRedo(ctx, cancel);
-        }
-
-        return ValueTask.CompletedTask;
+        throw new NotImplementedException();
     }
-    
-    protected abstract ValueTask InternalRedo(TContext context, CancellationToken cancel);
-    public ValueTask Undo(object context, CancellationToken cancel)
-    {
-        if (context is TContext ctx)
-        {
-            return InternalUndo(ctx, cancel);
-        }
-
-        return ValueTask.CompletedTask;
-    }
-
-    protected abstract ValueTask InternalUndo(TContext context, CancellationToken cancel);
 }

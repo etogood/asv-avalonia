@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
+using R3;
 
 namespace Asv.Avalonia
 {
@@ -19,8 +20,8 @@ namespace Asv.Avalonia
 
         static WindowHelper()
         {
-            EnableDragProperty.Changed.Subscribe(OnChangedEnableDrag);
-            DoubleTappedWindowStateProperty.Changed.Subscribe(OnChangedDoubleClickWindowState);
+            EnableDragProperty.Changed.ToObservable().Subscribe(OnChangedEnableDrag);
+            DoubleTappedWindowStateProperty.Changed.ToObservable().Subscribe(OnChangedDoubleClickWindowState);
         }
 
         #region IgnoreDragProperty
