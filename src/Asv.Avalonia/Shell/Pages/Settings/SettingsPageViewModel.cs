@@ -33,8 +33,8 @@ public class SettingsPageViewModel : TreePageViewModel<ISettingsPage>, ISettings
     }
 
     [ImportingConstructor]
-    public SettingsPageViewModel(ICommandService svc, [ImportMany] IEnumerable<IExtensionFor<ISettingsPage>> extensions)
-        : base(PageId, svc, extensions)
+    public SettingsPageViewModel(ICommandService svc)
+        : base(PageId, svc)
     {
         
     }

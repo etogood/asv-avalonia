@@ -6,6 +6,8 @@ public interface IDesignTimeTreePage : IPage
 {
     BindableReactiveProperty<bool> IsCompactMode { get; }
     IEnumerable<TreeMenuItem>? Items { get; }
+    BindableReactiveProperty<TreeMenuItem?> SelectedMenu { get; }
+    BindableReactiveProperty<IRoutable?> SelectedPage { get; }
 }
 
 public class DesignTimeTreePage : TreePageViewModel<IPage>

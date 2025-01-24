@@ -1,50 +1,50 @@
 using System.Collections.Immutable;
+using System.Composition;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using R3;
+using ZLogger;
 
 namespace Asv.Avalonia;
 
-public class ExtendableViewModel<TSelfInterface> : RoutableViewModel, IExtendable
+public class ExtendableViewModel<TSelfInterface> : RoutableViewModel
     where TSelfInterface : class
 {
-    private readonly BindableReactiveProperty<bool> _isLoading;
-    private readonly BindableReactiveProperty<string?> _loadingMessage;
-    private readonly ImmutableArray<IExtensionFor<TSelfInterface>> _extentions;
-
-    protected ExtendableViewModel(string id, params IEnumerable<IExtensionFor<TSelfInterface>> extensions)
+    protected ExtendableViewModel(string id)
         : base(id)
     {
-        _isLoading = new BindableReactiveProperty<bool>(false);
-        _loadingMessage = new BindableReactiveProperty<string?>(null);
-
-        var context = this as TSelfInterface ??
-                      throw new Exception($"Class {GetType().FullName} must implement {nameof(TSelfInterface)}");
-        _extentions = [..extensions];
-        BeginLoadExtensions(_extentions, context);
     }
 
-    public IReadOnlyBindableReactiveProperty<bool> IsLoading => _isLoading;
+    private TSelfInterface GetContext() => this as TSelfInterface ??
+                                        throw new Exception($"Class {GetType().FullName} must implement {nameof(TSelfInterface)}");
 
-    public IReadOnlyBindableReactiveProperty<string?> LoadingMessage => _loadingMessage;
+    [ImportMany]
+    public IEnumerable<Lazy<IExtensionFor<TSelfInterface>>>? Extensions { get; set; }
+    [Import]
+    public ILoggerFactory? LoggerFactory { get; set; }
 
-    protected virtual ValueTask AfterLoadExtensions()
-    {
-        return ValueTask.CompletedTask;
-    }
-
-    private async void BeginLoadExtensions(IEnumerable<IExtensionFor<TSelfInterface>> extensions, TSelfInterface context)
+    [OnImportsSatisfied]
+    public async void Load()
     {
         try
         {
-            _isLoading.Value = true;
-            foreach (var extension in extensions)
+            if (Extensions == null)
+            {
+                return;
+            }
+
+            var logger = LoggerFactory?.CreateLogger(GetType()) ?? NullLogger.Instance;
+
+            var context = GetContext();
+            foreach (var extension in Extensions)
             {
                 try
                 {
-                    await extension.Extend(context);
+                    await extension.Value.Extend(context);
                 }
                 catch (Exception e)
                 {
-                    // ignored
+                    logger.ZLogError(e, $"Error while loading extension {extension.Value.GetType().FullName} for {GetType().FullName}");
                 }
             }
 
@@ -52,23 +52,28 @@ public class ExtendableViewModel<TSelfInterface> : RoutableViewModel, IExtendabl
         }
         catch (Exception e)
         {
+            LoggerFactory?.CreateLogger(GetType()).ZLogError(e, $"Error while load extensions for {GetType().FullName}");
+        }
+    }
 
-        }
-        finally
-        {
-            _isLoading.Value = false;
-        }
+    protected virtual ValueTask AfterLoadExtensions()
+    {
+        return ValueTask.CompletedTask;
     }
 
     protected override void Dispose(bool disposing)
     {
         if (disposing)
         {
-            _isLoading.Dispose();
-            _loadingMessage.Dispose();
-            foreach (var item in _extentions)
+            if (Extensions != null)
             {
-                item.Dispose();
+                foreach (var item in Extensions)
+                {
+                    if (item.IsValueCreated)
+                    {
+                        item.Value.Dispose();
+                    }
+                }
             }
         }
 

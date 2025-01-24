@@ -15,7 +15,6 @@ public abstract class ShellViewModel : RoutableViewModel, IShell
         : base(ShellId)
     {
         ArgumentNullException.ThrowIfNull(host);
-        
         _container = host.Host;
         Pages = _pages.ToNotifyCollectionChangedSlim();
         Back = new ReactiveCommand((_, c) => BackwardAsync(c));

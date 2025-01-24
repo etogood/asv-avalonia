@@ -6,8 +6,8 @@ namespace Asv.Avalonia;
 public abstract class PageViewModel<TContext> : ExtendableViewModel<TContext>, IPage
     where TContext : class, IPage
 {
-    protected PageViewModel(string id, ICommandService cmd, params IEnumerable<IExtensionFor<TContext>> extensions)
-        : base(id, extensions)
+    protected PageViewModel(string id, ICommandService cmd)
+        : base(id)
     {
         History = cmd.CreateHistory(this);
         Icon = new BindableReactiveProperty<MaterialIconKind>(MaterialIconKind.Window);

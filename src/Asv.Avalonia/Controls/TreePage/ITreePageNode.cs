@@ -12,6 +12,12 @@ public interface ITreePageNode : IViewModel
     IRoutable CreateNodeViewModel();
 }
 
+public class BreadCrumbItem(bool isFirst, TreeMenuItem item)
+{
+    public bool IsFirst { get; } = isFirst;
+    public TreeMenuItem Item { get; } = item;
+}
+
 public class TreePageNode : ViewModelBase, ITreePageNode
 {
     private readonly Func<IRoutable> _create;

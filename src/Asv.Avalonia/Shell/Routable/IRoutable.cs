@@ -11,12 +11,6 @@ public interface IRoutable : IViewModel
     ValueTask<IRoutable> NavigateTo(ArraySegment<string> path);
 }
 
-public interface IExtendable
-{
-    IReadOnlyBindableReactiveProperty<bool> IsLoading { get; }
-    IReadOnlyBindableReactiveProperty<string?> LoadingMessage { get; }
-}
-
 public enum RoutingEventStrategy
 {
     Bubble,
