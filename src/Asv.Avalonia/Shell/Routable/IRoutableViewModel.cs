@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+
 namespace Asv.Avalonia;
 
 public interface IRoutableViewModel : IViewModel
@@ -5,6 +7,7 @@ public interface IRoutableViewModel : IViewModel
     IRoutableViewModel? Parent { get; set; }
     IEnumerable<IRoutableViewModel> Children { get; }
     ValueTask Rise(AsyncRoutedEvent e);
+    ValueTask<IRoutableViewModel> NavigateTo(ArraySegment<string> path);
 }
 
 public enum RoutingEventStrategy

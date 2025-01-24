@@ -17,41 +17,76 @@ public class ChangeThemeCommandFactory : ICommandFactory
         _host = host;
     }
 
-    public string CommandId => ChangeThemeCommand.CommandId;
+    public string CommandId => ChangeThemeAsyncUndoRedoCommand.CommandId;
     public string Name => "Change theme";
     public string Description => "Change application theme";
     public string Icon { get; } = string.Empty;
     public int Order => 0;
 
-    public ICommandBase Create()
+    public IAsyncCommand Create()
     {
-        return new ChangeThemeCommand(_svc);
+        return new ChangeThemeAsyncUndoRedoCommand(_svc);
     }
 }
 
-public class ChangeThemeCommand(IThemeService svc) : ICommandBase
+public class ChangeThemeAsyncUndoRedoCommand(IThemeService svc) : IAsyncUndoRedoCommand
 {
+    private PersistableChange<string>? _state;
     public const string CommandId = "theme.change";
-    public IMemento Save()
+    public IPersistable Save()
     {
-        throw new NotImplementedException();
+        return _state ?? throw new InvalidOperationException();
     }
 
-    public void Restore(IMemento state)
+    public void Restore(IPersistable state)
     {
-        throw new NotImplementedException();
-    }
-
-    public string Id => CommandId;
-
-    public ValueTask Execute(object? context, IMemento? parameter = null, CancellationToken cancel = default)
-    {
-        if (parameter is Memento<string> memento)
+        if (state is PersistableChange<string> memento)
         {
+            _state = memento;
+        }
+    }
+
+    public string AsyncCommandId => CommandId;
+
+    public ValueTask Execute(IRoutableViewModel context, IPersistable? parameter = null, CancellationToken cancel = default)
+    {
+        if (parameter is Persistable<string> memento)
+        {
+            var oldValue = svc.CurrentTheme.Value.Id;
             var theme = svc.Themes.FirstOrDefault(x => x.Id == memento.Value);
             if (theme != null)
             {
-                svc.CurrentTheme.OnNext(theme);
+                svc.CurrentTheme.Value = theme;
+            }
+
+            _state = new PersistableChange<string>(oldValue, memento.Value);
+        }
+
+        return ValueTask.CompletedTask;
+    }
+
+    public ValueTask Undo(IRoutableViewModel? context, CancellationToken cancel = default)
+    {
+        if (_state != null)
+        {
+            var theme = svc.Themes.FirstOrDefault(x => x.Id == _state.OldValue);
+            if (theme != null)
+            {
+                svc.CurrentTheme.Value = theme;
+            }
+        }
+
+        return ValueTask.CompletedTask;
+    }
+
+    public ValueTask Redo(IRoutableViewModel context, CancellationToken cancel = default)
+    {
+        if (_state != null)
+        {
+            var theme = svc.Themes.FirstOrDefault(x => x.Id == _state.NewValue);
+            if (theme != null)
+            {
+                svc.CurrentTheme.Value = theme;
             }
         }
 

@@ -3,6 +3,15 @@ using System.Composition;
 
 namespace Asv.Avalonia;
 
+public interface ICommandMetadata
+{
+    string CommandId { get; }
+    string Name { get; }
+    string Description { get; }
+    string Icon { get; }
+    int Order { get; }
+}
+
 public interface ICommandFactory
 {
     string CommandId { get; }
@@ -10,7 +19,7 @@ public interface ICommandFactory
     string Description { get; }
     string Icon { get; }
     int Order { get; }
-    ICommandBase Create();
+    IAsyncCommand Create();
 }
 
 [Export(typeof(ICommandService))]
@@ -25,16 +34,16 @@ public class CommandService : ICommandService
         _commands = factories.ToImmutableDictionary(x => x.CommandId);
     }
 
-    public ICommandBase? Create(string id)
+    public IEnumerable<ICommandMetadata> Commands { get; }
+
+    public IAsyncCommand? Create(string id)
     {
         return _commands.TryGetValue(id, out var command) ? command.Create() : null;
     }
 
-    public ICommandHistory CreateHistory(string id)
+    public ICommandHistory CreateHistory(IRoutableViewModel owner)
     {
-        var history = new CommandHistory(id, this);
-        var data = File.ReadAllLines($"{id}.undo.txt");
-        history.Load(data);
+        var history = new CommandHistory(owner, this);
         return history;
     }
 }

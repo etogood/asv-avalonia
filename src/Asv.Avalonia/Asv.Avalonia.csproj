@@ -5,6 +5,7 @@
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <CodeAnalysisRuleSet>../CodeStyle.ruleset</CodeAnalysisRuleSet>
         <WarningsAsErrors>
             CS0169,
@@ -58,6 +59,10 @@
         <DependentUpon>MainView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Controls\" />
     </ItemGroup>
 
    

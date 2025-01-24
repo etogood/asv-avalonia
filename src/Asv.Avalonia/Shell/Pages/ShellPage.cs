@@ -7,9 +7,9 @@ public abstract class ShellPage : RoutableViewModel, IShellPage
     protected ShellPage(string id, ICommandService cmd)
         : base(id)
     {
-        History = cmd.CreateHistory(id);
+        History = cmd.CreateHistory(this);
     }
-    
+
     public abstract IReadOnlyBindableReactiveProperty<string> Title { get; }
     public ICommandHistory History { get; }
 

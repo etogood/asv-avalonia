@@ -16,8 +16,6 @@ public abstract class Shell : RoutableViewModel, IShell
         : base(ShellId)
     {
         ArgumentNullException.ThrowIfNull(host);
-
-        
         
         _container = host.Host;
         Pages = _pages.ToNotifyCollectionChangedSlim();
@@ -79,6 +77,11 @@ public abstract class Shell : RoutableViewModel, IShell
             {
                  // write command to log
             }
+        }
+
+        if (e is FocusedEvent focus)
+        {
+            // write to navigation history
         }
         
         return ValueTask.CompletedTask;

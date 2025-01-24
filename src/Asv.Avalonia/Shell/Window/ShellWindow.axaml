@@ -5,6 +5,11 @@
         xmlns:avalonia="clr-namespace:Asv.Avalonia"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Asv.Avalonia.ShellWindow"
+        x:DataType="avalonia:Shell"
+        
         Title="Asv.Avalonia.Example">
+        <Window.KeyBindings>
+                
+        </Window.KeyBindings>
         <avalonia:ShellView />
 </Window>

@@ -10,10 +10,10 @@
         <avalonia:ThemePropertyViewModel/>
     </Design.DataContext>
     <ComboBox
-            IsFocused="{Binding IsSelected.Value, Mode=OneWayToSource}"
-            avalonia:NavigationHelper.IsSelected="{Binding IsSelected.Value, Mode=OneWay}"
-            ItemsSource="{Binding Items}" 
-              SelectedItem="{Binding SelectedItem.Value}">
+            IsFocused="{Binding IsFocused.Value, Mode=OneWayToSource}"
+            avalonia:NavigationHelper.IsSelected="{Binding IsFocused.Value, Mode=OneWay}"
+            ItemsSource="{Binding Items}"
+            SelectedItem="{Binding SelectedItem.Value}">
         <ComboBox.ItemTemplate>
             <DataTemplate>
                 <TextBlock Text="{Binding Name }"/>

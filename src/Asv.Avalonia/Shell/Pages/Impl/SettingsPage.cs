@@ -19,7 +19,7 @@ public class SettingsPage : ShellPage
     public SettingsPage(IThemeService themeService, ICommandService svc)
         : base(PageId, svc)
     {
-        Theme = new ThemePropertyViewModel(themeService, TODO)
+        Theme = new ThemePropertyViewModel(themeService)
         {
             Parent = this,
         };
@@ -33,11 +33,6 @@ public class SettingsPage : ShellPage
         {
             yield return Theme;
         }
-    }
-
-    protected override ValueTask InternalCatchEvent(AsyncRoutedEvent e)
-    {
-        return ValueTask.CompletedTask;
     }
 
     public override IReadOnlyBindableReactiveProperty<string> Title => _title;

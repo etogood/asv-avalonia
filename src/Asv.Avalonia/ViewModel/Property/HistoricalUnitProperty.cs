@@ -3,7 +3,7 @@ using R3;
 
 namespace Asv.Avalonia;
 
-public class HistoricalUnitProperty : RoutableViewModel, IOriginator
+public class HistoricalUnitProperty : RoutableViewModel, IStatePersistor
 {
     private readonly ReactiveProperty<double> _model;
     private readonly IUnit _unit;
@@ -44,8 +44,8 @@ public class HistoricalUnitProperty : RoutableViewModel, IOriginator
             return ValueTask.CompletedTask;
         }
 
-        var newValue = new Memento<double>(_unit.Current.CurrentValue.ParseToSi(userValue));
-        return this.ExecuteCommand(ChangeStateCommand<IOriginator>.CommandId, newValue);
+        var newValue = new Persistable<double>(_unit.Current.CurrentValue.ParseToSi(userValue));
+        return this.ExecuteCommand(ChangeStateAsyncUndoRedoCommand<IStatePersistor>.CommandId, newValue);
     }
 
     private void OnChangeByModel(double modelValue)
@@ -73,14 +73,14 @@ public class HistoricalUnitProperty : RoutableViewModel, IOriginator
         return ValueTask.CompletedTask;
     }
 
-    public IMemento Save()
+    public IPersistable Save()
     {
-        return new Memento<double>(Model.Value);
+        return new Persistable<double>(Model.Value);
     }
 
-    public void Restore(IMemento state)
+    public void Restore(IPersistable state)
     {
-        if (state is Memento<double> value)
+        if (state is Persistable<double> value)
         {
             Model.OnNext(value.Value);
         }

@@ -31,27 +31,28 @@ public class ThemePropertyViewModel : RoutableViewModel
         _internalChange = false;
     }
 
-    private ValueTask OnChangedByUser(IThemeInfo userValue, CancellationToken cancel)
+    private async ValueTask OnChangedByUser(IThemeInfo userValue, CancellationToken cancel)
     {
         if (_internalChange)
         {
-            return ValueTask.CompletedTask;
+            return;
         }
 
-        var newValue = new Memento<string>(userValue.Id);
-        return this.ExecuteCommand(ChangeThemeCommand.CommandId, newValue);
+        _internalChange = true;
+        var newValue = new Persistable<string>(userValue.Id);
+        await this.ExecuteCommand(ChangeThemeAsyncUndoRedoCommand.CommandId, newValue);
+        _internalChange = false;
     }
 
     private void OnChangeByModel(IThemeInfo modelValue)
     {
         _internalChange = true;
-        SelectedItem.OnNext(modelValue);
+        SelectedItem.Value = modelValue;
         _internalChange = false;
     }
 
     public IEnumerable<IThemeInfo> Items => _svc.Themes;
     public BindableReactiveProperty<IThemeInfo> SelectedItem { get; }
-    public BindableReactiveProperty<bool> IsSelected { get; } = new();
 
     public override IEnumerable<IRoutableViewModel> Children => ImmutableArray<IRoutableViewModel>.Empty;
     protected override ValueTask InternalCatchEvent(AsyncRoutedEvent e)
