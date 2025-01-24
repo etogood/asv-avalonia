@@ -45,7 +45,7 @@ public class HistoricalUnitProperty : RoutableViewModel, IStatePersistor
         }
 
         var newValue = new Persistable<double>(_unit.Current.CurrentValue.ParseToSi(userValue));
-        return this.ExecuteCommand(ChangeStateAsyncUndoRedoCommand<IStatePersistor>.CommandId, newValue);
+        return this.ExecuteCommand(ChangeThemeCommand.Id, newValue);
     }
 
     private void OnChangeByModel(double modelValue)
@@ -67,7 +67,7 @@ public class HistoricalUnitProperty : RoutableViewModel, IStatePersistor
         }
     }
 
-    public override IEnumerable<IRoutableViewModel> Children => ArraySegment<IRoutableViewModel>.Empty;
+    public override IEnumerable<IRoutable> Children => ArraySegment<IRoutable>.Empty;
     protected override ValueTask InternalCatchEvent(AsyncRoutedEvent e)
     {
         return ValueTask.CompletedTask;

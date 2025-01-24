@@ -2,15 +2,15 @@ using Avalonia.Controls.ApplicationLifetimes;
 
 namespace Asv.Avalonia;
 
-public class ClassicDesktopShell : Shell
+public class DesktopShellViewModel : ShellViewModel
 {
-    public ClassicDesktopShell(IClassicDesktopStyleApplicationLifetime lifetime, IContainerHost containerHost)
+    public DesktopShellViewModel(IClassicDesktopStyleApplicationLifetime lifetime, IContainerHost containerHost)
         : base(containerHost)
     {
         lifetime.MainWindow = new ShellWindow { DataContext = this };
     }
 
-    protected override void InternalAddPageToMainTab(IShellPage export)
+    protected override void InternalAddPageToMainTab(IPage export)
     {
         throw new NotImplementedException();
     }

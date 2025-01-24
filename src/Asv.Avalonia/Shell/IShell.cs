@@ -9,7 +9,7 @@ public interface IShellHost
     IShell Shell { get; }
 }
 
-public interface IShell : IRoutableViewModel
+public interface IShell : IRoutable
 {
     ReactiveCommand Back { get; }
     ValueTask BackwardAsync(CancellationToken cancel = default);
@@ -17,6 +17,6 @@ public interface IShell : IRoutableViewModel
     ValueTask ForwardAsync(CancellationToken cancel = default);
     ReactiveCommand GoHome { get; }
     ValueTask GoHomeAsync(CancellationToken cancel = default);
-    ValueTask<IShellPage?> OpenPage(string pageId);
-    NotifyCollectionChangedSynchronizedViewList<IShellPage> Pages { get; }
+    ValueTask<IPage?> OpenPage(string pageId);
+    NotifyCollectionChangedSynchronizedViewList<IPage> Pages { get; }
 }

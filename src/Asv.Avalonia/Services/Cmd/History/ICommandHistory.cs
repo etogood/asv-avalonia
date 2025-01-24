@@ -3,20 +3,16 @@ using R3;
 
 namespace Asv.Avalonia;
 
-public interface ICommandHistory
+public interface ICommandHistory : IDisposable
 {
-    IRoutableViewModel Owner { get; }
+    IRoutable HistoryOwner { get; }
     ReactiveCommand Undo { get; }
     ValueTask UndoAsync(CancellationToken cancel = default);
     ReactiveCommand Redo { get; }
     ValueTask RedoAsync(CancellationToken cancel = default);
-    ValueTask Execute(string commandId, IRoutableViewModel context, IPersistable? param = null, CancellationToken cancel = default);
+    ValueTask Execute(string commandId, IRoutable context, IPersistable? param = null, CancellationToken cancel = default);
 }
 
-public interface IQuickPick
-{
-    
-}
 
 
 

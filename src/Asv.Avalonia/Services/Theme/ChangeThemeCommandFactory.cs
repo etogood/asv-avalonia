@@ -1,4 +1,5 @@
 using System.Composition;
+using Material.Icons;
 
 namespace Asv.Avalonia;
 
@@ -7,32 +8,42 @@ namespace Asv.Avalonia;
 public class ChangeThemeCommandFactory : ICommandFactory
 {
     private readonly IThemeService _svc;
-    private readonly IShellHost _host;
 
     [ImportingConstructor]
-    public ChangeThemeCommandFactory(IThemeService svc, IShellHost host)
+    public ChangeThemeCommandFactory(IThemeService svc)
     {
         ArgumentNullException.ThrowIfNull(svc);
         _svc = svc;
-        _host = host;
     }
 
-    public string CommandId => ChangeThemeAsyncUndoRedoCommand.CommandId;
-    public string Name => "Change theme";
-    public string Description => "Change application theme";
-    public string Icon { get; } = string.Empty;
-    public int Order => 0;
+    public ICommandInfo Info => ChangeThemeCommand.StaticInfo;
 
     public IAsyncCommand Create()
     {
-        return new ChangeThemeAsyncUndoRedoCommand(_svc);
+        return new ChangeThemeCommand(_svc);
     }
 }
 
-public class ChangeThemeAsyncUndoRedoCommand(IThemeService svc) : IAsyncUndoRedoCommand
+public class ChangeThemeCommand(IThemeService svc)
+    : IUndoRedoCommand
 {
+    #region Static
+
+    public const string Id = "theme.change";
+    internal static readonly ICommandInfo StaticInfo = new CommandInfo
+    {
+        CommandId = Id,
+        Name = "Change theme",
+        Description = "Change application theme",
+        Icon = MaterialIconKind.ThemeLightDark,
+        Order = 0,
+    };
+
+    #endregion
+
     private PersistableChange<string>? _state;
-    public const string CommandId = "theme.change";
+
+    public ICommandInfo Info => StaticInfo;
     public IPersistable Save()
     {
         return _state ?? throw new InvalidOperationException();
@@ -46,9 +57,7 @@ public class ChangeThemeAsyncUndoRedoCommand(IThemeService svc) : IAsyncUndoRedo
         }
     }
 
-    public string AsyncCommandId => CommandId;
-
-    public ValueTask Execute(IRoutableViewModel context, IPersistable? parameter = null, CancellationToken cancel = default)
+    public ValueTask Execute(IRoutable context, IPersistable? parameter = null, CancellationToken cancel = default)
     {
         if (parameter is Persistable<string> memento)
         {
@@ -65,7 +74,7 @@ public class ChangeThemeAsyncUndoRedoCommand(IThemeService svc) : IAsyncUndoRedo
         return ValueTask.CompletedTask;
     }
 
-    public ValueTask Undo(IRoutableViewModel? context, CancellationToken cancel = default)
+    public ValueTask Undo(IRoutable? context, CancellationToken cancel = default)
     {
         if (_state != null)
         {
@@ -79,7 +88,7 @@ public class ChangeThemeAsyncUndoRedoCommand(IThemeService svc) : IAsyncUndoRedo
         return ValueTask.CompletedTask;
     }
 
-    public ValueTask Redo(IRoutableViewModel context, CancellationToken cancel = default)
+    public ValueTask Redo(IRoutable context, CancellationToken cancel = default)
     {
         if (_state != null)
         {

@@ -4,10 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace Asv.Avalonia;
 
-[ExportViewFor(typeof(ThemeProperty))]
-public partial class ThemePropertyView : UserControl
+public partial class TreePageView : UserControl
 {
-    public ThemePropertyView()
+    public TreePageView()
     {
         InitializeComponent();
     }

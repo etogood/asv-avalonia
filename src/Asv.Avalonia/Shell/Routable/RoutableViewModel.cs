@@ -2,7 +2,7 @@ using R3;
 
 namespace Asv.Avalonia;
 
-public abstract class RoutableViewModel : DisposableViewModel, IRoutableViewModel
+public abstract class RoutableViewModel : DisposableViewModel, IRoutable
 {
     private readonly IDisposable _sub1;
 
@@ -20,8 +20,8 @@ public abstract class RoutableViewModel : DisposableViewModel, IRoutableViewMode
         });
     }
 
-    public IRoutableViewModel? Parent { get; set; }
-    public abstract IEnumerable<IRoutableViewModel> Children { get; }
+    public IRoutable? Parent { get; set; }
+    public abstract IEnumerable<IRoutable> Children { get; }
 
     public async ValueTask Rise(AsyncRoutedEvent e)
     {
@@ -62,12 +62,12 @@ public abstract class RoutableViewModel : DisposableViewModel, IRoutableViewMode
         }
     }
 
-    public virtual ValueTask<IRoutableViewModel> NavigateTo(ArraySegment<string> path)
+    public virtual ValueTask<IRoutable> NavigateTo(ArraySegment<string> path)
     {
         if (path.Count == 0)
         {
             IsFocused.Value = true;
-            return ValueTask.FromResult<IRoutableViewModel>(this);
+            return ValueTask.FromResult<IRoutable>(this);
         }
 
         foreach (var child in Children)
@@ -78,7 +78,7 @@ public abstract class RoutableViewModel : DisposableViewModel, IRoutableViewMode
             }
         }
 
-        return ValueTask.FromResult<IRoutableViewModel>(this);
+        return ValueTask.FromResult<IRoutable>(this);
     }
 
     public ReactiveProperty<bool> IsFocused { get; } = new(false);

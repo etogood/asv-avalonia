@@ -5,7 +5,7 @@ using R3;
 
 namespace Asv.Avalonia;
 
-public class ThemePropertyViewModel : RoutableViewModel
+public class ThemeProperty : RoutableViewModel
 {
     private readonly IThemeService _svc;
     private bool _internalChange;
@@ -13,14 +13,14 @@ public class ThemePropertyViewModel : RoutableViewModel
     private readonly IDisposable _sub2;
     public const string ViewModelId = "theme.current";
 
-    public ThemePropertyViewModel()
+    public ThemeProperty()
         : this(DesignTime.ThemeService)
     {
         DesignTime.ThrowIfNotDesignMode();
     }
 
     [ImportingConstructor]
-    public ThemePropertyViewModel(IThemeService svc)
+    public ThemeProperty(IThemeService svc)
         : base(ViewModelId)
     {
         _svc = svc;
@@ -40,7 +40,7 @@ public class ThemePropertyViewModel : RoutableViewModel
 
         _internalChange = true;
         var newValue = new Persistable<string>(userValue.Id);
-        await this.ExecuteCommand(ChangeThemeAsyncUndoRedoCommand.CommandId, newValue);
+        await this.ExecuteCommand(ChangeThemeCommand.Id, newValue);
         _internalChange = false;
     }
 
@@ -54,7 +54,7 @@ public class ThemePropertyViewModel : RoutableViewModel
     public IEnumerable<IThemeInfo> Items => _svc.Themes;
     public BindableReactiveProperty<IThemeInfo> SelectedItem { get; }
 
-    public override IEnumerable<IRoutableViewModel> Children => ImmutableArray<IRoutableViewModel>.Empty;
+    public override IEnumerable<IRoutable> Children => ImmutableArray<IRoutable>.Empty;
     protected override ValueTask InternalCatchEvent(AsyncRoutedEvent e)
     {
         return ValueTask.CompletedTask;

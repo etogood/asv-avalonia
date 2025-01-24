@@ -3,8 +3,8 @@ using R3;
 
 namespace Asv.Avalonia;
 
-[ExportShellPage(PageId)]
-public class SettingsPage : ShellPage
+[ExportPage(PageId)]
+public class SettingsPage : Page
 {
     private readonly BindableReactiveProperty<string> _title = new(PageId);
     public const string PageId = "settings";
@@ -19,15 +19,15 @@ public class SettingsPage : ShellPage
     public SettingsPage(IThemeService themeService, ICommandService svc)
         : base(PageId, svc)
     {
-        Theme = new ThemePropertyViewModel(themeService)
+        Theme = new ThemeProperty(themeService)
         {
             Parent = this,
         };
     }
 
-    public ThemePropertyViewModel Theme { get; }
+    public ThemeProperty Theme { get; }
 
-    public override IEnumerable<IRoutableViewModel> Children
+    public override IEnumerable<IRoutable> Children
     {
         get
         {

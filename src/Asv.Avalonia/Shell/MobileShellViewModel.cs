@@ -2,15 +2,15 @@ using Avalonia.Controls.ApplicationLifetimes;
 
 namespace Asv.Avalonia;
 
-public class SingleViewAppShell : Shell
+public class MobileShellViewModel : ShellViewModel
 {
-    public SingleViewAppShell(ISingleViewApplicationLifetime lifetime, IContainerHost containerHost)
+    public MobileShellViewModel(ISingleViewApplicationLifetime lifetime, IContainerHost containerHost)
         : base(containerHost)
     {
         throw new System.NotImplementedException();
     }
 
-    protected override void InternalAddPageToMainTab(IShellPage export)
+    protected override void InternalAddPageToMainTab(IPage export)
     {
         throw new NotImplementedException();
     }

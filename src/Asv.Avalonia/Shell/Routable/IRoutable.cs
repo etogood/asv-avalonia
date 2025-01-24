@@ -2,12 +2,12 @@ using System.Collections.Immutable;
 
 namespace Asv.Avalonia;
 
-public interface IRoutableViewModel : IViewModel
+public interface IRoutable : IViewModel
 {
-    IRoutableViewModel? Parent { get; set; }
-    IEnumerable<IRoutableViewModel> Children { get; }
+    IRoutable? Parent { get; set; }
+    IEnumerable<IRoutable> Children { get; }
     ValueTask Rise(AsyncRoutedEvent e);
-    ValueTask<IRoutableViewModel> NavigateTo(ArraySegment<string> path);
+    ValueTask<IRoutable> NavigateTo(ArraySegment<string> path);
 }
 
 public enum RoutingEventStrategy
@@ -17,9 +17,9 @@ public enum RoutingEventStrategy
     Direct,
 }
 
-public abstract class AsyncRoutedEvent(IRoutableViewModel source, RoutingEventStrategy routingEventStrategy)
+public abstract class AsyncRoutedEvent(IRoutable source, RoutingEventStrategy routingEventStrategy)
 {
-    public IRoutableViewModel Source { get; } = source;
+    public IRoutable Source { get; } = source;
     public RoutingEventStrategy RoutingEventStrategy { get; } = routingEventStrategy;
     public bool IsHandled { get; set; }
     public virtual AsyncRoutedEvent Clone()

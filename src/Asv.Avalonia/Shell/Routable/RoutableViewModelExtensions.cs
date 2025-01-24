@@ -2,7 +2,7 @@
 
 public static class RoutableViewModelExtensions
 {
-    public static IRoutableViewModel GetRoot(this IRoutableViewModel src)
+    public static IRoutable GetRoot(this IRoutable src)
     {
         var root = src;
         while (root.Parent != null)
@@ -13,7 +13,7 @@ public static class RoutableViewModelExtensions
         return root;
     }
 
-    public static IEnumerable<IRoutableViewModel> GetAllToRoot(this IRoutableViewModel src)
+    public static IEnumerable<IRoutable> GetAllToRoot(this IRoutable src)
     {
         var current = src;
         while (current is not null)
@@ -23,7 +23,7 @@ public static class RoutableViewModelExtensions
         }
     }
 
-    public static IEnumerable<IRoutableViewModel> GetAllTo(this IRoutableViewModel src, IRoutableViewModel item)
+    public static IEnumerable<IRoutable> GetAllTo(this IRoutable src, IRoutable item)
     {
         var current = src;
         while (current is not null)
@@ -38,7 +38,7 @@ public static class RoutableViewModelExtensions
         }
     }
 
-    public static IEnumerable<IRoutableViewModel> GetAllFromRoot(this IRoutableViewModel src)
+    public static IEnumerable<IRoutable> GetAllFromRoot(this IRoutable src)
     {
         if (src.Parent != null)
         {
@@ -51,7 +51,7 @@ public static class RoutableViewModelExtensions
         yield return src;
     }
 
-    public static IEnumerable<IRoutableViewModel> GetAllFrom(this IRoutableViewModel src, IRoutableViewModel item)
+    public static IEnumerable<IRoutable> GetAllFrom(this IRoutable src, IRoutable item)
     {
         if (src.Parent != null && src != item)
         {

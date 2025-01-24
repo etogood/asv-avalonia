@@ -5,14 +5,13 @@ using R3;
 
 namespace Asv.Avalonia;
 
-public abstract class Shell : RoutableViewModel, IShell
+public abstract class ShellViewModel : RoutableViewModel, IShell
 {
     private readonly CompositionHost _container;
-    private readonly ObservableList<IShellPage> _pages = new();
-    private readonly ImmutableDictionary<string, ICommandFactory> _commands;
+    private readonly ObservableList<IPage> _pages = new();
     public const string ShellId = "shell";
 
-    protected Shell(IContainerHost host)
+    protected ShellViewModel(IContainerHost host)
         : base(ShellId)
     {
         ArgumentNullException.ThrowIfNull(host);
@@ -42,23 +41,23 @@ public abstract class Shell : RoutableViewModel, IShell
         throw new NotImplementedException();
     }
 
-    public ValueTask<IShellPage?> OpenPage(string pageId)
+    public ValueTask<IPage?> OpenPage(string pageId)
     {
-        if (_container.TryGetExport<IShellPage>(pageId, out var page))
+        if (_container.TryGetExport<IPage>(pageId, out var page))
         {
             page.Parent = this;
             _pages.Add(page);
-            return ValueTask.FromResult<IShellPage?>(page);
+            return ValueTask.FromResult<IPage?>(page);
         }
 
-        return ValueTask.FromResult<IShellPage?>(null);
+        return ValueTask.FromResult<IPage?>(null);
     }
 
-    protected abstract void InternalAddPageToMainTab(IShellPage export);
+    protected abstract void InternalAddPageToMainTab(IPage export);
 
-    public NotifyCollectionChangedSynchronizedViewList<IShellPage> Pages { get; }
+    public NotifyCollectionChangedSynchronizedViewList<IPage> Pages { get; }
 
-    public override IEnumerable<IRoutableViewModel> Children
+    public override IEnumerable<IRoutable> Children
     {
         get
         {
@@ -73,10 +72,7 @@ public abstract class Shell : RoutableViewModel, IShell
     {
         if (e is ExecuteCommandEvent cmd)
         {
-            if (_commands.TryGetValue(cmd.CommandId, out var command))
-            {
-                 // write command to log
-            }
+            // write command to log
         }
 
         if (e is FocusedEvent focus)

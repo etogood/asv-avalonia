@@ -5,9 +5,9 @@
              xmlns:avalonia="clr-namespace:Asv.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Asv.Avalonia.ThemePropertyView"
-             x:DataType="avalonia:ThemePropertyViewModel">
+             x:DataType="avalonia:ThemeProperty">
     <Design.DataContext>
-        <avalonia:ThemePropertyViewModel/>
+        <avalonia:ThemeProperty/>
     </Design.DataContext>
     <ComboBox
             IsFocused="{Binding IsFocused.Value, Mode=OneWayToSource}"

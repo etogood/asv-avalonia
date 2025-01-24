@@ -2,9 +2,9 @@ using R3;
 
 namespace Asv.Avalonia;
 
-public abstract class ShellPage : RoutableViewModel, IShellPage
+public abstract class Page : RoutableViewModel, IPage
 {
-    protected ShellPage(string id, ICommandService cmd)
+    protected Page(string id, ICommandService cmd)
         : base(id)
     {
         History = cmd.CreateHistory(this);

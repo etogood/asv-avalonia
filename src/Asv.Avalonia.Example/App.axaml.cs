@@ -46,7 +46,6 @@ public partial class App : Application, IContainerHost, IShellHost
 
         containerCfg 
             .WithExport<IContainerHost>(this)
-            .WithExport<IThemeVariantHost>(this)
             .WithExport<IDataTemplateHost>(this)
             .WithExport<IShellHost>(this)
             .WithDefaultConventions(conventions);
@@ -77,17 +76,17 @@ public partial class App : Application, IContainerHost, IShellHost
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            Shell = new ClassicDesktopShell(desktop, this);
+            Shell = new DesktopShellViewModel(desktop, this);
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
-            Shell = new SingleViewAppShell(singleViewPlatform, this);
+            Shell = new MobileShellViewModel(singleViewPlatform, this);
         }
 
         base.OnFrameworkInitializationCompleted();
         if (Design.IsDesignMode == false)
         {
-            Shell.OpenPage(SettingsPage.PageId);  
+            Shell.OpenPage(SettingsPage.PageId);
         }
     }
 

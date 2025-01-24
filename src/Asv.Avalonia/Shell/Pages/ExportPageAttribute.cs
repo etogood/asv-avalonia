@@ -7,10 +7,10 @@ namespace Asv.Avalonia;
 /// </summary>
 [MetadataAttribute]
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-public class ExportShellPageAttribute : ExportAttribute
+public class ExportPageAttribute : ExportAttribute
 {
-    public ExportShellPageAttribute(string pageId)
-        : base(pageId, typeof(IShellPage))
+    public ExportPageAttribute(string pageId)
+        : base(pageId, typeof(IPage))
     {
     }
 }

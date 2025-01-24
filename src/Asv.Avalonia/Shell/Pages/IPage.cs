@@ -2,7 +2,7 @@ using R3;
 
 namespace Asv.Avalonia;
 
-public interface IShellPage : IRoutableViewModel
+public interface IPage : IRoutable
 {
     public IReadOnlyBindableReactiveProperty<string> Title { get; }
 }
