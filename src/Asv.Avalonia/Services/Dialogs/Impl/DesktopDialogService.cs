@@ -12,13 +12,13 @@ public sealed class DesktopDialogService(TopLevel topLevel) : IDialogService
     public bool IsImplementedShowSelectFolderDialog { get; } = true;
     public bool IsImplementedShowObserveFolderDialog { get; } = true;
 
-    public async Task<string?> ShowOpenFileDialog(string title, string? typeFilter = null, string? initialDirectory = null)
+    public async Task<string?> ShowOpenFileDialog(
+        string title,
+        string? typeFilter = null,
+        string? initialDirectory = null
+    )
     {
-        var options = new FilePickerOpenOptions
-        {
-            Title = title,
-            AllowMultiple = false,
-        };
+        var options = new FilePickerOpenOptions { Title = title, AllowMultiple = false };
         if (!string.IsNullOrEmpty(typeFilter))
         {
             var fileTypes = typeFilter
@@ -49,7 +49,8 @@ public sealed class DesktopDialogService(TopLevel topLevel) : IDialogService
 
         if (!string.IsNullOrEmpty(initialDirectory))
         {
-            options.SuggestedStartLocation = await topLevel.StorageProvider.TryGetFolderFromPathAsync(initialDirectory);
+            options.SuggestedStartLocation =
+                await topLevel.StorageProvider.TryGetFolderFromPathAsync(initialDirectory);
         }
 
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(options);
@@ -57,18 +58,20 @@ public sealed class DesktopDialogService(TopLevel topLevel) : IDialogService
         return files.Count == 1 ? files[0].Path.AbsolutePath : null;
     }
 
-    public async Task<string?> ShowSaveFileDialog(string title, string? defaultExt = null, string? typeFilter = null, string? initialDirectory = null)
+    public async Task<string?> ShowSaveFileDialog(
+        string title,
+        string? defaultExt = null,
+        string? typeFilter = null,
+        string? initialDirectory = null
+    )
     {
-        var options = new FilePickerSaveOptions
-        {
-            Title = title,
-        };
+        var options = new FilePickerSaveOptions { Title = title };
 
         if (!string.IsNullOrEmpty(defaultExt))
         {
             options.DefaultExtension = defaultExt;
         }
-        
+
         if (!string.IsNullOrEmpty(typeFilter))
         {
             var fileTypes = typeFilter
@@ -86,7 +89,8 @@ public sealed class DesktopDialogService(TopLevel topLevel) : IDialogService
 
         if (!string.IsNullOrEmpty(initialDirectory))
         {
-            options.SuggestedStartLocation = await topLevel.StorageProvider.TryGetFolderFromPathAsync(initialDirectory);
+            options.SuggestedStartLocation =
+                await topLevel.StorageProvider.TryGetFolderFromPathAsync(initialDirectory);
         }
 
         var result = await topLevel.StorageProvider.SaveFilePickerAsync(options);
@@ -95,15 +99,12 @@ public sealed class DesktopDialogService(TopLevel topLevel) : IDialogService
 
     public async Task<string?> ShowSelectFolderDialog(string title, string? oldPath = null)
     {
-        var options = new FolderPickerOpenOptions
-        {
-            Title = title,
-            AllowMultiple = false,
-        };
+        var options = new FolderPickerOpenOptions { Title = title, AllowMultiple = false };
 
         if (!string.IsNullOrEmpty(oldPath))
         {
-            options.SuggestedStartLocation = await topLevel.StorageProvider.TryGetFolderFromPathAsync(oldPath);
+            options.SuggestedStartLocation =
+                await topLevel.StorageProvider.TryGetFolderFromPathAsync(oldPath);
         }
 
         var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(options);
@@ -143,31 +144,37 @@ public sealed class DesktopDialogService(TopLevel topLevel) : IDialogService
 
     private static void OpenFolderInWindowsExplorer(string folderPath)
     {
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = "explorer.exe",
-            Arguments = $"\"{folderPath}\"",
-            UseShellExecute = true,
-        });
+        Process.Start(
+            new ProcessStartInfo
+            {
+                FileName = "explorer.exe",
+                Arguments = $"\"{folderPath}\"",
+                UseShellExecute = true,
+            }
+        );
     }
 
     private static void OpenFolderInMacFinder(string folderPath)
     {
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = "open",
-            Arguments = $"\"{folderPath}\"",
-            UseShellExecute = true,
-        });
+        Process.Start(
+            new ProcessStartInfo
+            {
+                FileName = "open",
+                Arguments = $"\"{folderPath}\"",
+                UseShellExecute = true,
+            }
+        );
     }
 
     private static void OpenFolderInLinuxFileManager(string folderPath)
     {
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = "xdg-open",
-            Arguments = $"\"{folderPath}\"",
-            UseShellExecute = true,
-        });
+        Process.Start(
+            new ProcessStartInfo
+            {
+                FileName = "xdg-open",
+                Arguments = $"\"{folderPath}\"",
+                UseShellExecute = true,
+            }
+        );
     }
 }

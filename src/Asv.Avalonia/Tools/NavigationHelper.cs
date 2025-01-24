@@ -9,10 +9,15 @@ public class NavigationHelper
 {
     public static readonly AttachedProperty<bool> IsSelectedProperty =
         AvaloniaProperty.RegisterAttached<Control, bool>(
-            "IsSelected", typeof(NavigationHelper), defaultBindingMode: BindingMode.TwoWay);
+            "IsSelected",
+            typeof(NavigationHelper),
+            defaultBindingMode: BindingMode.TwoWay
+        );
 
     public static bool GetIsSelected(Control control) => control.GetValue(IsSelectedProperty);
-    public static void SetIsSelected(Control control, bool value) => control.SetValue(IsSelectedProperty, value);
+
+    public static void SetIsSelected(Control control, bool value) =>
+        control.SetValue(IsSelectedProperty, value);
 
     static NavigationHelper()
     {
