@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using R3;
 
 namespace Asv.Avalonia;
@@ -21,7 +22,7 @@ public abstract class RoutableViewModel : DisposableViewModel, IRoutable
     }
 
     public IRoutable? Parent { get; set; }
-    public abstract IEnumerable<IRoutable> Children { get; }
+    public virtual IEnumerable<IRoutable> Children => [];
 
     public async ValueTask Rise(AsyncRoutedEvent e)
     {
@@ -83,7 +84,7 @@ public abstract class RoutableViewModel : DisposableViewModel, IRoutable
 
     public ReactiveProperty<bool> IsFocused { get; } = new(false);
 
-    protected abstract ValueTask InternalCatchEvent(AsyncRoutedEvent e);
+    protected virtual ValueTask InternalCatchEvent(AsyncRoutedEvent e) => ValueTask.CompletedTask;
 
     protected override void Dispose(bool disposing)
     {

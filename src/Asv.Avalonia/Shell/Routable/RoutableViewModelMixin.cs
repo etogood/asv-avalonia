@@ -1,6 +1,6 @@
 ﻿namespace Asv.Avalonia;
 
-public static class RoutableViewModelExtensions
+public static class RoutableViewModelMixin
 {
     public static IRoutable GetRoot(this IRoutable src)
     {

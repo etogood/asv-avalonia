@@ -3,14 +3,11 @@ using System.Composition.Convention;
 using System.Composition.Hosting;
 using System.Linq;
 using System.Reflection;
-using Asv.Avalonia.Example.ViewModels;
-using Asv.Cfg;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml;
-using Avalonia.Styling;
 using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia.Example;
@@ -86,7 +83,7 @@ public partial class App : Application, IContainerHost, IShellHost
         base.OnFrameworkInitializationCompleted();
         if (Design.IsDesignMode == false)
         {
-            Shell.OpenPage(SettingsPage.PageId);
+            Shell.OpenPage(SettingsPageViewModel.PageId);
         }
     }
 

@@ -4,22 +4,22 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:avalonia="clr-namespace:Asv.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Asv.Avalonia.ThemePropertyView"
-             x:DataType="avalonia:ThemeProperty">
+             x:Class="Asv.Avalonia.SettingsAppearanceView"
+             x:DataType="avalonia:SettingsAppearanceViewModel">
     <Design.DataContext>
-        <avalonia:ThemeProperty/>
+        <avalonia:SettingsAppearanceViewModel/>
     </Design.DataContext>
-    <ComboBox
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <ComboBox DataContext="{Binding Theme}"
             IsFocused="{Binding IsFocused.Value, Mode=OneWayToSource}"
             avalonia:NavigationHelper.IsSelected="{Binding IsFocused.Value, Mode=OneWay}"
             ItemsSource="{Binding Items}"
             SelectedItem="{Binding SelectedItem.Value}">
-        <ComboBox.ItemTemplate>
-            <DataTemplate>
-                <TextBlock Text="{Binding Name }"/>
-            </DataTemplate>
-        </ComboBox.ItemTemplate>
-    </ComboBox>
-    
-    
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name }"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+    </StackPanel>
 </UserControl>

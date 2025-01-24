@@ -1,0 +1,68 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avalonia="clr-namespace:Asv.Avalonia"
+             xmlns:avalonia1="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Asv.Avalonia.TreePageView"
+             x:DataType="avalonia:IDesignTimeTreePage">
+    <Design.DataContext>
+        <avalonia:DesignTimeTreePage />
+    </Design.DataContext>
+    <Grid ColumnDefinitions="Auto, 5, 3*" RowDefinitions="42, 5, *, Auto">
+        
+        <DockPanel IsVisible="{Binding !IsCompactMode.Value}" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center">
+            <Button Margin="4,4,0,4" DockPanel.Dock="Right" Command="{Binding History.Redo}" Height="35"
+                    Theme="{DynamicResource TransparentButton}">
+                <avalonia1:MaterialIcon VerticalAlignment="Center" Width="16" Height="16" Kind="Redo" />
+            </Button>
+            <Button Margin="0,4,4,4" DockPanel.Dock="Right" Command="{Binding History.Undo}" Height="35"
+                    VerticalAlignment="Stretch" Theme="{DynamicResource TransparentButton}">
+                <avalonia1:MaterialIcon VerticalAlignment="Center" Width="16" Height="16" Kind="Undo" />
+            </Button>
+           
+            <ToggleButton Margin="4" Theme="{DynamicResource TransparentButton}" IsChecked="{Binding IsCompactMode}">
+                <StackPanel Orientation="Horizontal">
+                    <avalonia1:MaterialIcon Margin="0,0,8,0" DockPanel.Dock="Left"
+                                           IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                           VerticalAlignment="Center" Width="22" Height="22" Kind="{Binding Icon.Value}" />
+                    <TextBlock VerticalAlignment="Center" FontSize="18" Text="{Binding Title}" />
+                </StackPanel>
+            </ToggleButton>
+        </DockPanel>
+        <TreeView Grid.Column="0" Grid.Row="2" Grid.IsSharedSizeScope="True" 
+                  IsVisible="{Binding !IsCompactMode.Value}"
+                  SelectionMode="Single" ItemsSource="{Binding Items}">
+            <TreeView.Styles>
+                <Style Selector="TreeViewItem" x:DataType="avalonia:TreeMenuItem">
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    <Setter Property="IsSelected" Value="{Binding IsFocused.Value, Mode=TwoWay}" />
+                </Style>
+            </TreeView.Styles>
+            <TreeView.ItemTemplate>
+                <TreeDataTemplate ItemsSource="{Binding Items}">
+                    <DockPanel HorizontalAlignment="Stretch">
+                        <avalonia1:MaterialIcon
+                            Margin="0,0,12,0"
+                            DockPanel.Dock="Left"
+                            Kind="{Binding Base.Icon.Value}"
+                            Classes.expanded="{Binding IsExpanded}"
+                            Classes.selected="{Binding IsFocused}"
+                            Width="15" Height="15" />
+
+                        <Border IsVisible="{Binding Base.Status.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                Margin="0,0,5,0" VerticalAlignment="Center" MinWidth="20" CornerRadius="5"
+                                BorderBrush="{DynamicResource ButtonBorderBrush}" BorderThickness="1"
+                                DockPanel.Dock="Right">
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Margin="2" FontSize="10"
+                                       Text="{Binding Base.Status}" />
+                        </Border>
+                        <TextBlock Text="{Binding Base.Name}" />
+                    </DockPanel>
+                </TreeDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+    </Grid>
+</UserControl>

@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using R3;
 
 namespace Asv.Avalonia;
 
@@ -8,6 +9,12 @@ public interface IRoutable : IViewModel
     IEnumerable<IRoutable> Children { get; }
     ValueTask Rise(AsyncRoutedEvent e);
     ValueTask<IRoutable> NavigateTo(ArraySegment<string> path);
+}
+
+public interface IExtendable
+{
+    IReadOnlyBindableReactiveProperty<bool> IsLoading { get; }
+    IReadOnlyBindableReactiveProperty<string?> LoadingMessage { get; }
 }
 
 public enum RoutingEventStrategy

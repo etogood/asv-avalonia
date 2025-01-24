@@ -4,6 +4,7 @@ namespace Asv.Avalonia;
 
 public static class DesignTime
 {
+    public const string Id = "DesingTimeId";
     public static void ThrowIfNotDesignMode()
     {
         if (Design.IsDesignMode == false)

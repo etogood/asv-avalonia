@@ -20,7 +20,7 @@ public class CompositionViewLocator(CompositionHost container) : IDataTemplate
 
         while (viewModelType != null)
         {
-            var viewModelContract = data.GetType().FullName;
+            var viewModelContract = viewModelType.FullName;
             if (viewModelContract == null)
             {
                 break;
@@ -39,7 +39,7 @@ public class CompositionViewLocator(CompositionHost container) : IDataTemplate
                 // ReSharper disable once NullableWarningSuppressionIsUsed
                 return (Control)Activator.CreateInstance(type)!;
             }
-
+            
             // try to find view for parent class
             viewModelType = viewModelType.BaseType;
         }
