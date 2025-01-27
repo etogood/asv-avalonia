@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:avalonia="clr-namespace:Asv.Avalonia;assembly=Asv.Avalonia"
              xmlns:global="clr-namespace:"
+             xmlns:avalonia1="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Asv.Avalonia.ShellView"
              x:DataType="avalonia:ShellViewModel">
@@ -13,42 +14,40 @@
     <avalonia:DesignTimeShellViewModel />
   </Design.DataContext>
     <DockPanel>
-        <StackPanel DockPanel.Dock="Top" MinWidth="100" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Button Command="{Binding Back}">Back</Button>
-            <Button Command="{Binding Forward}">Forward</Button>
-            <!--<TextBox Focusable="True" DataContext="{Binding Property1}" 
-               IsFocused="{Binding IsSelected.Value, Mode=OneWayToSource}"
-               avalonia:NavigationHelper.IsSelected="{Binding IsSelected.Value, Mode=OneWay}"
-               Text="{Binding User.Value, UpdateSourceTrigger=LostFocus}"/>
-      
-      <TextBox Focusable="True" DataContext="{Binding Property2}" 
-               IsFocused="{Binding IsSelected.Value, Mode=OneWayToSource}"
-               avalonia:NavigationHelper.IsSelected="{Binding IsSelected.Value, Mode=TwoWay}"
-               Text="{Binding User.Value, UpdateSourceTrigger=LostFocus}"/>-->
-        </StackPanel>
-        <TabControl ItemsSource="{Binding Pages}">
-            <TabControl.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Title.Value}"></TextBlock>
-                </DataTemplate>
-            </TabControl.ItemTemplate>
-                
-        </TabControl>
-        <!--<ItemsControl>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <TabControl ItemsSource="{Binding Items}">
-                        <TabItem Header="Tab 1.1"></TabItem>
-                        <TabItem Header="Tab 1.2"></TabItem>
-                    </TabControl>        
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Grid ShowGridLines="True"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>-->
+        <DockPanel Background="#3c3f41" Dock="Top" avalonia:WindowHelper.EnableDrag="True" >
+            <Menu DockPanel.Dock="Left">
+                <MenuItem Header="File"></MenuItem>
+            </Menu>
+            <Button Margin="0,0,150,0" Background="Transparent" DockPanel.Dock="Right">
+                <avalonia1:MaterialIcon Kind="Cog"/>
+            </Button>
+            <StackPanel Spacing="4" HorizontalAlignment="Center" Orientation="Horizontal">
+                <Button Background="Transparent" Command="{Binding Back}"><avalonia1:MaterialIcon Kind="ArrowLeft"/></Button>
+                <Button Background="Transparent" Command="{Binding Forward}"><avalonia1:MaterialIcon Kind="ArrowRight"/></Button>
+                <AutoCompleteBox VerticalAlignment="Center" Width="200"></AutoCompleteBox>
+            </StackPanel>
+            
+        </DockPanel>
+        <DockPanel Background="#3c3f41" Dock="Bottom">
+            <TextBlock Text="Status bar"/>
+        </DockPanel>
+        <Border BorderThickness="0, 1" BorderBrush="#1e1f22">
+            <TabControl ItemsSource="{Binding Pages}">
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <avalonia1:MaterialIcon Kind="{Binding Icon.Value}"/>
+                            <TextBlock Text="{Binding Title.Value}"/>
+                            <Button Background="Transparent" Padding="0">
+                                <avalonia1:MaterialIcon Kind="Close"/>
+                            </Button>
+                        </StackPanel>
+                        
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+            </TabControl>
+        </Border>
+        
         
     </DockPanel>
   

@@ -17,7 +17,8 @@
     <FluentTheme DensityStyle="Compact" >
         <FluentTheme.Palettes>
             <ColorPaletteResources x:Key="Dark"
-                          Accent="#CC119EDA"             
+                          Accent="#CC119EDA" 
+                          BaseMedium="Red"
             />         
         </FluentTheme.Palettes>
     </FluentTheme>
