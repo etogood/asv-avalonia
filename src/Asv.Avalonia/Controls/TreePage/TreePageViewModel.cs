@@ -16,12 +16,25 @@ public class TreePageViewModel<T> : PageViewModel<T>, IDesignTimeTreePage
     public TreePageViewModel(string id, ICommandService cmd)
         : base(id, cmd)
     {
-        Nodes = new();
-        SelectedMenu = new();
-        SelectedPage = new();
+        Nodes = new ObservableList<ITreePageNode>();
+        SelectedMenu = new BindableReactiveProperty<TreeMenuItem?>();
+        SelectedPage = new BindableReactiveProperty<IRoutable?>();
+        ObservableList<BreadCrumbItem> breadCrumbSource = [];
+        BreadCrumb = breadCrumbSource.ToViewList();
         _sub2 = SelectedMenu.Subscribe(x =>
         {
-            SelectedPage.Value = x?.Base.CreateNodeViewModel();
+            var value = x?.Base.CreateNodeViewModel();
+            if (value != null)
+            {
+                value.Parent = this;
+            }
+            
+            SelectedPage.Value = value;
+            breadCrumbSource.Clear();
+            if (SelectedMenu.Value != null)
+            {
+                breadCrumbSource.AddRange(SelectedMenu.Value.GetAllMenuFromRoot().Select((item, index) => new BreadCrumbItem(index == 0, item)));
+            }
         });
     }
 
@@ -29,7 +42,7 @@ public class TreePageViewModel<T> : PageViewModel<T>, IDesignTimeTreePage
     {
         _sub1 = Nodes.ObserveChanged().Subscribe(_ =>
         {
-            // TODO: update tree
+            // TODO: optimize update tree: only update changed nodes
             RebuildTree();
         });
         RebuildTree();
@@ -57,9 +70,28 @@ public class TreePageViewModel<T> : PageViewModel<T>, IDesignTimeTreePage
     }
 
     public BindableReactiveProperty<IRoutable?> SelectedPage { get; }
+    public ISynchronizedViewList<BreadCrumbItem> BreadCrumb { get; }
     public BindableReactiveProperty<TreeMenuItem?> SelectedMenu { get; }
     public ObservableList<ITreePageNode> Nodes { get; }
-    public override IEnumerable<IRoutable> Children => Items ?? [];
+    public override IEnumerable<IRoutable> Children
+    {
+        get
+        {
+            if (Items != null)
+            {
+                foreach (var item in Items)
+                {
+                    yield return item;
+                }
+            }
+
+            if (SelectedPage.Value != null)
+            {
+                yield return SelectedPage.Value;
+            }
+        }
+    }
+
     public BindableReactiveProperty<bool> IsCompactMode { get; } = new();
 
     protected override void Dispose(bool disposing)
@@ -71,6 +103,7 @@ public class TreePageViewModel<T> : PageViewModel<T>, IDesignTimeTreePage
             IsCompactMode.Dispose();
             SelectedMenu.Dispose();
             SelectedPage.Dispose();
+            BreadCrumb.Dispose();
             if (Items != null)
             {
                 foreach (var item in Items)
@@ -83,3 +116,5 @@ public class TreePageViewModel<T> : PageViewModel<T>, IDesignTimeTreePage
         base.Dispose(disposing);
     }
 }
+
+

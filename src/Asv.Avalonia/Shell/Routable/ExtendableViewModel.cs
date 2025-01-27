@@ -24,27 +24,25 @@ public class ExtendableViewModel<TSelfInterface> : RoutableViewModel
     public ILoggerFactory? LoggerFactory { get; set; }
 
     [OnImportsSatisfied]
-    public async void Load()
+    public async void Init()
     {
         try
         {
-            if (Extensions == null)
+            if (Extensions != null)
             {
-                return;
-            }
+                var logger = LoggerFactory?.CreateLogger(GetType()) ?? NullLogger.Instance;
 
-            var logger = LoggerFactory?.CreateLogger(GetType()) ?? NullLogger.Instance;
-
-            var context = GetContext();
-            foreach (var extension in Extensions)
-            {
-                try
+                var context = GetContext();
+                foreach (var extension in Extensions)
                 {
-                    await extension.Value.Extend(context);
-                }
-                catch (Exception e)
-                {
-                    logger.ZLogError(e, $"Error while loading extension {extension.Value.GetType().FullName} for {GetType().FullName}");
+                    try
+                    {
+                        await extension.Value.Extend(context);
+                    }
+                    catch (Exception e)
+                    {
+                        logger.ZLogError(e, $"Error while loading extension {extension.Value.GetType().FullName} for {GetType().FullName}");
+                    }
                 }
             }
 

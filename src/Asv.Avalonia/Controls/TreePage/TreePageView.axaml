@@ -8,9 +8,85 @@
              x:Class="Asv.Avalonia.TreePageView"
              x:DataType="avalonia:IDesignTimeTreePage">
     <Design.DataContext>
-        <avalonia:DesignTimeTreePage />
+        <avalonia:DesignTimeTreePageViewModel />
     </Design.DataContext>
-    <Grid ColumnDefinitions="Auto, 5, 3*" RowDefinitions="42, 5, *, Auto">
+    <Grid RowDefinitions="30, *">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition MinWidth="150" Width="Auto" />
+            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="3*" />
+        </Grid.ColumnDefinitions>
+        <TextBox VerticalContentAlignment="Center" >
+            <TextBox.InnerLeftContent>
+                <avalonia1:MaterialIcon Margin="4 , 0" Kind="Search" Width="16" Height="16" />
+            </TextBox.InnerLeftContent>
+        </TextBox>
+        <TreeView Grid.Column="0" Grid.Row="1"
+                  AutoScrollToSelectedItem="True"
+                  SelectedItem="{Binding SelectedMenu.Value, Mode=TwoWay}"
+                  SelectionMode="Single"
+                  ItemsSource="{Binding Items}">
+            <TreeView.Styles>
+                <Style Selector="TreeViewItem" x:DataType="avalonia:TreeMenuItem">
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    <Setter Property="IsSelected" Value="{Binding IsFocused.Value, Mode=TwoWay}" />
+                </Style>
+            </TreeView.Styles>
+            <TreeView.ItemTemplate>
+                <TreeDataTemplate ItemsSource="{Binding Items}">
+                    <DockPanel HorizontalAlignment="Stretch">
+                        <avalonia1:MaterialIcon
+                            Margin="0,0,12,0"
+                            DockPanel.Dock="Left"
+                            Kind="{Binding Base.Icon.Value}"
+                            Classes.expanded="{Binding IsExpanded}"
+                            Classes.selected="{Binding IsFocused}"
+                            Width="15" Height="15" />
+
+                        <Border IsVisible="{Binding Base.Status.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                Margin="0,0,5,0" VerticalAlignment="Center" MinWidth="20" CornerRadius="5"
+                                BorderBrush="{DynamicResource ButtonBorderBrush}" BorderThickness="1"
+                                DockPanel.Dock="Right">
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Margin="2" FontSize="10"
+                                       Text="{Binding Base.Status}" />
+                        </Border>
+                        <TextBlock Text="{Binding Base.Name}" />
+                    </DockPanel>
+                </TreeDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+        <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
+                      Background="Transparent" Width="10" HorizontalAlignment="Stretch" />
+        <Rectangle Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
+                   Fill="{StaticResource SystemChromeLowColor}" Width="1" VerticalAlignment="Stretch" />
+        <avalonia1:MaterialIcon IsVisible="{Binding !IsCompactMode}" Grid.Row="0" Grid.RowSpan="2" Width="15"
+                               Height="15" Grid.Column="1" Kind="UnfoldMoreVertical"
+                               Foreground="{StaticResource SystemChromeLowColor}" />
+        <ContentControl Grid.Column="2" Grid.Row="1" Content="{Binding SelectedPage.Value}" />
+        <DockPanel Grid.Column="2" Grid.Row="0">
+            <ItemsControl ItemsSource="{Binding BreadCrumb}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <avalonia1:MaterialIcon IsVisible="{Binding !IsFirst}" VerticalAlignment="Center"
+                                                    Width="18" Height="18" Kind="ChevronRight" />
+                            <TextBlock FontSize="16" VerticalAlignment="Center"
+                                       Text="{Binding Item.Base.Name}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </DockPanel>
+        
+    </Grid>
+    
+    <!--<Grid ColumnDefinitions="Auto, 5, 3*" RowDefinitions="42, 5, *, Auto">
         <DockPanel IsVisible="{Binding !IsCompactMode.Value}" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center">
             <Button Margin="4,4,0,4" DockPanel.Dock="Right" Command="{Binding History.Redo}" Height="35"
                     Theme="{DynamicResource TransparentButton}">
@@ -101,7 +177,7 @@
                                 <avalonia1:MaterialIcon IsVisible="{Binding !IsFirst}" VerticalAlignment="Center"
                                                        Width="18" Height="18" Kind="ChevronRight" />
                                 <TextBlock FontSize="16" FontStretch="ExtraCondensed" VerticalAlignment="Center"
-                                           Text="{Binding Item.Name}" />
+                                           Text="{Binding Item.Base.Name}" />
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -112,7 +188,7 @@
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
             </StackPanel>
-            <DropDownButton HorizontalAlignment="Right" IsVisible="{Binding IsTitleCompactMode}"
+            ~1~<DropDownButton HorizontalAlignment="Right" IsVisible="{Binding IsTitleCompactMode}"
                             Theme="{DynamicResource TransparentButton}" Grid.Column="3">
                 <DropDownButton.Flyout>
                     <MenuFlyout ItemsSource="{Binding SelectedPage.Value.Actions}" />
@@ -158,7 +234,7 @@
 
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            </ItemsControl>@1@
 
         </Grid>
         <GridSplitter IsVisible="{Binding !IsCompactMode}" Grid.Column="1" Grid.Row="0" Grid.RowSpan="3"
@@ -182,5 +258,5 @@
             </StackPanel>
         </ToggleButton>
         
-    </Grid>
+    </Grid>-->
 </UserControl>

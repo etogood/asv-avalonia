@@ -1,0 +1,30 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!-- Add Controls for Previewer Here -->
+        </Border>
+    </Design.PreviewWith>
+    <Styles.Resources>
+        <system:Double x:Key="FontSizeSmall">10</system:Double>
+        <system:Double x:Key="FontSizeNormal">12</system:Double>
+        <system:Double x:Key="FontSizeLarge">16</system:Double>
+    </Styles.Resources>
+    
+    <!-- Add Styles Here -->
+    <FluentTheme DensityStyle="Compact" >
+        <FluentTheme.Palettes>
+            <ColorPaletteResources x:Key="Dark"
+                          Accent="#CC119EDA"             
+            />         
+        </FluentTheme.Palettes>
+    </FluentTheme>
+    <avalonia:MaterialIconStyles />
+    <StyleInclude Source="avares://Asv.Avalonia/Shell/View/DockControl.axaml"/>
+    <Style Selector="avalonia|MaterialIcon">
+        <Setter Property="Width" Value="{StaticResource  IconElementThemeWidth}"/>
+        <Setter Property="Height" Value="{StaticResource  IconElementThemeHeight}"/>
+    </Style>
+</Styles>
