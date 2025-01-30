@@ -8,16 +8,20 @@ namespace Asv.Avalonia;
 public class SettingsExtension() : IExtensionFor<ISettingsPage>
 {
     private TreePageNode? _node1;
+    private TreePageNode _node2;
 
     public void Extend(ISettingsPage context)
     {
         _node1 = new TreePageNode(SettingsAppearanceViewModel.PageId, SettingsAppearanceViewModel.PageId );
+        _node2 = new TreePageNode(SettingsUnitsViewModel.PageId, SettingsUnitsViewModel.PageId);
         context.Nodes.Add(_node1);
+        context.Nodes.Add(_node2);
     }
 
     public void Dispose()
     {
         _node1?.Dispose();
+        _node2?.Dispose();
     }
 }
 

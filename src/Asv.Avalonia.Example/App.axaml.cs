@@ -85,6 +85,7 @@ public partial class App : Application, IContainerHost, IShellHost
         if (Design.IsDesignMode == false)
         {
             Shell.NavigateTo(new ArraySegment<string>([SettingsPageViewModel.PageId]));
+            Shell.NavigateTo(new ArraySegment<string>([HomePageViewModel.PageId]));
         }
     }
 
