@@ -10,8 +10,4 @@ public class MobileShellViewModel : ShellViewModel
         throw new System.NotImplementedException();
     }
 
-    protected override void InternalAddPageToMainTab(IPage export)
-    {
-        throw new NotImplementedException();
-    }
 }

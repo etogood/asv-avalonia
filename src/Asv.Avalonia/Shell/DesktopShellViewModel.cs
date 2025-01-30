@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 
 namespace Asv.Avalonia;
@@ -10,8 +11,14 @@ public class DesktopShellViewModel : ShellViewModel
         lifetime.MainWindow = new ShellWindow { DataContext = this };
     }
 
-    protected override void InternalAddPageToMainTab(IPage export)
+    protected override ValueTask CloseAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        if (Application.Current != null && Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
+        {
+            lifetime.Shutdown();
+        }
+
+        return ValueTask.CompletedTask;
     }
+
 }

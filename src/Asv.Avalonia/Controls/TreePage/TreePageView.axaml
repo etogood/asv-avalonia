@@ -23,9 +23,9 @@
         </TextBox>
         <TreeView Grid.Column="0" Grid.Row="1"
                   AutoScrollToSelectedItem="True"
-                  SelectedItem="{Binding SelectedMenu.Value, Mode=TwoWay}"
+                  SelectedItem="{Binding SelectedNode.Value, Mode=TwoWay}"
                   SelectionMode="Single"
-                  ItemsSource="{Binding Items}">
+                  ItemsSource="{Binding Tree.Items}">
             <TreeView.Styles>
                 <Style Selector="TreeViewItem" x:DataType="avalonia:TreeMenuItem">
                     <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -40,8 +40,6 @@
                             Margin="0,0,12,0"
                             DockPanel.Dock="Left"
                             Kind="{Binding Base.Icon.Value}"
-                            Classes.expanded="{Binding IsExpanded}"
-                            Classes.selected="{Binding IsFocused}"
                             Width="15" Height="15" />
 
                         <Border IsVisible="{Binding Base.Status.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
@@ -72,7 +70,7 @@
                             <avalonia1:MaterialIcon IsVisible="{Binding !IsFirst}" VerticalAlignment="Center"
                                                     Width="18" Height="18" Kind="ChevronRight" />
                             <TextBlock FontSize="16" VerticalAlignment="Center"
-                                       Text="{Binding Item.Base.Name}" />
+                                       Text="{Binding Item.Name}" />
                         </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

@@ -9,42 +9,39 @@ public interface ITreePageNode : IViewModel
     BindableReactiveProperty<string> Name { get; }
     BindableReactiveProperty<MaterialIconKind> Icon { get; }
     BindableReactiveProperty<string?> Status { get; }
-    IRoutable CreateNodeViewModel();
+    string? NavigateTo { get; }
 }
 
-public class BreadCrumbItem(bool isFirst, TreeMenuItem item)
+public class BreadCrumbItem(bool isFirst, ITreePageNode item)
 {
     public bool IsFirst { get; } = isFirst;
-    public TreeMenuItem Item { get; } = item;
+    public ITreePageNode Item { get; } = item;
 }
 
 public class TreePageNode : ViewModelBase, ITreePageNode
 {
-    private readonly Func<IRoutable> _create;
-
-    public TreePageNode(string id, Func<IRoutable> create, string? parentId = null)
+    public TreePageNode(string id, string? navigateTo, string? parentId = null)
         : base(id)
     {
+        NavigateTo = navigateTo;
         ParentId = parentId;
-        _create = create;
         Name = new BindableReactiveProperty<string>(id);
         Icon = new BindableReactiveProperty<MaterialIconKind>(MaterialIconKind.Tree);
         Status = new BindableReactiveProperty<string?>(null);
     }
 
+    public string? NavigateTo { get; }
     public string? ParentId { get; }
     public BindableReactiveProperty<string> Name { get; }
     public BindableReactiveProperty<MaterialIconKind> Icon { get; }
     public BindableReactiveProperty<string?> Status { get; }
-
-    public IRoutable CreateNodeViewModel() => _create();
-
     protected override void Dispose(bool disposing)
     {
         if (disposing)
         {
             Name.Dispose();
             Icon.Dispose();
+            Status.Dispose();
         }
     }
 }

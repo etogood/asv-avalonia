@@ -15,10 +15,10 @@ public class SettingsPageViewModel : TreePageViewModel<ISettingsPage>, ISettings
     public const string PageId = "settings";
 
     public SettingsPageViewModel()
-        : base(PageId, DesignTime.CommandService)
+        : base(PageId, DesignTime.CommandService, NullContainerHost.Instance)
     {
         DesignTime.ThrowIfNotDesignMode();
-        Nodes.Add(new TreePageNode("node1", () => new SettingsAppearanceViewModel() ));
+        /*Nodes.Add(new TreePageNode("node1", () => new SettingsAppearanceViewModel() ));
         Nodes.Add(new TreePageNode("node2", () => new SettingsAppearanceViewModel() ));
         Nodes.Add(new TreePageNode("node3", () => new SettingsAppearanceViewModel() ));
         Nodes.Add(new TreePageNode("node4", () => new SettingsAppearanceViewModel() ));
@@ -29,12 +29,12 @@ public class SettingsPageViewModel : TreePageViewModel<ISettingsPage>, ISettings
         Nodes.Add(new TreePageNode("node1.4", () => new SettingsAppearanceViewModel(), "node1" ));
         Nodes.Add(new TreePageNode("node1.5", () => new SettingsAppearanceViewModel(), "node1" ));
         Nodes.Add(new TreePageNode("node1.1.1", () => new SettingsAppearanceViewModel(), "node1.1" ));
-        Nodes.Add(new TreePageNode("node1.1.2", () => new SettingsAppearanceViewModel(), "node1.1" ));
+        Nodes.Add(new TreePageNode("node1.1.2", () => new SettingsAppearanceViewModel(), "node1.1" ));*/
     }
 
     [ImportingConstructor]
-    public SettingsPageViewModel(ICommandService svc)
-        : base(PageId, svc)
+    public SettingsPageViewModel(ICommandService svc, IContainerHost host)
+        : base(PageId, svc, host)
     {
         
     }

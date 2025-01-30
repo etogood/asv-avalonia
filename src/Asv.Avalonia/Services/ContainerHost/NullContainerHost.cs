@@ -5,5 +5,9 @@ namespace Asv.Avalonia;
 public class NullContainerHost : IContainerHost
 {
     public static IContainerHost Instance { get; } = new NullContainerHost();
-    public CompositionHost Host { get; } = CompositionHost.CreateCompositionHost();
+    public bool TryGetExport<T>(string id, out T value)
+    {
+        value = default!;
+        return false;
+    }
 }

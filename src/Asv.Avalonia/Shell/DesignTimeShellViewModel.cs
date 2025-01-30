@@ -1,3 +1,5 @@
+using R3;
+
 namespace Asv.Avalonia;
 
 public class DesignTimeShellViewModel : ShellViewModel
@@ -5,11 +7,13 @@ public class DesignTimeShellViewModel : ShellViewModel
     public DesignTimeShellViewModel()
         : base(NullContainerHost.Instance)
     {
-        OpenPage("settings");
+        int cnt = 0;
+        var all = Enum.GetValues<ShellStatus>().Length;
+        Observable.Timer(TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(3)).Subscribe(_ =>
+        {
+            cnt++;
+            Status.Value = Enum.GetValues<ShellStatus>()[cnt % all];
+        });
     }
 
-    protected override void InternalAddPageToMainTab(IPage export)
-    {
-        // ignore
-    }
 }

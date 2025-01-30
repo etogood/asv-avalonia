@@ -4,7 +4,7 @@ namespace Asv.Avalonia;
 
 public interface IExtensionFor<in T> : IDisposable
 {
-    ValueTask Extend(T viewModel);
+    void Extend(T context);
 }
 
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]

@@ -6,8 +6,8 @@ namespace Asv.Avalonia;
 public interface IDesignTimeTreePage : IPage
 {
     BindableReactiveProperty<bool> IsCompactMode { get; }
-    IEnumerable<TreeMenuItem>? Items { get; }
-    BindableReactiveProperty<TreeMenuItem?> SelectedMenu { get; }
+    ObservableTree<ITreePageNode, string> Tree { get; }
+    BindableReactiveProperty<ObservableTreeNode<ITreePageNode, string>?> SelectedNode { get; }
     BindableReactiveProperty<IRoutable?> SelectedPage { get; }
     ISynchronizedViewList<BreadCrumbItem> BreadCrumb { get; }
 }
@@ -15,22 +15,27 @@ public interface IDesignTimeTreePage : IPage
 public class DesignTimeTreePageViewModel : TreePageViewModel<IPage>
 {
     public DesignTimeTreePageViewModel()
-        : base(DesignTime.Id, DesignTime.CommandService)
+        : base(DesignTime.Id, DesignTime.CommandService, DesignTime.ContainerHost)
     {
         DesignTime.ThrowIfNotDesignMode();
-        Nodes.Add(new TreePageNode("node1", () => new SettingsAppearanceViewModel()));
-        Nodes.Add(new TreePageNode("node2", () => new SettingsAppearanceViewModel()));
-        Nodes.Add(new TreePageNode("node3", () => new SettingsAppearanceViewModel()));
-        Nodes.Add(new TreePageNode("node4", () => new SettingsAppearanceViewModel()));
-        Nodes.Add(new TreePageNode("node5", () => new SettingsAppearanceViewModel()));
-        Nodes.Add(new TreePageNode("node1.1", () => new SettingsAppearanceViewModel(), "node1"));
-        Nodes.Add(new TreePageNode("node1.2", () => new SettingsAppearanceViewModel(), "node1"));
-        Nodes.Add(new TreePageNode("node1.3", () => new SettingsAppearanceViewModel(), "node1"));
-        Nodes.Add(new TreePageNode("node1.4", () => new SettingsAppearanceViewModel(), "node1"));
-        Nodes.Add(new TreePageNode("node1.5", () => new SettingsAppearanceViewModel(), "node1"));
-        Nodes.Add(new TreePageNode("node1.1.1", () => new SettingsAppearanceViewModel(), "node1.1"));
-        Nodes.Add(new TreePageNode("node1.1.2", () => new SettingsAppearanceViewModel(), "node1.1"));
+        Nodes.Add(new TreePageNode("node1", "node1" ));
+        Nodes.Add(new TreePageNode("node2", "node2" ));
+        Nodes.Add(new TreePageNode("node3", "node3" ));
+        Nodes.Add(new TreePageNode("node4", "node4" ));
+        Nodes.Add(new TreePageNode("node5", "node5" ));
+        Nodes.Add(new TreePageNode("node1.1", "node1.1", "node1"));
+        Nodes.Add(new TreePageNode("node1.2", "node1.2", "node1"));
+        Nodes.Add(new TreePageNode("node1.3", "node1.3", "node1"));
+        Nodes.Add(new TreePageNode("node1.4", "node1.4", "node1"));
+        Nodes.Add(new TreePageNode("node1.5", "node1.5", "node1"));
+        Nodes.Add(new TreePageNode("node1.1.1", "node1.1.1", "node1.1"));
+        Nodes.Add(new TreePageNode("node1.1.2", "node1.1.2", "node1.1"));
 
         Init();
+    }
+
+    protected override ISettingsSubPage? CreateSubPage(string id)
+    {
+        return new SettingsAppearanceViewModel();
     }
 }

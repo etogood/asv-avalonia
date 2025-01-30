@@ -4,5 +4,5 @@ namespace Asv.Avalonia;
 
 public interface IContainerHost
 {
-    CompositionHost Host { get; }
+    bool TryGetExport<T>(string id, out T value);
 }

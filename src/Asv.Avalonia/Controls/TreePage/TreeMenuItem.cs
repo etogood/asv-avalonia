@@ -5,15 +5,15 @@ namespace Asv.Avalonia;
 
 public class TreeMenuItem : RoutableViewModel
 {
-    public TreeMenuItem(IRoutable routeParent, ITreePageNode node, IReadOnlyList<ITreePageNode> items, TreeMenuItem? menuParent = null)
+    public TreeMenuItem(IRoutable routeEventParent, ITreePageNode node, IReadOnlyList<ITreePageNode> items, TreeMenuItem? menuParent = null)
         : base(node.Id)
     {
         Base = node;
         MenuParent = menuParent;
-        Parent = routeParent;
-        Items = items.Where(x => x.ParentId == node.Id).Select(x => new TreeMenuItem(routeParent, x, items, this)
+        NavigationParent = routeEventParent;
+        Items = items.Where(x => x.ParentId == node.Id).Select(x => new TreeMenuItem(routeEventParent, x, items, this)
         {
-            Parent = routeParent,
+            NavigationParent = routeEventParent,
         }).ToImmutableArray();
     }
 

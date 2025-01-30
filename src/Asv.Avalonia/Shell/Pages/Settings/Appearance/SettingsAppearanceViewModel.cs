@@ -5,15 +5,14 @@ namespace Asv.Avalonia;
 
 [ExportExtensionFor<ISettingsPage>]
 [method: ImportingConstructor]
-public class SettingsExtension(IThemeService theme) : IExtensionFor<ISettingsPage>
+public class SettingsExtension() : IExtensionFor<ISettingsPage>
 {
     private TreePageNode? _node1;
 
-    public ValueTask Extend(ISettingsPage viewModel)
+    public void Extend(ISettingsPage context)
     {
-        _node1 = new TreePageNode(SettingsAppearanceViewModel.PageId, () => new SettingsAppearanceViewModel(theme, viewModel) );
-        viewModel.Nodes.Add(_node1);
-        return ValueTask.CompletedTask;
+        _node1 = new TreePageNode(SettingsAppearanceViewModel.PageId, SettingsAppearanceViewModel.PageId );
+        context.Nodes.Add(_node1);
     }
 
     public void Dispose()
@@ -22,25 +21,31 @@ public class SettingsExtension(IThemeService theme) : IExtensionFor<ISettingsPag
     }
 }
 
-public class SettingsAppearanceViewModel : RoutableViewModel
+[ExportSettings(PageId)]
+public class SettingsAppearanceViewModel : RoutableViewModel, ISettingsSubPage
 {
-    public const string PageId = "settings.appearance";
+    public const string PageId = "appearance";
 
     #region DesignTime
 
     public SettingsAppearanceViewModel()
-        : this(DesignTime.ThemeService, new SettingsPageViewModel())
+        : this(DesignTime.ThemeService)
     {
         DesignTime.ThrowIfNotDesignMode();
     }
 
     #endregion
 
-    public SettingsAppearanceViewModel(IThemeService themeService, ISettingsPage context)
+    [ImportingConstructor]
+    public SettingsAppearanceViewModel(IThemeService themeService)
         : base(PageId)
     {
-        Theme = new ThemeProperty(themeService) { Parent = this };
+        Theme = new ThemeProperty(themeService) { NavigationParent = this };
     }
 
     public ThemeProperty Theme { get; }
+    public ValueTask Init(ISettingsPage context)
+    {
+        return ValueTask.CompletedTask;
+    }
 }

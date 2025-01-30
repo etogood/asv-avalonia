@@ -16,7 +16,7 @@ public class ExtendableViewModel<TSelfInterface> : RoutableViewModel
     }
 
     private TSelfInterface GetContext() => this as TSelfInterface ??
-                                        throw new Exception($"Class {GetType().FullName} must implement {nameof(TSelfInterface)}");
+                                           throw new Exception($"Class {GetType().FullName} must implement {nameof(TSelfInterface)}");
 
     [ImportMany]
     public IEnumerable<Lazy<IExtensionFor<TSelfInterface>>>? Extensions { get; set; }
@@ -24,7 +24,7 @@ public class ExtendableViewModel<TSelfInterface> : RoutableViewModel
     public ILoggerFactory? LoggerFactory { get; set; }
 
     [OnImportsSatisfied]
-    public async void Init()
+    public void Init()
     {
         try
         {
@@ -37,7 +37,7 @@ public class ExtendableViewModel<TSelfInterface> : RoutableViewModel
                 {
                     try
                     {
-                        await extension.Value.Extend(context);
+                        extension.Value.Extend(context);
                     }
                     catch (Exception e)
                     {
@@ -46,7 +46,7 @@ public class ExtendableViewModel<TSelfInterface> : RoutableViewModel
                 }
             }
 
-            await AfterLoadExtensions();
+            AfterLoadExtensions();
         }
         catch (Exception e)
         {
@@ -54,11 +54,11 @@ public class ExtendableViewModel<TSelfInterface> : RoutableViewModel
         }
     }
 
-    protected virtual ValueTask AfterLoadExtensions()
+    protected virtual void AfterLoadExtensions()
     {
-        return ValueTask.CompletedTask;
+        // Do nothing
     }
-
+    
     protected override void Dispose(bool disposing)
     {
         if (disposing)

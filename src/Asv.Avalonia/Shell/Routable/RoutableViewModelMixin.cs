@@ -5,9 +5,9 @@ public static class RoutableViewModelMixin
     public static IRoutable GetRoot(this IRoutable src)
     {
         var root = src;
-        while (root.Parent != null)
+        while (root.NavigationParent != null)
         {
-            root = root.Parent;
+            root = root.NavigationParent;
         }
 
         return root;
@@ -19,7 +19,7 @@ public static class RoutableViewModelMixin
         while (current is not null)
         {
             yield return current;
-            current = current.Parent;
+            current = current.NavigationParent;
         }
     }
 
@@ -34,15 +34,15 @@ public static class RoutableViewModelMixin
                 break;
             }
 
-            current = current.Parent;
+            current = current.NavigationParent;
         }
     }
 
     public static IEnumerable<IRoutable> GetAllFromRoot(this IRoutable src)
     {
-        if (src.Parent != null)
+        if (src.NavigationParent != null)
         {
-            foreach (var ancestor in src.Parent.GetAllFromRoot())
+            foreach (var ancestor in src.NavigationParent.GetAllFromRoot())
             {
                 yield return ancestor;
             }
@@ -53,9 +53,9 @@ public static class RoutableViewModelMixin
 
     public static IEnumerable<IRoutable> GetAllFrom(this IRoutable src, IRoutable item)
     {
-        if (src.Parent != null && src != item)
+        if (src.NavigationParent != null && src != item)
         {
-            foreach (var ancestor in src.Parent.GetAllFrom(item))
+            foreach (var ancestor in src.NavigationParent.GetAllFrom(item))
             {
                 yield return ancestor;
             }

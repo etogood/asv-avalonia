@@ -5,8 +5,8 @@ namespace Asv.Avalonia;
 
 public interface IRoutable : IViewModel
 {
-    IRoutable? Parent { get; set; }
-    IEnumerable<IRoutable> Children { get; }
+    IRoutable? NavigationParent { get; set; }
+    IEnumerable<IRoutable> NavigationChildren { get; }
     ValueTask Rise(AsyncRoutedEvent e);
     ValueTask<IRoutable> NavigateTo(ArraySegment<string> path);
 }

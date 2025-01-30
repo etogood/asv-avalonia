@@ -5,6 +5,7 @@ namespace Asv.Avalonia;
 public static class DesignTime
 {
     public const string Id = "DesingTimeId";
+
     public static void ThrowIfNotDesignMode()
     {
         if (Design.IsDesignMode == false)
@@ -14,7 +15,7 @@ public static class DesignTime
     }
 
     public static IAppHost AppHost => NullAppHost.Instance;
-
+    public static IContainerHost ContainerHost => NullContainerHost.Instance;
     public static IThemeService ThemeService => NullThemeService.Instance;
     public static ICommandService CommandService => NullCommandService.Instance;
 }

@@ -13,14 +13,61 @@
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
     <avalonia:DesignTimeShellViewModel />
   </Design.DataContext>
+    <UserControl.Styles>
+        <Style Selector="Border.error">
+            <Setter Property="BorderBrush" Value="Red"/>
+        </Style>
+        <Style Selector="Border.warning">
+            <Setter Property="BorderBrush" Value="Orange"/>
+        </Style>
+        <Style Selector="DockPanel.error">
+            <Setter Property="Background" Value="Red"/>
+        </Style>
+        <Style Selector="DockPanel.warning">
+            <Setter Property="Background" Value="Orange"/>
+        </Style>
+        <Style Selector="DropDownButton#WindowControlButton /template/ PathIcon">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+    </UserControl.Styles>
+  <Border BorderThickness="1"
+          BorderBrush="{StaticResource SystemControlHighlightChromeAltLowBrush}"
+          Classes.error="{Binding Status.Value, 
+              Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, 
+              ConverterParameter={x:Static avalonia:ShellStatus.Error} }"
+          Classes.warning="{Binding Status.Value, 
+              Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, 
+              ConverterParameter={x:Static avalonia:ShellStatus.Warning} }"
+          
+          >
     <DockPanel>
-        <DockPanel Background="#3c3f41" Dock="Top" avalonia:WindowHelper.EnableDrag="True" >
-            <Menu DockPanel.Dock="Left">
-                <MenuItem Header="File"></MenuItem>
-            </Menu>
-            <Button Margin="0,0,150,0" Background="Transparent" DockPanel.Dock="Right">
+        <DockPanel Background="{StaticResource SystemControlHighlightChromeAltLowBrush}" Dock="Top"
+                   avalonia:WindowHelper.EnableDrag="True"
+                   avalonia:WindowHelper.DoubleTappedWindowState="True">
+            <DropDownButton Background="Transparent">
+                <avalonia1:MaterialIcon Kind="Menu"/>
+                <DropDownButton.Flyout>
+                    <MenuFlyout>
+                        <MenuItem Header="File"></MenuItem>
+                        <MenuItem Header="Edit"></MenuItem>
+                        <MenuItem Header="View"></MenuItem>
+                        <MenuItem Header="Help"></MenuItem>
+                    </MenuFlyout>
+                </DropDownButton.Flyout>
+            </DropDownButton>
+            
+            <DropDownButton Name="WindowControlButton" Background="Transparent" DockPanel.Dock="Right">
+                <avalonia1:MaterialIcon Kind="DotsVertical"/>
+                <DropDownButton.Flyout>
+                    <MenuFlyout>
+                        <MenuItem Command="{Binding Close}" Header="Close"></MenuItem>
+                    </MenuFlyout>
+                </DropDownButton.Flyout>
+            </DropDownButton>
+            <Button Background="Transparent" DockPanel.Dock="Right">
                 <avalonia1:MaterialIcon Kind="Cog"/>
             </Button>
+            
             <StackPanel Spacing="4" HorizontalAlignment="Center" Orientation="Horizontal">
                 <Button Background="Transparent" Command="{Binding Back}"><avalonia1:MaterialIcon Kind="ArrowLeft"/></Button>
                 <Button Background="Transparent" Command="{Binding Forward}"><avalonia1:MaterialIcon Kind="ArrowRight"/></Button>
@@ -28,7 +75,14 @@
             </StackPanel>
             
         </DockPanel>
-        <DockPanel Background="#3c3f41" Dock="Bottom">
+        <DockPanel Dock="Bottom"
+                   Background="{StaticResource SystemControlHighlightChromeAltLowBrush}"
+                   Classes.error="{Binding Status.Value, 
+              Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, 
+              ConverterParameter={x:Static avalonia:ShellStatus.Error} }"
+                   Classes.warning="{Binding Status.Value, 
+              Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, 
+              ConverterParameter={x:Static avalonia:ShellStatus.Warning} }">
             <TextBlock Text="Status bar"/>
         </DockPanel>
         <Border BorderThickness="0, 1" BorderBrush="#1e1f22">
@@ -42,13 +96,11 @@
                                 <avalonia1:MaterialIcon Kind="Close"/>
                             </Button>
                         </StackPanel>
-                        
                     </DataTemplate>
                 </TabControl.ItemTemplate>
             </TabControl>
         </Border>
-        
-        
     </DockPanel>
+    </Border>
   
 </UserControl>

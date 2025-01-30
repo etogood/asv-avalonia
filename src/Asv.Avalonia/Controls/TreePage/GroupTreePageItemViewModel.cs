@@ -1,0 +1,10 @@
+﻿namespace Asv.Avalonia;
+
+public class GroupTreePageItemViewModel : RoutableViewModel
+{
+    public GroupTreePageItemViewModel(string id)
+        : base(id)
+    {
+        
+    }
+}

@@ -7,7 +7,7 @@ public class ExecuteCommandEvent(IRoutable source, string commandId, IPersistabl
     public IPersistable? CommandParameter { get; } = commandParameter;
 }
 
-public class FocusedEvent(IRoutable source)
+public class NavigationEvent(IRoutable source)
     : AsyncRoutedEvent(source, RoutingEventStrategy.Bubble)
 {
     

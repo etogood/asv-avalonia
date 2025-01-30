@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Composition.Convention;
 using System.Composition.Hosting;
@@ -83,10 +84,14 @@ public partial class App : Application, IContainerHost, IShellHost
         base.OnFrameworkInitializationCompleted();
         if (Design.IsDesignMode == false)
         {
-            Shell.OpenPage(SettingsPageViewModel.PageId);
+            Shell.NavigateTo(new ArraySegment<string>([SettingsPageViewModel.PageId]));
         }
     }
 
     public CompositionHost Host { get; }
     public IShell Shell { get; private set; }
+    public bool TryGetExport<T>(string id, out T value)
+    {
+        return Host.TryGetExport(id, out value);
+    }
 }

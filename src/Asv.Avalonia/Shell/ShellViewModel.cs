@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Composition.Hosting;
+using Avalonia;
 using ObservableCollections;
 using R3;
 
@@ -7,31 +8,57 @@ namespace Asv.Avalonia;
 
 public abstract class ShellViewModel : RoutableViewModel, IShell
 {
-    private readonly CompositionHost _container;
+    
     private readonly ObservableList<IPage> _pages = new();
+    private readonly IContainerHost _container;
+    private Stack<string[]> _backwardStack = new();
+    private Stack<string[]> _forwardStack = new();
     public const string ShellId = "shell";
 
-    protected ShellViewModel(IContainerHost host)
+    protected ShellViewModel(IContainerHost ioc)
         : base(ShellId)
     {
-        ArgumentNullException.ThrowIfNull(host);
-        _container = host.Host;
+        ArgumentNullException.ThrowIfNull(ioc);
+        _container = ioc;
         Pages = _pages.ToNotifyCollectionChangedSlim();
         Back = new ReactiveCommand((_, c) => BackwardAsync(c));
         Forward = new ReactiveCommand((_, c) => ForwardAsync(c));
         GoHome = new ReactiveCommand((_, c) => BackwardAsync(c));
+        Status = new BindableReactiveProperty<ShellStatus>(ShellStatus.Normal);
+        Close = new ReactiveCommand((_, c) => CloseAsync(c));
+    }
+
+    protected virtual ValueTask CloseAsync(CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
     }
 
     public ReactiveCommand Back { get; }
-    public ValueTask BackwardAsync(CancellationToken cancel = default)
+    public async ValueTask BackwardAsync(CancellationToken cancel = default)
     {
-        throw new NotImplementedException();
+        if (_backwardStack.TryPop(out var path))
+        {
+            _forwardStack.Push(path);
+            await NavigateTo(path);
+            CheckBackwardForwardCanExecute();
+        }
+    }
+
+    private void CheckBackwardForwardCanExecute()
+    {
+        Back.ChangeCanExecute(_backwardStack.Count != 0);
+        Forward.ChangeCanExecute(_forwardStack.Count != 0);
     }
 
     public ReactiveCommand Forward { get; }
-    public ValueTask ForwardAsync(CancellationToken cancel = default)
+    public async ValueTask ForwardAsync(CancellationToken cancel = default)
     {
-        throw new NotImplementedException();
+        if (_forwardStack.TryPop(out var path))
+        {
+            _backwardStack.Push(path);
+            await NavigateTo(path);
+            CheckBackwardForwardCanExecute();
+        }
     }
 
     public ReactiveCommand GoHome { get; }
@@ -40,23 +67,9 @@ public abstract class ShellViewModel : RoutableViewModel, IShell
         throw new NotImplementedException();
     }
 
-    public ValueTask<IPage?> OpenPage(string pageId)
-    {
-        if (_container.TryGetExport<IPage>(pageId, out var page))
-        {
-            page.Parent = this;
-            _pages.Add(page);
-            return ValueTask.FromResult<IPage?>(page);
-        }
-
-        return ValueTask.FromResult<IPage?>(null);
-    }
-
-    protected abstract void InternalAddPageToMainTab(IPage export);
-
     public NotifyCollectionChangedSynchronizedViewList<IPage> Pages { get; }
 
-    public override IEnumerable<IRoutable> Children
+    public override IEnumerable<IRoutable> NavigationChildren
     {
         get
         {
@@ -67,6 +80,23 @@ public abstract class ShellViewModel : RoutableViewModel, IShell
         }
     }
 
+    protected override ValueTask<IRoutable> NavigateToUnknownPath(ArraySegment<string> path)
+    {
+        var first = path[0];
+        if (_container.TryGetExport<IPage>(first, out var page))
+        {
+            _pages.Add(page);
+            page.NavigationParent = this;
+            return page.NavigateTo(path[1..]);
+        }
+
+        return base.NavigateToUnknownPath(path);
+    }
+
+    public BindableReactiveProperty<ShellStatus> Status { get; }
+
+    public ReactiveCommand Close { get; }
+
     protected override ValueTask InternalCatchEvent(AsyncRoutedEvent e)
     {
         if (e is ExecuteCommandEvent cmd)
@@ -74,11 +104,19 @@ public abstract class ShellViewModel : RoutableViewModel, IShell
             // write command to log
         }
 
-        if (e is FocusedEvent focus)
+        if (e is NavigationEvent focus)
         {
-            // write to navigation history
+            _backwardStack.Push([..focus.Source.GetAllTo(this).Select(x => x.Id)]);
+            _forwardStack.Clear();
         }
         
         return ValueTask.CompletedTask;
     }
+}
+
+public enum ShellStatus
+{
+    Normal,
+    Warning,
+    Error,
 }

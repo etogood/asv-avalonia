@@ -3,26 +3,10 @@ using R3;
 
 namespace Asv.Avalonia;
 
-public abstract class RoutableViewModel : DisposableViewModel, IRoutable
+public abstract class RoutableViewModel(string id) : DisposableViewModel(id), IRoutable
 {
-    private readonly IDisposable _sub1;
-
-    protected RoutableViewModel(string id)
-        : base(id)
-    {
-        _sub1 = IsFocused.SubscribeAwait((x, _) =>
-        {
-            if (x)
-            {
-                return Rise(new FocusedEvent(this));
-            }
-
-            return ValueTask.CompletedTask;
-        });
-    }
-
-    public IRoutable? Parent { get; set; }
-    public virtual IEnumerable<IRoutable> Children => [];
+    public IRoutable? NavigationParent { get; set; }
+    public virtual IEnumerable<IRoutable> NavigationChildren => [];
 
     public async ValueTask Rise(AsyncRoutedEvent e)
     {
@@ -39,12 +23,16 @@ public abstract class RoutableViewModel : DisposableViewModel, IRoutable
 
         switch (e.RoutingEventStrategy)
         {
-            case RoutingEventStrategy.Bubble when Parent is not null:
-                await Parent.Rise(e);
+            case RoutingEventStrategy.Bubble:
+                if (NavigationParent is not null)
+                {
+                    await NavigationParent.Rise(e);
+                }
+
                 break;
             case RoutingEventStrategy.Tunnel:
             {
-                foreach (var child in Children)
+                foreach (var child in NavigationChildren)
                 {
                     await child.Rise(e);
                     if (e.IsHandled)
@@ -59,30 +47,37 @@ public abstract class RoutableViewModel : DisposableViewModel, IRoutable
             case RoutingEventStrategy.Direct:
                 return;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException($"Unknown {nameof(RoutingEventStrategy)} value: {e.RoutingEventStrategy}");
         }
     }
 
-    public virtual ValueTask<IRoutable> NavigateTo(ArraySegment<string> path)
+    public async ValueTask<IRoutable> NavigateTo(ArraySegment<string> path)
     {
+        IsFocused.Value = true;
+
         if (path.Count == 0)
         {
-            IsFocused.Value = true;
-            return ValueTask.FromResult<IRoutable>(this);
+            await Rise(new NavigationEvent(this));
+            return this;
         }
 
-        foreach (var child in Children)
+        foreach (var child in NavigationChildren)
         {
             if (child.Id == path[0])
             {
-                return child.NavigateTo(path[1..]);
+                return await child.NavigateTo(path[1..]);
             }
         }
 
-        return ValueTask.FromResult<IRoutable>(this);
+        return await NavigateToUnknownPath(path);
     }
 
-    public ReactiveProperty<bool> IsFocused { get; } = new(false);
+    public BindableReactiveProperty<bool> IsFocused { get; } = new(false);
+
+    protected virtual ValueTask<IRoutable> NavigateToUnknownPath(ArraySegment<string> path)
+    {
+        return ValueTask.FromException<IRoutable>(new NavigationException($"Can't find child with id {path[0]}"));
+    }
 
     protected virtual ValueTask InternalCatchEvent(AsyncRoutedEvent e) => ValueTask.CompletedTask;
 
@@ -90,7 +85,6 @@ public abstract class RoutableViewModel : DisposableViewModel, IRoutable
     {
         if (disposing)
         {
-            _sub1.Dispose();
             IsFocused.Dispose();
         }
 

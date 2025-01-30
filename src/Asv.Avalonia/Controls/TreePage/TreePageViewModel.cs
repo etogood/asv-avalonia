@@ -1,4 +1,6 @@
 ﻿using System.Collections.Immutable;
+using System.Composition;
+using System.Composition.Hosting;
 using ObservableCollections;
 using R3;
 
@@ -6,85 +8,82 @@ namespace Asv.Avalonia;
 
 
 
-public class TreePageViewModel<T> : PageViewModel<T>, IDesignTimeTreePage
-    where T : class, IPage
+public class TreePageViewModel<TContext> : PageViewModel<TContext>, IDesignTimeTreePage
+    where TContext : class, IPage
 {
-    private IEnumerable<TreeMenuItem>? _items;
-    private IDisposable? _sub1;
+    private readonly IContainerHost _container;
     private readonly IDisposable _sub2;
+    private readonly ObservableList<BreadCrumbItem> _breadCrumbSource;
+    private bool _internalNavigate;
 
-    public TreePageViewModel(string id, ICommandService cmd)
+    public TreePageViewModel(string id, ICommandService cmd, IContainerHost container)
         : base(id, cmd)
     {
+        _container = container;
         Nodes = new ObservableList<ITreePageNode>();
-        SelectedMenu = new BindableReactiveProperty<TreeMenuItem?>();
+        SelectedNode = new BindableReactiveProperty<ObservableTreeNode<ITreePageNode, string>?>();
         SelectedPage = new BindableReactiveProperty<IRoutable?>();
-        ObservableList<BreadCrumbItem> breadCrumbSource = [];
-        BreadCrumb = breadCrumbSource.ToViewList();
-        _sub2 = SelectedMenu.Subscribe(x =>
+        _breadCrumbSource = new ObservableList<BreadCrumbItem>();
+        BreadCrumb = _breadCrumbSource.ToViewList();
+        Tree = Nodes.ToObservableTree(x => x.Id, x => x.ParentId);
+        _sub2 = SelectedNode.SubscribeAwait(async (x, _) =>
         {
-            var value = x?.Base.CreateNodeViewModel();
-            if (value != null)
+            if (x?.Base.NavigateTo == null || _internalNavigate)
             {
-                value.Parent = this;
+                return;
             }
-            
-            SelectedPage.Value = value;
-            breadCrumbSource.Clear();
-            if (SelectedMenu.Value != null)
+
+            _breadCrumbSource.Clear();
+            if (SelectedNode.Value != null)
             {
-                breadCrumbSource.AddRange(SelectedMenu.Value.GetAllMenuFromRoot().Select((item, index) => new BreadCrumbItem(index == 0, item)));
+                _breadCrumbSource.AddRange(SelectedNode.Value.GetAllMenuFromRoot().Select((item, index) => new BreadCrumbItem(index == 0, item.Base)));
             }
+
+            await NavigateTo(new ArraySegment<string>([x.Base.NavigateTo]));
         });
     }
 
-    protected override ValueTask AfterLoadExtensions()
+    protected override ValueTask<IRoutable> NavigateToUnknownPath(ArraySegment<string> path)
     {
-        _sub1 = Nodes.ObserveChanged().Subscribe(_ =>
+        if (path.Count == 0)
         {
-            // TODO: optimize update tree: only update changed nodes
-            RebuildTree();
-        });
-        RebuildTree();
-        return base.AfterLoadExtensions();
-    }
-
-    private void RebuildTree()
-    {
-        if (Items != null)
-        {
-            foreach (var item in Items)
-            {
-                item.Dispose();
-            }
+            throw new ArgumentException("Value cannot be an empty collection.", nameof(path));
         }
 
-        Items = Nodes.Where(x => x.ParentId == null).Select(x => new TreeMenuItem(this, x, Nodes))
-            .ToImmutableArray();
+        var first = path[0];
+        if (SelectedNode.Value?.Base.NavigateTo != first)
+        {
+            _internalNavigate = true;
+            SelectedNode.Value = Tree.FindNode(x => x.Base.NavigateTo == first);
+            _internalNavigate = false;
+        }
+
+        var newPage = CreateSubPage(first);
+        if (newPage == null)
+        {
+            return base.NavigateToUnknownPath(path);
+        }
+
+        SelectedPage.Value?.Dispose();
+        newPage.NavigationParent = this;
+        SelectedPage.Value = newPage;
+        return newPage.NavigateTo(path[1..]);
     }
 
-    public IEnumerable<TreeMenuItem>? Items
+    protected virtual ISettingsSubPage? CreateSubPage(string id)
     {
-        get => _items;
-        private set => SetField(ref _items, value);
+        return _container.TryGetExport<ISettingsSubPage>(id, out var page) ? page : null;
     }
 
+    public ObservableTree<ITreePageNode, string> Tree { get; }
     public BindableReactiveProperty<IRoutable?> SelectedPage { get; }
     public ISynchronizedViewList<BreadCrumbItem> BreadCrumb { get; }
-    public BindableReactiveProperty<TreeMenuItem?> SelectedMenu { get; }
+    public BindableReactiveProperty<ObservableTreeNode<ITreePageNode, string>?> SelectedNode { get; }
     public ObservableList<ITreePageNode> Nodes { get; }
-    public override IEnumerable<IRoutable> Children
+    public override IEnumerable<IRoutable> NavigationChildren
     {
         get
         {
-            if (Items != null)
-            {
-                foreach (var item in Items)
-                {
-                    yield return item;
-                }
-            }
-
             if (SelectedPage.Value != null)
             {
                 yield return SelectedPage.Value;
@@ -98,19 +97,12 @@ public class TreePageViewModel<T> : PageViewModel<T>, IDesignTimeTreePage
     {
         if (disposing)
         {
-            _sub1?.Dispose();
             _sub2.Dispose();
             IsCompactMode.Dispose();
-            SelectedMenu.Dispose();
+            SelectedNode.Dispose();
             SelectedPage.Dispose();
             BreadCrumb.Dispose();
-            if (Items != null)
-            {
-                foreach (var item in Items)
-                {
-                    item.Dispose();
-                }
-            }
+            Tree.Dispose();
         }
 
         base.Dispose(disposing);
