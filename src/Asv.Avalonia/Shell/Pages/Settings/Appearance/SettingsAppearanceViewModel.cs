@@ -44,12 +44,22 @@ public class SettingsAppearanceViewModel : RoutableViewModel, ISettingsSubPage
     public SettingsAppearanceViewModel(IThemeService themeService)
         : base(PageId)
     {
-        Theme = new ThemeProperty(themeService) { NavigationParent = this };
+        Theme = new ThemeProperty(themeService) { Parent = this };
     }
 
     public ThemeProperty Theme { get; }
     public ValueTask Init(ISettingsPage context)
     {
         return ValueTask.CompletedTask;
+    }
+
+    public override ValueTask<IRoutable> NavigateTo(string id)
+    {
+        if (id == Theme.Id)
+        {
+            return ValueTask.FromResult<IRoutable>(Theme);
+        }
+        
+        return ValueTask.FromResult<IRoutable>(this);
     }
 }

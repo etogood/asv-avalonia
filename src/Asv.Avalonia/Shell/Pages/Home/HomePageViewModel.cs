@@ -18,4 +18,14 @@ public class HomePageViewModel : PageViewModel<HomePageViewModel>
     {
         
     }
+
+    public override ValueTask<IRoutable> NavigateTo(string id)
+    {
+        return ValueTask.FromResult<IRoutable>(this);
+    }
+
+    protected override void AfterLoadExtensions()
+    {
+        // do nothing
+    }
 }

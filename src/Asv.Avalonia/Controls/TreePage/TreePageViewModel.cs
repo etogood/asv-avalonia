@@ -6,8 +6,6 @@ using R3;
 
 namespace Asv.Avalonia;
 
-
-
 public class TreePageViewModel<TContext> : PageViewModel<TContext>, IDesignTimeTreePage
     where TContext : class, IPage
 {
@@ -39,35 +37,35 @@ public class TreePageViewModel<TContext> : PageViewModel<TContext>, IDesignTimeT
                 _breadCrumbSource.AddRange(SelectedNode.Value.GetAllMenuFromRoot().Select((item, index) => new BreadCrumbItem(index == 0, item.Base)));
             }
 
-            await NavigateTo(new ArraySegment<string>([x.Base.NavigateTo]));
+            await NavigateTo(x.Base.NavigateTo);
         });
     }
 
-    protected override ValueTask<IRoutable> NavigateToUnknownPath(ArraySegment<string> path)
+    public override async ValueTask<IRoutable> NavigateTo(string id)
     {
-        if (path.Count == 0)
+        if (SelectedPage.Value != null && SelectedPage.Value.Id == id)
         {
-            throw new ArgumentException("Value cannot be an empty collection.", nameof(path));
+            return SelectedPage.Value;
         }
 
-        var first = path[0];
-        if (SelectedNode.Value?.Base.NavigateTo != first)
+        if (SelectedNode.Value?.Base.NavigateTo != id)
         {
             _internalNavigate = true;
-            SelectedNode.Value = Tree.FindNode(x => x.Base.NavigateTo == first);
+            SelectedNode.Value = Tree.FindNode(x => x.Base.NavigateTo == id);
             _internalNavigate = false;
         }
 
-        var newPage = CreateSubPage(first);
+        var newPage = CreateSubPage(id);
         if (newPage == null)
         {
-            return base.NavigateToUnknownPath(path);
+            return this;
         }
 
         SelectedPage.Value?.Dispose();
-        newPage.NavigationParent = this;
+        newPage.Parent = this;
         SelectedPage.Value = newPage;
-        return newPage.NavigateTo(path[1..]);
+        await Rise(new NavigationEvent(newPage));
+        return newPage;
     }
 
     protected virtual ISettingsSubPage? CreateSubPage(string id)
@@ -80,18 +78,12 @@ public class TreePageViewModel<TContext> : PageViewModel<TContext>, IDesignTimeT
     public ISynchronizedViewList<BreadCrumbItem> BreadCrumb { get; }
     public BindableReactiveProperty<ObservableTreeNode<ITreePageNode, string>?> SelectedNode { get; }
     public ObservableList<ITreePageNode> Nodes { get; }
-    public override IEnumerable<IRoutable> NavigationChildren
-    {
-        get
-        {
-            if (SelectedPage.Value != null)
-            {
-                yield return SelectedPage.Value;
-            }
-        }
-    }
-
     public BindableReactiveProperty<bool> IsCompactMode { get; } = new();
+
+    protected override void AfterLoadExtensions()
+    {
+        // do nothing
+    }
 
     protected override void Dispose(bool disposing)
     {

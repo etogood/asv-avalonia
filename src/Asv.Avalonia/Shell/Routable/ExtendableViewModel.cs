@@ -7,7 +7,7 @@ using ZLogger;
 
 namespace Asv.Avalonia;
 
-public class ExtendableViewModel<TSelfInterface> : RoutableViewModel
+public abstract class ExtendableViewModel<TSelfInterface> : RoutableViewModel
     where TSelfInterface : class
 {
     protected ExtendableViewModel(string id)
@@ -54,11 +54,8 @@ public class ExtendableViewModel<TSelfInterface> : RoutableViewModel
         }
     }
 
-    protected virtual void AfterLoadExtensions()
-    {
-        // Do nothing
-    }
-    
+    protected abstract void AfterLoadExtensions();
+
     protected override void Dispose(bool disposing)
     {
         if (disposing)

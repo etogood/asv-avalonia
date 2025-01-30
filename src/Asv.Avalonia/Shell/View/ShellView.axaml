@@ -89,7 +89,7 @@
             <TabControl ItemsSource="{Binding Pages}" SelectedItem="{Binding SelectedPage.Value}">
                 <TabControl.Styles>
                     <Style Selector="TabItem">
-                        <Setter Property="IsSelected" Value="{Binding IsFocused}"/>
+                        <Setter Property="IsSelected" Value="{Binding IsFocused, Mode=TwoWay}"/>
                     </Style>
                 </TabControl.Styles>
                 <TabControl.ItemTemplate>

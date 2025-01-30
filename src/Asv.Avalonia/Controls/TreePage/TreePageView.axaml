@@ -27,10 +27,8 @@
                   SelectionMode="Single"
                   ItemsSource="{Binding Tree.Items}">
             <TreeView.Styles>
-                <Style Selector="TreeViewItem" x:DataType="avalonia:TreeMenuItem">
+                <Style Selector="TreeViewItem">
                     <Setter Property="HorizontalAlignment" Value="Stretch" />
-                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-                    <Setter Property="IsSelected" Value="{Binding IsFocused.Value, Mode=TwoWay}" />
                 </Style>
             </TreeView.Styles>
             <TreeView.ItemTemplate>

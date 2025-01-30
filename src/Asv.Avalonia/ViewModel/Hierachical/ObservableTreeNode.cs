@@ -76,7 +76,7 @@ public class ObservableTreeNode<T, TKey> : AsyncDisposableOnce
 
         base.Dispose(disposing);
     }
-    
+
     public IEnumerable<ObservableTreeNode<T, TKey>> GetAllMenuFromRoot()
     {
         if (ParentNode != null)
@@ -108,7 +108,7 @@ public class ObservableTreeNode<T, TKey> : AsyncDisposableOnce
 
         return null;
     }
-    
+
     public ObservableTreeNode<T, TKey>? GetNode(TKey nodeId)
     {
         if (Key.Equals(nodeId))

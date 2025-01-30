@@ -7,4 +7,9 @@ public class GroupTreePageItemViewModel : RoutableViewModel
     {
         
     }
+
+    public override ValueTask<IRoutable> NavigateTo(string id)
+    {
+        return ValueTask.FromResult<IRoutable>(this);
+    }
 }

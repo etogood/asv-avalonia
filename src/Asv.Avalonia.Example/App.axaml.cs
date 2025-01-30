@@ -84,8 +84,8 @@ public partial class App : Application, IContainerHost, IShellHost
         base.OnFrameworkInitializationCompleted();
         if (Design.IsDesignMode == false)
         {
-            Shell.NavigateTo(new ArraySegment<string>([SettingsPageViewModel.PageId]));
-            Shell.NavigateTo(new ArraySegment<string>([HomePageViewModel.PageId]));
+            Shell.NavigateTo(SettingsPageViewModel.PageId);
+            Shell.NavigateTo(HomePageViewModel.PageId);
         }
     }
 

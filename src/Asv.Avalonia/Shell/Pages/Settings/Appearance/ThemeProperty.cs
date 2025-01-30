@@ -54,7 +54,11 @@ public class ThemeProperty : RoutableViewModel
     public IEnumerable<IThemeInfo> Items => _svc.Themes;
     public BindableReactiveProperty<IThemeInfo> SelectedItem { get; }
 
-    public override IEnumerable<IRoutable> NavigationChildren => ImmutableArray<IRoutable>.Empty;
+    public override ValueTask<IRoutable> NavigateTo(string id)
+    {
+        return ValueTask.FromResult<IRoutable>(this);
+    }
+
     protected override ValueTask InternalCatchEvent(AsyncRoutedEvent e)
     {
         return ValueTask.CompletedTask;

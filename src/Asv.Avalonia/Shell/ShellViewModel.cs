@@ -6,7 +6,7 @@ using R3;
 
 namespace Asv.Avalonia;
 
-public abstract class ShellViewModel : RoutableViewModel, IShell
+public class ShellViewModel : RoutableViewModel, IShell
 {
     
     private readonly ObservableList<IPage> _pages = new();
@@ -16,6 +16,7 @@ public abstract class ShellViewModel : RoutableViewModel, IShell
     private readonly IDisposable _sub1;
     private bool _internalNavigation;
     private string[]? _lastPath = null;
+    private bool _internalChange;
     public const string ShellId = "shell";
 
     protected ShellViewModel(IContainerHost ioc)
@@ -31,7 +32,13 @@ public abstract class ShellViewModel : RoutableViewModel, IShell
         Close = new ReactiveCommand((_, c) => CloseAsync(c));
         _sub1 = SelectedPage.SubscribeAwait(async (x, _) =>
         {
-            await NavigateTo(new ArraySegment<string>([x.Id]));
+            if (x == null || _internalChange)
+            {
+                return;
+            }
+
+            var page = await NavigateTo(x.Id);
+            await Rise(new NavigationEvent(page));
         });
     }
 
@@ -47,7 +54,7 @@ public abstract class ShellViewModel : RoutableViewModel, IShell
         {
             _forwardStack.Push(path);
             _internalNavigation = true;
-            await NavigateTo(path);
+            await this.NavigateTo(path);
             _internalNavigation = false;
             CheckBackwardForwardCanExecute();
         }
@@ -66,7 +73,7 @@ public abstract class ShellViewModel : RoutableViewModel, IShell
         {
             _backwardStack.Push(path);
             _internalNavigation = true;
-            await NavigateTo(path);
+            await this.NavigateTo(path);
             _internalNavigation = false;
             CheckBackwardForwardCanExecute();
         }
@@ -75,39 +82,31 @@ public abstract class ShellViewModel : RoutableViewModel, IShell
     public ReactiveCommand GoHome { get; }
     public async ValueTask GoHomeAsync(CancellationToken cancel = default)
     {
-        await NavigateTo(new ArraySegment<string>([HomePageViewModel.PageId]));
+        await NavigateTo(HomePageViewModel.PageId);
     }
 
     public NotifyCollectionChangedSynchronizedViewList<IPage> Pages { get; }
+    public BindableReactiveProperty<ShellStatus> Status { get; }
+    public ReactiveCommand Close { get; }
+    public BindableReactiveProperty<IPage?> SelectedPage { get; } = new();
 
-    public override IEnumerable<IRoutable> NavigationChildren
+    public override ValueTask<IRoutable> NavigateTo(string id)
     {
-        get
+        var page = _pages.FirstOrDefault(x => x.Id == id);
+        if (page == null)
         {
-            foreach (var page in _pages)
+            if (_container.TryGetExport<IPage>(id, out page))
             {
-                yield return page;
+                _pages.Add(page);
+                page.Parent = this;
             }
         }
+
+        _internalChange = true;
+        SelectedPage.Value = page;
+        _internalChange = false;
+        return ValueTask.FromResult<IRoutable>(page);
     }
-
-    protected override ValueTask<IRoutable> NavigateToUnknownPath(ArraySegment<string> path)
-    {
-        var first = path[0];
-        if (_container.TryGetExport<IPage>(first, out var page))
-        {
-            _pages.Add(page);
-            page.NavigationParent = this;
-            return page.NavigateTo(path[1..]);
-        }
-
-        return base.NavigateToUnknownPath(path);
-    }
-
-    public BindableReactiveProperty<ShellStatus> Status { get; }
-
-    public ReactiveCommand Close { get; }
-    public BindableReactiveProperty<IPage> SelectedPage { get; } = new();
 
     protected override ValueTask InternalCatchEvent(AsyncRoutedEvent e)
     {
@@ -118,7 +117,7 @@ public abstract class ShellViewModel : RoutableViewModel, IShell
 
         if (e is NavigationEvent focus && _internalNavigation == false)
         {
-            if (_lastPath != null)
+            if (_lastPath != null && _lastPath.Length > 0)
             {
                 _backwardStack.Push(_lastPath);
                 _forwardStack.Clear();
@@ -127,7 +126,7 @@ public abstract class ShellViewModel : RoutableViewModel, IShell
             _lastPath = focus.Source.GetAllFrom(this).Skip(1).Select(x => x.Id).ToArray();
             CheckBackwardForwardCanExecute();
         }
-        
+
         return ValueTask.CompletedTask;
     }
 
