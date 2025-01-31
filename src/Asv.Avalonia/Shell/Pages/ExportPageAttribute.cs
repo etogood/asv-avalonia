@@ -6,7 +6,5 @@ namespace Asv.Avalonia;
 public class ExportPageAttribute : ExportAttribute
 {
     public ExportPageAttribute(string pageId)
-        : base(pageId, typeof(IPage))
-    {
-    }
+        : base(pageId, typeof(IPage)) { }
 }

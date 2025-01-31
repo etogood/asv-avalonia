@@ -97,6 +97,7 @@ public abstract class AsyncRoutedEvent(IRoutable source)
 {
     public IRoutable Source { get; } = source;
     public bool IsHandled { get; set; }
+
     public virtual AsyncRoutedEvent Clone()
     {
         return (AsyncRoutedEvent)MemberwiseClone();
