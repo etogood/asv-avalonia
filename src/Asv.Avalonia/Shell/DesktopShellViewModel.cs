@@ -19,14 +19,22 @@ public class DesktopShellViewModel : ShellViewModel
         _commandService = commandService;
         lifetime.MainWindow = new ShellWindow { DataContext = this };
         InputElement.KeyDownEvent.AddClassHandler<TopLevel>(OnKeyDownCustom, handledEventsToo: true);
+        lifetime.MainWindow.Show();
     }
 
     private void OnKeyDownCustom(TopLevel arg1, KeyEventArgs arg2)
     {
+        if (KeyGesture.Parse("Ctrl+D").Matches(arg2))
+        {
+            var wnd = new DebugWindow();
+            wnd.Show();
+            wnd.DataContext = new DebugWindowViewModel(this);
+        }
+
         if (KeyGesture.Parse("Ctrl+Z").Matches(arg2))
         {
             arg2.Handled = true;
-            if (_commandService.CanExecuteCommand(UndoCommand.Id, SelectedControl.CurrentValue, out var target))
+            if (_commandService.CanExecuteCommand(UndoCommand.Id, SelectedControl.Value, out var target))
             {
                 if (target != null)
                 {
@@ -38,7 +46,7 @@ public class DesktopShellViewModel : ShellViewModel
         if (KeyGesture.Parse("Ctrl+T").Matches(arg2))
         {
             arg2.Handled = true;
-            if (_commandService.CanExecuteCommand(ChangeThemeCommand.Id, SelectedControl.CurrentValue, out var target))
+            if (_commandService.CanExecuteCommand(ChangeThemeCommand.Id, SelectedControl.Value, out var target))
             {
                 if (target != null)
                 {
@@ -57,5 +65,4 @@ public class DesktopShellViewModel : ShellViewModel
 
         return ValueTask.CompletedTask;
     }
-
 }

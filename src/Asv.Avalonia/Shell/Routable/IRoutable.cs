@@ -1,3 +1,5 @@
+using R3;
+
 namespace Asv.Avalonia;
 
 public interface IRoutable : IViewModel
@@ -5,6 +7,7 @@ public interface IRoutable : IViewModel
     IRoutable? Parent { get; set; }
     ValueTask Rise(AsyncRoutedEvent e);
     ValueTask<IRoutable> NavigateTo(string id);
+    BindableReactiveProperty<bool> IsFocused { get; }
 }
 
 public static class RoutableMixin
@@ -15,6 +18,7 @@ public static class RoutableMixin
         {
             if (path.Count == 0)
             {
+                src.IsFocused.Value = true;
                 return src;
             }
 

@@ -16,9 +16,9 @@ public class ShellViewModel : RoutableViewModel, IShell
     private readonly Stack<string[]> _forwardStack = new();
     private readonly IDisposable _sub1;
     private bool _internalNavigation;
-    private string[]? _lastPath = null;
     private bool _internalChange;
-    private readonly ReactiveProperty<IRoutable> _selectedControl;
+    private readonly BindableReactiveProperty<IRoutable> _selectedControl;
+    private readonly BindableReactiveProperty<string[]?> _selectedControlPath;
     public const string ShellId = "shell";
 
     protected ShellViewModel(IContainerHost ioc)
@@ -42,7 +42,18 @@ public class ShellViewModel : RoutableViewModel, IShell
             var page = await NavigateTo(x.Id);
             await Rise(new NavigationEvent(page));
         });
-        _selectedControl = new ReactiveProperty<IRoutable>(this);
+        _selectedControl = new BindableReactiveProperty<IRoutable>(this);
+        _selectedControlPath = new BindableReactiveProperty<string[]?>();
+        _selectedControlPath.Subscribe(x =>
+        {
+            if (x is not { Length: > 0 })
+            {
+                return;
+            }
+
+            _backwardStack.Push(x);
+            _forwardStack.Clear();
+        });
     }
 
     protected virtual ValueTask CloseAsync(CancellationToken cancellationToken)
@@ -90,7 +101,8 @@ public class ShellViewModel : RoutableViewModel, IShell
 
     public NotifyCollectionChangedSynchronizedViewList<IPage> Pages { get; }
 
-    public ReadOnlyReactiveProperty<IRoutable> SelectedControl => _selectedControl;
+    public IReadOnlyBindableReactiveProperty<IRoutable> SelectedControl => _selectedControl;
+    public IReadOnlyBindableReactiveProperty<string[]?> SelectedControlPath => _selectedControlPath;
 
     public BindableReactiveProperty<ShellStatus> Status { get; }
     public ReactiveCommand Close { get; }
@@ -123,14 +135,8 @@ public class ShellViewModel : RoutableViewModel, IShell
 
         if (e is NavigationEvent focus && _internalNavigation == false)
         {
-            if (_lastPath != null && _lastPath.Length > 0)
-            {
-                _backwardStack.Push(_lastPath);
-                _forwardStack.Clear();
-            }
-
             _selectedControl.Value = focus.Source;
-            _lastPath = focus.Source.GetAllFrom(this).Skip(1).Select(x => x.Id).ToArray();
+            _selectedControlPath.Value = focus.Source.GetAllFrom(this).Skip(1).Select(x => x.Id).ToArray();
             CheckBackwardForwardCanExecute();
         }
 
