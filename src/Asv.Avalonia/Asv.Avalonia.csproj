@@ -77,6 +77,10 @@
       </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Shell\Pages\Settings\Commands\" />
+    </ItemGroup>
+
    
 
 </Project>

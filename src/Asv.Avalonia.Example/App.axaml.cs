@@ -74,7 +74,7 @@ public partial class App : Application, IContainerHost, IShellHost
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            Shell = new DesktopShellViewModel(desktop, this);
+            Shell = new DesktopShellViewModel(desktop, GetExport<ICommandService>(), this);
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
@@ -87,6 +87,11 @@ public partial class App : Application, IContainerHost, IShellHost
             Shell.NavigateTo(SettingsPageViewModel.PageId);
             Shell.NavigateTo(HomePageViewModel.PageId);
         }
+    }
+
+    public T GetExport<T>()
+    {
+        return Host.GetExport<T>();
     }
 
     public CompositionHost Host { get; }

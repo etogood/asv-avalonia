@@ -13,6 +13,10 @@
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
     <avalonia:DesignTimeShellViewModel />
   </Design.DataContext>
+    <UserControl.KeyBindings>
+        <KeyBinding Command="{Binding Back}" Gesture="Ctrl+OemMinus"/>
+        <KeyBinding Command="{Binding Forward}" Gesture="Ctrl+OemPlus"/>
+    </UserControl.KeyBindings>
     <UserControl.Styles>
         <Style Selector="Border.error">
             <Setter Property="BorderBrush" Value="Red"/>

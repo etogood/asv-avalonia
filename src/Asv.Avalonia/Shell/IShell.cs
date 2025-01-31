@@ -18,4 +18,5 @@ public interface IShell : IRoutable
     ReactiveCommand GoHome { get; }
     ValueTask GoHomeAsync(CancellationToken cancel = default);
     NotifyCollectionChangedSynchronizedViewList<IPage> Pages { get; }
+    ReadOnlyReactiveProperty<IRoutable> SelectedControl { get; }
 }

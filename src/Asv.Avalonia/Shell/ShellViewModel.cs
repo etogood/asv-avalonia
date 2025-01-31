@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Composition;
 using System.Composition.Hosting;
 using Avalonia;
 using ObservableCollections;
@@ -17,6 +18,7 @@ public class ShellViewModel : RoutableViewModel, IShell
     private bool _internalNavigation;
     private string[]? _lastPath = null;
     private bool _internalChange;
+    private readonly ReactiveProperty<IRoutable> _selectedControl;
     public const string ShellId = "shell";
 
     protected ShellViewModel(IContainerHost ioc)
@@ -40,6 +42,7 @@ public class ShellViewModel : RoutableViewModel, IShell
             var page = await NavigateTo(x.Id);
             await Rise(new NavigationEvent(page));
         });
+        _selectedControl = new ReactiveProperty<IRoutable>(this);
     }
 
     protected virtual ValueTask CloseAsync(CancellationToken cancellationToken)
@@ -86,6 +89,9 @@ public class ShellViewModel : RoutableViewModel, IShell
     }
 
     public NotifyCollectionChangedSynchronizedViewList<IPage> Pages { get; }
+
+    public ReadOnlyReactiveProperty<IRoutable> SelectedControl => _selectedControl;
+
     public BindableReactiveProperty<ShellStatus> Status { get; }
     public ReactiveCommand Close { get; }
     public BindableReactiveProperty<IPage?> SelectedPage { get; } = new();
@@ -123,6 +129,7 @@ public class ShellViewModel : RoutableViewModel, IShell
                 _forwardStack.Clear();
             }
 
+            _selectedControl.Value = focus.Source;
             _lastPath = focus.Source.GetAllFrom(this).Skip(1).Select(x => x.Id).ToArray();
             CheckBackwardForwardCanExecute();
         }
@@ -154,3 +161,4 @@ public enum ShellStatus
     Warning,
     Error,
 }
+
