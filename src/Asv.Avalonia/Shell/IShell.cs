@@ -1,5 +1,4 @@
-﻿using System.Composition;
-using ObservableCollections;
+﻿using ObservableCollections;
 using R3;
 
 namespace Asv.Avalonia;
@@ -18,6 +17,6 @@ public interface IShell : IRoutable
     ReactiveCommand GoHome { get; }
     ValueTask GoHomeAsync(CancellationToken cancel = default);
     NotifyCollectionChangedSynchronizedViewList<IPage> Pages { get; }
-    IReadOnlyBindableReactiveProperty<IRoutable> SelectedControl { get; }
-    IReadOnlyBindableReactiveProperty<string[]?> SelectedControlPath { get; }
+    ReadOnlyReactiveProperty<IRoutable> SelectedControl { get; }
+    ReadOnlyReactiveProperty<string[]?> SelectedControlPath { get; }
 }

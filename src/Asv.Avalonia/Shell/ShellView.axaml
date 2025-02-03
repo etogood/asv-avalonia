@@ -13,10 +13,6 @@
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
     <avalonia:DesignTimeShellViewModel />
   </Design.DataContext>
-    <UserControl.KeyBindings>
-        <KeyBinding Command="{Binding Back}" Gesture="Ctrl+OemMinus"/>
-        <KeyBinding Command="{Binding Forward}" Gesture="Ctrl+OemPlus"/>
-    </UserControl.KeyBindings>
     <UserControl.Styles>
         <Style Selector="Border.error">
             <Setter Property="BorderBrush" Value="Red"/>
@@ -87,21 +83,7 @@
                    Classes.warning="{Binding Status.Value, 
               Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, 
               ConverterParameter={x:Static avalonia:ShellStatus.Warning} }">
-            <ItemsControl ItemsSource="{Binding SelectedControlPath.Value}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" Spacing="8"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock >
-                            <Run Text=" > "/>
-                            <Run Text="{Binding}"/>
-                        </TextBlock>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            
         </DockPanel>
         <Border BorderThickness="0, 1" BorderBrush="#1e1f22">
             <TabControl ItemsSource="{Binding Pages}" SelectedItem="{Binding SelectedPage.Value}">

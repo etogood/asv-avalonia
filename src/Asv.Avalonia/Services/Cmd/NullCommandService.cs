@@ -22,4 +22,16 @@ public class NullCommandService : ICommandService
         target = null;
         return false;
     }
+
+    public void ChangeHotKey(string commandId, KeyGesture? hotKey)
+    {
+        // do nothing
+    }
+
+    public bool TryGetCommand(KeyGesture gesture, IRoutable context, out IAsyncCommand? command, out IRoutable? target)
+    {
+        command = null;
+        target = null;
+        return false;
+    }
 }

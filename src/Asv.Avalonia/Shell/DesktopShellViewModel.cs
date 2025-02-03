@@ -1,7 +1,10 @@
+using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
+using Avalonia.Interactivity;
+using R3;
 
 namespace Asv.Avalonia;
 
@@ -19,40 +22,33 @@ public class DesktopShellViewModel : ShellViewModel
         _commandService = commandService;
         lifetime.MainWindow = new ShellWindow { DataContext = this };
         InputElement.KeyDownEvent.AddClassHandler<TopLevel>(OnKeyDownCustom, handledEventsToo: true);
+        InputElement.GotFocusEvent.AddClassHandler<TopLevel>(FocusChanged, handledEventsToo: true);
         lifetime.MainWindow.Show();
     }
 
-    private void OnKeyDownCustom(TopLevel arg1, KeyEventArgs arg2)
+    private void FocusChanged<TTarget>(TTarget arg1, GotFocusEventArgs arg2) 
+        where TTarget : Interactive
     {
-        if (KeyGesture.Parse("Ctrl+D").Matches(arg2))
+        
+    }
+
+    private void OnKeyDownCustom(TopLevel source, KeyEventArgs keyEventArgs)
+    {
+        if (keyEventArgs.KeyModifiers == KeyModifiers.None)
         {
-            var wnd = new DebugWindow();
-            wnd.Show();
-            wnd.DataContext = new DebugWindowViewModel(this);
+            // we don't want to handle key events without modifiers
+            return;
         }
 
-        if (KeyGesture.Parse("Ctrl+Z").Matches(arg2))
+        if (_commandService.TryGetCommand(new KeyGesture(keyEventArgs.Key, keyEventArgs.KeyModifiers), SelectedControl.CurrentValue, out var command, out var target))
         {
-            arg2.Handled = true;
-            if (_commandService.CanExecuteCommand(UndoCommand.Id, SelectedControl.Value, out var target))
+            if (command == null || target == null)
             {
-                if (target != null)
-                {
-                    target.Rise(new ExecuteCommandEvent(target, UndoCommand.Id, null));
-                }
+                return;
             }
-        }
-        
-        if (KeyGesture.Parse("Ctrl+T").Matches(arg2))
-        {
-            arg2.Handled = true;
-            if (_commandService.CanExecuteCommand(ChangeThemeCommand.Id, SelectedControl.Value, out var target))
-            {
-                if (target != null)
-                {
-                    target.Rise(new ExecuteCommandEvent(target, ChangeThemeCommand.Id, null));
-                }
-            }
+
+            target.ExecuteCommand(command.Info.Id, null);
+            keyEventArgs.Handled = true;
         }
     }
 

@@ -9,7 +9,7 @@ namespace Asv.Avalonia;
 
 public class ShellViewModel : RoutableViewModel, IShell
 {
-    
+
     private readonly ObservableList<IPage> _pages = new();
     private readonly IContainerHost _container;
     private readonly Stack<string[]> _backwardStack = new();
@@ -17,8 +17,8 @@ public class ShellViewModel : RoutableViewModel, IShell
     private readonly IDisposable _sub1;
     private bool _internalNavigation;
     private bool _internalChange;
-    private readonly BindableReactiveProperty<IRoutable> _selectedControl;
-    private readonly BindableReactiveProperty<string[]?> _selectedControlPath;
+    private readonly ReactiveProperty<IRoutable> _selectedControl;
+    private readonly ReactiveProperty<string[]?> _selectedControlPath;
     public const string ShellId = "shell";
 
     protected ShellViewModel(IContainerHost ioc)
@@ -42,8 +42,8 @@ public class ShellViewModel : RoutableViewModel, IShell
             var page = await NavigateTo(x.Id);
             await Rise(new NavigationEvent(page));
         });
-        _selectedControl = new BindableReactiveProperty<IRoutable>(this);
-        _selectedControlPath = new BindableReactiveProperty<string[]?>();
+        _selectedControl = new ReactiveProperty<IRoutable>(this);
+        _selectedControlPath = new ReactiveProperty<string[]?>();
         _selectedControlPath.Subscribe(x =>
         {
             if (x is not { Length: > 0 })
@@ -101,8 +101,8 @@ public class ShellViewModel : RoutableViewModel, IShell
 
     public NotifyCollectionChangedSynchronizedViewList<IPage> Pages { get; }
 
-    public IReadOnlyBindableReactiveProperty<IRoutable> SelectedControl => _selectedControl;
-    public IReadOnlyBindableReactiveProperty<string[]?> SelectedControlPath => _selectedControlPath;
+    public ReadOnlyReactiveProperty<IRoutable> SelectedControl => _selectedControl;
+    public ReadOnlyReactiveProperty<string[]?> SelectedControlPath => _selectedControlPath;
 
     public BindableReactiveProperty<ShellStatus> Status { get; }
     public ReactiveCommand Close { get; }

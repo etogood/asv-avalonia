@@ -4,6 +4,8 @@ namespace Asv.Avalonia;
 
 public class DesignTimeShellViewModel : ShellViewModel
 {
+    public static DesignTimeShellViewModel Instance { get; } = new();
+    
     public DesignTimeShellViewModel()
         : base(NullContainerHost.Instance)
     {

@@ -1,4 +1,5 @@
 using System.Composition;
+using Avalonia.Input;
 using Material.Icons;
 
 namespace Asv.Avalonia;
@@ -8,10 +9,11 @@ public class UndoCommand : IAsyncCommand
     public const string Id = "global.undo";
     public static ICommandInfo StaticInfo { get; } = new CommandInfo
     {
-        CommandId = Id,
+        Id = Id,
         Name = "Undo",
         Description = "Undo the last action",
         Icon = MaterialIconKind.UndoVariant,
+        DefaultHotKey = KeyGesture.Parse("Ctrl+Z"),
         Order = 0,
     };
 
@@ -32,12 +34,10 @@ public class UndoCommand : IAsyncCommand
         {
             return page.History.UndoAsync(cancel);
         }
-        
+
         return ValueTask.CompletedTask;
     }
 }
-
-
 
 [ExportCommand]
 [Shared]

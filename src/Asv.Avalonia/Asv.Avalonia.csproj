@@ -58,16 +58,20 @@
         <DependentUpon>ShellTabWindow.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Shell\View\ShellView.axaml.cs">
-        <DependentUpon>MainView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
       <Compile Update="Controls\TreePage\TreePageView.axaml.cs">
         <DependentUpon>TreePageView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
       <Compile Update="Shell\Pages\Settings\Units\SettingsUnitsView.axaml.cs">
         <DependentUpon>SettingsUnitsView.axaml</DependentUpon>
+      </Compile>
+      <Compile Update="DebugWindow\DebugWindow.axaml.cs">
+        <DependentUpon>DebugWindow.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Shell\ShellView.axaml.cs">
+        <DependentUpon>ShellView.axaml</DependentUpon>
+        <SubType>Code</SubType>
       </Compile>
     </ItemGroup>
 

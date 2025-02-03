@@ -12,5 +12,4 @@ public partial class ShellWindow : Window
         this.AttachDevTools();
 #endif
     }
-    
 }
