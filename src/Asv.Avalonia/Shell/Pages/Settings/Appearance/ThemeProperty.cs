@@ -29,15 +29,6 @@ public class ThemeProperty : RoutableViewModel
         _sub1 = SelectedItem.SubscribeAwait(OnChangedByUser);
         _sub2 = svc.CurrentTheme.Subscribe(OnChangeByModel);
         _internalChange = false;
-        IsFocused.SubscribeAwait((x, _) =>
-        {
-            if (x)
-            {
-                return Rise(new NavigationEvent(this));
-            }
-            
-            return ValueTask.CompletedTask;
-        });
     }
 
     private async ValueTask OnChangedByUser(IThemeInfo userValue, CancellationToken cancel)
@@ -63,14 +54,9 @@ public class ThemeProperty : RoutableViewModel
     public IEnumerable<IThemeInfo> Items => _svc.Themes;
     public BindableReactiveProperty<IThemeInfo> SelectedItem { get; }
 
-    public override ValueTask<IRoutable> NavigateTo(string id)
+    public override ValueTask<IRoutable> Navigate(string id)
     {
         return ValueTask.FromResult<IRoutable>(this);
-    }
-
-    protected override ValueTask InternalCatchEvent(AsyncRoutedEvent e)
-    {
-        return ValueTask.CompletedTask;
     }
 
     protected override void Dispose(bool disposing)

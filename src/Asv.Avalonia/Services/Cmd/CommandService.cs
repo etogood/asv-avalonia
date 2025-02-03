@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Composition;
 using Asv.Cfg;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Material.Icons;
 using Microsoft.Extensions.Logging;
@@ -147,15 +148,12 @@ public class CommandService : ICommandService
         ReloadHotKeys(config => config[commandId] = hotKey?.ToString());
     }
 
-    public bool TryGetCommand(KeyGesture gesture, IRoutable context, out IAsyncCommand? command, out IRoutable? target)
+    public bool CanExecuteCommand(KeyGesture hotKey, IRoutable context, out IAsyncCommand? command, out IRoutable? target)
     {
-        if (_gestureVsCommand.TryGetValue(gesture, out var cmdFactory))
+        if (_gestureVsCommand.TryGetValue(hotKey, out var cmdFactory))
         {
-            if (cmdFactory.CanExecute(context, out target))
-            {
-                command = cmdFactory.Create();
-                return true;
-            }
+            command = cmdFactory.Create();
+            return cmdFactory.CanExecute(context, out target);
         }
 
         command = null;

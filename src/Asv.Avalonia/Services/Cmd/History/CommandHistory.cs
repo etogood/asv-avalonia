@@ -15,6 +15,11 @@ public class HistoryItem
         Command = command;
         ContextPath = contextPath;
     }
+
+    public override string ToString()
+    {
+        return $"{Command.Info.Id}[{string.Join(">", ContextPath)}]";
+    }
 }
 
 public class CommandHistory : ICommandHistory
@@ -38,6 +43,8 @@ public class CommandHistory : ICommandHistory
 
     public IRoutable HistoryOwner { get; }
     public ReactiveCommand Undo { get; }
+    
+    public IObservableCollection<HistoryItem> UndoStack => _undoStack;
 
     public async ValueTask UndoAsync(CancellationToken cancel = default)
     {
@@ -70,6 +77,8 @@ public class CommandHistory : ICommandHistory
             CheckUndoRedoCanExecute();
         }
     }
+
+    public IObservableCollection<HistoryItem> RedoStack => _redoStack;
 
     private ValueTask<IRoutable> GetContext(IRoutable owner, string[] path)
     {

@@ -42,7 +42,6 @@ public class SettingsUnitsViewModel : RoutableViewModel, ISettingsSubPage
                         new SynchronizedViewFilter<IUnit, MeasureUnitViewModel>((_, model) => model.Fitler(x)));
                 }
             });
-        
     }
 
     public NotifyCollectionChangedSynchronizedViewList<MeasureUnitViewModel> Items { get; }
@@ -56,9 +55,15 @@ public class SettingsUnitsViewModel : RoutableViewModel, ISettingsSubPage
         return ValueTask.CompletedTask;
     }
 
-    public override ValueTask<IRoutable> NavigateTo(string id)
+    public override ValueTask<IRoutable> Navigate(string id)
     {
-        var item = (IRoutable?)_view.FirstOrDefault(x => x.Id == id) ?? this;
-        return ValueTask.FromResult(item);
+        var item = _view.FirstOrDefault(x => x.Id == id);
+        if (item != null)
+        {
+            SelectedItem.Value = item;
+            return ValueTask.FromResult<IRoutable>(item);
+        }
+
+        return ValueTask.FromResult<IRoutable>(this);
     }
 }

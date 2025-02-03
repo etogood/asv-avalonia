@@ -37,15 +37,15 @@ public class TreePageViewModel<TContext> : PageViewModel<TContext>, IDesignTimeT
                 _breadCrumbSource.AddRange(SelectedNode.Value.GetAllMenuFromRoot().Select((item, index) => new BreadCrumbItem(index == 0, item.Base)));
             }
 
-            await NavigateTo(x.Base.NavigateTo);
+            await Navigate(x.Base.NavigateTo);
         });
     }
 
-    public override async ValueTask<IRoutable> NavigateTo(string id)
+    public override async ValueTask<IRoutable> Navigate(string id)
     {
         if (SelectedPage.Value != null && SelectedPage.Value.Id == id)
         {
-            return SelectedPage.Value;
+            await ValueTask.FromResult(SelectedPage.Value);
         }
 
         if (SelectedNode.Value?.Base.NavigateTo != id)
@@ -64,7 +64,6 @@ public class TreePageViewModel<TContext> : PageViewModel<TContext>, IDesignTimeT
         SelectedPage.Value?.Dispose();
         newPage.Parent = this;
         SelectedPage.Value = newPage;
-        await Rise(new NavigationEvent(newPage));
         return newPage;
     }
 

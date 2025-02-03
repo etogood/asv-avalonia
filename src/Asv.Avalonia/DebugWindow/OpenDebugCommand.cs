@@ -1,4 +1,5 @@
 using System.Composition;
+using Avalonia;
 using Avalonia.Input;
 using Material.Icons;
 
@@ -60,6 +61,7 @@ public class OpenDebugCommand(ExportFactory<IDebugWindow> factory) : IAsyncComma
         {
             DataContext = factory.CreateExport().Value,
         };
+        wnd.Topmost = true;
         wnd.Show();
         return ValueTask.CompletedTask;
     }

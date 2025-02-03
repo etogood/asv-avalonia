@@ -67,7 +67,7 @@ public class HistoricalUnitProperty : RoutableViewModel, IStatePersistor
         }
     }
 
-    public override ValueTask<IRoutable> NavigateTo(string id)
+    public override ValueTask<IRoutable> Navigate(string id)
     {
         throw new NotImplementedException();
     }

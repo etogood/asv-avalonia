@@ -69,8 +69,12 @@
             </Button>
             
             <StackPanel Spacing="4" HorizontalAlignment="Center" Orientation="Horizontal">
-                <Button Background="Transparent" Command="{Binding Back}"><avalonia1:MaterialIcon Kind="ArrowLeft"/></Button>
-                <Button Background="Transparent" Command="{Binding Forward}"><avalonia1:MaterialIcon Kind="ArrowRight"/></Button>
+                <Button Background="Transparent" Command="{Binding Backward}">
+                    <avalonia1:MaterialIcon Kind="ArrowLeft"/>
+                </Button>
+                <Button Background="Transparent" Command="{Binding Forward}">
+                    <avalonia1:MaterialIcon Kind="ArrowRight"/>
+                </Button>
                 <AutoCompleteBox VerticalAlignment="Center" Width="200"></AutoCompleteBox>
             </StackPanel>
             
@@ -86,12 +90,7 @@
             
         </DockPanel>
         <Border BorderThickness="0, 1" BorderBrush="#1e1f22">
-            <TabControl ItemsSource="{Binding Pages}" SelectedItem="{Binding SelectedPage.Value}">
-                <TabControl.Styles>
-                    <Style Selector="TabItem">
-                        <Setter Property="IsSelected" Value="{Binding IsFocused, Mode=TwoWay}"/>
-                    </Style>
-                </TabControl.Styles>
+            <TabControl ItemsSource="{Binding PagesView}" SelectedItem="{Binding SelectedPage.Value}">
                 <TabControl.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
