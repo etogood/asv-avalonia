@@ -42,15 +42,14 @@ public partial class App : Application, IContainerHost, IShellHost
                 .WithExport(AppHost.Instance);
         }
 
-        containerCfg 
+        containerCfg
             .WithExport<IContainerHost>(this)
             .WithExport<IDataTemplateHost>(this)
             .WithExport<IShellHost>(this)
             .WithDefaultConventions(conventions);
 
-        containerCfg = containerCfg
-            .WithAssemblies(DefaultAssemblies.Distinct());
-        
+        containerCfg = containerCfg.WithAssemblies(DefaultAssemblies.Distinct());
+
         // TODO: load plugin manager before creating container
         Host = containerCfg.CreateContainer();
         DataTemplates.Add(new CompositionViewLocator(Host));
@@ -64,7 +63,7 @@ public partial class App : Application, IContainerHost, IShellHost
             yield return typeof(IAppHost).Assembly;
         }
     }
-    
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -96,6 +95,7 @@ public partial class App : Application, IContainerHost, IShellHost
 
     public CompositionHost Host { get; }
     public IShell Shell { get; private set; }
+
     public bool TryGetExport<T>(string id, out T value)
     {
         return Host.TryGetExport(id, out value);

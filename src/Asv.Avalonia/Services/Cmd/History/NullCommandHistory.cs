@@ -16,7 +16,8 @@ public class NullCommandHistory : ICommandHistory
         return ValueTask.CompletedTask;
     }
 
-    public IObservableCollection<HistoryItem> UndoStack { get; } = new ObservableList<HistoryItem>();
+    public IObservableCollection<HistoryItem> UndoStack { get; } =
+        new ObservableList<HistoryItem>();
 
     public ReactiveCommand Redo { get; } = new();
 
@@ -25,7 +26,8 @@ public class NullCommandHistory : ICommandHistory
         return ValueTask.CompletedTask;
     }
 
-    public IObservableCollection<HistoryItem> RedoStack { get; } = new ObservableList<HistoryItem>();
+    public IObservableCollection<HistoryItem> RedoStack { get; } =
+        new ObservableList<HistoryItem>();
 
     public ValueTask Execute(
         string commandId,

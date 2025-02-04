@@ -8,12 +8,10 @@ namespace Asv.Avalonia;
 public class DebugWindowViewModel : ViewModelBase, IDebugWindow
 {
     public const string ModelId = "DebugWindow";
-    private readonly ISynchronizedView<IPage,DebugPageViewModel> _pageView;
+    private readonly ISynchronizedView<IPage, DebugPageViewModel> _pageView;
 
     public DebugWindowViewModel()
-        : this(DesignTime.Shell)
-    {
-    }
+        : this(DesignTime.Shell) { }
 
     [ImportingConstructor]
     public DebugWindowViewModel(IShellHost host)
@@ -60,4 +58,3 @@ public class DebugPageViewModel : ViewModelBase
         // TODO: Implement Dispose
     }
 }
-

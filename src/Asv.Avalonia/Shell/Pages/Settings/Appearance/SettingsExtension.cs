@@ -12,9 +12,15 @@ public class SettingsExtension() : IExtensionFor<ISettingsPage>
 
     public void Extend(ISettingsPage context)
     {
-        _node1 = new TreePageNode(SettingsAppearanceViewModel.PageId, SettingsAppearanceViewModel.PageId );
+        _node1 = new TreePageNode(
+            SettingsAppearanceViewModel.PageId,
+            SettingsAppearanceViewModel.PageId
+        );
         _node2 = new TreePageNode(SettingsUnitsViewModel.PageId, SettingsUnitsViewModel.PageId);
-        _node3 = new TreePageNode(SettingsHotKeysViewModel.SubPageId, SettingsHotKeysViewModel.SubPageId);
+        _node3 = new TreePageNode(
+            SettingsHotKeysViewModel.SubPageId,
+            SettingsHotKeysViewModel.SubPageId
+        );
         context.Nodes.Add(_node1);
         context.Nodes.Add(_node2);
         context.Nodes.Add(_node3);

@@ -7,15 +7,16 @@ namespace Asv.Avalonia;
 public class UndoCommand : IAsyncCommand
 {
     public const string Id = "global.undo";
-    public static ICommandInfo StaticInfo { get; } = new CommandInfo
-    {
-        Id = Id,
-        Name = "Undo",
-        Description = "Undo the last action",
-        Icon = MaterialIconKind.UndoVariant,
-        DefaultHotKey = KeyGesture.Parse("Ctrl+Z"),
-        Order = 0,
-    };
+    public static ICommandInfo StaticInfo { get; } =
+        new CommandInfo
+        {
+            Id = Id,
+            Name = "Undo",
+            Description = "Undo the last action",
+            Icon = MaterialIconKind.UndoVariant,
+            DefaultHotKey = KeyGesture.Parse("Ctrl+Z"),
+            Order = 0,
+        };
 
     public IPersistable Save()
     {
@@ -28,7 +29,12 @@ public class UndoCommand : IAsyncCommand
     }
 
     public ICommandInfo Info => StaticInfo;
-    public ValueTask Execute(IRoutable context, IPersistable? parameter = null, CancellationToken cancel = default)
+
+    public ValueTask Execute(
+        IRoutable context,
+        IPersistable? parameter = null,
+        CancellationToken cancel = default
+    )
     {
         if (context is IPage page)
         {

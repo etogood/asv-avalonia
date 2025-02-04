@@ -26,6 +26,7 @@ public class SettingsAppearanceViewModel : RoutableViewModel, ISettingsSubPage
     }
 
     public ThemeProperty Theme { get; }
+
     public ValueTask Init(ISettingsPage context)
     {
         return ValueTask.CompletedTask;
@@ -37,7 +38,7 @@ public class SettingsAppearanceViewModel : RoutableViewModel, ISettingsSubPage
         {
             return ValueTask.FromResult<IRoutable>(Theme);
         }
-        
+
         return ValueTask.FromResult<IRoutable>(this);
     }
 }

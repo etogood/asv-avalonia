@@ -5,7 +5,10 @@ namespace Asv.Avalonia;
 
 public class DesktopShellViewModel : ShellViewModel
 {
-    public DesktopShellViewModel(IClassicDesktopStyleApplicationLifetime lifetime, IContainerHost ioc)
+    public DesktopShellViewModel(
+        IClassicDesktopStyleApplicationLifetime lifetime,
+        IContainerHost ioc
+    )
         : base(ioc)
     {
         lifetime.MainWindow = new ShellWindow { DataContext = this };
@@ -14,7 +17,11 @@ public class DesktopShellViewModel : ShellViewModel
 
     protected override ValueTask CloseAsync(CancellationToken cancellationToken)
     {
-        if (Application.Current != null && Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
+        if (
+            Application.Current != null
+            && Application.Current.ApplicationLifetime
+                is IClassicDesktopStyleApplicationLifetime lifetime
+        )
         {
             lifetime.Shutdown();
         }

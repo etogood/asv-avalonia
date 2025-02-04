@@ -6,8 +6,11 @@ public static class RoutableMixin
     {
         return src.Rise(new GotFocusEvent(src));
     }
-    
-    public static async ValueTask<IRoutable> NavigateTo(this IRoutable src, ArraySegment<string> path)
+
+    public static async ValueTask<IRoutable> NavigateTo(
+        this IRoutable src,
+        ArraySegment<string> path
+    )
     {
         while (true)
         {

@@ -43,7 +43,7 @@ public class CommandHistory : ICommandHistory
 
     public IRoutable HistoryOwner { get; }
     public ReactiveCommand Undo { get; }
-    
+
     public IObservableCollection<HistoryItem> UndoStack => _undoStack;
 
     public async ValueTask UndoAsync(CancellationToken cancel = default)
@@ -52,7 +52,9 @@ public class CommandHistory : ICommandHistory
         {
             var context = await GetContext(HistoryOwner, command.ContextPath);
 
-            _logger.ZLogInformation($"Undo command {command.Command.Info.Id} with {string.Join(">", command.ContextPath)} context");
+            _logger.ZLogInformation(
+                $"Undo command {command.Command.Info.Id} with {string.Join(">", command.ContextPath)} context"
+            );
             await command.Command.Undo(context, cancel);
             _redoStack.Push(command);
             CheckUndoRedoCanExecute();

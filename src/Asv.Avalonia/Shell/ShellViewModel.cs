@@ -17,7 +17,7 @@ public class ShellViewModel : RoutableViewModel, IShell
     private readonly ObservableStack<string[]> _forwardStack = new();
     private readonly ReactiveProperty<IRoutable> _selectedControl;
     private readonly ReactiveProperty<string[]> _selectedControlPath;
-    
+
     private readonly ObservableList<IPage> _pages = new();
     private readonly IContainerHost _container;
     private readonly ICommandService _cmd;
@@ -53,7 +53,10 @@ public class ShellViewModel : RoutableViewModel, IShell
             CheckBackwardForwardCanExecute();
         });
         InputElement.GotFocusEvent.AddClassHandler<TopLevel>(GotFocus, handledEventsToo: true);
-        InputElement.KeyDownEvent.AddClassHandler<TopLevel>(OnKeyDownCustom, handledEventsToo: true);
+        InputElement.KeyDownEvent.AddClassHandler<TopLevel>(
+            OnKeyDownCustom,
+            handledEventsToo: true
+        );
     }
 
     private void GotFocus(TopLevel control, GotFocusEventArgs args)
@@ -73,7 +76,14 @@ public class ShellViewModel : RoutableViewModel, IShell
         }
 
         var gesture = new KeyGesture(keyEventArgs.Key, keyEventArgs.KeyModifiers);
-        if (_cmd.CanExecuteCommand(gesture, SelectedControl.CurrentValue, out var command, out var target))
+        if (
+            _cmd.CanExecuteCommand(
+                gesture,
+                SelectedControl.CurrentValue,
+                out var command,
+                out var target
+            )
+        )
         {
             if (target != null && command != null)
             {
@@ -92,6 +102,7 @@ public class ShellViewModel : RoutableViewModel, IShell
     }
 
     public ReactiveCommand Backward { get; }
+
     public async ValueTask BackwardAsync(CancellationToken cancel = default)
     {
         if (_backwardStack.TryPop(out var path))
@@ -110,6 +121,7 @@ public class ShellViewModel : RoutableViewModel, IShell
 
     public IObservableCollection<string[]> ForwardStack => _forwardStack;
     public ReactiveCommand Forward { get; }
+
     public async ValueTask ForwardAsync(CancellationToken cancel = default)
     {
         if (_forwardStack.TryPop(out var path))
@@ -129,7 +141,10 @@ public class ShellViewModel : RoutableViewModel, IShell
 
     public IReadOnlyObservableList<IPage> Pages => _pages;
     public ReactiveCommand GoHome { get; }
-    public async ValueTask GoHomeAsync(CancellationToken cancel = default) => await Navigate(HomePageViewModel.PageId);
+
+    public async ValueTask GoHomeAsync(CancellationToken cancel = default) =>
+        await Navigate(HomePageViewModel.PageId);
+
     public BindableReactiveProperty<ShellStatus> Status { get; }
     public ReactiveCommand Close { get; }
     public BindableReactiveProperty<IPage?> SelectedPage { get; } = new();
@@ -179,7 +194,7 @@ public class ShellViewModel : RoutableViewModel, IShell
             {
                 page.Dispose();
             }
-            
+
             _pages.Clear();
         }
 
@@ -193,4 +208,3 @@ public enum ShellStatus
     Warning,
     Error,
 }
-

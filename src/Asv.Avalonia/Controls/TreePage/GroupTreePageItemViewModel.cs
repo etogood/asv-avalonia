@@ -3,10 +3,7 @@
 public class GroupTreePageItemViewModel : RoutableViewModel
 {
     public GroupTreePageItemViewModel(string id)
-        : base(id)
-    {
-        
-    }
+        : base(id) { }
 
     public override ValueTask<IRoutable> Navigate(string id)
     {

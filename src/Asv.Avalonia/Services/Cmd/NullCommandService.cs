@@ -7,11 +7,7 @@ public class NullCommandService : ICommandService
 {
     public NullCommandService()
     {
-        Commands = new[]
-        {
-            ChangeThemeCommand.StaticInfo,
-            UndoCommand.StaticInfo,
-        };
+        Commands = new[] { ChangeThemeCommand.StaticInfo, UndoCommand.StaticInfo };
     }
 
     public static ICommandService Instance { get; } = new NullCommandService();
@@ -38,14 +34,24 @@ public class NullCommandService : ICommandService
         // do nothing
     }
 
-    public bool CanExecuteCommand(KeyGesture hotKey, IRoutable context, out IAsyncCommand? command, out IRoutable? target)
+    public bool CanExecuteCommand(
+        KeyGesture hotKey,
+        IRoutable context,
+        out IAsyncCommand? command,
+        out IRoutable? target
+    )
     {
         command = null;
         target = null;
         return false;
     }
 
-    public bool TryGetCommand(KeyGesture gesture, IRoutable context, out IAsyncCommand? command, out IRoutable? target)
+    public bool TryGetCommand(
+        KeyGesture gesture,
+        IRoutable context,
+        out IAsyncCommand? command,
+        out IRoutable? target
+    )
     {
         command = null;
         target = null;

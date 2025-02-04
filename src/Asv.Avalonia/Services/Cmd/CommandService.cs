@@ -84,7 +84,11 @@ public class CommandService : ICommandService
             }
             catch (Exception e)
             {
-                _logger.LogWarning("Invalid hot key {hotKey} for command {commandId} at config", hotKey, commandId);
+                _logger.LogWarning(
+                    "Invalid hot key {hotKey} for command {commandId} at config",
+                    hotKey,
+                    commandId
+                );
                 config.HotKeys.Remove(commandId);
                 configChanged = true;
                 continue;
@@ -92,7 +96,10 @@ public class CommandService : ICommandService
 
             if (_commands.TryGetValue(commandId, out var command) == false)
             {
-                _logger.LogWarning("Command {commandId} not found => remove it from config", commandId);
+                _logger.LogWarning(
+                    "Command {commandId} not found => remove it from config",
+                    commandId
+                );
                 config.HotKeys.Remove(commandId);
                 configChanged = true;
                 continue;
@@ -100,7 +107,11 @@ public class CommandService : ICommandService
 
             if (command.Info.DefaultHotKey == keyGesture)
             {
-                _logger.LogWarning("Hot key {hotKey} for command {commandId} is default => remove it from config", hotKey, commandId);
+                _logger.LogWarning(
+                    "Hot key {hotKey} for command {commandId} is default => remove it from config",
+                    hotKey,
+                    commandId
+                );
                 config.HotKeys.Remove(commandId);
                 configChanged = true;
                 continue;
@@ -148,7 +159,12 @@ public class CommandService : ICommandService
         ReloadHotKeys(config => config[commandId] = hotKey?.ToString());
     }
 
-    public bool CanExecuteCommand(KeyGesture hotKey, IRoutable context, out IAsyncCommand? command, out IRoutable? target)
+    public bool CanExecuteCommand(
+        KeyGesture hotKey,
+        IRoutable context,
+        out IAsyncCommand? command,
+        out IRoutable? target
+    )
     {
         if (_gestureVsCommand.TryGetValue(hotKey, out var cmdFactory))
         {
@@ -161,5 +177,3 @@ public class CommandService : ICommandService
         return false;
     }
 }
-
-

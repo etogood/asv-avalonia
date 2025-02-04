@@ -28,7 +28,8 @@ public class SettingsHotKeysViewModel : RoutableViewModel, ISettingsSubPage
         SelectedItem = new BindableReactiveProperty<CommandViewModel>();
         _view = _observableList.CreateView(x => new CommandViewModel(x, svc) { Parent = this });
         Items = _view.ToNotifyCollectionChanged();
-        _sub1 = SearchText.ThrottleLast(TimeSpan.FromMilliseconds(500))
+        _sub1 = SearchText
+            .ThrottleLast(TimeSpan.FromMilliseconds(500))
             .Subscribe(x =>
             {
                 if (x.IsNullOrWhiteSpace())
@@ -45,6 +46,7 @@ public class SettingsHotKeysViewModel : RoutableViewModel, ISettingsSubPage
     public NotifyCollectionChangedSynchronizedViewList<CommandViewModel> Items { get; }
     public BindableReactiveProperty<string> SearchText { get; }
     public IBindableReactiveProperty<CommandViewModel> SelectedItem { get; }
+
     public override ValueTask<IRoutable> Navigate(string id)
     {
         var item = _view.FirstOrDefault(x => x.Id == id);

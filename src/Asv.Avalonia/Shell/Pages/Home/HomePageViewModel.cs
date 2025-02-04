@@ -6,6 +6,7 @@ namespace Asv.Avalonia;
 public class HomePageViewModel : PageViewModel<HomePageViewModel>
 {
     public const string PageId = "home";
+
     public HomePageViewModel()
         : this(DesignTime.CommandService)
     {
@@ -14,10 +15,7 @@ public class HomePageViewModel : PageViewModel<HomePageViewModel>
 
     [ImportingConstructor]
     public HomePageViewModel(ICommandService cmd)
-        : base(PageId, cmd)
-    {
-        
-    }
+        : base(PageId, cmd) { }
 
     public override ValueTask<IRoutable> Navigate(string id)
     {

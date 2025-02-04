@@ -29,7 +29,8 @@ public class SettingsUnitsViewModel : RoutableViewModel, ISettingsSubPage
         Items = _view.ToNotifyCollectionChanged();
         SelectedItem = new BindableReactiveProperty<MeasureUnitViewModel>();
         SearchText = new BindableReactiveProperty<string>();
-        _sub1 = SearchText.ThrottleLast(TimeSpan.FromMilliseconds(500))
+        _sub1 = SearchText
+            .ThrottleLast(TimeSpan.FromMilliseconds(500))
             .Subscribe(x =>
             {
                 if (x.IsNullOrWhiteSpace())
@@ -39,13 +40,15 @@ public class SettingsUnitsViewModel : RoutableViewModel, ISettingsSubPage
                 else
                 {
                     _view.AttachFilter(
-                        new SynchronizedViewFilter<IUnit, MeasureUnitViewModel>((_, model) => model.Fitler(x)));
+                        new SynchronizedViewFilter<IUnit, MeasureUnitViewModel>(
+                            (_, model) => model.Fitler(x)
+                        )
+                    );
                 }
             });
     }
 
     public NotifyCollectionChangedSynchronizedViewList<MeasureUnitViewModel> Items { get; }
-
 
     public BindableReactiveProperty<MeasureUnitViewModel> SelectedItem { get; }
     public BindableReactiveProperty<string> SearchText { get; }

@@ -18,6 +18,7 @@ public class OpenDebugCommandFactory : ICommandFactory
     }
 
     public ICommandInfo Info => OpenDebugCommand.StaticInfo;
+
     public IAsyncCommand Create()
     {
         return new OpenDebugCommand(_factory);
@@ -55,12 +56,14 @@ public class OpenDebugCommand(ExportFactory<IDebugWindow> factory) : IAsyncComma
     }
 
     public ICommandInfo Info => StaticInfo;
-    public ValueTask Execute(IRoutable context, IPersistable? parameter = null, CancellationToken cancel = default)
+
+    public ValueTask Execute(
+        IRoutable context,
+        IPersistable? parameter = null,
+        CancellationToken cancel = default
+    )
     {
-        var wnd = new DebugWindow()
-        {
-            DataContext = factory.CreateExport().Value,
-        };
+        var wnd = new DebugWindow() { DataContext = factory.CreateExport().Value };
         wnd.Topmost = true;
         wnd.Show();
         return ValueTask.CompletedTask;
