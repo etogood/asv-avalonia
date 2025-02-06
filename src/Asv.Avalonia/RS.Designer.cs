@@ -230,5 +230,35 @@ namespace Asv.Avalonia {
                 return ResourceManager.GetString("SettingsKeymapViewModel_Name", resourceCulture);
             }
         }
+        
+        public static string ShellView_WindowControlButton_Close {
+            get {
+                return ResourceManager.GetString("ShellView_WindowControlButton_Close", resourceCulture);
+            }
+        }
+        
+        public static string ShellView_Toolbar_File {
+            get {
+                return ResourceManager.GetString("ShellView_Toolbar_File", resourceCulture);
+            }
+        }
+        
+        public static string ShellView_Toolbar_Edit {
+            get {
+                return ResourceManager.GetString("ShellView_Toolbar_Edit", resourceCulture);
+            }
+        }
+        
+        public static string ShellView_Toolbar_View {
+            get {
+                return ResourceManager.GetString("ShellView_Toolbar_View", resourceCulture);
+            }
+        }
+        
+        public static string ShellView_Toolbar_Help {
+            get {
+                return ResourceManager.GetString("ShellView_Toolbar_Help", resourceCulture);
+            }
+        }
     }
 }

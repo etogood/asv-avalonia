@@ -104,4 +104,19 @@
     <data name="SettingsKeymapViewModel_Name" xml:space="preserve">
         <value>Горячие клавиши</value>
     </data>
+    <data name="ShellView_WindowControlButton_Close" xml:space="preserve">
+        <value>Закрыть</value>
+    </data>
+    <data name="ShellView_Toolbar_Edit" xml:space="preserve">
+        <value>Правка</value>
+    </data>
+    <data name="ShellView_Toolbar_File" xml:space="preserve">
+        <value>Файл</value>
+    </data>
+    <data name="ShellView_Toolbar_Help" xml:space="preserve">
+        <value>Помощь</value>
+    </data>
+    <data name="ShellView_Toolbar_View" xml:space="preserve">
+        <value>Вид</value>
+    </data>
 </root>
