@@ -92,4 +92,21 @@ public static class RoutableMixin
 
         yield return src;
     }
+
+    public static T? FindParent<T>(this IRoutable src)
+        where T : IRoutable
+    {
+        var current = src;
+        while (current is not null)
+        {
+            if (current is T result)
+            {
+                return result;
+            }
+
+            current = current.Parent;
+        }
+
+        return default;
+    }
 }

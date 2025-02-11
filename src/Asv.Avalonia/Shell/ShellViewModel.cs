@@ -5,7 +5,7 @@ using R3;
 
 namespace Asv.Avalonia;
 
-public class ShellViewModel : RoutableViewModel, IShell
+public class ShellViewModel : ExtendableViewModel<IShell>, IShell
 {
     private readonly ObservableStack<string[]> _backwardStack = new();
     private readonly ObservableStack<string[]> _forwardStack = new();
@@ -66,6 +66,11 @@ public class ShellViewModel : RoutableViewModel, IShell
             OnKeyDownCustom,
             handledEventsToo: true
         );
+
+        MainMenu = new ObservableList<IMenuItem>();
+        MainMenuView = new MenuCollection(MainMenu, x => x.Id, x => x.ParentId);
+        MainMenu.Add(new MenuItem("file") { Header = "File" });
+        MainMenu.Add(new MenuItem("file.open", "file") { Header = "Open" });
     }
 
     private void GotFocus(TopLevel control, GotFocusEventArgs args)
@@ -109,6 +114,13 @@ public class ShellViewModel : RoutableViewModel, IShell
     {
         return vm.GetAllFrom(this).Skip(1).Select(x => x.Id).ToArray();
     }
+
+    #region MainMenu
+
+    public ObservableList<IMenuItem> MainMenu { get; }
+    public MenuCollection MainMenuView { get; }
+
+    #endregion
 
     #region Backward \ Forward \ Home
 
@@ -222,6 +234,12 @@ public class ShellViewModel : RoutableViewModel, IShell
             _selectedControl.Value = gotFocus.Source;
         }
 
+        if (e is PageCloseRequestedEvent close)
+        {
+            // TODO: save page layout
+            _pages.Remove(close.Page);
+        }
+
         return ValueTask.CompletedTask;
     }
 
@@ -230,6 +248,11 @@ public class ShellViewModel : RoutableViewModel, IShell
     public BindableReactiveProperty<string> Title { get; }
 
     #region Dispose
+
+    protected override void AfterLoadExtensions()
+    {
+        // do nothing
+    }
 
     protected override void Dispose(bool disposing)
     {

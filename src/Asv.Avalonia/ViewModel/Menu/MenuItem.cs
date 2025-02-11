@@ -18,8 +18,13 @@ namespace Asv.Avalonia
         private ICommand _command;
         private object? _commandParameter;
 
-        public MenuItem(string id)
-            : base(id) { }
+        public MenuItem(string id, string? parentId = null)
+            : base(id)
+        {
+            ParentId = parentId;
+        }
+
+        public string? ParentId { get; }
 
         public int Order
         {

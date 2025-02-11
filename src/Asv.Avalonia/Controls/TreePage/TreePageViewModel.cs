@@ -96,6 +96,11 @@ public class TreePageViewModel<TContext> : PageViewModel<TContext>, IDesignTimeT
     public ObservableList<ITreePageNode> Nodes { get; }
     public BindableReactiveProperty<bool> IsCompactMode { get; } = new();
 
+    protected override TContext GetContext()
+    {
+        return this as TContext ?? throw new InvalidOperationException("Can't cast to context");
+    }
+
     protected override void AfterLoadExtensions()
     {
         // do nothing
