@@ -17,9 +17,7 @@ public class DocumentViewModel : PageViewModel<DocumentViewModel>
     public DocumentViewModel(ICommandService cmd)
         : base(PageId, cmd) { }
 
-    protected override void AfterLoadExtensions()
-    {
-    }
+    protected override void AfterLoadExtensions() { }
 
     public override ValueTask<IRoutable> Navigate(string id)
     {

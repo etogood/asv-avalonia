@@ -73,7 +73,6 @@ public class DockControl : SelectingItemsControl
 
     private void PressedHandler(object? sender, PointerPressedEventArgs e)
     {
-
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
         {
             return;
@@ -100,7 +99,9 @@ public class DockControl : SelectingItemsControl
 
         foreach (var border in _targetBorders)
         {
-            border.Background = TurnBorderIndicator(IsCursorWithinTargetBorder(pointerPosition, border));
+            border.Background = TurnBorderIndicator(
+                IsCursorWithinTargetBorder(pointerPosition, border)
+            );
         }
     }
 
@@ -133,7 +134,9 @@ public class DockControl : SelectingItemsControl
 
         foreach (var border in _targetBorders)
         {
-            border.Background = TurnBorderIndicator(IsCursorWithinTargetBorder(pointerPosition, border));
+            border.Background = TurnBorderIndicator(
+                IsCursorWithinTargetBorder(pointerPosition, border)
+            );
             if (IsCursorWithinTargetBorder(pointerPosition, border))
             {
                 isBorderSelected = true;
@@ -159,7 +162,9 @@ public class DockControl : SelectingItemsControl
 
             item.BorderBrush = TurnBorderIndicator(IsCursorWithinTabControl(pointerPosition, item));
 
-            item.BorderThickness = new Thickness(IsCursorWithinTabControl(pointerPosition, item) ? 4 : 0);
+            item.BorderThickness = new Thickness(
+                IsCursorWithinTabControl(pointerPosition, item) ? 4 : 0
+            );
         }
     }
 
@@ -215,7 +220,7 @@ public class DockControl : SelectingItemsControl
             {
                 return;
             }
-            
+
             item.Column = Grid.GetColumn(tabControl);
             UpdateGrid();
             break;
@@ -256,7 +261,10 @@ public class DockControl : SelectingItemsControl
 
     #endregion
 
-    protected override void LogicalChildrenCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    protected override void LogicalChildrenCollectionChanged(
+        object? sender,
+        NotifyCollectionChangedEventArgs e
+    )
     {
         base.LogicalChildrenCollectionChanged(sender, e);
         CreateTabs();
@@ -272,7 +280,9 @@ public class DockControl : SelectingItemsControl
 
         if (_dropTargetGrid is null)
         {
-            throw new ArgumentNullException($"_dropTargetGrid in {nameof(DockControl)} is not found");
+            throw new ArgumentNullException(
+                $"_dropTargetGrid in {nameof(DockControl)} is not found"
+            );
         }
 
         foreach (var content in Items)
@@ -282,10 +292,7 @@ public class DockControl : SelectingItemsControl
                 continue;
             }
 
-            var shellItem = new ShellItem()
-            {
-                TabControl = CreateTabItem(content),
-            };
+            var shellItem = new ShellItem() { TabControl = CreateTabItem(content) };
             if (_shellItems.Contains(shellItem))
             {
                 continue;
@@ -307,7 +314,10 @@ public class DockControl : SelectingItemsControl
 
         _dropTargetGrid.Children.Clear();
         _dropTargetGrid.ColumnDefinitions.Clear();
-        if (_shellItems.Min(_ => _.Column) != 0 && _shellItems.All(_ => _.Column == _shellItems[0].Column))
+        if (
+            _shellItems.Min(_ => _.Column) != 0
+            && _shellItems.All(_ => _.Column == _shellItems[0].Column)
+        )
         {
             foreach (var item in _shellItems)
             {
@@ -321,8 +331,8 @@ public class DockControl : SelectingItemsControl
 
         bool ColumnHasGridSplitter(int columnIndex)
         {
-            return _dropTargetGrid.Children
-                .OfType<GridSplitter>()
+            return _dropTargetGrid
+                .Children.OfType<GridSplitter>()
                 .Any(splitter => Grid.GetColumn(splitter) == columnIndex);
         }
 
@@ -336,7 +346,9 @@ public class DockControl : SelectingItemsControl
 
         foreach (var item in _shellItems)
         {
-            var tabControl = FindTabControlInColumn(_dropTargetGrid, item.Column) ?? new AdaptiveTabStripTabControl();
+            var tabControl =
+                FindTabControlInColumn(_dropTargetGrid, item.Column)
+                ?? new AdaptiveTabStripTabControl();
             var oldParent = tabControl.Parent as Grid;
             oldParent?.Children.Remove(tabControl);
 
@@ -382,7 +394,10 @@ public class DockControl : SelectingItemsControl
     {
         foreach (var child in myGrid.Children)
         {
-            if (child is AdaptiveTabStripTabControl tabControl && Grid.GetColumn(tabControl) == columnIndex)
+            if (
+                child is AdaptiveTabStripTabControl tabControl
+                && Grid.GetColumn(tabControl) == columnIndex
+            )
             {
                 return tabControl;
             }
@@ -410,11 +425,7 @@ public class DockControl : SelectingItemsControl
         };
         header.PointerPressed += PressedHandler;
         header.PointerMoved += PointerMovedHandler;
-        var tab = new TabItem()
-        {
-            Content = content,
-            Header = header,
-        };
+        var tab = new TabItem() { Content = content, Header = header };
         return tab;
     }
 
@@ -425,7 +436,10 @@ public class DockControl : SelectingItemsControl
         return targetBorder.Bounds.Contains(cursorPosition);
     }
 
-    private bool IsCursorWithinTabControl(Point cursorPosition, AdaptiveTabStripTabControl targetPanel)
+    private bool IsCursorWithinTabControl(
+        Point cursorPosition,
+        AdaptiveTabStripTabControl targetPanel
+    )
     {
         return targetPanel.Bounds.Contains(cursorPosition);
     }
@@ -452,7 +466,10 @@ public class DockControl : SelectingItemsControl
         {
             updateItem.Column -= ColumnIncrement;
 
-            if (_shellItems.Count(shellItem => shellItem.Column.Equals(updateItem.Column)) >= ColumnIncrement)
+            if (
+                _shellItems.Count(shellItem => shellItem.Column.Equals(updateItem.Column))
+                >= ColumnIncrement
+            )
             {
                 updateItem.Column -= ColumnIncrement;
             }
@@ -471,7 +488,10 @@ public class DockControl : SelectingItemsControl
         {
             updateItem.Column += ColumnIncrement;
 
-            if (_shellItems.Count(shellItem => shellItem.Column.Equals(updateItem.Column)) >= ColumnIncrement)
+            if (
+                _shellItems.Count(shellItem => shellItem.Column.Equals(updateItem.Column))
+                >= ColumnIncrement
+            )
             {
                 updateItem.Column += ColumnIncrement;
             }
@@ -505,7 +525,8 @@ public class DockControl : SelectingItemsControl
 
         _shellItems = _shellItems.OrderBy(shellItem => shellItem.Column).ToList();
 
-        var gapPairs = _shellItems.Zip(_shellItems.Skip(1), (prev, curr) => new { prev, curr })
+        var gapPairs = _shellItems
+            .Zip(_shellItems.Skip(1), (prev, curr) => new { prev, curr })
             .Where(pair => pair.curr.Column - pair.prev.Column > 2)
             .ToList();
         foreach (var pair in gapPairs)
@@ -537,8 +558,10 @@ public class DockControl : SelectingItemsControl
         set => SetValue(TabControlStripItemTemplateProperty, value);
     }
 
-    public static readonly StyledProperty<int> MaxSplitAmountProperty =
-        AvaloniaProperty.Register<DockControl, int>(nameof(MaxSplitAmount), 4);
+    public static readonly StyledProperty<int> MaxSplitAmountProperty = AvaloniaProperty.Register<
+        DockControl,
+        int
+    >(nameof(MaxSplitAmount), 4);
 
     public int MaxSplitAmount
     {
@@ -547,7 +570,10 @@ public class DockControl : SelectingItemsControl
     }
 
     public static readonly StyledProperty<IBrush> BorderHighLightColorProperty =
-        AvaloniaProperty.Register<DockControl, IBrush>(nameof(BorderHighLightColor), Brushes.LightBlue);
+        AvaloniaProperty.Register<DockControl, IBrush>(
+            nameof(BorderHighLightColor),
+            Brushes.LightBlue
+        );
 
     public IBrush BorderHighLightColor
     {

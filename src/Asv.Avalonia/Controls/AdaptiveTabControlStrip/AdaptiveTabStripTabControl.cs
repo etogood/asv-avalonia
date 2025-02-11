@@ -2,8 +2,4 @@
 
 namespace Asv.Avalonia;
 
-public class AdaptiveTabStripTabControl: TabControl
-{
-    
-
-}
+public class AdaptiveTabStripTabControl : TabControl { }
