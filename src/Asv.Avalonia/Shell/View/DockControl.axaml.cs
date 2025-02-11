@@ -48,12 +48,21 @@ public class DockControl : SelectingItemsControl
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
-        _leftSelector = e.NameScope.Find<Border>("PART_LeftSelector")
-                        ?? throw new ApplicationException("Part of control PART_LeftSelector not found in DockControl.axaml");
-        _rightSelector = e.NameScope.Find<Border>("PART_RightSelector")
-                         ?? throw new ApplicationException("Part of control PART_RightSelector not found in DockControl.axaml");
-        _dropTargetGrid = e.NameScope.Find<Grid>("PART_DockSelectivePart")
-                          ?? throw new ApplicationException("Part of control PART_DockSelectivePart not found in DockControl.axaml");
+        _leftSelector =
+            e.NameScope.Find<Border>("PART_LeftSelector")
+            ?? throw new ApplicationException(
+                "Part of control PART_LeftSelector not found in DockControl.axaml"
+            );
+        _rightSelector =
+            e.NameScope.Find<Border>("PART_RightSelector")
+            ?? throw new ApplicationException(
+                "Part of control PART_RightSelector not found in DockControl.axaml"
+            );
+        _dropTargetGrid =
+            e.NameScope.Find<Grid>("PART_DockSelectivePart")
+            ?? throw new ApplicationException(
+                "Part of control PART_DockSelectivePart not found in DockControl.axaml"
+            );
 
         _targetBorders.Add(_leftSelector);
         _targetBorders.Add(_rightSelector);
@@ -216,7 +225,9 @@ public class DockControl : SelectingItemsControl
                 continue;
             }
 
-            _shellItems.First(item => item.TabControl == _selectedTab).Column = Grid.GetColumn(tabControl);
+            _shellItems.First(item => item.TabControl == _selectedTab).Column = Grid.GetColumn(
+                tabControl
+            );
             UpdateGrid();
             break;
         }
