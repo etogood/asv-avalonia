@@ -85,7 +85,11 @@ public partial class App : Application, IContainerHost, IShellHost
         {
             Shell.Navigate(SettingsPageViewModel.PageId);
             Shell.Navigate(HomePageViewModel.PageId);
+            Shell.Navigate(DocumentViewModel.PageId);
         }
+#if DEBUG
+        this.AttachDevTools();
+#endif
     }
 
     public T GetExport<T>()
