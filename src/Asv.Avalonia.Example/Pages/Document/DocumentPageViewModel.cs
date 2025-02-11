@@ -1,21 +1,27 @@
-﻿using System.Composition;
+﻿using System.Collections.Generic;
+using System.Composition;
+using System.Threading.Tasks;
 
-namespace Asv.Avalonia;
+namespace Asv.Avalonia.Example;
 
 [ExportPage(PageId)]
-public class DocumentViewModel : PageViewModel<DocumentViewModel>
+public class DocumentPageViewModel : PageViewModel<DocumentPageViewModel>
 {
     public const string PageId = "document";
 
-    public DocumentViewModel()
+    public DocumentPageViewModel()
         : this(DesignTime.CommandService)
     {
         DesignTime.ThrowIfNotDesignMode();
+        Title.OnNext(RS.DocumentPageViewModel_Title);
     }
 
     [ImportingConstructor]
-    public DocumentViewModel(ICommandService cmd)
-        : base(PageId, cmd) { }
+    public DocumentPageViewModel(ICommandService cmd)
+        : base(PageId, cmd)
+    {
+        Title.OnNext(RS.DocumentPageViewModel_Title);
+    }
 
     protected override void AfterLoadExtensions() { }
 
