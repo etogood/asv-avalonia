@@ -49,4 +49,12 @@
       <ProjectReference Include="..\Asv.Avalonia.Map\Asv.Avalonia.Map.csproj" />
       <ProjectReference Include="..\Asv.Avalonia\Asv.Avalonia.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Pages\Document\DocumentPageView.axaml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Pages\Map\" />
+    </ItemGroup>
 </Project>

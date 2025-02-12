@@ -201,9 +201,9 @@ namespace Asv.Avalonia {
             }
         }
         
-        public static string HomePageVIewModel_Title {
+        public static string HomePageViewModel_Title {
             get {
-                return ResourceManager.GetString("HomePageVIewModel_Title", resourceCulture);
+                return ResourceManager.GetString("HomePageViewModel_Title", resourceCulture);
             }
         }
         
@@ -258,6 +258,18 @@ namespace Asv.Avalonia {
         public static string ShellView_Toolbar_Help {
             get {
                 return ResourceManager.GetString("ShellView_Toolbar_Help", resourceCulture);
+            }
+        }
+        
+        public static string DocumentPageViewModel_Title {
+            get {
+                return ResourceManager.GetString("DocumentPageViewModel_Title", resourceCulture);
+            }
+        }
+        
+        public static string MapExamplePageViewModel_Title {
+            get {
+                return ResourceManager.GetString("MapExamplePageViewModel_Title", resourceCulture);
             }
         }
     }

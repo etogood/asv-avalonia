@@ -24,9 +24,9 @@ public class DockControl : SelectingItemsControl
     private readonly List<Border> _targetBorders = [];
     private List<ShellItem> _shellItems = [];
     private TabItem? _selectedTab;
-    private Border? _leftSelector;
-    private Border? _rightSelector;
-    private Grid? _dropTargetGrid;
+    private Border _leftSelector;
+    private Border _rightSelector;
+    private Grid _dropTargetGrid;
 
     public DockControl()
     {
@@ -48,24 +48,24 @@ public class DockControl : SelectingItemsControl
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
-        _leftSelector = e.NameScope.Find<Border>("PART_LeftSelector");
-        _rightSelector = e.NameScope.Find<Border>("PART_RightSelector");
-        _dropTargetGrid = e.NameScope.Find<Grid>("PART_DockSelectivePart");
-        if (_dropTargetGrid is null)
-        {
-            throw new ApplicationException();
-        }
+        _leftSelector =
+            e.NameScope.Find<Border>("PART_LeftSelector")
+            ?? throw new ApplicationException(
+                "Part of control PART_LeftSelector not found in DockControl.axaml"
+            );
+        _rightSelector =
+            e.NameScope.Find<Border>("PART_RightSelector")
+            ?? throw new ApplicationException(
+                "Part of control PART_RightSelector not found in DockControl.axaml"
+            );
+        _dropTargetGrid =
+            e.NameScope.Find<Grid>("PART_DockSelectivePart")
+            ?? throw new ApplicationException(
+                "Part of control PART_DockSelectivePart not found in DockControl.axaml"
+            );
 
-        if (_leftSelector != null)
-        {
-            _targetBorders.Add(_leftSelector);
-        }
-
-        if (_rightSelector != null)
-        {
-            _targetBorders.Add(_rightSelector);
-        }
-
+        _targetBorders.Add(_leftSelector);
+        _targetBorders.Add(_rightSelector);
         CreateTabs();
     }
 
@@ -109,11 +109,6 @@ public class DockControl : SelectingItemsControl
     {
         base.OnPointerMoved(e);
 
-        if (_dropTargetGrid == null)
-        {
-            return;
-        }
-
         if (_selectedTab == null)
         {
             return;
@@ -125,10 +120,6 @@ public class DockControl : SelectingItemsControl
         }
 
         var isBorderSelected = false;
-        if (_selectedTab == null)
-        {
-            return;
-        }
 
         var pointerPosition = e.GetPosition(this);
 
@@ -141,11 +132,6 @@ public class DockControl : SelectingItemsControl
             {
                 isBorderSelected = true;
             }
-        }
-
-        if (_dropTargetGrid == null)
-        {
-            return;
         }
 
         if (isBorderSelected)
@@ -192,46 +178,11 @@ public class DockControl : SelectingItemsControl
         }
 
         var cursorPosition = e.GetPosition(window);
-
-        if (_dropTargetGrid is null)
-        {
-            return;
-        }
-
-        foreach (var child in _dropTargetGrid.Children)
-        {
-            if (child is not AdaptiveTabStripTabControl tabControl)
-            {
-                continue;
-            }
-
-            if (!IsCursorWithinTabControl(cursorPosition, tabControl))
-            {
-                continue;
-            }
-
-            if (_selectedTab.FindAncestorOfType<AdaptiveTabStripTabControl>() == tabControl)
-            {
-                continue;
-            }
-
-            var item = _shellItems.Find(item => item.TabControl == _selectedTab);
-            if (item is null)
-            {
-                return;
-            }
-
-            item.Column = Grid.GetColumn(tabControl);
-            UpdateGrid();
-            break;
-        }
-
         foreach (var targetBorder in _targetBorders)
         {
             if (IsCursorWithinTargetBorder(cursorPosition, targetBorder))
             {
                 AddTabItemToTabControl(_selectedTab, targetBorder);
-                _selectedTab = null;
                 break;
             }
 
@@ -252,11 +203,36 @@ public class DockControl : SelectingItemsControl
                 Content = _selectedTab.Content,
                 Title = (_selectedTab.Header as TabStripItem)?.Content?.ToString(),
             };
-            _selectedTab = null;
-            UpdateGrid();
             win.Show();
+            _selectedTab = null;
+            return;
+        }
+
+        foreach (var child in _dropTargetGrid.Children)
+        {
+            if (child is not AdaptiveTabStripTabControl tabControl)
+            {
+                continue;
+            }
+
+            if (!IsCursorWithinTabControl(cursorPosition, tabControl))
+            {
+                continue;
+            }
+
+            if (_selectedTab.FindAncestorOfType<AdaptiveTabStripTabControl>() == tabControl)
+            {
+                continue;
+            }
+
+            _shellItems.First(item => item.TabControl == _selectedTab).Column = Grid.GetColumn(
+                tabControl
+            );
+            UpdateGrid();
             break;
         }
+
+        _selectedTab = null;
     }
 
     #endregion
@@ -307,16 +283,12 @@ public class DockControl : SelectingItemsControl
     private void UpdateGrid()
     {
         SortShellItems();
-        if (_dropTargetGrid is null)
-        {
-            return;
-        }
 
         _dropTargetGrid.Children.Clear();
         _dropTargetGrid.ColumnDefinitions.Clear();
         if (
-            _shellItems.Min(_ => _.Column) != 0
-            && _shellItems.All(_ => _.Column == _shellItems[0].Column)
+            _shellItems.Min(item => item.Column) != 0
+            && _shellItems.All(item => item.Column == _shellItems[0].Column)
         )
         {
             foreach (var item in _shellItems)
