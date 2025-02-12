@@ -5,13 +5,11 @@ using Material.Icons;
 
 namespace Asv.Avalonia
 {
-    public interface IMenuItem : IViewModel
+    public interface IMenuItem : ITitledViewModel, IRoutable
     {
-        string ParentId { get; }
+        string? ParentId { get; }
         int Order { get; }
-        MaterialIconKind Icon { get; }
-        string Header { get; }
-        ICommand Command { get; }
+        ICommand? Command { get; }
         object? CommandParameter { get; }
         bool IsVisible { get; }
         bool StaysOpenOnClick { get; }

@@ -1,13 +1,20 @@
 ﻿namespace Asv.Avalonia;
 
+/// <summary>
+/// Provides extension methods for working with <see cref="IRoutable"/> components,
+/// including navigation, hierarchy traversal, and event propagation.
+/// </summary>
 public static class RoutableMixin
 {
-    public static ValueTask RiseGotFocusEvent(this IRoutable src)
-    {
-        return src.Rise(new GotFocusEvent(src));
-    }
-
-    public static async ValueTask<IRoutable> NavigateTo(
+    /// <summary>
+    /// Navigates through the specified path, resolving each step sequentially.
+    /// </summary>
+    /// <param name="src">The starting <see cref="IRoutable"/> element.</param>
+    /// <param name="path">An ordered segment of path identifiers.</param>
+    /// <returns>
+    /// A <see cref="ValueTask{TResult}"/> resolving to the final <see cref="IRoutable"/> reached in the path.
+    /// </returns>
+    public static async ValueTask<IRoutable> NavigateByPath(
         this IRoutable src,
         ArraySegment<string> path
     )
@@ -26,11 +33,24 @@ public static class RoutableMixin
         }
     }
 
-    public static async ValueTask<IRoutable> NavigateTo(this IRoutable src, string[] path)
+    /// <summary>
+    /// Navigates through the specified path, resolving each step sequentially.
+    /// </summary>
+    /// <param name="src">The starting <see cref="IRoutable"/> element.</param>
+    /// <param name="path">An ordered array of path identifiers.</param>
+    /// <returns>
+    /// A <see cref="ValueTask{TResult}"/> resolving to the final <see cref="IRoutable"/> reached in the path.
+    /// </returns>
+    public static async ValueTask<IRoutable> NavigateByPath(this IRoutable src, string[] path)
     {
-        return await src.NavigateTo(new ArraySegment<string>(path));
+        return await src.NavigateByPath(new ArraySegment<string>(path));
     }
 
+    /// <summary>
+    /// Retrieves the root <see cref="IRoutable"/> element in the hierarchy.
+    /// </summary>
+    /// <param name="src">The starting <see cref="IRoutable"/> element.</param>
+    /// <returns>The root element in the hierarchy.</returns>
     public static IRoutable GetRoot(this IRoutable src)
     {
         var root = src;
@@ -42,7 +62,12 @@ public static class RoutableMixin
         return root;
     }
 
-    public static IEnumerable<IRoutable> GetAllToRoot(this IRoutable src)
+    /// <summary>
+    /// Enumerates all ancestors from the current element up to the root.
+    /// </summary>
+    /// <param name="src">The starting <see cref="IRoutable"/> element.</param>
+    /// <returns>An enumerable collection of ancestors up to the root.</returns>
+    public static IEnumerable<IRoutable> GetAncestorsToRoot(this IRoutable src)
     {
         var current = src;
         while (current is not null)
@@ -52,13 +77,19 @@ public static class RoutableMixin
         }
     }
 
-    public static IEnumerable<IRoutable> GetAllTo(this IRoutable src, IRoutable item)
+    /// <summary>
+    /// Enumerates all elements from the current element up to the specified target element.
+    /// </summary>
+    /// <param name="src">The starting <see cref="IRoutable"/> element.</param>
+    /// <param name="target">The target <see cref="IRoutable"/> element.</param>
+    /// <returns>An enumerable collection of elements leading to the target.</returns>
+    public static IEnumerable<IRoutable> GetAncestorsTo(this IRoutable src, IRoutable target)
     {
         var current = src;
         while (current is not null)
         {
             yield return current;
-            if (current == item)
+            if (current == target)
             {
                 break;
             }
@@ -67,11 +98,16 @@ public static class RoutableMixin
         }
     }
 
-    public static IEnumerable<IRoutable> GetAllFromRoot(this IRoutable src)
+    /// <summary>
+    /// Enumerates all elements from the root down to the current element.
+    /// </summary>
+    /// <param name="src">The starting <see cref="IRoutable"/> element.</param>
+    /// <returns>An enumerable collection of elements from the root to the current element.</returns>
+    public static IEnumerable<IRoutable> GetHierarchyFromRoot(this IRoutable src)
     {
         if (src.Parent != null)
         {
-            foreach (var ancestor in src.Parent.GetAllFromRoot())
+            foreach (var ancestor in src.Parent.GetHierarchyFromRoot())
             {
                 yield return ancestor;
             }
@@ -80,11 +116,17 @@ public static class RoutableMixin
         yield return src;
     }
 
-    public static IEnumerable<IRoutable> GetAllFrom(this IRoutable src, IRoutable item)
+    /// <summary>
+    /// Enumerates all elements from the specified target element down to the current element.
+    /// </summary>
+    /// <param name="src">The starting <see cref="IRoutable"/> element.</param>
+    /// <param name="target">The target <see cref="IRoutable"/> element.</param>
+    /// <returns>An enumerable collection of elements from the target down to the current element.</returns>
+    public static IEnumerable<IRoutable> GetHierarchyFrom(this IRoutable src, IRoutable target)
     {
-        if (src.Parent != null && src != item)
+        if (src.Parent != null && src != target)
         {
-            foreach (var ancestor in src.Parent.GetAllFrom(item))
+            foreach (var ancestor in src.Parent.GetHierarchyFrom(target))
             {
                 yield return ancestor;
             }
@@ -93,7 +135,13 @@ public static class RoutableMixin
         yield return src;
     }
 
-    public static T? FindParent<T>(this IRoutable src)
+    /// <summary>
+    /// Finds the first parent of the current element that matches the specified type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of <see cref="IRoutable"/> to search for.</typeparam>
+    /// <param name="src">The starting <see cref="IRoutable"/> element.</param>
+    /// <returns>The first matching parent of type <typeparamref name="T"/>, or <c>null</c> if none is found.</returns>
+    public static T? FindParentOfType<T>(this IRoutable src)
         where T : IRoutable
     {
         var current = src;

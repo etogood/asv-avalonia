@@ -1,22 +1,22 @@
-﻿using System.Composition;
+using System.Composition;
 using Avalonia.Input;
 using Material.Icons;
 
 namespace Asv.Avalonia;
 
-public class ClosePageCommand : IAsyncCommand
+public class UndoCommand : IAsyncCommand
 {
-    public const string Id = "cmd.page.close";
-
-    public static readonly ICommandInfo StaticInfo = new CommandInfo
-    {
-        Id = Id,
-        Name = "Close page",
-        Description = RS.OpenDebugCommand_CommandInfo_Description,
-        Icon = MaterialIconKind.CloseBold,
-        DefaultHotKey = KeyGesture.Parse("Alt+F4"),
-        Order = 0,
-    };
+    public const string Id = "global.undo";
+    public static ICommandInfo StaticInfo { get; } =
+        new CommandInfo
+        {
+            Id = Id,
+            Name = RS.UndoCommand_CommandInfo_Name,
+            Description = RS.UndoCommand_CommandInfo_Description,
+            Icon = MaterialIconKind.UndoVariant,
+            DefaultHotKey = KeyGesture.Parse("Ctrl+Z"),
+            Order = 0,
+        };
 
     public IPersistable Save()
     {
@@ -38,7 +38,7 @@ public class ClosePageCommand : IAsyncCommand
     {
         if (context is IPage page)
         {
-            return page.TryCloseAsync();
+            return page.History.UndoAsync(cancel);
         }
 
         return ValueTask.CompletedTask;
@@ -47,18 +47,18 @@ public class ClosePageCommand : IAsyncCommand
 
 [ExportCommand]
 [Shared]
-public class ClosePageCommandFactory : ICommandFactory
+public class UndoCommandFactory : ICommandFactory
 {
-    public ICommandInfo Info => ClosePageCommand.StaticInfo;
+    public ICommandInfo Info => UndoCommand.StaticInfo;
 
     public IAsyncCommand Create()
     {
-        return new ClosePageCommand();
+        return new UndoCommand();
     }
 
     public bool CanExecute(IRoutable context, out IRoutable? target)
     {
-        target = context.FindParent<IShell>()?.SelectedPage.Value;
+        target = context.GetAncestorsToRoot().FirstOrDefault(x => x is IPage);
         return target != null;
     }
 }

@@ -1,4 +1,6 @@
-﻿using Avalonia.Controls;
+﻿using System.Composition;
+using Asv.Common;
+using Avalonia.Controls;
 using Avalonia.Input;
 using ObservableCollections;
 using R3;
@@ -15,15 +17,9 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
     private readonly ObservableList<IPage> _pages;
     private readonly IContainerHost _container;
     private readonly ICommandService _cmd;
-    private readonly IDisposable _sub1;
-    private readonly IDisposable _sub2;
-    private readonly IDisposable _sub3;
-    private readonly IDisposable _sub4;
 
-    public const string ShellId = "shell";
-
-    protected ShellViewModel(IContainerHost ioc)
-        : base(ShellId)
+    protected ShellViewModel(IContainerHost ioc, string id)
+        : base(id)
     {
         ArgumentNullException.ThrowIfNull(ioc);
         _container = ioc;
@@ -42,42 +38,48 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
         SelectedPage = new BindableReactiveProperty<IPage?>();
         _selectedControl = new ReactiveProperty<IRoutable>(this);
         _selectedControlPath = new ReactiveProperty<string[]>(GetPath(this));
-        _sub1 = _selectedControl.Subscribe(x => _selectedControlPath.Value = GetPath(x));
-        _sub2 = _selectedControlPath.Subscribe(x =>
-        {
-            if (x is not { Length: > 0 })
+        _selectedControl
+            .Subscribe(x => _selectedControlPath.Value = GetPath(x))
+            .DisposeItWith(Disposable);
+        _selectedControlPath
+            .Subscribe(x =>
             {
-                return;
-            }
+                if (x is not { Length: > 0 })
+                {
+                    return;
+                }
 
-            _backwardStack.Push(x);
-            _forwardStack.Clear();
-            CheckBackwardForwardCanExecute();
-        });
+                _backwardStack.Push(x);
+                _forwardStack.Clear();
+                CheckBackwardForwardCanExecute();
+            })
+            .DisposeItWith(Disposable);
+        ;
 
         // global event handlers for focus IRoutable controls
-        _sub3 = InputElement.GotFocusEvent.AddClassHandler<TopLevel>(
-            GotFocus,
-            handledEventsToo: true
-        );
+        InputElement
+            .GotFocusEvent.AddClassHandler<TopLevel>(GotFocus, handledEventsToo: true)
+            .DisposeItWith(Disposable);
+        ;
 
         // global event handlers for key events
-        _sub4 = InputElement.KeyDownEvent.AddClassHandler<TopLevel>(
-            OnKeyDownCustom,
-            handledEventsToo: true
-        );
+        InputElement
+            .KeyDownEvent.AddClassHandler<TopLevel>(OnKeyDownCustom, handledEventsToo: true)
+            .DisposeItWith(Disposable);
+        ;
 
         MainMenu = new ObservableList<IMenuItem>();
-        MainMenuView = new MenuCollection(MainMenu, x => x.Id, x => x.ParentId);
-        MainMenu.Add(new MenuItem("file") { Header = "File" });
-        MainMenu.Add(new MenuItem("file.open", "file") { Header = "Open" });
+        MainMenuView = new MenuTree(MainMenu).DisposeItWith(Disposable);
+        MainMenu.ObserveAdd().Subscribe(x => x.Value.Parent = this).DisposeItWith(Disposable);
+        MainMenu.ObserveRemove().Subscribe(x => x.Value.Parent = null).DisposeItWith(Disposable);
+        ;
     }
 
     private void GotFocus(TopLevel control, GotFocusEventArgs args)
     {
         if (args.Source is Control { DataContext: IRoutable routable })
         {
-            routable.RiseGotFocusEvent();
+            routable.RaiseFocusEvent();
         }
     }
 
@@ -112,13 +114,13 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
 
     private string[] GetPath(IRoutable vm)
     {
-        return vm.GetAllFrom(this).Skip(1).Select(x => x.Id).ToArray();
+        return vm.GetHierarchyFrom(this).Skip(1).Select(x => x.Id).ToArray();
     }
 
     #region MainMenu
 
     public ObservableList<IMenuItem> MainMenu { get; }
-    public MenuCollection MainMenuView { get; }
+    public MenuTree MainMenuView { get; }
 
     #endregion
 
@@ -136,7 +138,7 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
         if (_backwardStack.TryPop(out var path))
         {
             _forwardStack.Push(path);
-            await this.NavigateTo(path);
+            await this.NavigateByPath(path);
             CheckBackwardForwardCanExecute();
         }
     }
@@ -155,7 +157,7 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
         if (_forwardStack.TryPop(out var path))
         {
             _backwardStack.Push(path);
-            await this.NavigateTo(path);
+            await this.NavigateByPath(path);
             CheckBackwardForwardCanExecute();
         }
     }
@@ -258,10 +260,6 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
     {
         if (disposing)
         {
-            _sub1.Dispose();
-            _sub2.Dispose();
-            _sub3.Dispose();
-            _sub4.Dispose();
             _selectedControl.Dispose();
             _selectedControlPath.Dispose();
             Title.Dispose();

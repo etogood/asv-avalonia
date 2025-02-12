@@ -1,22 +1,22 @@
-using System.Composition;
+﻿using System.Composition;
 using Avalonia.Input;
 using Material.Icons;
 
 namespace Asv.Avalonia;
 
-public class UndoCommand : IAsyncCommand
+public class ClosePageCommand : IAsyncCommand
 {
-    public const string Id = "global.undo";
-    public static ICommandInfo StaticInfo { get; } =
-        new CommandInfo
-        {
-            Id = Id,
-            Name = RS.UndoCommand_CommandInfo_Name,
-            Description = RS.UndoCommand_CommandInfo_Description,
-            Icon = MaterialIconKind.UndoVariant,
-            DefaultHotKey = KeyGesture.Parse("Ctrl+Z"),
-            Order = 0,
-        };
+    public const string Id = "cmd.page.close";
+
+    public static readonly ICommandInfo StaticInfo = new CommandInfo
+    {
+        Id = Id,
+        Name = "Close page",
+        Description = RS.OpenDebugCommand_CommandInfo_Description,
+        Icon = MaterialIconKind.CloseBold,
+        DefaultHotKey = KeyGesture.Parse("Alt+F4"),
+        Order = 0,
+    };
 
     public IPersistable Save()
     {
@@ -38,7 +38,7 @@ public class UndoCommand : IAsyncCommand
     {
         if (context is IPage page)
         {
-            return page.History.UndoAsync(cancel);
+            return page.TryCloseAsync();
         }
 
         return ValueTask.CompletedTask;
@@ -47,18 +47,18 @@ public class UndoCommand : IAsyncCommand
 
 [ExportCommand]
 [Shared]
-public class UndoCommandFactory : ICommandFactory
+public class ClosePageCommandFactory : ICommandFactory
 {
-    public ICommandInfo Info => UndoCommand.StaticInfo;
+    public ICommandInfo Info => ClosePageCommand.StaticInfo;
 
     public IAsyncCommand Create()
     {
-        return new UndoCommand();
+        return new ClosePageCommand();
     }
 
     public bool CanExecute(IRoutable context, out IRoutable? target)
     {
-        target = context.GetAllToRoot().FirstOrDefault(x => x is IPage);
+        target = context.FindParentOfType<IShell>()?.SelectedPage.Value;
         return target != null;
     }
 }

@@ -51,18 +51,17 @@
                         <MenuFlyout.ItemContainerTheme>
                             <ControlTheme TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}" 
                                           x:DataType="avalonia:MenuNode">
-
-                                <Setter Property="Header" Value="{Binding Base.Header}"/>
+                                <Setter Property="Icon" Value="{Binding Base.Icon, Converter={x:Static avalonia:MaterialIconConverter.Instance}}" />
+                                <Setter Property="Header" Value="{Binding Base.Title}"/>
                                 <Setter Property="ItemsSource" Value="{Binding Items}"/>
                                 <Setter Property="Command" Value="{Binding Base.Command}"/>
                                 <Setter Property="CommandParameter" Value="{Binding Base.CommandParameter}"/>
-          
+                                <Setter Property="IsEnabled" Value="{Binding Base.IsEnabled}" />
+                                <Setter Property="IsVisible" Value="{Binding Base.IsVisible}" />
+                                <Setter Property="StaysOpenOnClick" Value="{Binding Base.StaysOpenOnClick}" />
+                                <Setter Property="HotKey" Value="{Binding Base.HotKey}" />
                             </ControlTheme>
                         </MenuFlyout.ItemContainerTheme>
-                        <!--<MenuItem Header="{x:Static avalonia:RS.ShellView_Toolbar_File}"></MenuItem>
-                        <MenuItem Header="{x:Static avalonia:RS.ShellView_Toolbar_Edit}"></MenuItem>
-                        <MenuItem Header="{x:Static avalonia:RS.ShellView_Toolbar_View}"></MenuItem>
-                        <MenuItem Header="{x:Static avalonia:RS.ShellView_Toolbar_Help}"></MenuItem>-->
                     </MenuFlyout>
                 </DropDownButton.Flyout>
             </DropDownButton>
