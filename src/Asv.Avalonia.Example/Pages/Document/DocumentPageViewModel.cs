@@ -23,7 +23,7 @@ public class DocumentPageViewModel : PageViewModel<DocumentPageViewModel>
         Title.OnNext(RS.DocumentPageViewModel_Title);
     }
 
-    protected override DocumentViewModel GetContext()
+    protected override DocumentPageViewModel GetContext()
     {
         return this;
     }
