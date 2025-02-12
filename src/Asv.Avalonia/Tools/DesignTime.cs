@@ -21,5 +21,6 @@ public static class DesignTime
     public static IContainerHost ContainerHost => NullContainerHost.Instance;
     public static IThemeService ThemeService => NullThemeService.Instance;
     public static ILocalizationService LocalizationService => NullLocalizationService.Instance;
+    public static ILogService LogService => NullLogService.Instance;
     public static ICommandService CommandService => NullCommandService.Instance;
 }
