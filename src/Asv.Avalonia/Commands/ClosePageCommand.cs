@@ -4,8 +4,46 @@ using Material.Icons;
 
 namespace Asv.Avalonia;
 
+[ExportCommand]
+[Shared]
+public class ClosePageCommandFactory : ICommandFactory
+{
+    public ICommandInfo Info => ClosePageCommand.StaticInfo;
+
+    public IAsyncCommand Create(IRoutable context, IPersistable? parameter = null)
+    {
+        return new ClosePageCommand(context);
+    }
+
+    public bool CanExecute(IRoutable context, IPersistable? parameter)
+    {
+        var t = context.FindParentOfType<IShell>()?.SelectedPage.Value;
+        if (t == null)
+        {
+            target = context;
+            return false;
+        }
+
+        target = t;
+        return true;
+    }
+
+    public bool CanExecute(IRoutable? context, out IRoutable? target)
+    {
+        target = context.FindParentOfType<IShell>()?.SelectedPage.Value;
+        return target != null;
+    }
+}
+
 public class ClosePageCommand : IAsyncCommand
 {
+    private readonly IRoutable _context;
+
+    public ClosePageCommand(IRoutable context)
+    {
+        _context = context;
+    }
+
     public const string Id = "cmd.page.close";
 
     public static readonly ICommandInfo StaticInfo = new CommandInfo
@@ -18,47 +56,15 @@ public class ClosePageCommand : IAsyncCommand
         Order = 0,
     };
 
-    public IPersistable Save()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Restore(IPersistable state)
-    {
-        throw new NotImplementedException();
-    }
-
     public ICommandInfo Info => StaticInfo;
 
-    public ValueTask Execute(
-        IRoutable context,
-        IPersistable? parameter = null,
-        CancellationToken cancel = default
-    )
+    public ValueTask Execute(CancellationToken cancel = default)
     {
-        if (context is IPage page)
+        if (_context is IPage page)
         {
             return page.TryCloseAsync();
         }
 
         return ValueTask.CompletedTask;
-    }
-}
-
-[ExportCommand]
-[Shared]
-public class ClosePageCommandFactory : ICommandFactory
-{
-    public ICommandInfo Info => ClosePageCommand.StaticInfo;
-
-    public IAsyncCommand Create()
-    {
-        return new ClosePageCommand();
-    }
-
-    public bool CanExecute(IRoutable context, out IRoutable? target)
-    {
-        target = context.FindParentOfType<IShell>()?.SelectedPage.Value;
-        return target != null;
     }
 }

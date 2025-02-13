@@ -11,17 +11,17 @@ public class DebugWindowViewModel : ViewModelBase, IDebugWindow
     private readonly ISynchronizedView<IPage, DebugPageViewModel> _pageView;
 
     public DebugWindowViewModel()
-        : this(DesignTime.Shell) { }
+        : this(DesignTime.Navigation, DesignTime.ShellHost) { }
 
     [ImportingConstructor]
-    public DebugWindowViewModel(IShellHost host)
+    public DebugWindowViewModel(INavigationService nav, IShellHost host)
         : base(ModelId)
     {
-        SelectedControlPath = host.Shell.SelectedControlPath.ToReadOnlyBindableReactiveProperty([]);
+        SelectedControlPath = nav.SelectedControlPath.ToReadOnlyBindableReactiveProperty([]);
         _pageView = host.Shell.Pages.CreateView(x => new DebugPageViewModel(x));
         Pages = _pageView.ToNotifyCollectionChanged();
-        BackwardStack = host.Shell.BackwardStack.ToNotifyCollectionChanged();
-        ForwardStack = host.Shell.ForwardStack.ToNotifyCollectionChanged();
+        BackwardStack = nav.BackwardStack.ToNotifyCollectionChanged();
+        ForwardStack = nav.ForwardStack.ToNotifyCollectionChanged();
     }
 
     public NotifyCollectionChangedSynchronizedViewList<string[]> ForwardStack { get; }

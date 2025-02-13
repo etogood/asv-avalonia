@@ -8,20 +8,34 @@ public class OpenSettingsCommandFactory : ICommandFactory
 {
     public ICommandInfo Info => OpenSettingsCommand.StaticInfo;
 
-    public IAsyncCommand Create()
+    public IAsyncCommand Create(IRoutable context, IPersistable? parameter = null)
     {
-        return new OpenSettingsCommand();
+        return new OpenSettingsCommand(context, parameter);
     }
 
-    public bool CanExecute(IRoutable context, out IRoutable? target)
+    public bool CanExecute(IRoutable context, IPersistable? parameter)
     {
-        target = context.FindParentOfType<IShell>();
-        return target != null;
+        var t = context.FindParentOfType<IShell>();
+        if (t == null)
+        {
+            target = context;
+            return false;
+        }
+
+        target = t;
+        return true;
     }
 }
 
 public class OpenSettingsCommand : IAsyncCommand
 {
+    private readonly IRoutable _context;
+
+    public OpenSettingsCommand(IRoutable context, IPersistable? parameter)
+    {
+        _context = context;
+    }
+
     public const string Id = "cmd.open.settings";
 
     public static readonly ICommandInfo StaticInfo = new CommandInfo
@@ -34,25 +48,11 @@ public class OpenSettingsCommand : IAsyncCommand
         Order = 0,
     };
 
-    public IPersistable Save()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Restore(IPersistable state)
-    {
-        throw new NotImplementedException();
-    }
-
     public ICommandInfo Info => StaticInfo;
 
-    public async ValueTask Execute(
-        IRoutable context,
-        IPersistable? parameter = null,
-        CancellationToken cancel = default
-    )
+    public async ValueTask Execute(CancellationToken cancel = default)
     {
-        var shell = context.FindParentOfType<IShell>();
+        var shell = _context.FindParentOfType<IShell>();
         if (shell != null)
         {
             await shell.Navigate(SettingsPageViewModel.PageId);

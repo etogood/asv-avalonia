@@ -34,16 +34,6 @@ public abstract class PageViewModel<TContext> : ExtendableViewModel<TContext>, I
     public BindableReactiveProperty<bool> HasChanges { get; }
     public ICommand TryClose { get; }
 
-    protected override ValueTask InternalCatchEvent(AsyncRoutedEvent e)
-    {
-        if (e is ExecuteCommandEvent cmd)
-        {
-            return History.Execute(cmd.CommandId, cmd.Source, cmd.CommandParameter);
-        }
-
-        return ValueTask.CompletedTask;
-    }
-
     protected override void Dispose(bool disposing)
     {
         if (disposing)

@@ -19,12 +19,12 @@ public class OpenDebugCommandFactory : ICommandFactory
 
     public ICommandInfo Info => OpenDebugCommand.StaticInfo;
 
-    public IAsyncCommand Create()
+    public IAsyncCommand Create(IRoutable context, IPersistable? parameter = null)
     {
         return new OpenDebugCommand(_factory);
     }
 
-    public bool CanExecute(IRoutable context, out IRoutable? target)
+    public bool CanExecute(IRoutable context, IPersistable? parameter)
     {
         target = context;
         return true;
@@ -45,26 +45,11 @@ public class OpenDebugCommand(ExportFactory<IDebugWindow> factory) : IAsyncComma
         Order = 0,
     };
 
-    public IPersistable Save()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Restore(IPersistable state)
-    {
-        throw new NotImplementedException();
-    }
-
     public ICommandInfo Info => StaticInfo;
 
-    public ValueTask Execute(
-        IRoutable context,
-        IPersistable? parameter = null,
-        CancellationToken cancel = default
-    )
+    public ValueTask Execute(CancellationToken cancel = default)
     {
-        var wnd = new DebugWindow() { DataContext = factory.CreateExport().Value };
-        wnd.Topmost = true;
+        var wnd = new DebugWindow { DataContext = factory.CreateExport().Value, Topmost = true };
         wnd.Show();
         return ValueTask.CompletedTask;
     }

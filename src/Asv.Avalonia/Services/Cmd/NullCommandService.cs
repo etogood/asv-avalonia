@@ -1,5 +1,6 @@
 using Avalonia.Input;
 using Material.Icons;
+using R3;
 
 namespace Asv.Avalonia;
 
@@ -7,54 +8,42 @@ public class NullCommandService : ICommandService
 {
     public NullCommandService()
     {
-        Commands = new[] { ChangeThemeCommand.StaticInfo, UndoCommand.StaticInfo };
+        Commands = [ChangeThemeCommand.StaticInfo, UndoCommand.StaticInfo];
     }
 
     public static ICommandService Instance { get; } = new NullCommandService();
     public IEnumerable<ICommandInfo> Commands { get; }
 
-    public IAsyncCommand? CreateCommand(string commandId)
-    {
-        return null;
-    }
-
-    public ICommandHistory CreateHistory(IRoutable owner)
+    public ICommandHistory CreateHistory(IRoutable? owner)
     {
         return NullCommandHistory.Instance;
     }
 
-    public bool CanExecuteCommand(string commandId, IRoutable context, out IRoutable? target)
-    {
-        target = null;
-        return false;
-    }
-
-    public void ChangeHotKey(string commandId, KeyGesture? hotKey)
-    {
-        // do nothing
-    }
-
-    public bool CanExecuteCommand(
-        KeyGesture hotKey,
+    public ValueTask Execute(
+        string commandId,
         IRoutable context,
-        out IAsyncCommand? command,
-        out IRoutable? target
+        IPersistable? param = null,
+        CancellationToken cancel = default
     )
     {
-        command = null;
-        target = null;
-        return false;
+        return ValueTask.CompletedTask;
     }
 
-    public bool TryGetCommand(
-        KeyGesture gesture,
-        IRoutable context,
-        out IAsyncCommand? command,
-        out IRoutable? target
-    )
+    public KeyGesture? this[string commandId]
     {
-        command = null;
-        target = null;
-        return false;
+        get => KeyGesture.Parse("Ctrl + X");
+        set { }
     }
+
+    public ValueTask Undo(CommandSnapshot command, CancellationToken cancel = default)
+    {
+        return ValueTask.CompletedTask;
+    }
+
+    public ValueTask Redo(CommandSnapshot command, CancellationToken cancel = default)
+    {
+        return ValueTask.CompletedTask;
+    }
+
+    public Observable<CommandEventArgs> OnCommand { get; } = new Subject<CommandEventArgs>();
 }

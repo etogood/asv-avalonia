@@ -3,12 +3,8 @@ using R3;
 
 namespace Asv.Avalonia;
 
-public interface IAsyncCommand : IStatePersistor
+public interface IAsyncCommand
 {
     ICommandInfo Info { get; }
-    ValueTask Execute(
-        IRoutable context,
-        IPersistable? parameter = null,
-        CancellationToken cancel = default
-    );
+    ValueTask Execute(CancellationToken cancel = default);
 }

@@ -5,8 +5,13 @@ namespace Asv.Avalonia;
 public interface ICommandFactory
 {
     ICommandInfo Info { get; }
-    IAsyncCommand Create();
-    bool CanExecute(IRoutable context, out IRoutable? target);
+    bool CanExecute(IRoutable context, IPersistable? parameter);
+    ValueTask<IPersistable?> Execute(
+        IRoutable context,
+        IPersistable? parameter,
+        CancellationToken cancel = default
+    );
+    ValueTask Undo(IRoutable context, IPersistable? parameter, CancellationToken cancel = default);
 }
 
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]

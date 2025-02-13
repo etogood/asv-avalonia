@@ -5,7 +5,7 @@ using Material.Icons;
 
 namespace Asv.Avalonia;
 
-[Export(typeof(ICommandFactory))]
+[ExportCommand]
 [Shared]
 public class ChangeThemeCommandFactory : ICommandFactory
 {
@@ -20,22 +20,20 @@ public class ChangeThemeCommandFactory : ICommandFactory
 
     public ICommandInfo Info => ChangeThemeCommand.StaticInfo;
 
-    public IAsyncCommand Create()
+    public IAsyncCommand Create(IRoutable context, IPersistable? parameter = null)
     {
-        return new ChangeThemeCommand(_svc);
+        return new ChangeThemeCommand(_svc, context, parameter);
     }
 
-    public bool CanExecute(IRoutable context, out IRoutable? target)
+    public bool CanExecute(IRoutable context, IPersistable? parameter)
     {
         target = context;
         return true;
     }
 }
 
-public class ChangeThemeCommand(IThemeService svc) : IUndoRedoCommand
+public class ChangeThemeCommand : IUndoRedoCommand
 {
-    #region Static
-
     public const string Id = "theme.change";
     internal static readonly ICommandInfo StaticInfo = new CommandInfo
     {
@@ -47,39 +45,30 @@ public class ChangeThemeCommand(IThemeService svc) : IUndoRedoCommand
         Order = 0,
     };
 
-    #endregion
-
+    private readonly IThemeService _svc;
+    private readonly IRoutable _context;
+    private readonly IPersistable? _parameter;
     private PersistableChange<string>? _state;
+
+    public ChangeThemeCommand(IThemeService svc, IRoutable context, IPersistable? parameter)
+    {
+        _svc = svc;
+        _context = context;
+        _parameter = parameter;
+    }
 
     public ICommandInfo Info => StaticInfo;
 
-    public IPersistable Save()
+    public ValueTask Execute(CancellationToken cancel = default)
     {
-        return _state ?? throw new InvalidOperationException();
-    }
-
-    public void Restore(IPersistable state)
-    {
-        if (state is PersistableChange<string> memento)
-        {
-            _state = memento;
-        }
-    }
-
-    public ValueTask Execute(
-        IRoutable context,
-        IPersistable? parameter = null,
-        CancellationToken cancel = default
-    )
-    {
-        if (parameter is Persistable<string> memento)
+        if (_parameter is Persistable<string> memento)
         {
             // execute with parameter
-            var oldValue = svc.CurrentTheme.Value.Id;
-            var theme = svc.Themes.FirstOrDefault(x => x.Id == memento.Value);
+            var oldValue = _svc.CurrentTheme.Value.Id;
+            var theme = _svc.Themes.FirstOrDefault(x => x.Id == memento.Value);
             if (theme != null)
             {
-                svc.CurrentTheme.Value = theme;
+                _svc.CurrentTheme.Value = theme;
             }
 
             _state = new PersistableChange<string>(oldValue, memento.Value);
@@ -87,9 +76,9 @@ public class ChangeThemeCommand(IThemeService svc) : IUndoRedoCommand
         else
         {
             // execute without parameter
-            var oldValue = svc.CurrentTheme.Value.Id;
-            var temp = svc.Themes.ToList();
-            var index = temp.IndexOf(svc.CurrentTheme.Value);
+            var oldValue = _svc.CurrentTheme.Value.Id;
+            var temp = _svc.Themes.ToList();
+            var index = temp.IndexOf(_svc.CurrentTheme.Value);
             index++;
             if (index >= temp.Count)
             {
@@ -97,21 +86,21 @@ public class ChangeThemeCommand(IThemeService svc) : IUndoRedoCommand
             }
 
             var newValue = temp[index].Id;
-            svc.CurrentTheme.Value = temp[index];
+            _svc.CurrentTheme.Value = temp[index];
             _state = new PersistableChange<string>(oldValue, newValue);
         }
 
         return ValueTask.CompletedTask;
     }
 
-    public ValueTask Undo(IRoutable? context, CancellationToken cancel = default)
+    public ValueTask Undo(IRoutable context, CancellationToken cancel = default)
     {
         if (_state != null)
         {
-            var theme = svc.Themes.FirstOrDefault(x => x.Id == _state.OldValue);
+            var theme = _svc.Themes.FirstOrDefault(x => x.Id == _state.OldValue);
             if (theme != null)
             {
-                svc.CurrentTheme.Value = theme;
+                _svc.CurrentTheme.Value = theme;
             }
         }
 
@@ -122,10 +111,10 @@ public class ChangeThemeCommand(IThemeService svc) : IUndoRedoCommand
     {
         if (_state != null)
         {
-            var theme = svc.Themes.FirstOrDefault(x => x.Id == _state.NewValue);
+            var theme = _svc.Themes.FirstOrDefault(x => x.Id == _state.NewValue);
             if (theme != null)
             {
-                svc.CurrentTheme.Value = theme;
+                _svc.CurrentTheme.Value = theme;
             }
         }
 

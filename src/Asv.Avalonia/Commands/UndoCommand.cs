@@ -4,9 +4,41 @@ using Material.Icons;
 
 namespace Asv.Avalonia;
 
+[ExportCommand]
+[Shared]
+public class UndoCommandFactory : ICommandFactory
+{
+    public ICommandInfo Info => UndoCommand.StaticInfo;
+
+    public IAsyncCommand Create(IRoutable context, IPersistable? parameter = null)
+    {
+        return new UndoCommand(context, parameter);
+    }
+
+    public bool CanExecute(IRoutable context, IPersistable? parameter)
+    {
+        var t = context.FindParentOfType<IPage>();
+        if (t != null)
+        {
+            target = t;
+            return true;
+        }
+
+        target = context;
+        return false;
+    }
+}
+
 public class UndoCommand : IAsyncCommand
 {
-    public const string Id = "global.undo";
+    private readonly IRoutable _context;
+
+    public UndoCommand(IRoutable context, IPersistable? parameter)
+    {
+        _context = context;
+    }
+
+    public const string Id = "cmd.global.undo";
     public static ICommandInfo StaticInfo { get; } =
         new CommandInfo
         {
@@ -18,47 +50,15 @@ public class UndoCommand : IAsyncCommand
             Order = 0,
         };
 
-    public IPersistable Save()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Restore(IPersistable state)
-    {
-        throw new NotImplementedException();
-    }
-
     public ICommandInfo Info => StaticInfo;
 
-    public ValueTask Execute(
-        IRoutable context,
-        IPersistable? parameter = null,
-        CancellationToken cancel = default
-    )
+    public ValueTask Execute(CancellationToken cancel = default)
     {
-        if (context is IPage page)
+        if (_context is IPage page)
         {
             return page.History.UndoAsync(cancel);
         }
 
         return ValueTask.CompletedTask;
-    }
-}
-
-[ExportCommand]
-[Shared]
-public class UndoCommandFactory : ICommandFactory
-{
-    public ICommandInfo Info => UndoCommand.StaticInfo;
-
-    public IAsyncCommand Create()
-    {
-        return new UndoCommand();
-    }
-
-    public bool CanExecute(IRoutable context, out IRoutable? target)
-    {
-        target = context.GetAncestorsToRoot().FirstOrDefault(x => x is IPage);
-        return target != null;
     }
 }
