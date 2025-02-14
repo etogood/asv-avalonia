@@ -14,7 +14,7 @@ public abstract class PageViewModel<TContext> : ExtendableViewModel<TContext>, I
         Icon = new BindableReactiveProperty<MaterialIconKind>(MaterialIconKind.Window);
         Title = new BindableReactiveProperty<string>(id);
         HasChanges = new BindableReactiveProperty<bool>(false);
-        TryClose = new AsyncReactiveCommand(ClosePageCommand.Id, this);
+        TryClose = new BindableAsyncCommand(ClosePageCommand.Id, this);
     }
 
     public async ValueTask TryCloseAsync()
@@ -46,4 +46,6 @@ public abstract class PageViewModel<TContext> : ExtendableViewModel<TContext>, I
 
         base.Dispose(disposing);
     }
+
+    public abstract IExportInfo Source { get; }
 }

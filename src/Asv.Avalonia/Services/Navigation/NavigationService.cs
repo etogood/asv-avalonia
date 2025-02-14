@@ -26,6 +26,7 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
     public NavigationService(IContainerHost ioc, IShellHost host)
     {
         ArgumentNullException.ThrowIfNull(ioc);
+        ArgumentNullException.ThrowIfNull(ioc);
         _ioc = ioc;
         _host = host;
         var dispose = Disposable.CreateBuilder();
@@ -45,7 +46,12 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
 
     public ValueTask<IRoutable> GoTo(string[] path)
     {
-        return _host.Shell.NavigateByPath(path[1..]);
+        if (path.Length == 0)
+        {
+            return NavException.AsyncEmptyPathException();
+        }
+
+        return _host.Shell.NavigateByPath(path[0] == _host.Shell.Id ? path[1..] : path);
     }
 
     #region Focus
@@ -79,7 +85,7 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
             return;
         }
 
-        _selectedControlPath.Value = routable.GetHierarchyFromRoot().Select(x => x!.Id).ToArray();
+        _selectedControlPath.Value = routable.GetPathToRoot();
     }
 
     public ReadOnlyReactiveProperty<IRoutable?> SelectedControl => _selectedControl;
@@ -152,4 +158,6 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
     }
 
     #endregion
+
+    public IExportInfo Source => SystemModule.Instance;
 }

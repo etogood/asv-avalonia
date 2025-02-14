@@ -49,9 +49,9 @@ public class DebugPageViewModel : ViewModelBase
         RedoStack = page.History.RedoStack.ToNotifyCollectionChanged();
     }
 
-    public NotifyCollectionChangedSynchronizedViewList<HistoryItem> RedoStack { get; }
+    public NotifyCollectionChangedSynchronizedViewList<CommandSnapshot> RedoStack { get; }
 
-    public NotifyCollectionChangedSynchronizedViewList<HistoryItem> UndoStack { get; }
+    public NotifyCollectionChangedSynchronizedViewList<CommandSnapshot> UndoStack { get; }
 
     protected override void Dispose(bool disposing)
     {

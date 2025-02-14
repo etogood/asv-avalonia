@@ -6,8 +6,9 @@ namespace Asv.Avalonia;
 
 public class NullCommandService : ICommandService
 {
-    public NullCommandService()
+    private NullCommandService()
     {
+        DesignTime.ThrowIfNotDesignMode();
         Commands = [ChangeThemeCommand.StaticInfo, UndoCommand.StaticInfo];
     }
 
@@ -22,17 +23,21 @@ public class NullCommandService : ICommandService
     public ValueTask Execute(
         string commandId,
         IRoutable context,
-        IPersistable? param = null,
+        IPersistable param,
         CancellationToken cancel = default
     )
     {
         return ValueTask.CompletedTask;
     }
 
-    public KeyGesture? this[string commandId]
+    public void SetHotKey(string commandId, KeyGesture hotKey)
     {
-        get => KeyGesture.Parse("Ctrl + X");
-        set { }
+        // Do nothing
+    }
+
+    public KeyGesture? GetHostKey(string commandId)
+    {
+        return KeyGesture.Parse("Ctrl + X");
     }
 
     public ValueTask Undo(CommandSnapshot command, CancellationToken cancel = default)
@@ -46,4 +51,5 @@ public class NullCommandService : ICommandService
     }
 
     public Observable<CommandEventArgs> OnCommand { get; } = new Subject<CommandEventArgs>();
+    public IExportInfo Source => SystemModule.Instance;
 }

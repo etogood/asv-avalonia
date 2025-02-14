@@ -24,9 +24,9 @@ public class CommandService : AsyncDisposableOnce, ICommandService
     private readonly INavigationService _nav;
     private readonly IConfiguration _cfg;
     private readonly ILoggerFactory _loggerFactory;
-    private readonly ImmutableDictionary<string, ICommandFactory> _commands;
+    private readonly ImmutableDictionary<string, IAsyncCommand> _commands;
     private ImmutableDictionary<string, KeyGesture> _commandsVsGesture;
-    private ImmutableDictionary<KeyGesture, ICommandFactory> _gestureVsCommand;
+    private ImmutableDictionary<KeyGesture, IAsyncCommand> _gestureVsCommand;
     private readonly ILogger<CommandService> _logger;
     private readonly IDisposable _disposeId;
     private readonly Subject<CommandEventArgs> _onCommand;
@@ -35,7 +35,7 @@ public class CommandService : AsyncDisposableOnce, ICommandService
     public CommandService(
         INavigationService nav,
         IConfiguration cfg,
-        [ImportMany] IEnumerable<ICommandFactory> factories,
+        [ImportMany] IEnumerable<IAsyncCommand> factories,
         ILoggerFactory loggerFactory
     )
     {
@@ -46,7 +46,7 @@ public class CommandService : AsyncDisposableOnce, ICommandService
         _loggerFactory = loggerFactory;
         _logger = loggerFactory.CreateLogger<CommandService>();
         _commands = factories.ToImmutableDictionary(x => x.Info.Id);
-        ReloadHotKeys();
+        ReloadHotKeys(out _commandsVsGesture, out _gestureVsCommand);
 
         // global event handlers for key events
         InputElement
@@ -84,7 +84,7 @@ public class CommandService : AsyncDisposableOnce, ICommandService
             await InternalExecute(
                 commandFactory,
                 _nav.SelectedControl.CurrentValue,
-                null,
+                Persistable.Empty,
                 CancellationToken.None
             );
         }
@@ -98,15 +98,15 @@ public class CommandService : AsyncDisposableOnce, ICommandService
     }
 
     private async ValueTask InternalExecute(
-        ICommandFactory factory,
+        IAsyncCommand factory,
         IRoutable context,
-        IPersistable? param,
+        IPersistable param,
         CancellationToken cancel
     )
     {
-        if (factory.CanExecute(context, param))
+        if (factory.CanExecute(context, param, out var target))
         {
-            var backup = await factory.Execute(context, param, cancel);
+            var backup = await factory.Execute(target, param, cancel);
             var snapShot = new CommandSnapshot(
                 factory.Info.Id,
                 context.GetPathToRoot(),
@@ -115,12 +115,19 @@ public class CommandService : AsyncDisposableOnce, ICommandService
             );
             _onCommand.OnNext(new CommandEventArgs(context, factory, snapShot));
             _logger.ZLogTrace($"Execute command {backup}: context: {context}, param: {param}");
+            return;
         }
+
+        throw new CommandCannotExecuteException(factory.Info, context);
     }
 
-    private void ReloadHotKeys(Action<IDictionary<string, string?>>? modifyConfig = null)
+    private void ReloadHotKeys(
+        out ImmutableDictionary<string, KeyGesture> commandVsGesture,
+        out ImmutableDictionary<KeyGesture, IAsyncCommand> gestureVsCommand,
+        Action<IDictionary<string, string?>>? modifyConfig = null
+    )
     {
-        var keyVsCommandBuilder = ImmutableDictionary.CreateBuilder<KeyGesture, ICommandFactory>();
+        var keyVsCommandBuilder = ImmutableDictionary.CreateBuilder<KeyGesture, IAsyncCommand>();
         var commandVsKeyBuilder = ImmutableDictionary.CreateBuilder<string, KeyGesture>();
 
         // load default hot keys
@@ -201,8 +208,8 @@ public class CommandService : AsyncDisposableOnce, ICommandService
             keyVsCommandBuilder[keyGesture] = command;
         }
 
-        _gestureVsCommand = keyVsCommandBuilder.ToImmutable();
-        _commandsVsGesture = commandVsKeyBuilder.ToImmutable();
+        gestureVsCommand = keyVsCommandBuilder.ToImmutable();
+        commandVsGesture = commandVsKeyBuilder.ToImmutable();
 
         if (configChanged)
         {
@@ -221,7 +228,7 @@ public class CommandService : AsyncDisposableOnce, ICommandService
     public ValueTask Execute(
         string commandId,
         IRoutable context,
-        IPersistable? param = null,
+        IPersistable param,
         CancellationToken cancel = default
     )
     {
@@ -230,13 +237,32 @@ public class CommandService : AsyncDisposableOnce, ICommandService
             return InternalExecute(factory, context, param, cancel);
         }
 
-        throw new CommandException($"Command {commandId} not found");
+        return ValueTask.FromException(new CommandNotFoundException(commandId));
     }
 
-    public KeyGesture? this[string commandId]
+    public void SetHotKey(string commandId, KeyGesture hotKey)
     {
-        get => _commandsVsGesture.GetValueOrDefault(commandId);
-        set => ReloadHotKeys(config => config[commandId] = value?.ToString());
+        ArgumentNullException.ThrowIfNull(hotKey);
+        if (_commands.ContainsKey(commandId) == false)
+        {
+            throw new CommandNotFoundException(commandId);
+        }
+
+        ReloadHotKeys(
+            out _commandsVsGesture,
+            out _gestureVsCommand,
+            config => config[commandId] = hotKey?.ToString()
+        );
+    }
+
+    public KeyGesture? GetHostKey(string commandId)
+    {
+        if (_commandsVsGesture.TryGetValue(commandId, out var gesture))
+        {
+            return gesture;
+        }
+
+        throw new CommandNotFoundException(commandId);
     }
 
     public Observable<CommandEventArgs> OnCommand => _onCommand;
@@ -244,14 +270,11 @@ public class CommandService : AsyncDisposableOnce, ICommandService
     public async ValueTask Undo(CommandSnapshot command, CancellationToken cancel)
     {
         var context = await _nav.GoTo(command.ContextPath);
-        if (
-            _commands.TryGetValue(command.CommandId, out var factory)
-            && command.UndoParameter != null
-        )
+        if (_commands.TryGetValue(command.CommandId, out var factory) && command.OldValue != null)
         {
-            await factory.Undo(context, command.Parameter, cancel);
+            await factory.Execute(context, command.OldValue, cancel);
             _logger.ZLogTrace(
-                $"Undo command {factory.Info.Id}: context: {context}, param: {command.Parameter}"
+                $"Undo command {factory.Info.Id}: context: {context}, param: {command.NewValue}"
             );
         }
     }
@@ -259,14 +282,11 @@ public class CommandService : AsyncDisposableOnce, ICommandService
     public async ValueTask Redo(CommandSnapshot command, CancellationToken cancel = default)
     {
         var context = await _nav.GoTo(command.ContextPath);
-        if (
-            _commands.TryGetValue(command.CommandId, out var factory)
-            && command.UndoParameter != null
-        )
+        if (_commands.TryGetValue(command.CommandId, out var factory))
         {
-            await factory.Execute(context, command.Parameter, cancel);
+            await factory.Execute(context, command.NewValue, cancel);
             _logger.ZLogTrace(
-                $"Redo command {factory.Info.Id}: context: {context}, param: {command.Parameter}"
+                $"Redo command {factory.Info.Id}: context: {context}, param: {command.NewValue}"
             );
         }
     }
@@ -280,4 +300,6 @@ public class CommandService : AsyncDisposableOnce, ICommandService
 
         base.Dispose(disposing);
     }
+
+    public IExportInfo Source => SystemModule.Instance;
 }

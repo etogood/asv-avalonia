@@ -33,7 +33,7 @@ public class CommandHistory : ICommandHistory
     private void TryAddToHistory(CommandEventArgs cmd)
     {
         if (
-            cmd.Snapshot.UndoParameter != null
+            cmd.Snapshot.OldValue != null
             && cmd.Context.GetAncestorsToRoot().Contains(HistoryOwner)
         )
         {

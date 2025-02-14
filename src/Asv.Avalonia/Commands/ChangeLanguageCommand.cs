@@ -5,11 +5,11 @@ namespace Asv.Avalonia;
 
 [ExportCommand]
 [Shared]
-public class ChangeLanguageCommand : ICommandFactory
+public class ChangeLanguageCommand : NoContextCommand
 {
     #region Static
 
-    public const string Id = "language.change";
+    public const string Id = $"{BaseId}.settings.language.change";
 
     private static readonly ICommandInfo StaticInfo = new CommandInfo
     {
@@ -18,6 +18,7 @@ public class ChangeLanguageCommand : ICommandFactory
         Description = RS.ChangeLanguageCommand_CommandInfo_Description,
         Icon = MaterialIconKind.Translate,
         DefaultHotKey = null,
+        Source = SystemModule.Instance,
     };
 
     #endregion
@@ -31,24 +32,18 @@ public class ChangeLanguageCommand : ICommandFactory
         _svc = svc;
     }
 
-    public ICommandInfo Info => StaticInfo;
+    public override ICommandInfo Info => StaticInfo;
 
-    public bool CanExecute(IRoutable context, IPersistable? parameter)
-    {
-        return true;
-    }
-
-    public ValueTask<IPersistable?> Execute(
-        IRoutable context,
-        IPersistable? parameter,
-        CancellationToken cancel = default
+    protected override ValueTask<IPersistable?> InternalExecute(
+        IPersistable newValue,
+        CancellationToken cancel
     )
     {
-        if (parameter is Persistable<string> memento)
+        if (newValue is Persistable<string> themeName)
         {
             // execute with parameter
             var oldValue = _svc.CurrentLanguage.Value.Id;
-            var language = _svc.AvailableLanguages.FirstOrDefault(x => x.Id == memento.Value);
+            var language = _svc.AvailableLanguages.FirstOrDefault(x => x.Id == themeName.Value);
             if (language is not null)
             {
                 _svc.CurrentLanguage.Value = language;
@@ -71,14 +66,5 @@ public class ChangeLanguageCommand : ICommandFactory
             _svc.CurrentLanguage.Value = temp[index];
             return ValueTask.FromResult<IPersistable?>(new Persistable<string>(oldValue));
         }
-    }
-
-    public async ValueTask Undo(
-        IRoutable context,
-        IPersistable? parameter,
-        CancellationToken cancel = default
-    )
-    {
-        await Execute(context, parameter, cancel);
     }
 }

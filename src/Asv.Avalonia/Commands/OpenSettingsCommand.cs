@@ -1,42 +1,16 @@
-﻿using Avalonia.Input;
+﻿using System.Composition;
+using Avalonia.Input;
 using Material.Icons;
 
 namespace Asv.Avalonia;
 
 [ExportCommand]
-public class OpenSettingsCommandFactory : ICommandFactory
+[method: ImportingConstructor]
+public class OpenSettingsCommand() : OpenPageCommandBase(SettingsPageViewModel.PageId)
 {
-    public ICommandInfo Info => OpenSettingsCommand.StaticInfo;
+    #region Static
 
-    public IAsyncCommand Create(IRoutable context, IPersistable? parameter = null)
-    {
-        return new OpenSettingsCommand(context, parameter);
-    }
-
-    public bool CanExecute(IRoutable context, IPersistable? parameter)
-    {
-        var t = context.FindParentOfType<IShell>();
-        if (t == null)
-        {
-            target = context;
-            return false;
-        }
-
-        target = t;
-        return true;
-    }
-}
-
-public class OpenSettingsCommand : IAsyncCommand
-{
-    private readonly IRoutable _context;
-
-    public OpenSettingsCommand(IRoutable context, IPersistable? parameter)
-    {
-        _context = context;
-    }
-
-    public const string Id = "cmd.open.settings";
+    public const string Id = $"{BaseId}.open.settings";
 
     public static readonly ICommandInfo StaticInfo = new CommandInfo
     {
@@ -45,17 +19,9 @@ public class OpenSettingsCommand : IAsyncCommand
         Description = "Open settings",
         Icon = MaterialIconKind.Cog,
         DefaultHotKey = KeyGesture.Parse("Ctrl+F1"),
-        Order = 0,
+        Source = SystemModule.Instance,
     };
 
-    public ICommandInfo Info => StaticInfo;
-
-    public async ValueTask Execute(CancellationToken cancel = default)
-    {
-        var shell = _context.FindParentOfType<IShell>();
-        if (shell != null)
-        {
-            await shell.Navigate(SettingsPageViewModel.PageId);
-        }
-    }
+    #endregion
+    public override ICommandInfo Info => StaticInfo;
 }

@@ -4,7 +4,7 @@ using R3;
 
 namespace Asv.Avalonia;
 
-public interface INavigationService
+public interface INavigationService : IExportable
 {
     IObservableCollection<string[]> BackwardStack { get; }
     ValueTask BackwardAsync();

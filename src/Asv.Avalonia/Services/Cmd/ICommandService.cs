@@ -3,17 +3,18 @@ using R3;
 
 namespace Asv.Avalonia;
 
-public interface ICommandService
+public interface ICommandService : IExportable
 {
     IEnumerable<ICommandInfo> Commands { get; }
     ICommandHistory CreateHistory(IRoutable? owner);
     ValueTask Execute(
         string commandId,
         IRoutable context,
-        IPersistable? param = null,
+        IPersistable param,
         CancellationToken cancel = default
     );
-    KeyGesture? this[string commandId] { get; set; }
+    void SetHotKey(string commandId, KeyGesture hotKey);
+    KeyGesture? GetHostKey(string commandId);
     Observable<CommandEventArgs> OnCommand { get; }
     ValueTask Undo(CommandSnapshot command, CancellationToken cancel = default);
     ValueTask Redo(CommandSnapshot command, CancellationToken cancel = default);
@@ -22,19 +23,19 @@ public interface ICommandService
 public sealed class CommandSnapshot(
     string commandId,
     string[] contextPath,
-    IPersistable? parameter,
-    IPersistable? undoParameter
+    IPersistable newValue,
+    IPersistable? oldValue
 )
 {
     public string CommandId { get; set; } = commandId;
     public string[] ContextPath { get; set; } = contextPath;
-    public IPersistable? Parameter { get; set; } = parameter;
-    public IPersistable? UndoParameter { get; set; } = undoParameter;
+    public IPersistable NewValue { get; set; } = newValue;
+    public IPersistable? OldValue { get; set; } = oldValue;
 }
 
-public class CommandEventArgs(IRoutable context, ICommandFactory command, CommandSnapshot snapshot)
+public class CommandEventArgs(IRoutable context, IAsyncCommand command, CommandSnapshot snapshot)
 {
     public IRoutable Context { get; } = context;
-    public ICommandFactory Command { get; } = command;
+    public IAsyncCommand Command { get; } = command;
     public CommandSnapshot Snapshot { get; } = snapshot;
 }

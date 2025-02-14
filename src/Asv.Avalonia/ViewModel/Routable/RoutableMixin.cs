@@ -8,7 +8,7 @@ public static class RoutableMixin
 {
     public static string[] GetPathToRoot(this IRoutable src)
     {
-        return src.GetAncestorsToRoot().Select(x => x.Id).ToArray();
+        return src.GetHierarchyFromRoot().Select(x => x.Id).ToArray();
     }
 
     /// <summary>

@@ -36,4 +36,6 @@ public sealed class NullNavigationService : INavigationService
     {
         return ValueTask.FromResult<IRoutable>(Shell);
     }
+
+    public IExportInfo Source => SystemModule.Instance;
 }

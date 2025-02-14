@@ -6,39 +6,12 @@ namespace Asv.Avalonia;
 
 [ExportCommand]
 [Shared]
-public class UndoCommandFactory : ICommandFactory
+public class UndoCommand : ContextCommand<IPage>
 {
-    public ICommandInfo Info => UndoCommand.StaticInfo;
+    #region Static
 
-    public IAsyncCommand Create(IRoutable context, IPersistable? parameter = null)
-    {
-        return new UndoCommand(context, parameter);
-    }
+    public const string Id = $"{BaseId}.global.undo";
 
-    public bool CanExecute(IRoutable context, IPersistable? parameter)
-    {
-        var t = context.FindParentOfType<IPage>();
-        if (t != null)
-        {
-            target = t;
-            return true;
-        }
-
-        target = context;
-        return false;
-    }
-}
-
-public class UndoCommand : IAsyncCommand
-{
-    private readonly IRoutable _context;
-
-    public UndoCommand(IRoutable context, IPersistable? parameter)
-    {
-        _context = context;
-    }
-
-    public const string Id = "cmd.global.undo";
     public static ICommandInfo StaticInfo { get; } =
         new CommandInfo
         {
@@ -47,18 +20,19 @@ public class UndoCommand : IAsyncCommand
             Description = RS.UndoCommand_CommandInfo_Description,
             Icon = MaterialIconKind.UndoVariant,
             DefaultHotKey = KeyGesture.Parse("Ctrl+Z"),
-            Order = 0,
+            Source = SystemModule.Instance,
         };
 
-    public ICommandInfo Info => StaticInfo;
+    #endregion
+    public override ICommandInfo Info => StaticInfo;
 
-    public ValueTask Execute(CancellationToken cancel = default)
+    protected override async ValueTask<IPersistable?> InternalExecute(
+        IPage context,
+        IPersistable newValue,
+        CancellationToken cancel
+    )
     {
-        if (_context is IPage page)
-        {
-            return page.History.UndoAsync(cancel);
-        }
-
-        return ValueTask.CompletedTask;
+        await context.History.UndoAsync(cancel);
+        return null;
     }
 }

@@ -10,6 +10,7 @@ public interface ICommandInfo
     string Description { get; }
     MaterialIconKind Icon { get; }
     KeyGesture? DefaultHotKey { get; }
+    IExportInfo Source { get; }
 }
 
 public class CommandInfo : ICommandInfo
@@ -19,4 +20,5 @@ public class CommandInfo : ICommandInfo
     public required string Description { get; set; }
     public required MaterialIconKind Icon { get; set; }
     public required KeyGesture? DefaultHotKey { get; set; }
+    public required IExportInfo Source { get; set; }
 }

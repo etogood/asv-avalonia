@@ -84,19 +84,23 @@ public partial class App : Application, IContainerHost, IShellHost
     }
 
     public T GetExport<T>()
+        where T : IExportable
     {
         return _container.GetExport<T>();
     }
 
     public T GetExport<T>(string contract)
+        where T : IExportable
     {
         return _container.GetExport<T>(contract);
     }
 
     public bool TryGetExport<T>(string id, out T value)
+        where T : IExportable
     {
         return _container.TryGetExport(id, out value);
     }
 
     public IShell Shell { get; set; }
+    public IExportInfo Source => SystemModule.Instance;
 }
