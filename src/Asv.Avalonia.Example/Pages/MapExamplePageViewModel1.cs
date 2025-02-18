@@ -15,6 +15,7 @@ public class MapExamplePageViewModel : PageViewModel<IMapContext>, IMapContext
         : this(DesignTime.CommandService)
     {
         DesignTime.ThrowIfNotDesignMode();
+
         Title.OnNext(RS.MapExamplePageViewModel_Title);
     }
 

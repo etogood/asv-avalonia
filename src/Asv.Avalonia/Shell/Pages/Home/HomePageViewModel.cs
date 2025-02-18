@@ -11,6 +11,7 @@ public class HomePageViewModel : PageViewModel<HomePageViewModel>
         : this(DesignTime.CommandService)
     {
         DesignTime.ThrowIfNotDesignMode();
+
         Title.OnNext(RS.HomePageViewModel_Title);
     }
 
