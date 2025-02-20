@@ -36,9 +36,7 @@ public class TileLoader : AsyncDisposableWithCancel, ITileLoader
     private readonly ConcurrentHashSet<string> _remoteRequests;
     private readonly ILogger<TileLoader> _logger;
 
-    public TileLoader(
-        ILoggerFactory loggerFactory,
-        IConfiguration configProvider)
+    public TileLoader(ILoggerFactory loggerFactory, IConfiguration configProvider)
     {
         _logger = loggerFactory.CreateLogger<TileLoader>();
         _fastCache = new MemoryTileCache(new MemoryTileCacheConfig(), loggerFactory);
@@ -77,8 +75,9 @@ public class TileLoader : AsyncDisposableWithCancel, ITileLoader
                     // already in progress => skip
                     continue;
                 }
-                if (_fastCache[key] != null) continue;
-                
+                if (_fastCache[key] != null)
+                    continue;
+
                 var tile = _slowCache[key];
                 if (tile != null)
                 {
@@ -129,7 +128,7 @@ public class TileLoader : AsyncDisposableWithCancel, ITileLoader
             }
         }
     }
-    
+
     public Bitmap this[TileKey key]
     {
         get
@@ -158,8 +157,10 @@ public class TileLoader : AsyncDisposableWithCancel, ITileLoader
         ctx.FillRectangle(brush, new Rect(0, 0, size, size));
         return btm;
     }
+
     public ReactiveProperty<IBrush> EmptyTileBrush { get; }
     public Observable<TileKey> OnLoaded => _onLoaded;
+
     protected override void Dispose(bool disposing)
     {
         if (disposing)
@@ -171,7 +172,7 @@ public class TileLoader : AsyncDisposableWithCancel, ITileLoader
             _httpClient.Dispose();
             _remoteRequests.Dispose();
             EmptyTileBrush.Dispose();
-            
+
             foreach (var value in _emptyBitmap.Values)
             {
                 value.Dispose();
@@ -195,7 +196,7 @@ public class TileLoader : AsyncDisposableWithCancel, ITileLoader
         {
             await CastAndDispose(value);
         }
-        
+
         await base.DisposeAsyncCore();
 
         return;

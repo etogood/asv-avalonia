@@ -31,12 +31,9 @@ public partial class App : Application, IContainerHost, IShellHost
                 AppHost.Instance.GetService<IConfiguration>()
                     ?? throw new Exception("Configuration not found")
             )
+            .WithExport(AppHost.Instance.GetService<ILoggerFactory>() ?? NullLoggerFactory.Instance)
             .WithExport(
-                AppHost.Instance.GetService<ILoggerFactory>() ?? NullLoggerFactory.Instance
-            )
-            .WithExport(
-                AppHost.Instance.GetService<IAppPath>()
-                    ?? throw new Exception("AppPath not found")
+                AppHost.Instance.GetService<IAppPath>() ?? throw new Exception("AppPath not found")
             )
             .WithExport<IDataTemplateHost>(this)
             .WithExport<IShellHost>(this)

@@ -105,6 +105,7 @@
     </FluentTheme>-->
     <avalonia:MaterialIconStyles />
     <StyleInclude Source="avares://Asv.Avalonia/Shell/View/DockControl.axaml"/>
+    <StyleInclude Source="avares://Asv.Avalonia/Controls/Textbox/IpAddressTextBoxStyles.axaml"/>
     <Style Selector="avalonia|MaterialIcon">
         <Setter Property="Width" Value="{DynamicResource  IconElementThemeWidth}"/>
         <Setter Property="Height" Value="{DynamicResource  IconElementThemeHeight}"/>

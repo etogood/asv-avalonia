@@ -58,6 +58,14 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
         {
             OnFullSizedDesiredChanged(change);
         }
+
+        if (change.Property == IsPrimaryButtonEnabledProperty)
+        {
+            if (_primaryButton != null)
+            {
+                _primaryButton.IsEnabled = IsPrimaryButtonEnabled;
+            }
+        }
     }
 
     protected override bool RegisterContentPresenter(ContentPresenter presenter)

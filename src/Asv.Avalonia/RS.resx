@@ -501,4 +501,10 @@
     <data name="LanguageProperty_RestartDialog_Message" xml:space="preserve">
         <value>For the changes to take effect, you need to restart the application</value>
     </data>
+    <data name="AddSerialPortCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Add serial port</value>
+    </data>
+    <data name="AddSerialPortCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Command that adds a serial port</value>
+    </data>
 </root>

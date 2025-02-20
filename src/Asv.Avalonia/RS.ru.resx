@@ -494,4 +494,10 @@
     <data name="LanguageProperty_RestartDialog_Message" xml:space="preserve">
         <value>Чтобы изменения вступили в силу, требуется перезапустить приложение</value>
     </data>
+    <data name="AddSerialPortCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Добавить последовательный порт</value>
+    </data>
+    <data name="AddSerialPortCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда, которая добавляет последовательный порт</value>
+    </data>
 </root>

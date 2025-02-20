@@ -34,11 +34,16 @@ public class TileKey : IEquatable<TileKey>
 
     public bool Equals(TileKey? other)
     {
-        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(null, other))
+            return false;
         return X == other.X
             && Y == other.Y
             && Zoom == other.Zoom
-            && string.Equals(Provider.Info.Id, other.Provider.Info.Id, StringComparison.InvariantCultureIgnoreCase);
+            && string.Equals(
+                Provider.Info.Id,
+                other.Provider.Info.Id,
+                StringComparison.InvariantCultureIgnoreCase
+            );
     }
 
     public override bool Equals(object? obj)
