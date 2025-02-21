@@ -353,17 +353,15 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
         //     was being handled before the deferral.
         var args = new ContentDialogClosingEventArgs(_result);
 
-        var deferral = new Deferral(() =>
+        var deferral = new Deferral(async () =>
         {
             Dispatcher.UIThread.VerifyAccess();
             _hasDeferralActive = false;
 
             if (!args.Cancel)
             {
-                FinalCloseDialog();
+                await FinalCloseDialog();
             }
-
-            return ValueTask.CompletedTask;
         });
 
         args.SetDeferral(deferral);
@@ -376,78 +374,71 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
 
     // This is the exit point for the ContentDialog
     // This method MUST be called to finalize everything
-    private async void FinalCloseDialog()
+    private async ValueTask FinalCloseDialog()
     {
-        try
+        // Prevent interaction when closing...double/multiple clicking on the buttons to close
+        // the dialog was calling this multiple times, which would cause the OverlayLayer check
+        // below to fail (as this would be removed from the tree). This is a simple workaround
+        // to make sure we don't error out
+        IsHitTestVisible = false;
+
+        // For a better experience when animating closed, we need to make sure the
+        // focus adorner is not showing (if using keyboard) otherwise that will hang
+        // around and not fade out, and it just looks weird. So focus this to force the
+        // adorner to hide, then continue forward.
+        Focus();
+
+        PseudoClasses.Set(ContentDialogPseudoClasses.s_pcHidden, true);
+        PseudoClasses.Set(ContentDialogPseudoClasses.s_pcOpen, false);
+
+        // Let the close animation finish (now 0.167s in new WinUI update...)
+        // We'll wait just a touch longer to be sure
+        await Task.Delay(200);
+
+        OnClosed(new ContentDialogClosedEventArgs(_result));
+
+        if (_lastFocus != null)
         {
-            // Prevent interaction when closing...double/multiple clicking on the buttons to close
-            // the dialog was calling this multiple times, which would cause the OverlayLayer check
-            // below to fail (as this would be removed from the tree). This is a simple workaround
-            // to make sure we don't error out
-            IsHitTestVisible = false;
-
-            // For a better experience when animating closed, we need to make sure the
-            // focus adorner is not showing (if using keyboard) otherwise that will hang
-            // around and not fade out, and it just looks weird. So focus this to force the
-            // adorner to hide, then continue forward.
-            Focus();
-
-            PseudoClasses.Set(ContentDialogPseudoClasses.s_pcHidden, true);
-            PseudoClasses.Set(ContentDialogPseudoClasses.s_pcOpen, false);
-
-            // Let the close animation finish (now 0.167s in new WinUI update...)
-            // We'll wait just a touch longer to be sure
-            await Task.Delay(200);
-
-            OnClosed(new ContentDialogClosedEventArgs(_result));
-
-            if (_lastFocus != null)
-            {
-                _lastFocus.Focus();
-                _lastFocus = null;
-            }
-
-            var ol = OverlayLayer.GetOverlayLayer(_host!);
-
-            // If OverlayLayer isn't found here, this may be a reentrant call (hit ESC multiple times quickly, etc)
-            // Don't fail, and return. If this isn't reentrant, there's bigger issues...
-            if (ol == null)
-            {
-                return;
-            }
-
-            ol.Children.Remove(_host!);
-
-            _host!.Content = null;
-
-            if (_originalHost != null)
-            {
-                if (_originalHost is Panel p)
-                {
-                    p.Children.Insert(_originalHostIndex, this);
-                }
-                else if (_originalHost is Decorator d)
-                {
-                    d.Child = this;
-                }
-                else if (_originalHost is ContentControl cc)
-                {
-                    cc.Content = this;
-                }
-                else if (_originalHost is ContentPresenter cp)
-                {
-                    cp.Content = this;
-                }
-            }
-
-            _hotkeyDownVisual = null;
-
-            _tcs.TrySetResult(_result);
+            _lastFocus.Focus();
+            _lastFocus = null;
         }
-        catch (Exception)
+
+        var ol = OverlayLayer.GetOverlayLayer(_host!);
+
+        // If OverlayLayer isn't found here, this may be a reentrant call (hit ESC multiple times quickly, etc)
+        // Don't fail, and return. If this isn't reentrant, there's bigger issues...
+        if (ol == null)
         {
-            // TODO handle exception
+            return;
         }
+
+        ol.Children.Remove(_host!);
+
+        _host!.Content = null;
+
+        if (_originalHost != null)
+        {
+            if (_originalHost is Panel p)
+            {
+                p.Children.Insert(_originalHostIndex, this);
+            }
+            else if (_originalHost is Decorator d)
+            {
+                d.Child = this;
+            }
+            else if (_originalHost is ContentControl cc)
+            {
+                cc.Content = this;
+            }
+            else if (_originalHost is ContentPresenter cp)
+            {
+                cp.Content = this;
+            }
+        }
+
+        _hotkeyDownVisual = null;
+
+        _tcs.TrySetResult(_result);
     }
 
     private void OnButtonClick(object? sender, RoutedEventArgs? e)
