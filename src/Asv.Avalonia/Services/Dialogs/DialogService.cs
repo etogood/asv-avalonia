@@ -195,7 +195,8 @@ public sealed class DialogService : IDialogService
             Content = new TextBlock { Text = message },
             PrimaryButtonText = RS.DialogButton_Yes,
             SecondaryButtonText = RS.DialogButton_No,
-            DefaultButton = ContentDialogButton.Primary,
+
+            // DefaultButton = ContentDialogButton.Primary,
         };
 
         var result = await dialogContent.ShowAsync();

@@ -35,6 +35,7 @@ public class ContentDialogClosingEventArgs : EventArgs
         {
             Dispatcher.UIThread.VerifyAccess();
             DecrementDeferralCount();
+            return ValueTask.CompletedTask;
         });
     }
 

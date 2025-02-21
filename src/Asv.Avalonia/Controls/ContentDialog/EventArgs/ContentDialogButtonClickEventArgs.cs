@@ -27,6 +27,7 @@ public class ContentDialogButtonClickEventArgs : EventArgs
         {
             Dispatcher.UIThread.VerifyAccess();
             DecrementDeferralCount();
+            return ValueTask.CompletedTask;
         });
     }
 

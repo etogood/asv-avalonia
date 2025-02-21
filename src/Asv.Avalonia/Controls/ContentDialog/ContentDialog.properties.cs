@@ -17,82 +17,79 @@ public delegate void TypedEventHandler<TSender, TResult>(TSender sender, TResult
 public partial class ContentDialog
 {
     /// <summary>
-    /// Defines the <see cref="CloseButtonCommand"/> property
+    /// Defines the <see cref="CloseButtonCommand"/> property.
     /// </summary>
-    public static readonly StyledProperty<ICommand> CloseButtonCommandProperty =
-        AvaloniaProperty.Register<ContentDialog, ICommand>(nameof(CloseButtonCommand));
+    public static readonly StyledProperty<ICommand?> CloseButtonCommandProperty =
+        AvaloniaProperty.Register<ContentDialog, ICommand?>(nameof(CloseButtonCommand));
 
     /// <summary>
-    /// Defines the <see cref="CloseButtonCommandParameter"/> property
+    /// Defines the <see cref="CloseButtonCommandParameter"/> property.
     /// </summary>
     public static readonly StyledProperty<object> CloseButtonCommandParameterProperty =
         AvaloniaProperty.Register<ContentDialog, object>(nameof(CloseButtonCommandParameter));
 
     /// <summary>
-    /// Defines the <see cref="CloseButtonText"/> property
+    /// Defines the <see cref="CloseButtonText"/> property.
     /// </summary>
     public static readonly StyledProperty<string> CloseButtonTextProperty =
         AvaloniaProperty.Register<ContentDialog, string>(nameof(CloseButtonText));
 
     /// <summary>
-    /// Defines the <see cref="DefaultButton"/> property
+    /// Defines the <see cref="DefaultButton"/> property.
     /// </summary>
     public static readonly StyledProperty<ContentDialogButton> DefaultButtonProperty =
-        AvaloniaProperty.Register<ContentDialog, ContentDialogButton>(
-            nameof(DefaultButton),
-            ContentDialogButton.None
-        );
+        AvaloniaProperty.Register<ContentDialog, ContentDialogButton>(nameof(DefaultButton));
 
     /// <summary>
-    /// Defines the <see cref="IsPrimaryButtonEnabled"/> property
+    /// Defines the <see cref="IsPrimaryButtonEnabled"/> property.
     /// </summary>
     public static readonly StyledProperty<bool> IsPrimaryButtonEnabledProperty =
         AvaloniaProperty.Register<ContentDialog, bool>(nameof(IsPrimaryButtonEnabled), true);
 
     /// <summary>
-    /// Defines the <see cref="IsSecondaryButtonEnabled"/> property
+    /// Defines the <see cref="IsSecondaryButtonEnabled"/> property.
     /// </summary>
     public static readonly StyledProperty<bool> IsSecondaryButtonEnabledProperty =
         AvaloniaProperty.Register<ContentDialog, bool>(nameof(IsSecondaryButtonEnabled), true);
 
     /// <summary>
-    /// Defines the <see cref="PrimaryButtonCommand"/> property
+    /// Defines the <see cref="PrimaryButtonCommand"/> property.
     /// </summary>
-    public static readonly StyledProperty<ICommand> PrimaryButtonCommandProperty =
-        AvaloniaProperty.Register<ContentDialog, ICommand>(nameof(PrimaryButtonCommand));
+    public static readonly StyledProperty<ICommand?> PrimaryButtonCommandProperty =
+        AvaloniaProperty.Register<ContentDialog, ICommand?>(nameof(PrimaryButtonCommand));
 
     /// <summary>
-    /// Defines the <see cref="PrimaryButtonCommandParameter"/> property
+    /// Defines the <see cref="PrimaryButtonCommandParameter"/> property.
     /// </summary>
     public static readonly StyledProperty<object> PrimaryButtonCommandParameterProperty =
         AvaloniaProperty.Register<ContentDialog, object>(nameof(PrimaryButtonCommandParameter));
 
     /// <summary>
-    /// Defines the <see cref="PrimaryButtonText"/> property
+    /// Defines the <see cref="PrimaryButtonText"/> property.
     /// </summary>
     public static readonly StyledProperty<string> PrimaryButtonTextProperty =
         AvaloniaProperty.Register<ContentDialog, string>(nameof(PrimaryButtonText));
 
     /// <summary>
-    /// Defines the <see cref="SecondaryButtonCommand"/> property
+    /// Defines the <see cref="SecondaryButtonCommand"/> property.
     /// </summary>
-    public static readonly StyledProperty<ICommand> SecondaryButtonCommandProperty =
-        AvaloniaProperty.Register<ContentDialog, ICommand>(nameof(SecondaryButtonCommand));
+    public static readonly StyledProperty<ICommand?> SecondaryButtonCommandProperty =
+        AvaloniaProperty.Register<ContentDialog, ICommand?>(nameof(SecondaryButtonCommand));
 
     /// <summary>
-    /// Defines the <see cref="SecondaryButtonCommandParameter"/> property
+    /// Defines the <see cref="SecondaryButtonCommandParameter"/> property.
     /// </summary>
     public static readonly StyledProperty<object> SecondaryButtonCommandParameterProperty =
         AvaloniaProperty.Register<ContentDialog, object>(nameof(SecondaryButtonCommandParameter));
 
     /// <summary>
-    /// Defines the <see cref="SecondaryButtonText"/> property
+    /// Defines the <see cref="SecondaryButtonText"/> property.
     /// </summary>
     public static readonly StyledProperty<string> SecondaryButtonTextProperty =
         AvaloniaProperty.Register<ContentDialog, string>(nameof(SecondaryButtonText));
 
     /// <summary>
-    /// Defines the <see cref="Title"/> property
+    /// Defines the <see cref="Title"/> property.
     /// </summary>
     public static readonly StyledProperty<object> TitleProperty = AvaloniaProperty.Register<
         ContentDialog,
@@ -100,13 +97,13 @@ public partial class ContentDialog
     >(nameof(Title), string.Empty);
 
     /// <summary>
-    /// Defines the <see cref="TitleTemplate"/> property
+    /// Defines the <see cref="TitleTemplate"/> property.
     /// </summary>
     public static readonly StyledProperty<IDataTemplate> TitleTemplateProperty =
         AvaloniaProperty.Register<ContentDialog, IDataTemplate>(nameof(TitleTemplate));
 
     /// <summary>
-    /// Defines the <see cref="FullSizeDesired"/> property
+    /// Defines the <see cref="FullSizeDesired"/> property.
     /// </summary>
     public static readonly StyledProperty<bool> FullSizeDesiredProperty = AvaloniaProperty.Register<
         ContentDialog,
@@ -116,7 +113,7 @@ public partial class ContentDialog
     /// <summary>
     /// Gets or sets the command to invoke when the close button is tapped.
     /// </summary>
-    public ICommand CloseButtonCommand
+    public ICommand? CloseButtonCommand
     {
         get => GetValue(CloseButtonCommandProperty);
         set => SetValue(CloseButtonCommandProperty, value);
@@ -150,7 +147,7 @@ public partial class ContentDialog
     }
 
     /// <summary>
-    /// Gets or sets whether the dialog's primary button is enabled.
+    /// Gets or sets a value indicating whether the dialog's primary button is enabled.
     /// </summary>
     public bool IsPrimaryButtonEnabled
     {
@@ -159,7 +156,7 @@ public partial class ContentDialog
     }
 
     /// <summary>
-    /// Gets or sets whether the dialog's secondary button is enabled.
+    /// Gets or sets a value indicating whether the dialog's secondary button is enabled.
     /// </summary>
     public bool IsSecondaryButtonEnabled
     {
@@ -170,7 +167,7 @@ public partial class ContentDialog
     /// <summary>
     /// Gets or sets the command to invoke when the primary button is tapped.
     /// </summary>
-    public ICommand PrimaryButtonCommand
+    public ICommand? PrimaryButtonCommand
     {
         get => GetValue(PrimaryButtonCommandProperty);
         set => SetValue(PrimaryButtonCommandProperty, value);
@@ -197,7 +194,7 @@ public partial class ContentDialog
     /// <summary>
     /// Gets or sets the command to invoke when the secondary button is tapped.
     /// </summary>
-    public ICommand SecondaryButtonCommand
+    public ICommand? SecondaryButtonCommand
     {
         get => GetValue(SecondaryButtonCommandProperty);
         set => SetValue(SecondaryButtonCommandProperty, value);
@@ -240,9 +237,9 @@ public partial class ContentDialog
     }
 
     /// <summary>
-    /// Gets or sets whether the Dialog should show full screen
+    /// Gets or sets a value indicating whether the Dialog should show full screen
     /// On WinUI3, at least desktop, this just show the dialog at
-    /// the maximum size of a contentdialog.
+    /// the maximum size of a Content Dialog.
     /// </summary>
     public bool FullSizeDesired
     {
@@ -251,7 +248,7 @@ public partial class ContentDialog
     }
 
     /// <summary>
-    /// Occurs before the dialog is opened
+    /// Occurs before the dialog is opened.
     /// </summary>
     public event TypedEventHandler<ContentDialog, EventArgs> Opening;
 

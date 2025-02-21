@@ -5,7 +5,6 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Logging;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 
@@ -13,6 +12,9 @@ namespace Asv.Avalonia;
 
 /// <summary>
 /// Presents a asynchronous dialog to the user.
+/// <remarks>
+/// Code was taken from: https://github.com/amwx/FluentAvalonia.
+/// </remarks>
 /// </summary>
 public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
 {
@@ -60,12 +62,7 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
 
     protected override bool RegisterContentPresenter(ContentPresenter presenter)
     {
-        if (presenter.Name == "Content")
-        {
-            return true;
-        }
-
-        return base.RegisterContentPresenter(presenter);
+        return presenter.Name == "Content" || base.RegisterContentPresenter(presenter);
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
@@ -73,9 +70,9 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
         base.OnKeyDown(e);
 
         // See OnKeyUp for reasoning
-        if (!e.Handled && (e.Key == Key.Enter || e.Key == Key.Escape))
+        if (e is { Handled: false, Key: Key.Enter or Key.Escape, Source: Visual visual })
         {
-            _hotkeyDownVisual = (e.Source as Visual)!;
+            _hotkeyDownVisual = visual;
         }
     }
 
@@ -91,11 +88,9 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
         // the KeyUp event is raised on the focused item within the dialog, instead of the original button
         // (Avalonia related issue #9626) and will immediately close the dialog
         // We store the source of the key down and if it doesn't match, or hasn't been set yet, we ignore
-        // this key up event so we don't inadvertantly close the dialog
-        if (
-            (e.Key == Key.Enter || e.Key == Key.Escape)
-            && (_hotkeyDownVisual == null || _hotkeyDownVisual != (Visual)e.Source!)
-        )
+        // this key up event so we don't inadvertently close the dialog
+        var visualSrc = e.Source as Visual;
+        if (e.Key is Key.Enter or Key.Escape && _hotkeyDownVisual != visualSrc)
         {
             base.OnKeyUp(e);
             return;
@@ -119,15 +114,15 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
                     switch (defButton)
                     {
                         case ContentDialogButton.Primary:
-                            OnButtonClick(_primaryButton, null!);
+                            OnButtonClick(_primaryButton, null);
                             break;
 
                         case ContentDialogButton.Secondary:
-                            OnButtonClick(_secondaryButton, null!);
+                            OnButtonClick(_secondaryButton, null);
                             break;
 
                         case ContentDialogButton.Close:
-                            OnButtonClick(_closeButton, null!);
+                            OnButtonClick(_closeButton, null);
                             break;
                     }
 
@@ -143,20 +138,26 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
     /// <summary>
     /// Begins an asynchronous operation to show the dialog.
     /// </summary>
-    public Task<ContentDialogResult> ShowAsync() => ShowAsyncCoreForTopLevel(null!);
+    /// <returns>Returns <inheritdoc cref="ContentDialogResult"/> that shows which dialog button was pressed.</returns>
+    public Task<ContentDialogResult> ShowAsync() => ShowAsyncCoreForTopLevel(null);
 
     /// <summary>
-    /// Begins an asynchronous operation to show the dialog using the specified window
+    /// Begins an asynchronous operation to show the dialog using the specified window.
     /// </summary>
-    public Task<ContentDialogResult> ShowAsync(Window w) => ShowAsyncCoreForTopLevel(w);
+    /// <param name="window">.</param>
+    /// <returns>Returns <inheritdoc cref="ContentDialogResult"/> that shows which dialog button was pressed.</returns>
+    public Task<ContentDialogResult> ShowAsync(Window window) => ShowAsyncCoreForTopLevel(window);
 
     /// <summary>
-    /// Begins an asynchronous operation to show the dialog using the specified top level
+    /// Begins an asynchronous operation to show the dialog using the specified top level.
     /// </summary>
     /// <remarks>
-    /// Use this when an ApplicationLifetime is unavailable (such as in headless unit tests)
+    /// Use this when an ApplicationLifetime is unavailable (such as in headless unit tests).
     /// </remarks>
-    public Task<ContentDialogResult> ShowAsync(TopLevel tl) => ShowAsyncCoreForTopLevel(tl);
+    /// <param name="topLevel">.</param>
+    /// <returns>Returns <inheritdoc cref="ContentDialogResult"/> that shows which dialog button was pressed.</returns>
+    public Task<ContentDialogResult> ShowAsync(TopLevel topLevel) =>
+        ShowAsyncCoreForTopLevel(topLevel);
 
     private async Task<ContentDialogResult> ShowAsyncCoreForTopLevel(TopLevel? topLevel)
     {
@@ -186,10 +187,9 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
         }
 
         _host ??= new DialogHost();
-
         _host.Content = this;
 
-        OverlayLayer? ol = null;
+        OverlayLayer? ol;
 
         if (topLevel != null)
         {
@@ -199,37 +199,38 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
         {
             if (
                 Application.Current?.ApplicationLifetime
-                is IClassicDesktopStyleApplicationLifetime al
+                is IClassicDesktopStyleApplicationLifetime applicationLifetime
             )
             {
-                var windows = al.Windows;
-                for (int i = 0; i < windows.Count; i++)
+                var windows = applicationLifetime.Windows;
+                foreach (var window in windows)
                 {
-                    if (windows[i].IsActive)
+                    if (!window.IsActive)
                     {
-                        topLevel = windows[i];
-                        break;
-                    }
-                }
-
-                if (topLevel == null)
-                {
-                    if (al.MainWindow == null)
-                    {
-                        throw new NotSupportedException(
-                            "No TopLevel root found to parent ContentDialog"
-                        );
+                        continue;
                     }
 
-                    topLevel = al.MainWindow;
+                    topLevel = window;
+                    break;
                 }
+
+                topLevel ??=
+                    applicationLifetime.MainWindow
+                    ?? throw new NotSupportedException(
+                        "No TopLevel root found to parent ContentDialog"
+                    );
 
                 ol = OverlayLayer.GetOverlayLayer(topLevel);
             }
             else if (Application.Current?.ApplicationLifetime is ISingleViewApplicationLifetime sl)
             {
-                topLevel = TopLevel.GetTopLevel(sl.MainView);
-                ol = OverlayLayer.GetOverlayLayer(sl.MainView!);
+                topLevel =
+                    TopLevel.GetTopLevel(sl.MainView)
+                    ?? throw new NotSupportedException(
+                        "No TopLevel root found to parent ContentDialog"
+                    );
+
+                ol = OverlayLayer.GetOverlayLayer(topLevel);
             }
             else
             {
@@ -245,7 +246,7 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
             throw new InvalidOperationException("Unable to find OverlayLayer from given TopLevel");
         }
 
-        _lastFocus = topLevel!.FocusManager!.GetFocusedElement()!;
+        _lastFocus = topLevel.FocusManager?.GetFocusedElement();
 
         ol.Children.Add(_host);
 
@@ -254,7 +255,7 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
         PseudoClasses.Set(ContentDialogPseudoClasses.s_pcHidden, false);
         PseudoClasses.Set(ContentDialogPseudoClasses.s_pcOpen, true);
 
-        // Delay futher initializing until after the dialog has loaded. We sub here and unsbu in DialogLoaded
+        // Delay further initializing until after the dialog has loaded. We sub here and unsub in DialogLoaded
         // because ContentDialog can be declared in Xaml prior to showing, and we don't want Loaded to trigger
         // initialization if we're not actually showing the dialog
         Loaded += DialogLoaded;
@@ -263,14 +264,15 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
     }
 
     /// <summary>
-    /// Closes the current <see cref="ContentDialog"/> without a result (<see cref="ContentDialogResult"/>.<see cref="ContentDialogResult.None"/>)
+    /// Closes the current <see cref="ContentDialog"/> without a result (<see cref="ContentDialogResult"/>.<see cref="ContentDialogResult.None"/>).
     /// </summary>
     public void Hide() => Hide(ContentDialogResult.None);
 
     /// <summary>
-    /// Closes the current <see cref="ContentDialog"/> with the given <see cref="ContentDialogResult"/> <para>ddd</para>
+    /// Closes the current <see cref="ContentDialog"/> with the given <see cref="ContentDialogResult"/>.
+    /// <para>ddd.</para>
     /// </summary>
-    /// <param name="dialogResult">The <see cref="ContentDialogResult"/> to return</param>
+    /// <param name="dialogResult">The <see cref="ContentDialogResult"/> to return.</param>
     public void Hide(ContentDialogResult dialogResult)
     {
         _result = dialogResult;
@@ -278,31 +280,34 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
     }
 
     /// <summary>
-    /// Called when the primary button is invoked
+    /// Called when the primary button is invoked.
     /// </summary>
+    /// <param name="args">.</param>
     protected virtual void OnPrimaryButtonClick(ContentDialogButtonClickEventArgs args)
     {
         PrimaryButtonClick?.Invoke(this, args);
     }
 
     /// <summary>
-    /// Called when the secondary button is invoked
+    /// Called when the secondary button is invoked.
     /// </summary>
+    /// <param name="args">.</param>
     protected virtual void OnSecondaryButtonClick(ContentDialogButtonClickEventArgs args)
     {
         SecondaryButtonClick?.Invoke(this, args);
     }
 
     /// <summary>
-    /// Called when the close button is invoked
+    /// Called when the close button is invoked.
     /// </summary>
+    /// <param name="args">.</param>
     protected virtual void OnCloseButtonClick(ContentDialogButtonClickEventArgs args)
     {
         CloseButtonClick?.Invoke(this, args);
     }
 
     /// <summary>
-    /// Called when the ContentDialog is requested to be opened
+    /// Called when the ContentDialog is requested to be opened.
     /// </summary>
     protected virtual void OnOpening()
     {
@@ -310,7 +315,7 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
     }
 
     /// <summary>
-    /// Called after the ContentDialog is initialized but just before its presented on screen
+    /// Called after the ContentDialog is initialized but just before it is presented on screen.
     /// </summary>
     protected virtual void OnOpened()
     {
@@ -318,7 +323,7 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
     }
 
     /// <summary>
-    /// Called when the ContentDialog has been requested to close, but before it actually closes
+    /// Called when the ContentDialog has been requested to close, but before it actually closes.
     /// </summary>
     /// <param name="args">.</param>
     protected virtual void OnClosing(ContentDialogClosingEventArgs args)
@@ -327,8 +332,9 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
     }
 
     /// <summary>
-    /// Called when the ContentDialog has been closed and removed from the tree
+    /// Called when the ContentDialog has been closed and removed from the tree.
     /// </summary>
+    /// <param name="args">.</param>
     protected virtual void OnClosed(ContentDialogClosedEventArgs args)
     {
         Closed?.Invoke(this, args);
@@ -356,6 +362,8 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
             {
                 FinalCloseDialog();
             }
+
+            return ValueTask.CompletedTask;
         });
 
         args.SetDeferral(deferral);
@@ -370,72 +378,79 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
     // This method MUST be called to finalize everything
     private async void FinalCloseDialog()
     {
-        // Prevent interaction when closing...double/mutliple clicking on the buttons to close
-        // the dialog was calling this multiple times, which would cause the OverlayLayer check
-        // below to fail (as this would be removed from the tree). This is a simple workaround
-        // to make sure we don't error out
-        IsHitTestVisible = false;
-
-        // For a better experience when animating closed, we need to make sure the
-        // focus adorner is not showing (if using keyboard) otherwise that will hang
-        // around and not fade out and it just looks weird. So focus this to force the
-        // adorner to hide, then continue forward.
-        Focus();
-
-        PseudoClasses.Set(ContentDialogPseudoClasses.s_pcHidden, true);
-        PseudoClasses.Set(ContentDialogPseudoClasses.s_pcOpen, false);
-
-        // Let the close animation finish (now 0.167s in new WinUI update...)
-        // We'll wait just a touch longer to be sure
-        await Task.Delay(200);
-
-        OnClosed(new ContentDialogClosedEventArgs(_result));
-
-        if (_lastFocus != null)
+        try
         {
-            _lastFocus.Focus(NavigationMethod.Unspecified);
-            _lastFocus = null!;
+            // Prevent interaction when closing...double/multiple clicking on the buttons to close
+            // the dialog was calling this multiple times, which would cause the OverlayLayer check
+            // below to fail (as this would be removed from the tree). This is a simple workaround
+            // to make sure we don't error out
+            IsHitTestVisible = false;
+
+            // For a better experience when animating closed, we need to make sure the
+            // focus adorner is not showing (if using keyboard) otherwise that will hang
+            // around and not fade out, and it just looks weird. So focus this to force the
+            // adorner to hide, then continue forward.
+            Focus();
+
+            PseudoClasses.Set(ContentDialogPseudoClasses.s_pcHidden, true);
+            PseudoClasses.Set(ContentDialogPseudoClasses.s_pcOpen, false);
+
+            // Let the close animation finish (now 0.167s in new WinUI update...)
+            // We'll wait just a touch longer to be sure
+            await Task.Delay(200);
+
+            OnClosed(new ContentDialogClosedEventArgs(_result));
+
+            if (_lastFocus != null)
+            {
+                _lastFocus.Focus();
+                _lastFocus = null;
+            }
+
+            var ol = OverlayLayer.GetOverlayLayer(_host!);
+
+            // If OverlayLayer isn't found here, this may be a reentrant call (hit ESC multiple times quickly, etc)
+            // Don't fail, and return. If this isn't reentrant, there's bigger issues...
+            if (ol == null)
+            {
+                return;
+            }
+
+            ol.Children.Remove(_host!);
+
+            _host!.Content = null;
+
+            if (_originalHost != null)
+            {
+                if (_originalHost is Panel p)
+                {
+                    p.Children.Insert(_originalHostIndex, this);
+                }
+                else if (_originalHost is Decorator d)
+                {
+                    d.Child = this;
+                }
+                else if (_originalHost is ContentControl cc)
+                {
+                    cc.Content = this;
+                }
+                else if (_originalHost is ContentPresenter cp)
+                {
+                    cp.Content = this;
+                }
+            }
+
+            _hotkeyDownVisual = null;
+
+            _tcs.TrySetResult(_result);
         }
-
-        var ol = OverlayLayer.GetOverlayLayer(_host);
-
-        // If OverlayLayer isn't found here, this may be a reentrant call (hit ESC multiple times quickly, etc)
-        // Don't fail, and return. If this isn't reentrant, there's bigger issues...
-        if (ol == null)
+        catch (Exception)
         {
-            return;
+            // TODO handle exception
         }
-
-        ol.Children.Remove(_host);
-
-        _host.Content = null;
-
-        if (_originalHost != null)
-        {
-            if (_originalHost is Panel p)
-            {
-                p.Children.Insert(_originalHostIndex, this);
-            }
-            else if (_originalHost is Decorator d)
-            {
-                d.Child = this;
-            }
-            else if (_originalHost is ContentControl cc)
-            {
-                cc.Content = this;
-            }
-            else if (_originalHost is ContentPresenter cp)
-            {
-                cp.Content = this;
-            }
-        }
-
-        _hotkeyDownVisual = null!;
-
-        _tcs.TrySetResult(_result);
     }
 
-    private void OnButtonClick(object sender, RoutedEventArgs e)
+    private void OnButtonClick(object? sender, RoutedEventArgs? e)
     {
         // v2 - No longer disabling the dialog during a deferral so we need to make sure that if
         //      multiple requests to close come in, we don't handle them
@@ -453,39 +468,30 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
 
             if (args.Cancel)
             {
-                return;
+                return ValueTask.CompletedTask;
             }
 
-            if (sender == _primaryButton)
+            if (Equals(sender, _primaryButton))
             {
-                if (
-                    PrimaryButtonCommand != null
-                    && PrimaryButtonCommand.CanExecute(PrimaryButtonCommandParameter)
-                )
+                if (PrimaryButtonCommand?.CanExecute(PrimaryButtonCommandParameter) ?? false)
                 {
                     PrimaryButtonCommand.Execute(PrimaryButtonCommandParameter);
                 }
 
                 _result = ContentDialogResult.Primary;
             }
-            else if (sender == _secondaryButton)
+            else if (Equals(sender, _secondaryButton))
             {
-                if (
-                    SecondaryButtonCommand != null
-                    && SecondaryButtonCommand.CanExecute(SecondaryButtonCommandParameter)
-                )
+                if (SecondaryButtonCommand?.CanExecute(SecondaryButtonCommandParameter) ?? false)
                 {
                     SecondaryButtonCommand.Execute(SecondaryButtonCommandParameter);
                 }
 
                 _result = ContentDialogResult.Secondary;
             }
-            else if (sender == _closeButton)
+            else if (Equals(sender, _closeButton))
             {
-                if (
-                    CloseButtonCommand != null
-                    && CloseButtonCommand.CanExecute(CloseButtonCommandParameter)
-                )
+                if (CloseButtonCommand?.CanExecute(CloseButtonCommandParameter) ?? false)
                 {
                     CloseButtonCommand.Execute(CloseButtonCommandParameter);
                 }
@@ -494,21 +500,23 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
             }
 
             HideCore();
+
+            return ValueTask.CompletedTask;
         });
 
         args.SetDeferral(deferral);
         _hasDeferralActive = true;
 
         args.IncrementDeferralCount();
-        if (sender == _primaryButton)
+        if (Equals(sender, _primaryButton))
         {
             OnPrimaryButtonClick(args);
         }
-        else if (sender == _secondaryButton)
+        else if (Equals(sender, _secondaryButton))
         {
             OnSecondaryButtonClick(args);
         }
-        else if (sender == _closeButton)
+        else if (Equals(sender, _closeButton))
         {
             OnCloseButtonClick(args);
         }
@@ -518,11 +526,19 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
 
     private void OnFullSizedDesiredChanged(AvaloniaPropertyChangedEventArgs e)
     {
-        bool newVal = (bool)e.NewValue;
-        PseudoClasses.Set(s_pcFullSize, newVal);
+        if (e.NewValue is bool newVal)
+        {
+            PseudoClasses.Set(s_pcFullSize, newVal);
+        }
     }
 
-    public (bool handled, IInputElement next) GetNext(
+    /// <summary>
+    /// Unused. TODO: Find out how to get rid of it in our custom version.
+    /// </summary>
+    /// <param name="element">.</param>
+    /// <param name="direction">..</param>
+    /// <returns>...</returns>
+    public (bool handled, IInputElement? next) GetNext(
         IInputElement element,
         NavigationDirection direction
     )
@@ -542,7 +558,7 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
             return (false, null);
         }
 
-        var current = TopLevel.GetTopLevel(this)!.FocusManager!.GetFocusedElement();
+        var current = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
         if (current == null)
         {
             return (false, null);
@@ -552,34 +568,34 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
         {
             for (int i = 0; i < children.Count; i++)
             {
-                if (children[i] == current)
+                if (children[i] != current)
                 {
-                    if (i == children.Count - 1)
-                    {
-                        return (true, children[0]);
-                    }
-                    else
-                    {
-                        return (true, children[i + 1]);
-                    }
+                    continue;
                 }
+
+                if (i == children.Count - 1)
+                {
+                    return (true, children[0]);
+                }
+
+                return (true, children[i + 1]);
             }
         }
         else if (direction == NavigationDirection.Previous)
         {
             for (int i = children.Count - 1; i >= 0; i--)
             {
-                if (children[i] == current)
+                if (children[i] != current)
                 {
-                    if (i == 0)
-                    {
-                        return (true, children[children.Count - 1]);
-                    }
-                    else
-                    {
-                        return (true, children[i - 1]);
-                    }
+                    continue;
                 }
+
+                if (i == 0)
+                {
+                    return (true, children[^1]);
+                }
+
+                return (true, children[i - 1]);
             }
         }
 
@@ -599,90 +615,67 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
         PseudoClasses.Set(s_pcSecondary, !string.IsNullOrEmpty(SecondaryButtonText));
         PseudoClasses.Set(s_pcClose, !string.IsNullOrEmpty(CloseButtonText));
 
-        var p = Presenter;
         switch (DefaultButton)
         {
             case ContentDialogButton.Primary:
                 if (!_primaryButton.IsVisible)
                 {
-#if DEBUG
-                    // Logger.TryGet(LogEventLevel.Debug, "ContentDialog")?.Log("SetupDialog", "DefaultButton was set to Primary, but PrimaryButton is not enabled");
-#endif
                     break;
                 }
 
                 _primaryButton.Classes.Add(ContentDialogPseudoClasses.s_cAccent);
-                _secondaryButton.Classes.Remove(ContentDialogPseudoClasses.s_cAccent);
-                _closeButton.Classes.Remove(ContentDialogPseudoClasses.s_cAccent);
+                _secondaryButton?.Classes.Remove(ContentDialogPseudoClasses.s_cAccent);
+                _closeButton?.Classes.Remove(ContentDialogPseudoClasses.s_cAccent);
 
                 _primaryButton.Focus();
-#if DEBUG
-                // Logger.TryGet(LogEventLevel.Debug, "ContentDialog")?.Log("SetupDialog", "Set initial focus to PrimaryButton");
-#endif
-
                 break;
 
             case ContentDialogButton.Secondary:
-                if (!_secondaryButton.IsVisible)
+                if (!_secondaryButton?.IsVisible ?? false)
                 {
-#if DEBUG
-                    // Logger.TryGet(LogEventLevel.Debug, "ContentDialog")?.Log("SetupDialog","DefaultButton was set to Secondary, but SecondaryButton is not enabled");
-#endif
                     break;
                 }
 
-                _secondaryButton.Classes.Add(ContentDialogPseudoClasses.s_cAccent);
+                _secondaryButton?.Classes.Add(ContentDialogPseudoClasses.s_cAccent);
                 _primaryButton.Classes.Remove(ContentDialogPseudoClasses.s_cAccent);
-                _closeButton.Classes.Remove(ContentDialogPseudoClasses.s_cAccent);
+                _closeButton?.Classes.Remove(ContentDialogPseudoClasses.s_cAccent);
 
-                _secondaryButton.Focus();
-#if DEBUG
-                // Logger.TryGet(LogEventLevel.Debug, "ContentDialog")?.Log("SetupDialog", "Set initial focus to SecondaryButton");
-#endif
-
+                _secondaryButton?.Focus();
                 break;
 
             case ContentDialogButton.Close:
-                if (!_closeButton.IsVisible)
+                if (!_closeButton?.IsVisible ?? false)
                 {
-#if DEBUG
-                    // Logger.TryGet(LogEventLevel.Debug, "ContentDialog")?.Log("SetupDialog","DefaultButton was set to Close, but CloseButton is not enabled");
-#endif
                     break;
                 }
 
-                _closeButton.Classes.Add(ContentDialogPseudoClasses.s_cAccent);
+                _closeButton?.Classes.Add(ContentDialogPseudoClasses.s_cAccent);
                 _primaryButton.Classes.Remove(ContentDialogPseudoClasses.s_cAccent);
-                _secondaryButton.Classes.Remove(ContentDialogPseudoClasses.s_cAccent);
-
-                _closeButton.Focus();
-#if DEBUG
-                Logger
-                    .TryGet(LogEventLevel.Debug, "ContentDialog")
-                    ?.Log("SetupDialog", "Set initial focus to CloseButton");
-#endif
+                _secondaryButton?.Classes.Remove(ContentDialogPseudoClasses.s_cAccent);
+                _closeButton?.Focus();
 
                 break;
 
             default:
-                _closeButton.Classes.Remove(ContentDialogPseudoClasses.s_cAccent);
+                _closeButton?.Classes.Remove(ContentDialogPseudoClasses.s_cAccent);
                 _primaryButton.Classes.Remove(ContentDialogPseudoClasses.s_cAccent);
-                _secondaryButton.Classes.Remove(ContentDialogPseudoClasses.s_cAccent);
+                _secondaryButton?.Classes.Remove(ContentDialogPseudoClasses.s_cAccent);
 
                 // If no default button is set, try to find a suitable first focus item. If none exist, focus the
                 // ContentDialog itself to pull focus away from the main visual tree so weird things don't happen
                 // The latter shouldn't happen in 99% of cases as either something in the user content will be able
                 // to take focus OR there should always be at least one button which can take focus
-                // var next = KeyboardNavigationHandler.GetNext(this, NavigationDirection.Next) ?? this;
-                // next.Focus();
-#if DEBUG
-                // Logger.TryGet(LogEventLevel.Debug, "ContentDialog")?.Log("SetupDialog", "Set initial focus to {next}", next);
-#endif
+#pragma warning disable CS0618 // Type or member is obsolete // TODO: Copy fix for this from FA when they'll come up with it
+                var next =
+                    KeyboardNavigationHandler.GetNext(this, NavigationDirection.Next) ?? this;
+#pragma warning restore CS0618 // Type or member is obsolete
+                next.Focus();
+
                 break;
         }
     }
 
-    private void DialogLoaded(object sender, RoutedEventArgs args)
+    private void DialogLoaded(object? sender, RoutedEventArgs args)
     {
         Loaded -= DialogLoaded;
 
@@ -698,15 +691,15 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
 
     // Store the last element focused before showing the dialog, so we can
     // restore it when it closes
-    private IInputElement _lastFocus;
-    private Control _originalHost;
+    private IInputElement? _lastFocus;
+    private Control? _originalHost;
     private int _originalHostIndex;
-    private DialogHost _host;
+    private DialogHost? _host;
     private ContentDialogResult _result;
     private TaskCompletionSource<ContentDialogResult> _tcs;
-    private Button _primaryButton;
-    private Button _secondaryButton;
-    private Button _closeButton;
+    private Button? _primaryButton;
+    private Button? _secondaryButton;
+    private Button? _closeButton;
     private bool _hasDeferralActive;
-    private Visual _hotkeyDownVisual;
+    private Visual? _hotkeyDownVisual;
 }
