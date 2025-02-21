@@ -55,7 +55,7 @@ public class PageCloseRestriction
 
 /// <summary>
 /// Requests approval from child components before closing the page.
-/// If any child prevents the closure, the method returns false and provides the list of restrictions
+/// If any child prevents the closure, the method returns the list of restrictions.
 /// </summary>
 public static class PageCloseAttemptEventMixin
 {

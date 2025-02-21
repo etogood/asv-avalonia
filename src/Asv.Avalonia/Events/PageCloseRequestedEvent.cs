@@ -21,7 +21,7 @@ public static class PageCloseRequestMixin
     /// The shell must handle this event and either allow or prevent the closure.
     /// </summary>
     /// <param name="src">The page that is requesting to close.</param>
-    /// <returns>A <see cref="ValueTask"/> representing the asynchronous operation.</returns>
+    /// <returns>A <see cref="ValueTask"/> representing an asynchronous operation.</returns>
     public static ValueTask RequestClose(this IPage src)
     {
         return src.Rise(new PageCloseRequestedEvent(src));

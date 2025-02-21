@@ -192,7 +192,7 @@ public sealed class DialogService : IDialogService
         var dialogContent = new ContentDialog
         {
             Title = title,
-            Content = new TextBlock { Text = message },
+            Content = new TextBlock { Text = message, TextWrapping = TextWrapping.Wrap },
             PrimaryButtonText = RS.DialogButton_Yes,
             SecondaryButtonText = RS.DialogButton_No,
 
