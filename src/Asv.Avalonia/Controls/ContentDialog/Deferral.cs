@@ -1,6 +1,6 @@
 namespace Asv.Avalonia;
 
-public delegate void DeferralCompletedHandler();
+public delegate ValueTask DeferralCompletedHandler();
 
 /// <summary>
 /// Stores a <see cref="DeferralCompletedHandler"/> to be invoked upon completion of the
@@ -9,7 +9,8 @@ public delegate void DeferralCompletedHandler();
 public class Deferral
 {
     /// <summary>
-    /// Initializes a new Deferral object and specifies a <see cref="DeferralCompletedHandler"/> to be called
+    /// Initializes a new instance of the <see cref="Deferral"/> class.
+    /// Specifies a <see cref="DeferralCompletedHandler"/> to be called
     /// upon completion of the deferral.
     /// </summary>
     /// <param name="completedHandler">A DeferralCompletedHandler to be called upon completion of the deferral.</param>
@@ -19,7 +20,7 @@ public class Deferral
             completedHandler
             ?? throw new ArgumentNullException(
                 nameof(completedHandler),
-                "Completion delegate cannot be null"
+                @"Completion delegate cannot be null"
             );
     }
 
