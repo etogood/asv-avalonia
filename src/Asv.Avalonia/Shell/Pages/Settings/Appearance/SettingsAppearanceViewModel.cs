@@ -10,7 +10,7 @@ public class SettingsAppearanceViewModel : RoutableViewModel, ISettingsSubPage
     #region DesignTime
 
     public SettingsAppearanceViewModel()
-        : this(DesignTime.ThemeService, DesignTime.LocalizationService)
+        : this(DesignTime.ThemeService, DesignTime.LocalizationService, null!)
     {
         DesignTime.ThrowIfNotDesignMode();
     }
@@ -20,12 +20,13 @@ public class SettingsAppearanceViewModel : RoutableViewModel, ISettingsSubPage
     [ImportingConstructor]
     public SettingsAppearanceViewModel(
         IThemeService themeService,
-        ILocalizationService localizationService
+        ILocalizationService localizationService,
+        IDialogService dialogService
     )
         : base(PageId)
     {
         Theme = new ThemeProperty(themeService) { Parent = this };
-        Language = new LanguageProperty(localizationService) { Parent = this };
+        Language = new LanguageProperty(localizationService, dialogService) { Parent = this };
     }
 
     public ThemeProperty Theme { get; }
@@ -54,6 +55,7 @@ public class SettingsAppearanceViewModel : RoutableViewModel, ISettingsSubPage
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
         yield return Theme;
+        yield return Language;
     }
 
     public IExportInfo Source => SystemModule.Instance;

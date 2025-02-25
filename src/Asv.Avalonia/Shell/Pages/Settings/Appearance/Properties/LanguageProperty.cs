@@ -6,6 +6,7 @@ namespace Asv.Avalonia;
 public class LanguageProperty : RoutableViewModel
 {
     private readonly ILocalizationService _svc;
+    private readonly IDialogService _dialogService;
     private bool _internalChange;
     public const string ViewModelId = "language.current";
 
@@ -13,16 +14,17 @@ public class LanguageProperty : RoutableViewModel
     public BindableReactiveProperty<ILanguageInfo> SelectedItem { get; }
 
     public LanguageProperty()
-        : this(DesignTime.LocalizationService)
+        : this(DesignTime.LocalizationService, null!)
     {
         DesignTime.ThrowIfNotDesignMode();
     }
 
     [ImportingConstructor]
-    public LanguageProperty(ILocalizationService svc)
+    public LanguageProperty(ILocalizationService svc, IDialogService dialogService)
         : base(ViewModelId)
     {
         _svc = svc;
+        _dialogService = dialogService;
         SelectedItem = new BindableReactiveProperty<ILanguageInfo>(
             svc.CurrentLanguage.CurrentValue
         );
@@ -43,6 +45,19 @@ public class LanguageProperty : RoutableViewModel
         var newValue = new Persistable<string>(userValue.Id);
         await this.ExecuteCommand(ChangeLanguageCommand.Id, newValue);
         _internalChange = false;
+
+        if (_dialogService.IsImplementedShowYesNoDialogDialog)
+        {
+            var isReloadReady = await _dialogService.ShowYesNoDialog(
+                RS.LanguageProperty_RestartDialog_Title,
+                RS.LanguageProperty_RestartDialog_Message
+            );
+
+            if (isReloadReady)
+            {
+                await this.ExecuteCommand(RestartApplicationCommand.Id);
+            }
+        }
     }
 
     private void OnChangeByModel(ILanguageInfo modelValue)

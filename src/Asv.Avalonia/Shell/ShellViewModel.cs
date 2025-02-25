@@ -1,7 +1,4 @@
-﻿using System.Composition;
-using Asv.Common;
-using Avalonia.Controls;
-using Avalonia.Input;
+﻿using Asv.Common;
 using ObservableCollections;
 using R3;
 
@@ -94,11 +91,16 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
         return _pages;
     }
 
-    protected override ValueTask InternalCatchEvent(AsyncRoutedEvent e)
+    protected override async ValueTask InternalCatchEvent(AsyncRoutedEvent e)
     {
         if (e is ExecuteCommandEvent cmd)
         {
-            return _cmd.Execute(cmd.CommandId, cmd.Source, cmd.CommandParameter);
+            await _cmd.Execute(cmd.CommandId, cmd.Source, cmd.CommandParameter);
+        }
+
+        if (e is RestartApplicationEvent)
+        {
+            Environment.Exit(0);
         }
 
         if (e is PageCloseRequestedEvent close)
@@ -106,8 +108,6 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
             // TODO: save page layout
             _pages.Remove(close.Page);
         }
-
-        return ValueTask.CompletedTask;
     }
 
     #endregion

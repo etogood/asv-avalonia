@@ -61,10 +61,10 @@ public class LocalizationService
 
         selectedLang ??= _languages[0];
         CurrentLanguage = new ReactiveProperty<ILanguageInfo>(selectedLang);
-        _sub1 = CurrentLanguage.Subscribe(SetLanguage);
+        _sub1 = CurrentLanguage.SubscribeAwait(SetLanguage);
     }
 
-    private void SetLanguage(ILanguageInfo lang)
+    private ValueTask SetLanguage(ILanguageInfo lang, CancellationToken cancelToken)
     {
         ArgumentNullException.ThrowIfNull(lang);
 
@@ -78,6 +78,8 @@ public class LocalizationService
         CultureInfo.DefaultThreadCurrentUICulture = culture;
         Thread.CurrentThread.CurrentUICulture = culture;
         InternalSaveConfig(_ => _.CurrentLanguage = lang.Id);
+
+        return ValueTask.CompletedTask;
     }
 
     #region Dispose

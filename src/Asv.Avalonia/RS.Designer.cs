@@ -986,5 +986,29 @@ namespace Asv.Avalonia {
                 return ResourceManager.GetString("DialogButton_DontSave", resourceCulture);
             }
         }
+        
+        public static string RestartApplicationCommand_Info_Name {
+            get {
+                return ResourceManager.GetString("RestartApplicationCommand_Info_Name", resourceCulture);
+            }
+        }
+        
+        public static string RestartApplicationCommand_Info_Description {
+            get {
+                return ResourceManager.GetString("RestartApplicationCommand_Info_Description", resourceCulture);
+            }
+        }
+        
+        public static string LanguageProperty_RestartDialog_Title {
+            get {
+                return ResourceManager.GetString("LanguageProperty_RestartDialog_Title", resourceCulture);
+            }
+        }
+        
+        public static string LanguageProperty_RestartDialog_Message {
+            get {
+                return ResourceManager.GetString("LanguageProperty_RestartDialog_Message", resourceCulture);
+            }
+        }
     }
 }
