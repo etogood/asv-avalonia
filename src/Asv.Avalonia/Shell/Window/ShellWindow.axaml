@@ -13,6 +13,7 @@
         PositionChanged="WindowBase_OnPositionChanged"
         SizeChanged="Control_OnSizeChanged"
         MinWidth="800"
-        MinHeight="600">
+        MinHeight="600"
+        DragDrop.AllowDrop="True">
         <avalonia:ShellView />
 </Window>
