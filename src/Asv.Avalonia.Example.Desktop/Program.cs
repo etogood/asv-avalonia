@@ -5,6 +5,8 @@ using Asv.Cfg;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Key = Avalonia.Remote.Protocol.Input.Key;
 
 namespace Asv.Avalonia.Example.Desktop;
@@ -17,29 +19,18 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        var builder = AppHost.CreateBuilder();
-
-        builder
-            .UseJsonConfig("config.json", true, TimeSpan.FromMilliseconds(500))
-            .SetAppInfoFrom(typeof(App).Assembly)
-            .UseLogging(options =>
-            {
-                options.WithLogMinimumLevel<AppHostConfig>(cfg => cfg.LogMinLevel);
-                options.WithJsonLogFolder<AppHostConfig>("logs", cfg => cfg.RollingSizeKb);
-#if DEBUG
-                options.WithLogToConsole();
-#endif
-            })
-            .EnforceSingleInstance(options => options.EnableArgumentForwarding())
-            .SetArguments(args);
-
-        using var host = builder.Build();
-
-        // If this is not the first instance, host have sent the arguments to the first instance and we can exit
-        if (host.IsFirstInstance == false)
-        {
-            return;
-        }
+        using var app = AppHost
+            .CreateBuilder()
+            .UseLogToConsoleOnDebug()
+            .UseAppPath(opt => opt.WithRelativeFolder("data"))
+            .UseJsonUserConfig(opt =>
+                opt.WithFileName("user_settings.json").WithAutoSave(TimeSpan.FromSeconds(1))
+            )
+            .UseAppInfo(opt => opt.FillFromAssembly(typeof(App).Assembly))
+            .UseSoloRun(opt => opt.WithArgumentForwarding())
+            .UseLogService(opt => opt.WithRelativeFolder("logs"))
+            .Build()
+            .ExitIfNotFirstInstance();
 
         try
         {
@@ -48,13 +39,8 @@ sealed class Program
         }
         catch (Exception e)
         {
-            if (Debugger.IsAttached)
-            {
-                Debugger.Break();
-            }
-
             Console.WriteLine(e);
-            host.HandleApplicationCrash(e);
+            app.HandleApplicationCrash(e);
         }
     }
 
