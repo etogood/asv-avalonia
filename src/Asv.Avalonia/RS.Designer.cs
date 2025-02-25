@@ -129,24 +129,6 @@ namespace Asv.Avalonia {
             }
         }
         
-        public static string MeterDistanceUnit_Name {
-            get {
-                return ResourceManager.GetString("MeterDistanceUnit_Name", resourceCulture);
-            }
-        }
-        
-        public static string MeterDistanceUnit_Description {
-            get {
-                return ResourceManager.GetString("MeterDistanceUnit_Description", resourceCulture);
-            }
-        }
-        
-        public static string MeterDistanceUnit_Symbol {
-            get {
-                return ResourceManager.GetString("MeterDistanceUnit_Symbol", resourceCulture);
-            }
-        }
-        
         public static string ChangeThemeCommand_CommandInfo_Name {
             get {
                 return ResourceManager.GetString("ChangeThemeCommand_CommandInfo_Name", resourceCulture);
@@ -231,6 +213,18 @@ namespace Asv.Avalonia {
             }
         }
         
+        public static string NauticalMile_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("NauticalMile_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string NauticalMile_Distance_Description {
+            get {
+                return ResourceManager.GetString("NauticalMile_Distance_Description", resourceCulture);
+            }
+        }
+        
         public static string ShellView_WindowControlButton_Close {
             get {
                 return ResourceManager.GetString("ShellView_WindowControlButton_Close", resourceCulture);
@@ -285,6 +279,684 @@ namespace Asv.Avalonia {
             }
         }
         
+        public static string ChangeCurrentUnitItemCommand_CommandInfo_Name {
+            get {
+                return ResourceManager.GetString("ChangeCurrentUnitItemCommand_CommandInfo_Name", resourceCulture);
+            }
+        }
+        
+        public static string ChangeCurrentUnitItemCommand_CommandInfo_Description {
+            get {
+                return ResourceManager.GetString("ChangeCurrentUnitItemCommand_CommandInfo_Description", resourceCulture);
+            }
+        }
+        
+        public static string Altitude_Name {
+            get {
+                return ResourceManager.GetString("Altitude_Name", resourceCulture);
+            }
+        }
+        
+        public static string Altitude_Description {
+            get {
+                return ResourceManager.GetString("Altitude_Description", resourceCulture);
+            }
+        }
+        
+        public static string Meter_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("Meter_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string Meter_Altitude_Description {
+            get {
+                return ResourceManager.GetString("Meter_Altitude_Description", resourceCulture);
+            }
+        }
+        
+        public static string Meter_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("Meter_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string Feet_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("Feet_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string Feet_Altitude_Description {
+            get {
+                return ResourceManager.GetString("Feet_Altitude_Description", resourceCulture);
+            }
+        }
+        
+        public static string Feet_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("Feet_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string AmplitudeModulation_Name {
+            get {
+                return ResourceManager.GetString("AmplitudeModulation_Name", resourceCulture);
+            }
+        }
+        
+        public static string AmplitudeModulation_Description {
+            get {
+                return ResourceManager.GetString("AmplitudeModulation_Description", resourceCulture);
+            }
+        }
+        
+        public static string InParts_AmplitudeModulation_Description {
+            get {
+                return ResourceManager.GetString("InParts_AmplitudeModulation_Description", resourceCulture);
+            }
+        }
+        
+        public static string Percent_AmplitudeModulation_Description {
+            get {
+                return ResourceManager.GetString("Percent_AmplitudeModulation_Description", resourceCulture);
+            }
+        }
+        
+        public static string Bearing_Name {
+            get {
+                return ResourceManager.GetString("Bearing_Name", resourceCulture);
+            }
+        }
+        
+        public static string Bearing_Description {
+            get {
+                return ResourceManager.GetString("Bearing_Description", resourceCulture);
+            }
+        }
+        
+        public static string Degree_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("Degree_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string Degree_Bearing_Description {
+            get {
+                return ResourceManager.GetString("Degree_Bearing_Description", resourceCulture);
+            }
+        }
+        
+        public static string DM_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("DM_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string DM_Bearing_Description {
+            get {
+                return ResourceManager.GetString("DM_Bearing_Description", resourceCulture);
+            }
+        }
+        
+        public static string DM_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("DM_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string DdmGp_Name {
+            get {
+                return ResourceManager.GetString("DdmGp_Name", resourceCulture);
+            }
+        }
+        
+        public static string DdmGp_Description {
+            get {
+                return ResourceManager.GetString("DdmGp_Description", resourceCulture);
+            }
+        }
+        
+        public static string InParts_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("InParts_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string InParts_DdmGp_Description {
+            get {
+                return ResourceManager.GetString("InParts_DdmGp_Description", resourceCulture);
+            }
+        }
+        
+        public static string Percent_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("Percent_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string Percent_DdmGp_Description {
+            get {
+                return ResourceManager.GetString("Percent_DdmGp_Description", resourceCulture);
+            }
+        }
+        
+        public static string Ddm_µA_Symbol {
+            get {
+                return ResourceManager.GetString("Ddm_µA_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string MicroAmp_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("MicroAmp_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string MicroAmp_DdmGp_Description {
+            get {
+                return ResourceManager.GetString("MicroAmp_DdmGp_Description", resourceCulture);
+            }
+        }
+        
+        public static string MicroAmpRu_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("MicroAmpRu_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string MicroAmpRu_DdmGp_Description {
+            get {
+                return ResourceManager.GetString("MicroAmpRu_DdmGp_Description", resourceCulture);
+            }
+        }
+        
+        public static string DdmLlz_Name {
+            get {
+                return ResourceManager.GetString("DdmLlz_Name", resourceCulture);
+            }
+        }
+        
+        public static string DdmLlz_Description {
+            get {
+                return ResourceManager.GetString("DdmLlz_Description", resourceCulture);
+            }
+        }
+        
+        public static string InParts_DdmLlz_Description {
+            get {
+                return ResourceManager.GetString("InParts_DdmLlz_Description", resourceCulture);
+            }
+        }
+        
+        public static string Percent_DdmLlz_Description {
+            get {
+                return ResourceManager.GetString("Percent_DdmLlz_Description", resourceCulture);
+            }
+        }
+        
+        public static string MicroAmp_DdmLlz_Description {
+            get {
+                return ResourceManager.GetString("MicroAmp_DdmLlz_Description", resourceCulture);
+            }
+        }
+        
+        public static string MicroAmpRu_DdmLlz_Description {
+            get {
+                return ResourceManager.GetString("MicroAmpRu_DdmLlz_Description", resourceCulture);
+            }
+        }
+        
+        public static string Angle_Description {
+            get {
+                return ResourceManager.GetString("Angle_Description", resourceCulture);
+            }
+        }
+        
+        public static string Degree_Angle_Description {
+            get {
+                return ResourceManager.GetString("Degree_Angle_Description", resourceCulture);
+            }
+        }
+        
+        public static string Angle_Name {
+            get {
+                return ResourceManager.GetString("Angle_Name", resourceCulture);
+            }
+        }
+        
+        public static string Degree_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("Degree_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string Ms_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("Ms_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string Ms_Angle_Description {
+            get {
+                return ResourceManager.GetString("Ms_Angle_Description", resourceCulture);
+            }
+        }
+        
+        public static string Ms_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("Ms_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string Dms_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("Dms_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string Dms_Angle_Description {
+            get {
+                return ResourceManager.GetString("Dms_Angle_Description", resourceCulture);
+            }
+        }
+        
+        public static string Dms_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("Dms_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string FieldStrength_Name {
+            get {
+                return ResourceManager.GetString("FieldStrength_Name", resourceCulture);
+            }
+        }
+        
+        public static string FieldStrength_Description {
+            get {
+                return ResourceManager.GetString("FieldStrength_Description", resourceCulture);
+            }
+        }
+        
+        public static string MicroVoltsPerMeter_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("MicroVoltsPerMeter_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string MicroVoltsPerMeter_FieldStrength_Description {
+            get {
+                return ResourceManager.GetString("MicroVoltsPerMeter_FieldStrength_Description", resourceCulture);
+            }
+        }
+        
+        public static string FieldStrength_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("FieldStrength_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string Power_Name {
+            get {
+                return ResourceManager.GetString("Power_Name", resourceCulture);
+            }
+        }
+        
+        public static string Power_Description {
+            get {
+                return ResourceManager.GetString("Power_Description", resourceCulture);
+            }
+        }
+        
+        public static string Dbm_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("Dbm_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string Dbm_Power_Description {
+            get {
+                return ResourceManager.GetString("Dbm_Power_Description", resourceCulture);
+            }
+        }
+        
+        public static string Dbm_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("Dbm_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string Frequency_Name {
+            get {
+                return ResourceManager.GetString("Frequency_Name", resourceCulture);
+            }
+        }
+        
+        public static string Frequency_Description {
+            get {
+                return ResourceManager.GetString("Frequency_Description", resourceCulture);
+            }
+        }
+        
+        public static string Hertz_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("Hertz_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string Hertz_Frequency_Description {
+            get {
+                return ResourceManager.GetString("Hertz_Frequency_Description", resourceCulture);
+            }
+        }
+        
+        public static string Hertz_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("Hertz_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string Gigahertz_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("Gigahertz_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string Gigahertz_Frequency_Description {
+            get {
+                return ResourceManager.GetString("Gigahertz_Frequency_Description", resourceCulture);
+            }
+        }
+        
+        public static string Gigahertz_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("Gigahertz_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string Kilohertz_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("Kilohertz_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string Kilohertz_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("Kilohertz_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string Kilohertz_Frequency_Description {
+            get {
+                return ResourceManager.GetString("Kilohertz_Frequency_Description", resourceCulture);
+            }
+        }
+        
+        public static string Megahertz_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("Megahertz_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string Megahertz_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("Megahertz_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string Megahertz_Frequency_Description {
+            get {
+                return ResourceManager.GetString("Megahertz_Frequency_Description", resourceCulture);
+            }
+        }
+        
+        public static string Latitude_Name {
+            get {
+                return ResourceManager.GetString("Latitude_Name", resourceCulture);
+            }
+        }
+        
+        public static string Latitude_Description {
+            get {
+                return ResourceManager.GetString("Latitude_Description", resourceCulture);
+            }
+        }
+        
+        public static string Degree_Latitude_Description {
+            get {
+                return ResourceManager.GetString("Degree_Latitude_Description", resourceCulture);
+            }
+        }
+        
+        public static string Dms_Latitude_Description {
+            get {
+                return ResourceManager.GetString("Dms_Latitude_Description", resourceCulture);
+            }
+        }
+        
+        public static string Longitude_Name {
+            get {
+                return ResourceManager.GetString("Longitude_Name", resourceCulture);
+            }
+        }
+        
+        public static string Longitude_Description {
+            get {
+                return ResourceManager.GetString("Longitude_Description", resourceCulture);
+            }
+        }
+        
+        public static string Degree_Longitude_Description {
+            get {
+                return ResourceManager.GetString("Degree_Longitude_Description", resourceCulture);
+            }
+        }
+        
+        public static string Dms_Longitude_Description {
+            get {
+                return ResourceManager.GetString("Dms_Longitude_Description", resourceCulture);
+            }
+        }
+        
+        public static string Phase_Name {
+            get {
+                return ResourceManager.GetString("Phase_Name", resourceCulture);
+            }
+        }
+        
+        public static string Phase_Description {
+            get {
+                return ResourceManager.GetString("Phase_Description", resourceCulture);
+            }
+        }
+        
+        public static string Degree_Phase_Description {
+            get {
+                return ResourceManager.GetString("Degree_Phase_Description", resourceCulture);
+            }
+        }
+        
+        public static string Radian_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("Radian_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string Radian_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("Radian_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string Radian_Phase_Description {
+            get {
+                return ResourceManager.GetString("Radian_Phase_Description", resourceCulture);
+            }
+        }
+        
+        public static string Sdm_Name {
+            get {
+                return ResourceManager.GetString("Sdm_Name", resourceCulture);
+            }
+        }
+        
+        public static string Sdm_Description {
+            get {
+                return ResourceManager.GetString("Sdm_Description", resourceCulture);
+            }
+        }
+        
+        public static string Percent_Sdm_Description {
+            get {
+                return ResourceManager.GetString("Percent_Sdm_Description", resourceCulture);
+            }
+        }
+        
+        public static string Temperature_Name {
+            get {
+                return ResourceManager.GetString("Temperature_Name", resourceCulture);
+            }
+        }
+        
+        public static string Temperature_Description {
+            get {
+                return ResourceManager.GetString("Temperature_Description", resourceCulture);
+            }
+        }
+        
+        public static string Kelvin_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("Kelvin_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string Kelvin_Temperature_Description {
+            get {
+                return ResourceManager.GetString("Kelvin_Temperature_Description", resourceCulture);
+            }
+        }
+        
+        public static string Celsius_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("Celsius_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string Celsius_Temperature_Description {
+            get {
+                return ResourceManager.GetString("Celsius_Temperature_Description", resourceCulture);
+            }
+        }
+        
+        public static string Fahrenheit_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("Fahrenheit_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string Fahrenheit_Temperature_Description {
+            get {
+                return ResourceManager.GetString("Fahrenheit_Temperature_Description", resourceCulture);
+            }
+        }
+        
+        public static string Velocity_Name {
+            get {
+                return ResourceManager.GetString("Velocity_Name", resourceCulture);
+            }
+        }
+        
+        public static string Velocity_Description {
+            get {
+                return ResourceManager.GetString("Velocity_Description", resourceCulture);
+            }
+        }
+        
+        public static string MetersPerSecond_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("MetersPerSecond_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string MetersPerSecond_Velocity_Description {
+            get {
+                return ResourceManager.GetString("MetersPerSecond_Velocity_Description", resourceCulture);
+            }
+        }
+        
+        public static string MetersPerSecond_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("MetersPerSecond_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string KilometersPerHour_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("KilometersPerHour_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string KilometersPerHour_Velocity_Description {
+            get {
+                return ResourceManager.GetString("KilometersPerHour_Velocity_Description", resourceCulture);
+            }
+        }
+        
+        public static string KilometersPerHour_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("KilometersPerHour_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string MilesPerHour_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("MilesPerHour_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string MilesPerHour_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("MilesPerHour_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string MilesPerHour_Velocity_Description {
+            get {
+                return ResourceManager.GetString("MilesPerHour_Velocity_Description", resourceCulture);
+            }
+        }
+        
+        public static string ChangeDoublePropertyCommand_CommandInfo_Name {
+            get {
+                return ResourceManager.GetString("ChangeDoublePropertyCommand_CommandInfo_Name", resourceCulture);
+            }
+        }
+        
+        public static string ChangeDoublePropertyCommand_CommandInfo_Description {
+            get {
+                return ResourceManager.GetString("ChangeDoublePropertyCommand_CommandInfo_Description", resourceCulture);
+            }
+        }
+        
+        public static string ClosePageCommand_CommandInfo_Name {
+            get {
+                return ResourceManager.GetString("ClosePageCommand_CommandInfo_Name", resourceCulture);
+            }
+        }
+        
+        public static string ClosePageCommand_CommandInfo_Description {
+            get {
+                return ResourceManager.GetString("ClosePageCommand_CommandInfo_Description", resourceCulture);
+            }
+        }
+        
+        public static string Meter_Distance_Description {
+            get {
+                return ResourceManager.GetString("Meter_Distance_Description", resourceCulture);
+            }
+        }
+        
         public static string DialogPageVIewModel_Title {
             get {
                 return ResourceManager.GetString("DialogPageVIewModel_Title", resourceCulture);
@@ -312,6 +984,30 @@ namespace Asv.Avalonia {
         public static string DialogButton_DontSave {
             get {
                 return ResourceManager.GetString("DialogButton_DontSave", resourceCulture);
+            }
+        }
+        
+        public static string RestartApplicationCommand_Info_Name {
+            get {
+                return ResourceManager.GetString("RestartApplicationCommand_Info_Name", resourceCulture);
+            }
+        }
+        
+        public static string RestartApplicationCommand_Info_Description {
+            get {
+                return ResourceManager.GetString("RestartApplicationCommand_Info_Description", resourceCulture);
+            }
+        }
+        
+        public static string LanguageProperty_RestartDialog_Title {
+            get {
+                return ResourceManager.GetString("LanguageProperty_RestartDialog_Title", resourceCulture);
+            }
+        }
+        
+        public static string LanguageProperty_RestartDialog_Message {
+            get {
+                return ResourceManager.GetString("LanguageProperty_RestartDialog_Message", resourceCulture);
             }
         }
     }

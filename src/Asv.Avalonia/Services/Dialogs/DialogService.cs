@@ -1,8 +1,12 @@
 ﻿using System.Composition;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Layout;
+using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using R3;
 
 namespace Asv.Avalonia;
 
@@ -185,62 +189,53 @@ public sealed class DialogService : IDialogService
 
     public async Task<bool> ShowYesNoDialog(string title, string message)
     {
-        var dialogContent = new ContentDialog(_host.TopLevel)
+        var dialogContent = new ContentDialog
         {
             Title = title,
-            Message = message,
-            IsInputDialog = false,
+            Content = new TextBlock { Text = message, TextWrapping = TextWrapping.Wrap },
             PrimaryButtonText = RS.DialogButton_Yes,
             SecondaryButtonText = RS.DialogButton_No,
+
+            // DefaultButton = ContentDialogButton.Primary,
         };
 
-        var result = await dialogContent.ShowAsync(_host.TopLevel);
+        var result = await dialogContent.ShowAsync();
 
-        if (result == ContentDialog.DialogResult.True)
-        {
-            return true;
-        }
-
-        return false;
+        return result == ContentDialogResult.Primary;
     }
 
     public async Task<bool> ShowSaveCancelDialog(string title, string message)
     {
-        var dialogContent = new ContentDialog(_host.TopLevel)
+        var dialogContent = new ContentDialog
         {
             Title = title,
-            DialogContent = new TextBlock { Text = message },
-            IsInputDialog = false,
+            Content = new TextBlock { Text = message },
             PrimaryButtonText = RS.DialogButton_Save,
             SecondaryButtonText = RS.DialogButton_DontSave,
+            DefaultButton = ContentDialogButton.Primary,
         };
 
-        var result = await dialogContent.ShowAsync(_host.TopLevel);
+        var result = await dialogContent.ShowAsync();
 
-        if (result == ContentDialog.DialogResult.True)
-        {
-            return true;
-        }
-
-        return false;
+        return result == ContentDialogResult.Primary;
     }
 
     public async Task<string?> ShowInputDialog(string title, string message)
     {
-        var dialogContent = new ContentDialog(_host.TopLevel)
+        var dialogContent = new ContentDialog
         {
             Title = title,
-            DialogContent = new TextBox(),
-            IsInputDialog = true,
+            Content = new TextBox { Watermark = message },
             PrimaryButtonText = RS.DialogButton_Yes,
             SecondaryButtonText = RS.DialogButton_No,
+            DefaultButton = ContentDialogButton.Primary,
         };
 
-        var result = await dialogContent.ShowAsync(_host.TopLevel);
+        var result = await dialogContent.ShowAsync();
 
-        if (result == ContentDialog.DialogResult.True)
+        if (result == ContentDialogResult.Primary)
         {
-            if (dialogContent.DialogContent is TextBox box)
+            if (dialogContent.Content is TextBox box)
             {
                 return box.Text;
             }
