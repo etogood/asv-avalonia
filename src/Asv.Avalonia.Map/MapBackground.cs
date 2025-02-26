@@ -14,6 +14,7 @@ public class MapBackground : Control
     private readonly Subject<Unit> _renderRequestSubject = new();
     private readonly IDisposable _disposeIt;
     private readonly ITileLoader _tileLoader;
+
     static MapBackground()
     {
         AffectsRender<MapBackground>(
@@ -34,9 +35,7 @@ public class MapBackground : Control
             .ThrottleLastFrame(1)
             .Subscribe(_ => InvalidateVisual())
             .AddTo(ref disposeBuilder);
-        _tileLoader.OnLoaded
-            .Subscribe(_=> RequestRenderLoop())
-            .AddTo(ref disposeBuilder);
+        _tileLoader.OnLoaded.Subscribe(_ => RequestRenderLoop()).AddTo(ref disposeBuilder);
 
         Provider = new BingTileProvider(
             "Anqg-XzYo-sBPlzOWFHIcjC3F8s17P_O7L4RrevsHVg4fJk6g_eEmUBphtSn4ySg"
@@ -44,7 +43,6 @@ public class MapBackground : Control
         _disposeIt = disposeBuilder.Build();
 
         Zoom = 8;
-        
     }
 
     protected override void OnUnloaded(RoutedEventArgs e)
@@ -202,7 +200,6 @@ public class MapBackground : Control
     #region IsDebug
 
     private bool _isDebug;
-    
 
     public static readonly DirectProperty<MapBackground, bool> IsDebugEnabledProperty =
         AvaloniaProperty.RegisterDirect<MapBackground, bool>(

@@ -65,12 +65,12 @@ public class AppHost : AsyncDisposableWithCancel
         _config = config;
     }
 
-    public T GetService<T>() 
+    public T GetService<T>()
         where T : notnull
     {
         return _services.GetRequiredService<T>();
     }
-    
+
     public void HandleApplicationCrash(Exception e)
     {
         GetService<ILoggerFactory>()

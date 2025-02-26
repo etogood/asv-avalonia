@@ -29,6 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Asv.Mavlink" Version="4.0.0-dev.3" />
         <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)"/>
         <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)"/>
         <PackageReference Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)"/>
@@ -52,5 +53,10 @@
 
     <ItemGroup>
       <AdditionalFiles Include="Pages\Document\DocumentPageView.axaml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Pages\Settings\" />
+      <Folder Include="Services\" />
     </ItemGroup>
 </Project>

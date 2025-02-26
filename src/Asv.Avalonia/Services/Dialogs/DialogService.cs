@@ -22,6 +22,7 @@ public sealed class DialogService : IDialogService
         _host = host;
     }
 
+    public IShellHost ShellHost { get; set; }
     public bool IsImplementedShowOpenFileDialog { get; } = true;
     public bool IsImplementedShowSaveFileDialog { get; } = true;
     public bool IsImplementedShowSelectFolderDialog { get; } = true;

@@ -31,6 +31,7 @@ public class SettingsExtension() : IExtensionFor<ISettingsPage>
             MaterialIconKind.KeyboardSettings,
             SettingsKeymapViewModel.SubPageId
         );
+
         context.Nodes.Add(_node1);
         context.Nodes.Add(_node2);
         context.Nodes.Add(_node3);

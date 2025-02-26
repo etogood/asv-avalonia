@@ -1010,5 +1010,17 @@ namespace Asv.Avalonia {
                 return ResourceManager.GetString("LanguageProperty_RestartDialog_Message", resourceCulture);
             }
         }
+        
+        public static string AddSerialPortCommand_CommandInfo_Name {
+            get {
+                return ResourceManager.GetString("AddSerialPortCommand_CommandInfo_Name", resourceCulture);
+            }
+        }
+        
+        public static string AddSerialPortCommand_CommandInfo_Description {
+            get {
+                return ResourceManager.GetString("AddSerialPortCommand_CommandInfo_Description", resourceCulture);
+            }
+        }
     }
 }

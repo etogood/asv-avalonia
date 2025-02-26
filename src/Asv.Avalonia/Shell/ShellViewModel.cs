@@ -17,7 +17,6 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
         _container = ioc;
         _cmd = ioc.GetExport<ICommandService>();
         Navigation = ioc.GetExport<INavigationService>();
-
         _pages = new ObservableList<IPage>();
         PagesView = _pages.ToNotifyCollectionChangedSlim();
         ErrorState = new BindableReactiveProperty<ShellErrorState>(ShellErrorState.Normal);

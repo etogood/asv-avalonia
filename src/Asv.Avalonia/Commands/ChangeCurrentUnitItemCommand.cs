@@ -40,7 +40,7 @@ public sealed class ChangeCurrentUnitItemCommand : NoContextCommand
         CancellationToken cancel
     )
     {
-        if (newValue is not Persistable<UnitDelegate> memento)
+        if (newValue is not Persistable<UnitPersistable> memento)
         {
             return ValueTask.FromException<IPersistable?>(
                 new InvalidOperationException("Unable to perform action. Pass a valid parameter.")
@@ -50,13 +50,13 @@ public sealed class ChangeCurrentUnitItemCommand : NoContextCommand
         _svc.Units.TryGetValue(memento.Value.unitId, out var unit);
         ArgumentNullException.ThrowIfNull(unit);
 
-        var oldValue = new UnitDelegate(unit.UnitId, unit.Current.Value.UnitItemId);
+        var oldValue = new UnitPersistable(unit.UnitId, unit.Current.Value.UnitItemId);
         unit.AvailableUnits.TryGetValue(memento.Value.unitItemId, out var unitItem);
         if (unitItem is not null)
         {
             unit.Current.Value = unitItem;
         }
 
-        return ValueTask.FromResult<IPersistable?>(new Persistable<UnitDelegate>(oldValue));
+        return ValueTask.FromResult<IPersistable?>(new Persistable<UnitPersistable>(oldValue));
     }
 }

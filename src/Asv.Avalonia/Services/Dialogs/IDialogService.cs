@@ -2,6 +2,8 @@
 
 public interface IDialogService
 {
+    public IShellHost ShellHost { get; set; }
+
     /// <summary>
     /// Gets a value indicating whether indicates whether the functionality to show an open file dialog is implemented in the dialog service.
     /// </summary>
