@@ -1,6 +1,7 @@
 ﻿using Asv.Common;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using R3;
 
 namespace Asv.Avalonia.Map;
@@ -45,18 +46,55 @@ public class MapPanel : Panel
     protected virtual void ArrangeChild(Control child, Size finalSize)
     {
         var point = GetLocation(child);
-        if (point == null)
-            return;
-        if (Provider == null)
+        var offsetH = GetHorizontalOffset(child);
+        var offsetV = GetVerticalOffset(child);
+
+        if (Provider == null || point == null)
             return;
 
-        var centerPixel = Provider.Projection.Wgs84ToPixels(CenterMap, Zoom, Provider.TileSize);
-        var offset = new Point(Bounds.Width / 2 - centerPixel.X, Bounds.Height / 2 - centerPixel.Y);
-        var pos = Provider.Projection.Wgs84ToPixels(point.Value, Zoom, Provider.TileSize);
+        var tileSize = Provider.TileSize;
+        var halfWidth = Bounds.Width * 0.5;
+        var halfHeight = Bounds.Height * 0.5;
+        var projection = Provider.Projection;
+
+        var centerPixel = projection.Wgs84ToPixels(CenterMap, Zoom, tileSize);
+        var offset = new Point(halfWidth - centerPixel.X, halfHeight - centerPixel.Y);
+        var pos = projection.Wgs84ToPixels(point.Value, Zoom, tileSize);
+
         pos += offset;
+        pos = new Point(
+            pos.X + offsetH.CalculateOffset(child.Bounds.Width),
+            pos.Y + offsetV.CalculateOffset(child.Bounds.Height)
+        );
 
         child.Arrange(new Rect(pos, child.DesiredSize));
     }
+
+    #region VerticalOffset
+
+    public static readonly AttachedProperty<VerticalOffset> VerticalOffsetProperty =
+        AvaloniaProperty.RegisterAttached<MapPanel, Control, VerticalOffset>("VerticalOffset");
+
+    public static void SetVerticalOffset(Control obj, VerticalOffset value) =>
+        obj.SetValue(VerticalOffsetProperty, value);
+
+    public static VerticalOffset GetVerticalOffset(Control obj) =>
+        obj.GetValue(VerticalOffsetProperty);
+
+    #endregion
+
+    #region HorizontalOffset
+
+    public static readonly AttachedProperty<HorizontalOffset> HorizontalOffsetProperty =
+        AvaloniaProperty.RegisterAttached<MapPanel, Control, HorizontalOffset>("HorizontalOffset");
+
+    public static void SetHorizontalOffset(Control obj, HorizontalOffset value) =>
+        obj.SetValue(HorizontalOffsetProperty, value);
+
+    public static HorizontalOffset GetHorizontalOffset(Control obj) =>
+        obj.GetValue(HorizontalOffsetProperty);
+
+    #endregion
 
     #region Location
 

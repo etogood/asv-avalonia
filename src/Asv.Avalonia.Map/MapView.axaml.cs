@@ -1,63 +1,199 @@
-﻿using Asv.Common;
+﻿using System.Diagnostics;
+using Asv.Common;
 using Avalonia;
+using Avalonia.Collections;
 using Avalonia.Controls;
+using Avalonia.Controls.Mixins;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Media;
+using Avalonia.VisualTree;
 
 namespace Asv.Avalonia.Map;
+
+public enum DragState
+{
+    None,
+    DragSelection,
+    DragMap,
+}
 
 public class MapView : SelectingItemsControl
 {
     private Point _lastMousePosition;
+    private DragState _dragState = DragState.None;
 
     public MapView()
     {
         Provider = new BingTileProvider(
             "Anqg-XzYo-sBPlzOWFHIcjC3F8s17P_O7L4RrevsHVg4fJk6g_eEmUBphtSn4ySg"
         );
+        SelectionMode = SelectionMode.Multiple;
+        SelectedItems = new AvaloniaList<object>();
+    }
 
-        PointerPressed += OnPointerPressed;
-        PointerReleased += OnPointerReleased;
-        PointerMoved += OnPointerMoved;
-        PointerWheelChanged += OnPointerWheelChanged;
+    protected override Control CreateContainerForItemOverride(
+        object? item,
+        int index,
+        object? recycleKey
+    )
+    {
+        return new MapViewItem();
+    }
+
+    protected override bool NeedsContainerOverride(object? item, int index, out object? recycleKey)
+    {
+        return NeedsContainer<MapViewItem>(item, out recycleKey);
+    }
+
+    protected override void PrepareContainerForItemOverride(
+        Control container,
+        object item,
+        int index
+    )
+    {
+        base.PrepareContainerForItemOverride(container, item, index);
+        if (container is MapViewItem listBoxItem)
+        {
+            listBoxItem.IsSelected = SelectedItems.Contains(item);
+        }
     }
 
     #region Pointer Events
 
-    private void OnPointerPressed(object? sender, PointerPressedEventArgs args)
+
+
+    protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
-        _lastMousePosition = args.GetPosition(this);
+        base.OnPointerPressed(e);
+        _lastMousePosition = e.GetPosition(this);
+
+        if (UpdateSelectionFromEventSource(e.Source, toggleModifier: true))
+        {
+            /*var item = ItemFromContainer(container);
+            if (item != null)
+            {
+                
+                if (e.KeyModifiers == KeyModifiers.Control)
+                {
+                    // Ctrl + клик: добавить/убрать элемент
+                    if (SelectedItems.Contains(item))
+                    {
+                        SelectedItems.Remove(item);
+                        container.IsSelected = false;
+                    }
+                    else
+                    {
+                        SelectedItems.Add(item);
+                        container.IsSelected = true;
+                    }
+                        
+                }
+                else if (e.KeyModifiers == KeyModifiers.Shift && SelectedItem != null)
+                {
+                    if (SelectedItems.Contains(item) == false)
+                    {
+                        SelectedItems.Add(item);
+                        container.IsSelected = true;
+                    }
+                }
+                else
+                {
+                    // Обычный клик: сбросить выбор и выбрать один элемент
+                    foreach (var selectedItem in SelectedItems)
+                    {
+                        var ctrl = ContainerFromItem(selectedItem);
+                        if (ctrl != null)
+                        {
+                            if (ctrl is MapViewItem c)
+                            {
+                                c.IsSelected = false;
+                            }
+                        }
+                    }
+                    SelectedItems.Clear();
+                    SelectedItems.Add(item);
+                    container.IsSelected = true;
+                }
+                Debug.WriteLine(SelectedItems.Count);
+                SelectedItem = item;
+                Debug.WriteLine(SelectedItems.Count);
+            }*/
+            _dragState = DragState.DragSelection;
+        }
+        else
+        {
+            _dragState = DragState.DragMap;
+        }
     }
 
-    private void OnPointerReleased(object? sender, PointerReleasedEventArgs args) { }
-
-    private void OnPointerMoved(object? sender, PointerEventArgs e)
+    protected override void OnPointerMoved(PointerEventArgs e)
     {
+        base.OnPointerMoved(e);
+
         var offset =
             new Point(Bounds.Width / 2, Bounds.Height / 2)
             - Provider.Projection.Wgs84ToPixels(CenterMap, Zoom, Provider.TileSize);
 
         var currentPosition = e.GetPosition(this);
+
         CursorPosition = Provider.Projection.PixelsToWgs84(
             currentPosition - offset,
             Zoom,
             Provider.TileSize
         );
 
-        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        if (_dragState == DragState.None) { }
+        else if (_dragState == DragState.DragSelection)
+        {
+            foreach (var item in SelectedItems)
+            {
+                var ctrl = ContainerFromItem(item);
+                if (ctrl != null)
+                {
+                    var location = MapPanel.GetLocation(ctrl);
+                    if (location != null)
+                    {
+                        var delta = currentPosition - _lastMousePosition;
+                        var currentPixel = Provider.Projection.Wgs84ToPixels(
+                            location.Value,
+                            Zoom,
+                            Provider.TileSize
+                        );
+                        var newPixelX = currentPixel.X + delta.X;
+                        var newPixelY = currentPixel.Y + delta.Y;
+                        var newLocation = Provider.Projection.PixelsToWgs84(
+                            new Point(newPixelX, newPixelY),
+                            Zoom,
+                            Provider.TileSize
+                        );
+                        MapPanel.SetLocation(ctrl, newLocation);
+                    }
+                }
+            }
+        }
+        else if (_dragState == DragState.DragMap)
         {
             offset = offset + currentPosition - _lastMousePosition;
-            _lastMousePosition = currentPosition;
+
             CenterMap = Provider.Projection.PixelsToWgs84(
                 new Point(Bounds.Width / 2 - offset.X, Bounds.Height / 2 - offset.Y),
                 Zoom,
                 Provider.TileSize
             );
         }
+        _lastMousePosition = currentPosition;
     }
 
-    private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
+    protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
+        base.OnPointerReleased(e);
+        _dragState = DragState.None;
+    }
+
+    protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
+    {
+        base.OnPointerWheelChanged(e);
         var newZoom = _zoom;
 
         if (e.Delta.Y > 0 && _zoom < 19)
@@ -72,6 +208,11 @@ public class MapView : SelectingItemsControl
         {
             Zoom = newZoom;
         }
+    }
+
+    public override void Render(DrawingContext context)
+    {
+        base.Render(context);
     }
 
     #endregion

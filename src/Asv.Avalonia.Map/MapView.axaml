@@ -1,14 +1,28 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="using:Asv.Avalonia.Map">
+        xmlns:controls="using:Asv.Avalonia.Map"
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia">
     <Design.PreviewWith>
-        <controls:MapView CenterMap="{controls:GeoPoint 53,53}" Width="1000" Height="1000" >
-            <Button Width="100" Height="100" controls:MapPanel.Location="{controls:GeoPoint 53.1,53}">
-                Hello
-            </Button>
-        </controls:MapView>
+        <Panel Width="1000" Height="250">
+            <controls:MapView x:Name="MAP" CenterMap="{controls:GeoPoint 53,53}" >
+                <controls:MapViewItem controls:MapPanel.Location="{controls:GeoPoint 53,53}"
+                                 controls:MapPanel.HorizontalOffset="{controls:HorizontalOffset Center}"
+                                 controls:MapPanel.VerticalOffset="{controls:VerticalOffset Bottom}">
+                    <avalonia:MaterialIcon Width="40" Height="40" Kind="MapMarker" />
+                </controls:MapViewItem>
+                <controls:MapViewItem controls:MapPanel.Location="{controls:GeoPoint 53,53.4}"
+                                      controls:MapPanel.HorizontalOffset="{controls:HorizontalOffset Center}"
+                                      controls:MapPanel.VerticalOffset="{controls:VerticalOffset Bottom}">
+                    <avalonia:MaterialIcon Width="40" Height="40" Kind="MapMarker" />
+                </controls:MapViewItem>
+        
+            </controls:MapView>
+            <TextBlock HorizontalAlignment="Right" Text="{ReflectionBinding SelectedItem, ElementName=MAP}"/>
+            <TextBlock HorizontalAlignment="Left" Text="{ReflectionBinding SelectedItems.Count, ElementName=MAP}"/>
+        
+        </Panel>
     </Design.PreviewWith>
-
+    
     <Style Selector="controls|MapView">
         <!-- Set Defaults -->
         <Setter Property="ItemsPanel">
@@ -24,12 +38,13 @@
                 <Panel>
                     <controls:MapBackground 
                         HorizontalAlignment="Stretch"
+                        IsDebug="False"
                         Zoom="{TemplateBinding Zoom}" 
                         CenterMap="{TemplateBinding CenterMap}" 
                         Provider="{TemplateBinding Provider}"/>
                     <ItemsPresenter Name="PART_ItemsPresenter"
-                                     ItemsPanel="{TemplateBinding ItemsPanel}"
-                                     Margin="{TemplateBinding Padding}"/>
+                                    ItemsPanel="{TemplateBinding ItemsPanel}"
+                                    Margin="{TemplateBinding Padding}"/>
                 </Panel>
             </ControlTemplate>
         </Setter>

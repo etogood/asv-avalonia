@@ -7,5 +7,6 @@
     <Application.Styles>
         <StyleInclude Source="avares://Asv.Avalonia/AsvTheme.axaml"/>
         <StyleInclude Source="avares://Asv.Avalonia.Map/MapView.axaml"/>
+        <StyleInclude Source="avares://Asv.Avalonia.Map/MapViewItem.axaml"/>
     </Application.Styles>
 </Application>
