@@ -28,7 +28,7 @@ public partial class App : Application, IContainerHost, IShellHost
         if (Design.IsDesignMode)
         {
             containerCfg
-                .WithExport<IContainerHost>(NullContainerHost.Instance)
+                .WithExport(NullContainerHost.Instance)
                 .WithExport<IConfiguration>(new InMemoryConfiguration())
                 .WithExport(NullLoggerFactory.Instance)
                 .WithExport(NullAppPath.Instance)

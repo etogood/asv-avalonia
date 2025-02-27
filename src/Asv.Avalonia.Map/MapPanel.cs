@@ -20,18 +20,6 @@ public class MapPanel : Panel
         );
     }
 
-    #region Location
-
-    public static readonly AttachedProperty<GeoPoint?> LocationProperty =
-        AvaloniaProperty.RegisterAttached<MapPanel, Control, GeoPoint?>("Location");
-
-    public static GeoPoint? GetLocation(Control element) => element.GetValue(LocationProperty);
-
-    public static void SetLocation(Control element, GeoPoint? value) =>
-        element.SetValue(LocationProperty, value);
-
-    #endregion
-
     protected override Size MeasureOverride(Size availableSize)
     {
         availableSize = new Size(double.PositiveInfinity, double.PositiveInfinity);
@@ -69,6 +57,18 @@ public class MapPanel : Panel
 
         child.Arrange(new Rect(pos, child.DesiredSize));
     }
+
+    #region Location
+
+    public static readonly AttachedProperty<GeoPoint?> LocationProperty =
+        AvaloniaProperty.RegisterAttached<MapPanel, Control, GeoPoint?>("Location");
+
+    public static GeoPoint? GetLocation(Control element) => element.GetValue(LocationProperty);
+
+    public static void SetLocation(Control element, GeoPoint? value) =>
+        element.SetValue(LocationProperty, value);
+
+    #endregion
 
     #region CenterMap
 

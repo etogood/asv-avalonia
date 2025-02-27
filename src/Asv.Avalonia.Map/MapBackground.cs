@@ -1,10 +1,12 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
+using Asv.Cfg;
 using Asv.Common;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Microsoft.Extensions.Logging.Abstractions;
 using R3;
 
 namespace Asv.Avalonia.Map;
@@ -28,7 +30,10 @@ public class MapBackground : Control
     public MapBackground()
     {
         IsDebug = true;
-        _tileLoader = AppHost.Instance.GetService<ITileLoader>();
+        _tileLoader = Design.IsDesignMode
+            ? new TileLoader(NullLoggerFactory.Instance, new InMemoryConfiguration())
+            : AppHost.Instance.GetService<ITileLoader>();
+
         DisposableBuilder disposeBuilder = new();
         _renderRequestSubject.AddTo(ref disposeBuilder);
         _renderRequestSubject
