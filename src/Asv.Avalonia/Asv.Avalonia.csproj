@@ -28,17 +28,17 @@
 
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
-        <PackageReference Include="Avalonia.Diagnostics" Version="11.2.3" />
+        <PackageReference Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
         <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
         <PackageReference Include="Avalonia.Controls.DataGrid" Version="$(AvaloniaVersion)" />
         <PackageReference Include="Avalonia.Controls.TreeDataGrid" Version="11.1.1" />
         <PackageReference Include="Material.Icons.Avalonia" Version="$(MaterialIconsAvaloniaVersion)"/>
         <PackageReference Include="MemoryPack" Version="1.21.3" />
-        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.2" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.2" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.2" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.2" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="9.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="$(MicrosoftExtensionsVersion)" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="$(MicrosoftExtensionsVersion)" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsVersion)" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="$(MicrosoftExtensionsVersion)" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="$(MicrosoftExtensionsVersion)" />
         <PackageReference Include="ObservableCollections.R3" Version="$(R3CollectionVersion)" />
         <PackageReference Include="R3Extensions.Avalonia" Version="$(R3Version)" />
         <PackageReference Include="Roslynator.Analyzers" Version="4.12.10">
@@ -49,10 +49,9 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Avalonia.Controls.DataGrid" Version="$(AvaloniaVersion)"/>
         <PackageReference Include="System.Composition" Version="$(SystemCompositionVersion)" />
-        <PackageReference Include="Asv.Common" Version="3.1.1-dev.1" />
-        <PackageReference Include="Asv.Cfg" Version="3.1.1-dev.1" />
+        <PackageReference Include="Asv.Common" Version="$(AsvCommonVersion)" />
+        <PackageReference Include="Asv.Cfg" Version="$(AsvCommonVersion)" />
         <PackageReference Include="ZLogger" Version="$(ZLoggerVersion)" />
     </ItemGroup>
 
@@ -95,12 +94,6 @@
         <DependentUpon>ShellView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Avalonia.Controls.DataGrid">
-        <HintPath>..\..\..\..\.nuget\packages\avalonia.controls.datagrid\11.2.3\lib\net8.0\Avalonia.Controls.DataGrid.dll</HintPath>
-      </Reference>
     </ItemGroup>
 
     <ItemGroup>

@@ -7,6 +7,7 @@
     <AsvCommonVersion>3.1.1-dev.1</AsvCommonVersion>
     <ZLoggerVersion>2.5.5</ZLoggerVersion>
     <SystemCompositionVersion>9.0.0</SystemCompositionVersion>
+    <MicrosoftExtensionsVersion>9.0.2</MicrosoftExtensionsVersion>
     <MaterialIconsAvaloniaVersion>2.2.0</MaterialIconsAvaloniaVersion>
   </PropertyGroup>
 </Project>

@@ -25,19 +25,28 @@ public partial class App : Application, IContainerHost, IShellHost
         var conventions = new ConventionBuilder();
         var containerCfg = new ContainerConfiguration();
 
-        containerCfg
-            .WithExport<IContainerHost>(this)
-            .WithExport(
-                AppHost.Instance.GetService<IConfiguration>()
-                    ?? throw new Exception("Configuration not found")
-            )
-            .WithExport(AppHost.Instance.GetService<ILoggerFactory>() ?? NullLoggerFactory.Instance)
-            .WithExport(
-                AppHost.Instance.GetService<IAppPath>() ?? throw new Exception("AppPath not found")
-            )
-            .WithExport<IDataTemplateHost>(this)
-            .WithExport<IShellHost>(this)
-            .WithDefaultConventions(conventions);
+        if (Design.IsDesignMode)
+        {
+            containerCfg
+                .WithExport<IContainerHost>(NullContainerHost.Instance)
+                .WithExport<IConfiguration>(new InMemoryConfiguration())
+                .WithExport(NullLoggerFactory.Instance)
+                .WithExport(NullAppPath.Instance)
+                .WithExport<IDataTemplateHost>(this)
+                .WithExport<IShellHost>(this)
+                .WithDefaultConventions(conventions);
+        }
+        else
+        {
+            containerCfg
+                .WithExport<IContainerHost>(this)
+                .WithExport(AppHost.Instance.GetService<IConfiguration>())
+                .WithExport(AppHost.Instance.GetService<ILoggerFactory>())
+                .WithExport(AppHost.Instance.GetService<IAppPath>())
+                .WithExport<IDataTemplateHost>(this)
+                .WithExport<IShellHost>(this)
+                .WithDefaultConventions(conventions);
+        }
 
         containerCfg = containerCfg.WithAssemblies(DefaultAssemblies.Distinct());
 
