@@ -10,6 +10,14 @@ public class EnumToBooleanConverter : IValueConverter
 
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
+        if (parameter is string str && value != null)
+        {
+            if (Enum.TryParse(value.GetType(), str, out var result))
+            {
+                parameter = result;
+            }
+        }
+
         return value?.Equals(parameter);
     }
 

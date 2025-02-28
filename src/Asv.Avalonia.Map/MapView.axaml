@@ -1,7 +1,8 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:Asv.Avalonia.Map"
-        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia">
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:avalonia1="clr-namespace:Asv.Avalonia;assembly=Asv.Avalonia">
     <Design.PreviewWith>
         <Panel Width="1000" Height="250">
             <controls:MapView x:Name="MAP" CenterMap="{controls:GeoPoint 53,53}" >
@@ -45,6 +46,21 @@
                     <ItemsPresenter Name="PART_ItemsPresenter"
                                     ItemsPanel="{TemplateBinding ItemsPanel}"
                                     Margin="{TemplateBinding Padding}"/>
+                    <TextBlock Text="{TemplateBinding DragState}" HorizontalAlignment="Center"/>
+                    <Canvas>
+                        
+                        <Border 
+                            Canvas.Left="{TemplateBinding SelectionLeft}" 
+                            Canvas.Top="{TemplateBinding SelectionTop}"
+                            Width="{TemplateBinding SelectionWidth}"
+                            Height="{TemplateBinding SelectionHeight}" 
+                            IsVisible="{TemplateBinding DragState, Converter={x:Static avalonia1:EnumToBooleanConverter.Instance}, ConverterParameter=SelectRectangle }" 
+                            BorderBrush="BlueViolet" BorderThickness="2"
+                            Opacity="0.3"
+                            Background="Aquamarine" />
+                               
+                    </Canvas>
+                    
                 </Panel>
             </ControlTemplate>
         </Setter>

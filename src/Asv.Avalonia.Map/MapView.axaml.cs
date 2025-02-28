@@ -1,13 +1,13 @@
-﻿using System.Diagnostics;
+﻿using System.Collections;
+using System.Text.RegularExpressions;
 using Asv.Common;
 using Avalonia;
-using Avalonia.Collections;
 using Avalonia.Controls;
-using Avalonia.Controls.Mixins;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Selection;
 using Avalonia.Input;
 using Avalonia.Media;
-using Avalonia.VisualTree;
+using Avalonia.Media.Immutable;
 
 namespace Asv.Avalonia.Map;
 
@@ -16,12 +16,13 @@ public enum DragState
     None,
     DragSelection,
     DragMap,
+    SelectRectangle,
 }
 
 public class MapView : SelectingItemsControl
 {
     private Point _lastMousePosition;
-    private DragState _dragState = DragState.None;
+    private Point _startMousePosition;
 
     public MapView()
     {
@@ -29,7 +30,50 @@ public class MapView : SelectingItemsControl
             "Anqg-XzYo-sBPlzOWFHIcjC3F8s17P_O7L4RrevsHVg4fJk6g_eEmUBphtSn4ySg"
         );
         SelectionMode = SelectionMode.Multiple;
-        SelectedItems = new AvaloniaList<object>();
+        SelectionChanged += OnSelectionChanged;
+    }
+
+    private void OnSelectionChanged(object? sender, SelectionChangedEventArgs args)
+    {
+        foreach (var item in args.RemovedItems)
+        {
+            if (ContainerFromItem(item) is ISelectable sel)
+            {
+                sel.IsSelected = false;
+            }
+        }
+
+        foreach (var item in args.AddedItems)
+        {
+            if (ContainerFromItem(item) is ISelectable sel)
+            {
+                sel.IsSelected = true;
+            }
+        }
+    }
+
+    public new IList? SelectedItems
+    {
+        get => base.SelectedItems;
+        set => base.SelectedItems = value;
+    }
+
+    /// <inheritdoc />
+    public new ISelectionModel Selection
+    {
+        get => base.Selection;
+        set => base.Selection = value;
+    }
+
+    /// <summary>Gets or sets the selection mode.</summary>
+    /// <remarks>
+    /// Note that the selection mode only applies to selections made via user interaction.
+    /// Multiple selections can be made programmatically regardless of the value of this property.
+    /// </remarks>
+    public new SelectionMode SelectionMode
+    {
+        get => base.SelectionMode;
+        set => base.SelectionMode = value;
     }
 
     protected override Control CreateContainerForItemOverride(
@@ -46,149 +90,254 @@ public class MapView : SelectingItemsControl
         return NeedsContainer<MapViewItem>(item, out recycleKey);
     }
 
-    protected override void PrepareContainerForItemOverride(
-        Control container,
-        object item,
-        int index
-    )
+    #region Selection rect
+
+    private double _selectionLeft;
+
+    public static readonly DirectProperty<MapView, double> SelectionLeftProperty =
+        AvaloniaProperty.RegisterDirect<MapView, double>(
+            nameof(SelectionLeft),
+            o => o.SelectionLeft,
+            (o, v) => o.SelectionLeft = v
+        );
+
+    public double SelectionLeft
     {
-        base.PrepareContainerForItemOverride(container, item, index);
-        if (container is MapViewItem listBoxItem)
-        {
-            listBoxItem.IsSelected = SelectedItems.Contains(item);
-        }
+        get => _selectionLeft;
+        set => SetAndRaise(SelectionLeftProperty, ref _selectionLeft, value);
     }
 
+    private double _selectionTop;
+
+    public static readonly DirectProperty<MapView, double> SelectionTopProperty =
+        AvaloniaProperty.RegisterDirect<MapView, double>(
+            nameof(SelectionTop),
+            o => o.SelectionTop,
+            (o, v) => o.SelectionTop = v
+        );
+
+    public double SelectionTop
+    {
+        get => _selectionTop;
+        set => SetAndRaise(SelectionTopProperty, ref _selectionTop, value);
+    }
+
+    private double _selectionWidth;
+
+    public static readonly DirectProperty<MapView, double> SelectionWidthProperty =
+        AvaloniaProperty.RegisterDirect<MapView, double>(
+            nameof(SelectionWidth),
+            o => o.SelectionWidth,
+            (o, v) => o.SelectionWidth = v
+        );
+
+    public double SelectionWidth
+    {
+        get => _selectionWidth;
+        set => SetAndRaise(SelectionWidthProperty, ref _selectionWidth, value);
+    }
+
+    private double _selectionHeight;
+
+    public static readonly DirectProperty<MapView, double> SelectionHeightProperty =
+        AvaloniaProperty.RegisterDirect<MapView, double>(
+            nameof(SelectionHeight),
+            o => o.SelectionHeight,
+            (o, v) => o.SelectionHeight = v
+        );
+
+    public double SelectionHeight
+    {
+        get => _selectionHeight;
+        set => SetAndRaise(SelectionHeightProperty, ref _selectionHeight, value);
+    }
+
+    #endregion
+
+    #region Drag state
+
+    private DragState _dragState;
+
+    public static readonly DirectProperty<MapView, DragState> DragStateProperty =
+        AvaloniaProperty.RegisterDirect<MapView, DragState>(
+            nameof(DragState),
+            o => o.DragState,
+            (o, v) => o.DragState = v
+        );
+
+    public DragState DragState
+    {
+        get => _dragState;
+        set => SetAndRaise(DragStateProperty, ref _dragState, value);
+    }
+
+    #endregion
+
     #region Pointer Events
-
-
 
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
-        _lastMousePosition = e.GetPosition(this);
-
-        if (UpdateSelectionFromEventSource(e.Source, toggleModifier: true))
+        _startMousePosition = _lastMousePosition = e.GetPosition(this);
+        if (e.KeyModifiers == KeyModifiers.Shift)
         {
-            /*var item = ItemFromContainer(container);
-            if (item != null)
-            {
-                
-                if (e.KeyModifiers == KeyModifiers.Control)
-                {
-                    // Ctrl + клик: добавить/убрать элемент
-                    if (SelectedItems.Contains(item))
-                    {
-                        SelectedItems.Remove(item);
-                        container.IsSelected = false;
-                    }
-                    else
-                    {
-                        SelectedItems.Add(item);
-                        container.IsSelected = true;
-                    }
-                        
-                }
-                else if (e.KeyModifiers == KeyModifiers.Shift && SelectedItem != null)
-                {
-                    if (SelectedItems.Contains(item) == false)
-                    {
-                        SelectedItems.Add(item);
-                        container.IsSelected = true;
-                    }
-                }
-                else
-                {
-                    // Обычный клик: сбросить выбор и выбрать один элемент
-                    foreach (var selectedItem in SelectedItems)
-                    {
-                        var ctrl = ContainerFromItem(selectedItem);
-                        if (ctrl != null)
-                        {
-                            if (ctrl is MapViewItem c)
-                            {
-                                c.IsSelected = false;
-                            }
-                        }
-                    }
-                    SelectedItems.Clear();
-                    SelectedItems.Add(item);
-                    container.IsSelected = true;
-                }
-                Debug.WriteLine(SelectedItems.Count);
-                SelectedItem = item;
-                Debug.WriteLine(SelectedItems.Count);
-            }*/
-            _dragState = DragState.DragSelection;
+            UpdateSelectRectangle(_startMousePosition);
+            DragState = DragState.SelectRectangle;
+        }
+        else if (
+            UpdateSelectionFromEventSource(
+                e.Source,
+                select: true,
+                toggleModifier: e.KeyModifiers == KeyModifiers.Control
+            )
+        )
+        {
+            DragState = DragState.DragSelection;
         }
         else
         {
-            _dragState = DragState.DragMap;
+            DragState = DragState.DragMap;
         }
     }
 
     protected override void OnPointerMoved(PointerEventArgs e)
     {
         base.OnPointerMoved(e);
+        var position = e.GetPosition(this);
+        var delta = position - _lastMousePosition;
 
+        var centerScreen = new Point(Bounds.Width / 2, Bounds.Height / 2);
         var offset =
-            new Point(Bounds.Width / 2, Bounds.Height / 2)
-            - Provider.Projection.Wgs84ToPixels(CenterMap, Zoom, Provider.TileSize);
+            centerScreen - Provider.Projection.Wgs84ToPixels(CenterMap, Zoom, Provider.TileSize);
 
-        var currentPosition = e.GetPosition(this);
+        UpdateCursorLocation(offset, position);
 
+        if (Math.Sqrt(delta.X * delta.X + delta.Y * delta.Y) < 5)
+        {
+            return;
+        }
+        switch (DragState)
+        {
+            case DragState.SelectRectangle:
+                UpdateSelectRectangle(position);
+
+                InvalidateVisual();
+                break;
+            case DragState.DragSelection:
+                DragSelectedItems(delta);
+                break;
+            case DragState.DragMap:
+                DragMapCenter(offset, delta, centerScreen);
+                break;
+            case DragState.None:
+            default:
+                break;
+        }
+        _lastMousePosition = position;
+    }
+
+    private void UpdateSelectRectangle(Point position)
+    {
+        SelectionWidth = Math.Abs(_startMousePosition.X - position.X);
+        SelectionHeight = Math.Abs(_startMousePosition.Y - position.Y);
+        SelectionLeft = SelectionLeft > position.X ? position.X : _startMousePosition.X;
+        SelectionTop = SelectionTop > position.Y ? position.Y : _startMousePosition.Y;
+        var rect = new Rect(
+            SelectionLeft,
+            SelectionTop,
+            SelectionLeft + SelectionWidth,
+            SelectionTop + SelectionHeight
+        );
+        foreach (var item in Items)
+        {
+            if (item == null)
+                continue;
+            var control = ContainerFromItem(item) as MapViewItem;
+            if (control == null)
+                return;
+            // Получаем границы контрола в координатах родителя (this)
+            var bounds = control.Bounds;
+
+            // Преобразуем координаты в систему родителя, если нужно
+            var transformedBounds = control.TransformToVisual(this) is { } transform
+                ? bounds.TransformToAABB(transform)
+                : bounds;
+
+            if (rect.Intersects(transformedBounds))
+            {
+                control.IsSelected = true;
+            }
+            else
+            {
+                control.IsSelected = false;
+            }
+        }
+    }
+
+    private void UpdateCursorLocation(Point offset, Point position)
+    {
         CursorPosition = Provider.Projection.PixelsToWgs84(
-            currentPosition - offset,
+            position - offset,
             Zoom,
             Provider.TileSize
         );
+    }
 
-        if (_dragState == DragState.None) { }
-        else if (_dragState == DragState.DragSelection)
+    private void DragMapCenter(Point offset, Point delta, Point center)
+    {
+        CenterMap = Provider.Projection.PixelsToWgs84(
+            center - offset - delta,
+            Zoom,
+            Provider.TileSize
+        );
+    }
+
+    private void DragSelectedItems(Point delta)
+    {
+        foreach (var item in Selection.SelectedItems)
         {
-            foreach (var item in SelectedItems)
+            if (item == null)
+                continue;
+            var ctrl = ContainerFromItem(item);
+            if (ctrl != null)
             {
-                var ctrl = ContainerFromItem(item);
-                if (ctrl != null)
+                var location = MapPanel.GetLocation(ctrl);
+                if (location != null)
                 {
-                    var location = MapPanel.GetLocation(ctrl);
-                    if (location != null)
-                    {
-                        var delta = currentPosition - _lastMousePosition;
-                        var currentPixel = Provider.Projection.Wgs84ToPixels(
-                            location.Value,
-                            Zoom,
-                            Provider.TileSize
-                        );
-                        var newPixelX = currentPixel.X + delta.X;
-                        var newPixelY = currentPixel.Y + delta.Y;
-                        var newLocation = Provider.Projection.PixelsToWgs84(
-                            new Point(newPixelX, newPixelY),
-                            Zoom,
-                            Provider.TileSize
-                        );
-                        MapPanel.SetLocation(ctrl, newLocation);
-                    }
+                    var currentPixel = Provider.Projection.Wgs84ToPixels(
+                        location.Value,
+                        Zoom,
+                        Provider.TileSize
+                    );
+                    var newPixelX = currentPixel.X + delta.X;
+                    var newPixelY = currentPixel.Y + delta.Y;
+                    var newLocation = Provider.Projection.PixelsToWgs84(
+                        new Point(newPixelX, newPixelY),
+                        Zoom,
+                        Provider.TileSize
+                    );
+                    MapPanel.SetLocation(ctrl, newLocation);
                 }
             }
         }
-        else if (_dragState == DragState.DragMap)
-        {
-            offset = offset + currentPosition - _lastMousePosition;
-
-            CenterMap = Provider.Projection.PixelsToWgs84(
-                new Point(Bounds.Width / 2 - offset.X, Bounds.Height / 2 - offset.Y),
-                Zoom,
-                Provider.TileSize
-            );
-        }
-        _lastMousePosition = currentPosition;
     }
 
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
         base.OnPointerReleased(e);
-        _dragState = DragState.None;
+        ClearDragState();
+    }
+
+    protected override void OnPointerCaptureLost(PointerCaptureLostEventArgs e)
+    {
+        base.OnPointerCaptureLost(e);
+        ClearDragState();
+    }
+
+    private void ClearDragState()
+    {
+        DragState = DragState.None;
+        InvalidateVisual();
     }
 
     protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
@@ -208,11 +357,6 @@ public class MapView : SelectingItemsControl
         {
             Zoom = newZoom;
         }
-    }
-
-    public override void Render(DrawingContext context)
-    {
-        base.Render(context);
     }
 
     #endregion
