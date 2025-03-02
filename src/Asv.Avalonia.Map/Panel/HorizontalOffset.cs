@@ -23,8 +23,8 @@ public readonly struct HorizontalOffset(MapOffsetXEnum offsetType, double offset
         return OffsetType switch
         {
             MapOffsetXEnum.Left => Offset,
-            MapOffsetXEnum.Center => Offset - boundsWidth / 2,
-            MapOffsetXEnum.Right => Offset - boundsWidth,
+            MapOffsetXEnum.Center => boundsWidth / 2 - Offset,
+            MapOffsetXEnum.Right => boundsWidth - Offset,
             _ => throw new ArgumentOutOfRangeException(),
         };
     }
@@ -36,14 +36,14 @@ public readonly struct HorizontalOffset(MapOffsetXEnum offsetType, double offset
 public enum MapOffsetXEnum
 {
     /// <summary>
-    /// Represents the offset value for the X-axis of an element to be positioned on the left side.
-    /// </summary>
-    Left,
-
-    /// <summary>
     /// Enumeration for X-axis offset values.
     /// </summary>
     Center,
+
+    /// <summary>
+    /// Represents the offset value for the X-axis of an element to be positioned on the left side.
+    /// </summary>
+    Left,
 
     /// <summary>
     /// Enumeration for X-axis offset values.

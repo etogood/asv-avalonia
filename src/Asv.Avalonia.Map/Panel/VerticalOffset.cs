@@ -34,8 +34,8 @@ public readonly struct VerticalOffset(MapOffsetYEnum offsetType, double offset)
         return OffsetType switch
         {
             MapOffsetYEnum.Top => Offset,
-            MapOffsetYEnum.Center => Offset - boundsHeight / 2,
-            MapOffsetYEnum.Bottom => Offset - boundsHeight,
+            MapOffsetYEnum.Center => boundsHeight / 2 - Offset,
+            MapOffsetYEnum.Bottom => boundsHeight - Offset,
             _ => throw new ArgumentOutOfRangeException(),
         };
     }
@@ -47,14 +47,14 @@ public readonly struct VerticalOffset(MapOffsetYEnum offsetType, double offset)
 public enum MapOffsetYEnum
 {
     /// <summary>
-    /// Represents the vertical offset position of an element.
-    /// </summary>
-    Top,
-
-    /// <summary>
     /// Enum member representing the vertical offset position from the center of the target element.
     /// </summary>
     Center,
+
+    /// <summary>
+    /// Represents the vertical offset position of an element.
+    /// </summary>
+    Top,
 
     /// <summary>
     /// Represents the vertical alignment of an element relative to its parent or container.

@@ -46,8 +46,8 @@ public class MapPanel : Panel
     protected virtual void ArrangeChild(Control child, Size finalSize)
     {
         var point = GetLocation(child);
-        var offsetH = GetHorizontalOffset(child);
-        var offsetV = GetVerticalOffset(child);
+        var offsetH = GetCenterX(child);
+        var offsetV = GetCenterY(child);
 
         if (Provider == null || point == null)
             return;
@@ -63,36 +63,46 @@ public class MapPanel : Panel
 
         pos += offset;
         pos = new Point(
-            pos.X + offsetH.CalculateOffset(child.Bounds.Width),
-            pos.Y + offsetV.CalculateOffset(child.Bounds.Height)
+            pos.X - offsetH.CalculateOffset(child.Bounds.Width),
+            pos.Y - offsetV.CalculateOffset(child.Bounds.Height)
         );
 
         child.Arrange(new Rect(pos, child.DesiredSize));
     }
 
-    #region VerticalOffset
+    #region Rotation
 
-    public static readonly AttachedProperty<VerticalOffset> VerticalOffsetProperty =
-        AvaloniaProperty.RegisterAttached<MapPanel, Control, VerticalOffset>("VerticalOffset");
+    public static readonly AttachedProperty<double> RotationProperty =
+        AvaloniaProperty.RegisterAttached<MapPanel, Control, double>("Rotation");
 
-    public static void SetVerticalOffset(Control obj, VerticalOffset value) =>
-        obj.SetValue(VerticalOffsetProperty, value);
+    public static void SetRotation(Control obj, double value) =>
+        obj.SetValue(RotationProperty, value);
 
-    public static VerticalOffset GetVerticalOffset(Control obj) =>
-        obj.GetValue(VerticalOffsetProperty);
+    public static double GetRotation(Control obj) => obj.GetValue(RotationProperty);
 
     #endregion
 
-    #region HorizontalOffset
+    #region CenterY
 
-    public static readonly AttachedProperty<HorizontalOffset> HorizontalOffsetProperty =
-        AvaloniaProperty.RegisterAttached<MapPanel, Control, HorizontalOffset>("HorizontalOffset");
+    public static readonly AttachedProperty<VerticalOffset> CenterYProperty =
+        AvaloniaProperty.RegisterAttached<MapPanel, Control, VerticalOffset>("CenterY");
 
-    public static void SetHorizontalOffset(Control obj, HorizontalOffset value) =>
-        obj.SetValue(HorizontalOffsetProperty, value);
+    public static void SetCenterY(Control obj, VerticalOffset value) =>
+        obj.SetValue(CenterYProperty, value);
 
-    public static HorizontalOffset GetHorizontalOffset(Control obj) =>
-        obj.GetValue(HorizontalOffsetProperty);
+    public static VerticalOffset GetCenterY(Control obj) => obj.GetValue(CenterYProperty);
+
+    #endregion
+
+    #region CenterX
+
+    public static readonly AttachedProperty<HorizontalOffset> CenterXProperty =
+        AvaloniaProperty.RegisterAttached<MapPanel, Control, HorizontalOffset>("CenterX");
+
+    public static void SetCenterX(Control obj, HorizontalOffset value) =>
+        obj.SetValue(CenterXProperty, value);
+
+    public static HorizontalOffset GetCenterX(Control obj) => obj.GetValue(CenterXProperty);
 
     #endregion
 

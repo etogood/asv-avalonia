@@ -23,6 +23,7 @@ public class MapView : SelectingItemsControl
 {
     private Point _lastMousePosition;
     private Point _startMousePosition;
+    private Control? _selectedContainer;
 
     public MapView()
     {
@@ -184,19 +185,19 @@ public class MapView : SelectingItemsControl
             UpdateSelectRectangle(_startMousePosition);
             DragState = DragState.SelectRectangle;
         }
-        else if (
-            UpdateSelectionFromEventSource(
-                e.Source,
-                select: true,
-                toggleModifier: e.KeyModifiers == KeyModifiers.Control
-            )
-        )
-        {
-            DragState = DragState.DragSelection;
-        }
         else
         {
-            DragState = DragState.DragMap;
+            var container = GetContainerFromEventSource(e.Source);
+            if (container != null)
+            {
+                DragState = DragState.DragSelection;
+                _selectedContainer = container;
+                Selection.Select(IndexFromContainer(container));
+            }
+            else
+            {
+                DragState = DragState.DragMap;
+            }
         }
     }
 
@@ -216,17 +217,19 @@ public class MapView : SelectingItemsControl
         {
             return;
         }
+        _selectedContainer = null;
         switch (DragState)
         {
             case DragState.SelectRectangle:
                 UpdateSelectRectangle(position);
-
                 InvalidateVisual();
                 break;
             case DragState.DragSelection:
+                Cursor = new Cursor(StandardCursorType.Hand);
                 DragSelectedItems(delta);
                 break;
             case DragState.DragMap:
+                Cursor = new Cursor(StandardCursorType.SizeAll);
                 DragMapCenter(offset, delta, centerScreen);
                 break;
             case DragState.None:
@@ -236,18 +239,41 @@ public class MapView : SelectingItemsControl
         _lastMousePosition = position;
     }
 
+    protected override void OnPointerReleased(PointerReleasedEventArgs e)
+    {
+        base.OnPointerReleased(e);
+        ClearDragState();
+    }
+
+    protected override void OnPointerCaptureLost(PointerCaptureLostEventArgs e)
+    {
+        base.OnPointerCaptureLost(e);
+        ClearDragState();
+    }
+
+    private void ClearDragState()
+    {
+        if (_selectedContainer != null)
+        {
+            Selection.BeginBatchUpdate();
+            Selection.Clear();
+            Selection.Select(IndexFromContainer(_selectedContainer));
+            Selection.EndBatchUpdate();
+        }
+        DragState = DragState.None;
+        Cursor = Cursor.Default;
+        InvalidateVisual();
+    }
+
     private void UpdateSelectRectangle(Point position)
     {
         SelectionWidth = Math.Abs(_startMousePosition.X - position.X);
         SelectionHeight = Math.Abs(_startMousePosition.Y - position.Y);
         SelectionLeft = SelectionLeft > position.X ? position.X : _startMousePosition.X;
         SelectionTop = SelectionTop > position.Y ? position.Y : _startMousePosition.Y;
-        var rect = new Rect(
-            SelectionLeft,
-            SelectionTop,
-            SelectionLeft + SelectionWidth,
-            SelectionTop + SelectionHeight
-        );
+        var rect = new Rect(SelectionLeft, SelectionTop, SelectionWidth, SelectionHeight);
+        Selection.BeginBatchUpdate();
+        Selection.Clear();
         foreach (var item in Items)
         {
             if (item == null)
@@ -255,23 +281,15 @@ public class MapView : SelectingItemsControl
             var control = ContainerFromItem(item) as MapViewItem;
             if (control == null)
                 return;
-            // Получаем границы контрола в координатах родителя (this)
-            var bounds = control.Bounds;
 
-            // Преобразуем координаты в систему родителя, если нужно
-            var transformedBounds = control.TransformToVisual(this) is { } transform
-                ? bounds.TransformToAABB(transform)
-                : bounds;
-
-            if (rect.Intersects(transformedBounds))
+            if (rect.Intersects(control.Bounds))
             {
                 control.IsSelected = true;
-            }
-            else
-            {
-                control.IsSelected = false;
+                var index = IndexFromContainer(control);
+                Selection.Select(index);
             }
         }
+        Selection.EndBatchUpdate();
     }
 
     private void UpdateCursorLocation(Point offset, Point position)
@@ -298,46 +316,24 @@ public class MapView : SelectingItemsControl
         {
             if (item == null)
                 continue;
-            var ctrl = ContainerFromItem(item);
-            if (ctrl != null)
+            if (ContainerFromItem(item) is MapViewItem ctrl)
             {
-                var location = MapPanel.GetLocation(ctrl);
-                if (location != null)
-                {
-                    var currentPixel = Provider.Projection.Wgs84ToPixels(
-                        location.Value,
-                        Zoom,
-                        Provider.TileSize
-                    );
-                    var newPixelX = currentPixel.X + delta.X;
-                    var newPixelY = currentPixel.Y + delta.Y;
-                    var newLocation = Provider.Projection.PixelsToWgs84(
-                        new Point(newPixelX, newPixelY),
-                        Zoom,
-                        Provider.TileSize
-                    );
-                    MapPanel.SetLocation(ctrl, newLocation);
-                }
+                var location = ctrl.Location;
+                var currentPixel = Provider.Projection.Wgs84ToPixels(
+                    location,
+                    Zoom,
+                    Provider.TileSize
+                );
+                var newPixelX = currentPixel.X + delta.X;
+                var newPixelY = currentPixel.Y + delta.Y;
+                var newLocation = Provider.Projection.PixelsToWgs84(
+                    new Point(newPixelX, newPixelY),
+                    Zoom,
+                    Provider.TileSize
+                );
+                ctrl.Location = newLocation;
             }
         }
-    }
-
-    protected override void OnPointerReleased(PointerReleasedEventArgs e)
-    {
-        base.OnPointerReleased(e);
-        ClearDragState();
-    }
-
-    protected override void OnPointerCaptureLost(PointerCaptureLostEventArgs e)
-    {
-        base.OnPointerCaptureLost(e);
-        ClearDragState();
-    }
-
-    private void ClearDragState()
-    {
-        DragState = DragState.None;
-        InvalidateVisual();
     }
 
     protected override void OnPointerWheelChanged(PointerWheelEventArgs e)

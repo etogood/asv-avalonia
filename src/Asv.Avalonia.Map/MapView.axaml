@@ -5,16 +5,17 @@
         xmlns:avalonia1="clr-namespace:Asv.Avalonia;assembly=Asv.Avalonia">
     <Design.PreviewWith>
         <Panel Width="1000" Height="250">
-            <controls:MapView x:Name="MAP" CenterMap="{controls:GeoPoint 53,53}" >
-                <controls:MapViewItem controls:MapPanel.Location="{controls:GeoPoint 53,53}"
-                                 controls:MapPanel.HorizontalOffset="{controls:HorizontalOffset Center}"
-                                 controls:MapPanel.VerticalOffset="{controls:VerticalOffset Bottom}">
-                    <avalonia:MaterialIcon Width="40" Height="40" Kind="MapMarker" />
+            <controls:MapView CenterMap="{controls:GeoPoint 53,53}" >
+                <controls:MapViewItem Location="{controls:GeoPoint 53,53}"
+                                      Rotation="45"
+                                      CenterX="{controls:HorizontalOffset Center}"
+                                      CenterY="{controls:VerticalOffset Center}">
+                    <avalonia:MaterialIcon Foreground="BlueViolet" Width="40" Height="40" Kind="Navigation" />
                 </controls:MapViewItem>
-                <controls:MapViewItem controls:MapPanel.Location="{controls:GeoPoint 53,53.4}"
-                                      controls:MapPanel.HorizontalOffset="{controls:HorizontalOffset Center}"
-                                      controls:MapPanel.VerticalOffset="{controls:VerticalOffset Bottom}">
-                    <avalonia:MaterialIcon Width="40" Height="40" Kind="MapMarker" />
+                <controls:MapViewItem Location="{controls:GeoPoint 53,53.4}"
+                                      CenterX="{controls:HorizontalOffset Center}"
+                                      CenterY="{controls:VerticalOffset Bottom}">
+                    <avalonia:MaterialIcon x:Name="PART_Icon" Width="40" Height="40" Kind="MapMarker" />
                 </controls:MapViewItem>
         
             </controls:MapView>
@@ -25,6 +26,7 @@
     </Design.PreviewWith>
     
     <Style Selector="controls|MapView">
+        
         <!-- Set Defaults -->
         <Setter Property="ItemsPanel">
             <ItemsPanelTemplate>
@@ -48,19 +50,16 @@
                                     Margin="{TemplateBinding Padding}"/>
                     <TextBlock Text="{TemplateBinding DragState}" HorizontalAlignment="Center"/>
                     <Canvas>
-                        
-                        <Border 
+                        <Rectangle 
                             Canvas.Left="{TemplateBinding SelectionLeft}" 
                             Canvas.Top="{TemplateBinding SelectionTop}"
                             Width="{TemplateBinding SelectionWidth}"
                             Height="{TemplateBinding SelectionHeight}" 
                             IsVisible="{TemplateBinding DragState, Converter={x:Static avalonia1:EnumToBooleanConverter.Instance}, ConverterParameter=SelectRectangle }" 
-                            BorderBrush="BlueViolet" BorderThickness="2"
-                            Opacity="0.3"
-                            Background="Aquamarine" />
-                               
+                            Stroke="BlueViolet"
+                            StrokeThickness="2"
+                            />
                     </Canvas>
-                    
                 </Panel>
             </ControlTemplate>
         </Setter>

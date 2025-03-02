@@ -13,14 +13,14 @@
     </Design.DataContext>
     <Panel>
         <map:MapView x:Name="MAP" CenterMap="{map:GeoPoint 53,53}" >
-            <map:MapViewItem map:MapPanel.Location="{map:GeoPoint 53,53}"
-                             map:MapPanel.HorizontalOffset="{map:HorizontalOffset Center}"
-                             map:MapPanel.VerticalOffset="{map:VerticalOffset Bottom}">
+            <map:MapViewItem Location="{map:GeoPoint 53,53}"
+                             CenterX="{map:HorizontalOffset Center}"
+                             CenterY="{map:VerticalOffset Bottom}">
                 <avalonia:MaterialIcon Width="40" Height="40" Kind="MapMarker" />
             </map:MapViewItem>
-            <map:MapViewItem map:MapPanel.Location="{map:GeoPoint 53,53.4}"
-                             map:MapPanel.HorizontalOffset="{map:HorizontalOffset Center}"
-                             map:MapPanel.VerticalOffset="{map:VerticalOffset Bottom}">
+            <map:MapViewItem Location="{map:GeoPoint 53,53.4}"
+                             CenterX="{map:HorizontalOffset Center}"
+                             CenterY="{map:VerticalOffset Bottom}">
                 <avalonia:MaterialIcon Width="40" Height="40" Kind="MapMarker" />
             </map:MapViewItem>
         
