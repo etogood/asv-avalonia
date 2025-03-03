@@ -41,11 +41,6 @@ public class MeasureUnitViewModel : RoutableViewModel
         _internalChange = false;
     }
 
-    public override ValueTask<IRoutable> Navigate(string id)
-    {
-        return new ValueTask<IRoutable>(this);
-    }
-
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
         return [];

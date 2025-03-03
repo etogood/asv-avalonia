@@ -22,11 +22,6 @@ public class HomePageViewModel : PageViewModel<HomePageViewModel>
         Title.OnNext(RS.HomePageViewModel_Title);
     }
 
-    public override ValueTask<IRoutable> Navigate(string id)
-    {
-        return ValueTask.FromResult<IRoutable>(this);
-    }
-
     protected override HomePageViewModel GetContext()
     {
         return this;

@@ -82,7 +82,8 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
         }
 
         SelectedPage.Value = page;
-        return ValueTask.FromResult<IRoutable>(page);
+
+        return base.Navigate(id);
     }
 
     public override IEnumerable<IRoutable> GetRoutableChildren()

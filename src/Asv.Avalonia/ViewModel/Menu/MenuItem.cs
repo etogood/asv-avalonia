@@ -60,11 +60,6 @@ namespace Asv.Avalonia
             set => SetField(ref _hotKey, value);
         }
 
-        public override ValueTask<IRoutable> Navigate(string id)
-        {
-            return ValueTask.FromResult<IRoutable>(this);
-        }
-
         public override IEnumerable<IRoutable> GetRoutableChildren()
         {
             return [];

@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:testUnits="clr-namespace:Asv.Avalonia.Example"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Asv.Avalonia.Example.TestUnitsPageView"
+             x:DataType="testUnits:TestUnitsPageViewModel">
+    <Design.DataContext>
+        <testUnits:TestUnitsPageViewModel/>
+    </Design.DataContext>
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Left" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Grid RowDefinitions="*, Auto, Auto, Auto" ColumnDefinitions="*,*">
+                <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Speed: " />
+                <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Speed.ViewValue.Value, UpdateSourceTrigger=LostFocus}" />
+                <TextBlock Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" Text="StringWithoutValidation: " />
+                <TextBox Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Text="{Binding StringPropWithoutValidation.ViewValue.Value, UpdateSourceTrigger=LostFocus}" />
+                <TextBlock Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" Text="StringWithOneValidation: " />
+                <TextBox Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Text="{Binding StringPropWithOneValidation.ViewValue.Value, UpdateSourceTrigger=LostFocus}" />
+                <TextBlock Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" Text="StringWithManyValidations: " />
+                <TextBox Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" Text="{Binding StringPropWithManyValidations.ViewValue.Value, UpdateSourceTrigger=LostFocus}" />
+            </Grid>
+            <DockPanel>
+                <Button Background="Transparent" DockPanel.Dock="Right" Command="{Binding History.Redo}">
+                    <avalonia:MaterialIcon Kind="Redo"/>
+                </Button>
+                <Button Background="Transparent" DockPanel.Dock="Right" Command="{Binding History.Undo}">
+                    <avalonia:MaterialIcon Kind="Undo"/>
+                </Button>
+            </DockPanel>
+        </StackPanel>
+    </DockPanel>
+    
+</UserControl>

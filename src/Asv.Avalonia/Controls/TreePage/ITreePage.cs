@@ -41,11 +41,6 @@ public class TreePage : TitledViewModel, ITreePage
         set => SetField(ref _status, value);
     }
 
-    public override ValueTask<IRoutable> Navigate(string id)
-    {
-        return ValueTask.FromResult<IRoutable>(this);
-    }
-
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
         return [];

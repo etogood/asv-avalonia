@@ -37,21 +37,6 @@ public class SettingsAppearanceViewModel : RoutableViewModel, ISettingsSubPage
         return ValueTask.CompletedTask;
     }
 
-    public override ValueTask<IRoutable> Navigate(string id)
-    {
-        if (id == Theme.Id)
-        {
-            return ValueTask.FromResult<IRoutable>(Theme);
-        }
-
-        if (id == Language.Id)
-        {
-            return ValueTask.FromResult<IRoutable>(Language);
-        }
-
-        return ValueTask.FromResult<IRoutable>(this);
-    }
-
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
         yield return Theme;
