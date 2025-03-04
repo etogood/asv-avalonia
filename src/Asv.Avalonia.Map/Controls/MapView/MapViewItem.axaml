@@ -4,7 +4,7 @@
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         xmlns:avalonia1="clr-namespace:Asv.Avalonia;assembly=Asv.Avalonia">
     <Design.PreviewWith>
-        <WrapPanel Width="500" Height="500">
+        <WrapPanel Width="200" Height="100">
             <controls:MapViewItem Rotation="0" IsSelected="True" CenterY="{controls:VerticalOffset Bottom, 3}" >
                 <avalonia:MaterialIcon Width="40" Height="40" Kind="MapMarker"  />
             </controls:MapViewItem>    

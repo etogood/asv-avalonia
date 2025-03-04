@@ -16,4 +16,14 @@
     <ItemGroup>
       <ProjectReference Include="..\Asv.Avalonia\Asv.Avalonia.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <Compile Update="Controls\MapView\MapView.axaml.cs">
+        <DependentUpon>MapView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Controls\MapView\MapViewItem.axaml.cs">
+        <DependentUpon>MapViewItem.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
 </Project>

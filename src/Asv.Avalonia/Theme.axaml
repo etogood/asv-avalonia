@@ -84,12 +84,12 @@
             <ColorPaletteResources x:Key="Dark"  Accent="#ff8961cc" AltHigh="Black" AltLow="Black" AltMedium="Black" AltMediumHigh="Black" AltMediumLow="Black" BaseHigh="White" BaseLow="#ff64576b" BaseMedium="#ffb6aabc" BaseMediumHigh="#ffcbbfd0" BaseMediumLow="#ff8d8193" ChromeAltLow="#ffcbbfd0" ChromeBlackHigh="Black" ChromeBlackLow="#ffcbbfd0" ChromeBlackMedium="Black" ChromeBlackMediumLow="Black" ChromeDisabledHigh="#ff64576b" ChromeDisabledLow="#ffb6aabc" ChromeGray="#ffa295a8" ChromeHigh="#ffa295a8" ChromeLow="#ff332041" ChromeMedium="#ff3f2e4b" ChromeMediumLow="#ff584960" ChromeWhite="White" ListLow="#ff3f2e4b" ListMedium="#ff64576b" RegionColor="#ff262738" />
             <!--<ColorPaletteResources x:Key="Light" Accent="#ff0073cf" AltHigh="White" AltLow="White" AltMedium="White" AltMediumHigh="White" AltMediumLow="White" BaseHigh="Black" BaseLow="#ffcccccc" BaseMedium="#ff898989" BaseMediumHigh="#ff5d5d5d" BaseMediumLow="#ff737373" ChromeAltLow="#ff5d5d5d" ChromeBlackHigh="Black" ChromeBlackLow="#ffcccccc" ChromeBlackMedium="#ff5d5d5d" ChromeBlackMediumLow="#ff898989" ChromeDisabledHigh="#ffcccccc" ChromeDisabledLow="#ff898989" ChromeGray="#ff737373" ChromeHigh="#ffcccccc" ChromeLow="#ffececec" ChromeMedium="#ffe6e6e6" ChromeMediumLow="#ffececec" ChromeWhite="White" ListLow="#ffe6e6e6" ListMedium="#ffcccccc" RegionColor="White" />
             <ColorPaletteResources x:Key="Dark" Accent="#ff0073cf" AltHigh="Black" AltLow="Black" AltMedium="Black" AltMediumHigh="Black" AltMediumLow="Black" BaseHigh="White" BaseLow="#ff333333" BaseMedium="#ff9a9a9a" BaseMediumHigh="#ffb4b4b4" BaseMediumLow="#ff676767" ChromeAltLow="#ffb4b4b4" ChromeBlackHigh="Black" ChromeBlackLow="#ffb4b4b4" ChromeBlackMedium="Black" ChromeBlackMediumLow="Black" ChromeDisabledHigh="#ff333333" ChromeDisabledLow="#ff9a9a9a" ChromeGray="Gray" ChromeHigh="Gray" ChromeLow="#ff151515" ChromeMedium="#ff1d1d1d" ChromeMediumLow="#ff2c2c2c" ChromeWhite="White" ListLow="#ff1d1d1d" ListMedium="#ff333333" RegionColor="#ff181717" />-->
-    </FluentTheme.Palettes>
-        
-        
+        </FluentTheme.Palettes>
     </FluentTheme>
+    <avalonia:MaterialIconStyles />
     <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
-    
+    <StyleInclude Source="avares://Asv.Avalonia/Shell/View/DockControl.axaml"/>
+    <StyleInclude Source="avares://Asv.Avalonia/Controls/Textbox/IpAddressTextBoxStyles.axaml"/>
     
     
     <!-- <StyleInclude Source="avares://Avalonia.Controls.TreeDataGrid/Themes/Fluent.axaml"/> -->
@@ -103,9 +103,7 @@
             />         
         </FluentTheme.Palettes>
     </FluentTheme>-->
-    <avalonia:MaterialIconStyles />
-    <StyleInclude Source="avares://Asv.Avalonia/Shell/View/DockControl.axaml"/>
-    <StyleInclude Source="avares://Asv.Avalonia/Controls/Textbox/IpAddressTextBoxStyles.axaml"/>
+    
     <Style Selector="avalonia|MaterialIcon">
         <Setter Property="Width" Value="{DynamicResource  IconElementThemeWidth}"/>
         <Setter Property="Height" Value="{DynamicResource  IconElementThemeHeight}"/>

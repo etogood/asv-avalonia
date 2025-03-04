@@ -49,7 +49,7 @@ public class MavlinkConnectionService : AsyncDisposableOnce, IMavlinkConnectionS
 
         LoadFromConfig();
 
-        // CreateDeviceExplorer();
+        CreateDeviceExplorer();
     }
 
     private void CreateRouter()
