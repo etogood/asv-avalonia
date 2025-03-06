@@ -1,4 +1,5 @@
 using System.Composition;
+using Material.Icons;
 using R3;
 
 namespace Asv.Avalonia;
@@ -7,12 +8,14 @@ namespace Asv.Avalonia;
 public class SettingsPageViewModel : TreePageViewModel<ISettingsPage>, ISettingsPage
 {
     public const string PageId = "settings";
+    public const MaterialIconKind PageIcon = MaterialIconKind.Settings;
 
     public SettingsPageViewModel()
         : base(PageId, DesignTime.CommandService, NullContainerHost.Instance)
     {
         DesignTime.ThrowIfNotDesignMode();
         Title.OnNext(RS.SettingsPageViewModel_Title);
+        Icon.Value = PageIcon;
     }
 
     [ImportingConstructor]

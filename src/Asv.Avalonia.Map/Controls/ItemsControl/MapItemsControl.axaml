@@ -7,7 +7,7 @@
         <Panel Width="1000" Height="250">
             <controls:MapItemsControl CenterMap="{controls:GeoPoint 53,53}" >
                 <controls:MapItem Location="{controls:GeoPoint 53,53}"
-                                  AnnotationText="asdasdasd"
+                                  
                                       Rotation="45"
                                       CenterX="{controls:HorizontalOffset Center}"
                                       CenterY="{controls:VerticalOffset Center}">
@@ -15,7 +15,7 @@
                 </controls:MapItem>
                 <controls:MapItem Location="{controls:GeoPoint 53,53.4}"
                                   IsReadOnly="True"
-                                  AnnotationText="asdasdasd"
+                                  
                                       CenterX="{controls:HorizontalOffset Center}"
                                       CenterY="{controls:VerticalOffset Bottom}">
                     <avalonia:MaterialIcon x:Name="PART_Icon" Width="40" Height="40" Kind="MapMarker" />

@@ -17,6 +17,11 @@ public abstract class ViewModelBase(string id) : IViewModel
     /// </summary>
     public string Id { get; } = id;
 
+    public override string ToString()
+    {
+        return $"{GetType().Name}[{Id}]";
+    }
+
     #region Dispose
 
     /// <summary>

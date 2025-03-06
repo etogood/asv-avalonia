@@ -13,12 +13,15 @@ using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using R3;
 
 namespace Asv.Avalonia.Example;
 
 public partial class App : Application, IContainerHost, IShellHost
 {
     private readonly CompositionHost _container;
+    private IShell _shell;
+    private readonly Subject<IShell> _onShellLoaded = new Subject<IShell>();
 
     public App()
     {
@@ -33,6 +36,7 @@ public partial class App : Application, IContainerHost, IShellHost
                 .WithExport(NullLoggerFactory.Instance)
                 .WithExport(NullAppPath.Instance)
                 .WithExport(NullPluginManager.Instance)
+                .WithExport(NullAppInfo.Instance)
                 .WithExport<IDataTemplateHost>(this)
                 .WithExport<IShellHost>(this)
                 .WithDefaultConventions(conventions);
@@ -45,6 +49,7 @@ public partial class App : Application, IContainerHost, IShellHost
                 .WithExport(AppHost.Instance.GetService<IConfiguration>())
                 .WithExport(AppHost.Instance.GetService<ILoggerFactory>())
                 .WithExport(AppHost.Instance.GetService<IAppPath>())
+                .WithExport(AppHost.Instance.GetService<IAppInfo>())
                 .WithExport(pluginManager)
                 .WithAssemblies(pluginManager.PluginsAssemblies)
                 .WithExport<IDataTemplateHost>(this)
@@ -101,23 +106,6 @@ public partial class App : Application, IContainerHost, IShellHost
         }
 
         base.OnFrameworkInitializationCompleted();
-        if (Design.IsDesignMode == false)
-        {
-            Shell.Navigate(FlightPageViewModel.PageId);
-            Shell.Navigate(SettingsPageViewModel.PageId);
-            Shell.Navigate(HomePageViewModel.PageId);
-            Shell.Navigate(DocumentPageViewModel.PageId);
-            Shell.Navigate(MapExamplePageViewModel.PageId);
-            Shell.Navigate(DialogBoardViewModel.PageId);
-            Shell.Navigate(TestUnitsPageViewModel.PageId);
-
-            Shell.Navigate(PluginsSourcesViewModel.PageId);
-            Shell.Navigate(PluginsMarketViewModel.PageId);
-            Shell.Navigate(InstalledPluginsViewModel.PageId);
-            Shell.Navigate(InstalledPluginsViewModel.PageId);
-            Shell.Navigate(PluginsMarketViewModel.PageId);
-            Shell.Navigate(PluginsSourcesViewModel.PageId);
-        }
 #if DEBUG
         this.AttachDevTools();
 #endif
@@ -141,7 +129,18 @@ public partial class App : Application, IContainerHost, IShellHost
         return _container.TryGetExport(id, out value);
     }
 
-    public IShell Shell { get; set; }
+    public IShell Shell
+    {
+        get => _shell;
+        private set
+        {
+            _shell = value;
+            _onShellLoaded.OnNext(value);
+        }
+    }
+
+    public Observable<IShell> OnShellLoaded => _onShellLoaded;
+
     public TopLevel TopLevel { get; private set; }
     public IExportInfo Source => SystemModule.Instance;
 }

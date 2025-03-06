@@ -1,5 +1,6 @@
 using System.Composition;
 using Avalonia.Controls.ApplicationLifetimes;
+using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia;
 
@@ -9,8 +10,8 @@ public class MobileShellViewModel : ShellViewModel
     public const string ShellId = "shell.mobile";
 
     [ImportingConstructor]
-    public MobileShellViewModel(IContainerHost containerHost)
-        : base(containerHost, ShellId)
+    public MobileShellViewModel(IContainerHost containerHost, ILoggerFactory loggerFactory)
+        : base(containerHost, loggerFactory, ShellId)
     {
         // do nothing
     }

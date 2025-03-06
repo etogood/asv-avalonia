@@ -1,4 +1,8 @@
-﻿namespace Asv.Avalonia;
+﻿using Asv.Common;
+using ObservableCollections;
+using R3;
+
+namespace Asv.Avalonia;
 
 /// <summary>
 /// Provides extension methods for working with <see cref="IRoutable"/> components,
@@ -6,6 +10,43 @@
 /// </summary>
 public static class RoutableMixin
 {
+    public static IDisposable SetRoutableParentForView<T, TView>(
+        this ISynchronizedView<T, TView> src,
+        IRoutable parent,
+        bool disposeWhenRemoveView
+    )
+        where TView : class, IRoutable
+    {
+        var sub1 = src.ObserveAdd().Subscribe(x => x.Value.View.Parent = parent);
+        IDisposable sub2;
+        if (disposeWhenRemoveView)
+        {
+            sub2 = src.ObserveRemove()
+                .Subscribe(x =>
+                {
+                    x.Value.View.Parent = null;
+                    x.Value.View.Dispose();
+                });
+        }
+        else
+        {
+            sub2 = src.ObserveRemove().Subscribe(x => x.Value.View.Parent = null);
+        }
+
+        return new CompositeDisposable(sub1, sub2);
+    }
+
+    public static IDisposable ObserveRoutableParent<T>(
+        this IObservableCollection<T> src,
+        IRoutable parent
+    )
+        where T : class, IRoutable
+    {
+        var sub1 = src.ObserveAdd().Subscribe(x => x.Value.Parent = parent);
+        var sub2 = src.ObserveRemove().Subscribe(x => x.Value.Parent = null);
+        return new CompositeDisposable(sub1, sub2);
+    }
+
     public static string[] GetPathToRoot(this IRoutable src)
     {
         return src.GetHierarchyFromRoot().Select(x => x.Id).ToArray();

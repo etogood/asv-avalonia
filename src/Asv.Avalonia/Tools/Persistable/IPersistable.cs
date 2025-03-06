@@ -41,6 +41,8 @@ public readonly partial struct EmptyPersistable : IPersistable
     {
         return ValueTask.CompletedTask;
     }
+
+    public override string ToString() => "[EMPTY]";
 }
 
 [MemoryPackable]
@@ -78,6 +80,11 @@ public partial struct Persistable<T>(T value) : IPersistable
 
         Value = (T)rdr.Value;
         return ValueTask.CompletedTask;
+    }
+
+    public override string ToString()
+    {
+        return $"[{Value}]";
     }
 }
 

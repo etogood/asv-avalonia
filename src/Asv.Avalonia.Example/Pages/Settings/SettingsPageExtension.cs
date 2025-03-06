@@ -5,7 +5,7 @@ namespace Asv.Avalonia.Example;
 
 [ExportExtensionFor<ISettingsPage>]
 [method: ImportingConstructor]
-public class SettingsExampleExtension() : IExtensionFor<ISettingsPage>
+public class SettingsPageExtension() : IExtensionFor<ISettingsPage>
 {
     private TreePage? _node4;
 

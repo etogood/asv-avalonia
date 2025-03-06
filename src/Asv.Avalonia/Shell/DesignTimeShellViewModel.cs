@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using R3;
 
 namespace Asv.Avalonia;
@@ -8,7 +9,7 @@ public class DesignTimeShellViewModel : ShellViewModel
     public static DesignTimeShellViewModel Instance { get; } = new();
 
     public DesignTimeShellViewModel()
-        : base(NullContainerHost.Instance, ShellId)
+        : base(NullContainerHost.Instance, NullLoggerFactory.Instance, ShellId)
     {
         int cnt = 0;
         var all = Enum.GetValues<ShellErrorState>().Length;
@@ -20,7 +21,6 @@ public class DesignTimeShellViewModel : ShellViewModel
                 ErrorState.Value = Enum.GetValues<ShellErrorState>()[cnt % all];
             });
         InternalPages.Add(new SettingsPageViewModel());
-        InternalPages.Add(new HomePageViewModel());
         InternalPages.Add(new PluginsMarketViewModel());
     }
 }

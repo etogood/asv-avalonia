@@ -7,6 +7,7 @@ namespace Asv.Avalonia;
 public interface IShellHost
 {
     IShell Shell { get; }
+    Observable<IShell> OnShellLoaded { get; }
     TopLevel TopLevel { get; }
 }
 
@@ -17,6 +18,7 @@ public class NullShellHost : IShellHost
     private NullShellHost() { }
 
     public IShell Shell => DesignTimeShellViewModel.Instance;
+    public Observable<IShell> OnShellLoaded { get; } = new Subject<IShell>();
     public TopLevel TopLevel { get; } = null!; // TODO: сделать DesignTime вариант
 }
 

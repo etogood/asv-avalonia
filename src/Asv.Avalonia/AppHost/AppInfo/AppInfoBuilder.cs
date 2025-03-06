@@ -148,15 +148,31 @@ public class AppInfoBuilder
         return this;
     }
 
-    /// <summary>
-    /// Configures the application host builder with the specified product title.
-    /// </summary>
-    /// <param name="productTitle">The title of the product to be set for the application host.</param>
-    /// <returns>The current instance of the options.</returns>
-    public AppInfoBuilder WithProductTitle(string productTitle)
+    public AppInfoBuilder WithProductDescriptionFrom(string description)
     {
-        ArgumentNullException.ThrowIfNull(productTitle);
-        _options.Title = productTitle;
+        ArgumentNullException.ThrowIfNull(description);
+        _options.Description = description;
+        return this;
+    }
+
+    public AppInfoBuilder WithProductDescriptionFrom(Assembly assembly)
+    {
+        var attributes = assembly.GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
+
+        ArgumentNullException.ThrowIfNull(attributes);
+        if (attributes.Length != 0)
+        {
+            var titleAttribute = (AssemblyDescriptionAttribute)attributes[0];
+            if (titleAttribute.Description.Length != 0)
+            {
+                _options.Description = titleAttribute.Description;
+                return this;
+            }
+        }
+
+        var name = assembly.GetName().Name;
+        ArgumentNullException.ThrowIfNull(name);
+        _options.Description = name;
         return this;
     }
 
@@ -194,6 +210,7 @@ public class AppInfoBuilder
     public void FillFromAssembly(Assembly assembly)
     {
         WithProductNameFrom(assembly);
+        WithProductDescriptionFrom(assembly);
         WithVersionFrom(assembly);
         WithCompanyNameFrom(assembly);
         WithProductTitleFrom(assembly);
