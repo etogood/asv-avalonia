@@ -37,6 +37,11 @@
         <Exec Command="dotnet run --project $(SolutionDir)Asv.Avalonia.DC\Asv.Avalonia.DC.csproj $(SolutionDir)Asv.Avalonia.Example\Asv.Avalonia.Example.csproj" />
     </Target>
     
+    
+    <Target Name="RunDependencyCollector" AfterTargets="Build" Condition="'$(IsPacking)' != 'true' AND '$(MSBuildProjectFile)' != 'Asv.Avalonia.csproj'">
+        <Exec Command="dotnet run --project $(SolutionDir)Asv.Avalonia.DC\Asv.Avalonia.DC.csproj $(SolutionDir)Asv.Avalonia.Example\Asv.Avalonia.Example.csproj" />
+    </Target>
+    
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
         <PackageReference Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
@@ -47,6 +52,7 @@
         <PackageReference Include="FluentAvaloniaUI" Version="2.2.0" />
         <PackageReference Include="Material.Icons.Avalonia" Version="2.2.0" />
         <PackageReference Include="MemoryPack" Version="1.21.3" />
+        <PackageReference Include="MemoryPack" Version="1.21.4" />
         <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="$(MicrosoftExtensionsVersion)" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="$(MicrosoftExtensionsVersion)" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsVersion)" />
@@ -135,6 +141,54 @@
 
     <ItemGroup>
       <UpToDateCheckInput Remove="Shell\Pages\Document\DocumentPageView.axaml" />
+      <UpToDateCheckInput Remove="Shell\Pages\Impl\SettingsPageView.axaml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="RS.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>RS.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="RS.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>RS.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="AppHost\Builder\Extentions\" />
+        <PackageReference Include="MemoryPack" Version="1.21.4" />
+        <PackageReference Include="FluentAvaloniaUI" Version="2.2.0" />
+        <PackageReference Include="Material.Icons.Avalonia" Version="2.2.0" />
+        <PackageReference Include="MemoryPack" Version="1.21.3" />
+        <PackageReference Include="NuGet.Packaging" Version="6.12.1" />
+        <PackageReference Include="NuGet.Protocol" Version="6.12.1" />
+        <PackageReference Include="NuGet.Resolver" Version="6.12.1" />
+        <PackageReference Include="observablecollections" Version="3.3.3" />
+        <Compile Update="Shell\Pages\Plugins\Installed\InstalledPluginsView.axaml.cs">
+          <DependentUpon>InstalledPluginsView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Shell\Pages\Plugins\Market\PluginsMarketView.axaml.cs">
+          <DependentUpon>PluginsMarketView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Shell\Pages\Plugins\Sources\PluginsSourcesView.axaml.cs">
+          <DependentUpon>PluginsSourcesView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Shell\Pages\Plugins\Sources\SourceView.axaml.cs">
+          <DependentUpon>SourceView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Shell\Pages\Plugins\Market\PluginInstallerView.axaml.cs">
+          <DependentUpon>PluginInstallerView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
       <UpToDateCheckInput Remove="Shell\Pages\Impl\SettingsPageView.axaml" />
     </ItemGroup>
 

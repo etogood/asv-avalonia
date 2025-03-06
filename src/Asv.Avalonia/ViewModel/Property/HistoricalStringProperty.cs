@@ -2,30 +2,26 @@ using R3;
 
 namespace Asv.Avalonia;
 
-public class HistoricalUnitProperty : RoutableViewModel, IHistoricalProperty<double>
+public class HistoricalStringProperty : RoutableViewModel, IHistoricalProperty<string?>
 {
-    private readonly ReactiveProperty<double> _modelValue;
-    private readonly IUnit _unit;
-    private readonly string? _format;
+    private readonly ReactiveProperty<string?> _modelValue;
+    private readonly IList<Func<string?, ValidationResult>> _validationRules = [];
 
     private bool _internalChange;
 
-    public ReactiveProperty<double> ModelValue => _modelValue;
+    public ReactiveProperty<string?> ModelValue => _modelValue;
     public BindableReactiveProperty<string?> ViewValue { get; } = new();
     public BindableReactiveProperty<bool> IsSelected { get; } = new();
-    public IUnit Unit => _unit;
 
-    public HistoricalUnitProperty(
+    public HistoricalStringProperty(
         string id,
-        ReactiveProperty<double> modelValue,
-        IUnit unit,
-        string? format = null
+        ReactiveProperty<string?> modelValue,
+        IList<Func<string?, ValidationResult>>? validationRules = null
     )
         : base(id)
     {
+        InternalInitValidationRules(validationRules);
         _modelValue = modelValue;
-        _unit = unit;
-        _format = format;
 
         _internalChange = true;
         ViewValue.EnableValidation().ForceValidate();
@@ -46,18 +42,25 @@ public class HistoricalUnitProperty : RoutableViewModel, IHistoricalProperty<dou
         _internalChange = false;
 
         _sub3 = _modelValue.Subscribe(OnChangeByModel);
-        _sub4 = unit.Current.Subscribe(_ => OnChangeByModel(modelValue.CurrentValue));
+    }
+
+    public void AddValidationRule(Func<string?, ValidationResult> validationFunc)
+    {
+        _validationRules.Add(validationFunc);
     }
 
     private Exception? ValidateValue(string? userValue)
     {
-        var result = _unit.Current.CurrentValue.ValidateValue(userValue);
-        if (result.IsSuccess)
+        foreach (var rule in _validationRules)
         {
-            return null;
+            var res = rule(userValue);
+            if (res.IsFailed)
+            {
+                return res.ValidationException;
+            }
         }
 
-        return result.ValidationException;
+        return null;
     }
 
     private async ValueTask OnChangedByUser(string? userValue, CancellationToken cancel)
@@ -67,15 +70,14 @@ public class HistoricalUnitProperty : RoutableViewModel, IHistoricalProperty<dou
             return;
         }
 
-        var value = _unit.Current.CurrentValue.ParseToSi(userValue);
-        var newValue = new Persistable<double>(value);
-        await this.ExecuteCommand(ChangeDoublePropertyCommand.Id, newValue);
+        var newValue = new Persistable<string?>(userValue);
+        await this.ExecuteCommand(ChangeStringPropertyCommand.Id, newValue);
     }
 
-    private void OnChangeByModel(double modelValue)
+    private void OnChangeByModel(string? modelValue)
     {
         _internalChange = true;
-        ViewValue.OnNext(_unit.Current.CurrentValue.PrintFromSi(modelValue, _format));
+        ViewValue.OnNext(modelValue);
         _internalChange = false;
     }
 
@@ -89,11 +91,25 @@ public class HistoricalUnitProperty : RoutableViewModel, IHistoricalProperty<dou
         return ValueTask.CompletedTask;
     }
 
+    private void InternalInitValidationRules(
+        IList<Func<string?, ValidationResult>>? validationRules
+    )
+    {
+        if (validationRules is null)
+        {
+            return;
+        }
+
+        foreach (var rules in validationRules)
+        {
+            AddValidationRule(rules);
+        }
+    }
+
     #region Dispose
 
     private readonly IDisposable _sub2;
     private readonly IDisposable _sub3;
-    private readonly IDisposable _sub4;
 
     protected override void Dispose(bool disposing)
     {
@@ -104,9 +120,9 @@ public class HistoricalUnitProperty : RoutableViewModel, IHistoricalProperty<dou
 
         _sub2.Dispose();
         _sub3.Dispose();
-        _sub4.Dispose();
         ViewValue.Dispose();
         IsSelected.Dispose();
+        _validationRules.Clear();
     }
 
     #endregion

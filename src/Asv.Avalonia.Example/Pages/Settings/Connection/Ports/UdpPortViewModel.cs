@@ -81,11 +81,6 @@ public partial class UdpPortViewModel : RoutableViewModel
     public BindableReactiveProperty<string> RemoteIpAddressInput { get; set; } = new(string.Empty);
     public BindableReactiveProperty<string> RemotePortInput { get; set; } = new();
 
-    public override ValueTask<IRoutable> Navigate(string id)
-    {
-        return ValueTask.FromResult<IRoutable>(this);
-    }
-
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
         return [];

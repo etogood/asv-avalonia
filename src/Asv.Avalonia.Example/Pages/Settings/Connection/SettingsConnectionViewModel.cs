@@ -125,11 +125,6 @@ public class SettingsConnectionViewModel : RoutableViewModel, ISettingsSubPage
     public ReactiveCommand AddUdpPortCommand { get; set; }
     public ReactiveCommand AddTcpPortCommand { get; set; }
 
-    public override ValueTask<IRoutable> Navigate(string id)
-    {
-        return ValueTask.FromResult<IRoutable>(this);
-    }
-
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
         return [];

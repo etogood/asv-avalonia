@@ -60,11 +60,6 @@ public partial class TcpPortViewModel : RoutableViewModel
     public BindableReactiveProperty<bool> IsTcpIpServer { get; set; } = new(false);
     public ReactiveProperty<bool> IsValid { get; set; } = new(false);
 
-    public override ValueTask<IRoutable> Navigate(string id)
-    {
-        return ValueTask.FromResult<IRoutable>(this);
-    }
-
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
         return [];

@@ -31,11 +31,6 @@ public class DocumentPageViewModel : PageViewModel<DocumentPageViewModel>
 
     protected override void AfterLoadExtensions() { }
 
-    public override ValueTask<IRoutable> Navigate(string id)
-    {
-        return ValueTask.FromResult<IRoutable>(this);
-    }
-
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
         return [];

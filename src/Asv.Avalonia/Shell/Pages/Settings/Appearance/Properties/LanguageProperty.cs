@@ -67,11 +67,6 @@ public class LanguageProperty : RoutableViewModel
         _internalChange = false;
     }
 
-    public override ValueTask<IRoutable> Navigate(string id)
-    {
-        return ValueTask.FromResult<IRoutable>(this);
-    }
-
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
         return [];

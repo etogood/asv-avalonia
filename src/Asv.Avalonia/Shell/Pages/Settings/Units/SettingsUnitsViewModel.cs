@@ -67,7 +67,7 @@ public class SettingsUnitsViewModel : RoutableViewModel, ISettingsSubPage
             return ValueTask.FromResult<IRoutable>(item);
         }
 
-        return ValueTask.FromResult<IRoutable>(this);
+        return base.Navigate(id);
     }
 
     public override IEnumerable<IRoutable> GetRoutableChildren()

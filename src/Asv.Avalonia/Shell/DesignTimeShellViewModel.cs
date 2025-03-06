@@ -23,9 +23,4 @@ public class DesignTimeShellViewModel : ShellViewModel
         InternalPages.Add(new HomePageViewModel());
         InternalPages.Add(new PluginsMarketViewModel());
     }
-
-    public override ValueTask<IRoutable> Navigate(string id)
-    {
-        return ValueTask.FromResult<IRoutable>(this);
-    }
 }
