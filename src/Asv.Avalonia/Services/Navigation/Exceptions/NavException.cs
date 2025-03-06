@@ -12,6 +12,11 @@ public class NavException : Exception
     public NavException(string message, Exception inner)
         : base(message, inner) { }
 
+    public static void ThrowEmptyPathException()
+    {
+        throw new NavException("Navigation path is empty");
+    }
+
     public static ValueTask<IRoutable> AsyncEmptyPathException()
     {
         _exception ??= ValueTask.FromException<IRoutable>(

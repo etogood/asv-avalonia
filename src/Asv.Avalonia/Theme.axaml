@@ -73,9 +73,17 @@
         <Thickness x:Key="TabItemMargin">8,0,8,0</Thickness>-->
         <FontWeight x:Key="TabItemHeaderThemeFontWeight">SemiLight</FontWeight>
         <x:Double x:Key="TabItemMinHeight">28</x:Double>
-        <system:Double x:Key="FontSizeSmall">10</system:Double>
-        <system:Double x:Key="FontSizeNormal">12</system:Double>
-        <system:Double x:Key="FontSizeLarge">16</system:Double>
+        
+        <system:Double x:Key="FontSizeSmall">12</system:Double>
+        <system:Double x:Key="FontSizeNormal">14</system:Double>
+        <system:Double x:Key="H3FontSize">16</system:Double>
+        <system:Double x:Key="H1FontSize">18</system:Double>
+        <system:Double x:Key="H2FontSize">20</system:Double>
+        
+        <system:Double x:Key="IconBigSize">40</system:Double>
+        <system:Double x:Key="IconMediumSize">30</system:Double>
+        <system:Double x:Key="IconSmallSize">20</system:Double>
+        
     </Styles.Resources>
     
     <FluentTheme>
@@ -103,12 +111,54 @@
             />         
         </FluentTheme.Palettes>
     </FluentTheme>-->
-    
+    <!--MaterialIcon-->
     <Style Selector="avalonia|MaterialIcon">
+        
+        <Style Selector="^.accent">
+            <Setter Property="Foreground" Value="{DynamicResource  SystemAccentColorLight1}"/>
+        </Style>
+        <Style Selector="^.big">
+            <Setter Property="Width" Value="{StaticResource  IconBigSize}"/>
+            <Setter Property="Height" Value="{DynamicResource  IconBigSize}"/>
+        </Style>
+        <Style Selector="^.medium">
+            <Setter Property="Width" Value="{StaticResource  IconMediumSize}"/>
+            <Setter Property="Height" Value="{DynamicResource  IconMediumSize}"/>
+        </Style>
+        <Style Selector="^.small">
+            <Setter Property="Width" Value="{StaticResource  IconSmallSize}"/>
+            <Setter Property="Height" Value="{DynamicResource  IconSmallSize}"/>
+        </Style>
         <Setter Property="Width" Value="{DynamicResource  IconElementThemeWidth}"/>
         <Setter Property="Height" Value="{DynamicResource  IconElementThemeHeight}"/>
         <Setter Property="Foreground" Value="{DynamicResource  TextControlForeground}"/>
     </Style>
+   
+   
+    <!--Header-->
+    <Style Selector="TextBlock">
+        <Style Selector="^.h1">
+            <Setter Property="FontSize" Value="{DynamicResource  H1FontSize}"/>
+            <Setter Property="FontWeight" Value="Thin"/>
+            <Setter Property="Foreground" Value="{DynamicResource  TextControlForeground}"/>
+        </Style>
+        <Style Selector="^.h2">
+            <Setter Property="FontSize" Value="{DynamicResource  H2FontSize}"/>
+            <Setter Property="FontWeight" Value="Thin"/>
+            <Setter Property="Foreground" Value="{DynamicResource  TextControlForeground}"/>
+        </Style>
+        <Style Selector="^.h3">
+            <Setter Property="FontSize" Value="{DynamicResource  H3FontSize}"/>
+            <Setter Property="FontWeight" Value="Thin"/>
+            <Setter Property="Foreground" Value="{DynamicResource  TextControlForeground}"/>
+        </Style>
+        <Style Selector="^.description">
+            <Setter Property="FontSize" Value="{DynamicResource  FontSizeSmall}"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Foreground" Value="{DynamicResource   TextControlForegroundDisabled}"/>
+        </Style>
+    </Style>
+    
     
     
 </Styles>

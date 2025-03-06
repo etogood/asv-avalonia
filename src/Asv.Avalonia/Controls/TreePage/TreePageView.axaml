@@ -47,7 +47,7 @@
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Margin="2" FontSize="10"
                                        Text="{Binding Base.Status}" />
                         </Border>
-                        <TextBlock Text="{Binding Base.Title}" />
+                        <TextBlock Text="{Binding Base.Header}" />
                     </DockPanel>
                 </TreeDataTemplate>
             </TreeView.ItemTemplate>
@@ -75,7 +75,7 @@
                             <avalonia1:MaterialIcon IsVisible="{Binding !IsFirst}" VerticalAlignment="Center"
                                                     Width="18" Height="18" Kind="ChevronRight" />
                             <TextBlock FontSize="16" VerticalAlignment="Center"
-                                       Text="{Binding Item.Title}" />
+                                       Text="{Binding Item.Header}" />
                         </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

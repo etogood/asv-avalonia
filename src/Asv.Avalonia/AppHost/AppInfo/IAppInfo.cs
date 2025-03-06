@@ -5,12 +5,12 @@ public interface IAppInfo
     /// <summary>
     /// Gets application name.
     /// </summary>
-    string Title { get; }
+    string Name { get; }
 
     /// <summary>
-    /// Gets application name.
+    /// Application description.
     /// </summary>
-    string Name { get; }
+    string Description { get; }
 
     /// <summary>
     /// Gets application version.

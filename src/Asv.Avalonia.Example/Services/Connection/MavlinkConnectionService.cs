@@ -70,8 +70,8 @@ public class MavlinkConnectionService : AsyncDisposableOnce, IMavlinkConnectionS
                 builder.SetConfig(
                     new ClientDeviceBrowserConfig()
                     {
-                        DeviceTimeoutMs = 1000,
-                        DeviceCheckIntervalMs = 1000,
+                        DeviceTimeoutMs = 30_000,
+                        DeviceCheckIntervalMs = 3_000,
                     }
                 );
 

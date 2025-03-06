@@ -17,17 +17,29 @@ public partial class ShellWindow : Window, IExportable
     private readonly ILogger<ShellWindow> _logger;
     private bool _internalChange;
 
+    static ShellWindow()
+    {
+        WindowStateProperty.Changed.Subscribe(x =>
+        {
+            if (x.Sender is ShellWindow window)
+            {
+                window._savePosition?.OnNext(Unit.Default);
+            }
+        });
+    }
+
     [ImportingConstructor]
     public ShellWindow(IConfiguration configuration, ILoggerFactory logger)
     {
         _logger = logger.CreateLogger<ShellWindow>();
         InitializeComponent();
-#if DEBUG
-        // this.AttachDevTools();
-#endif
+
         _configuration = configuration;
         _savePosition = new Subject<Unit>();
-        _sub1 = _savePosition.ThrottleLast(TimeSpan.FromSeconds(1)).Subscribe(_ => SaveLayout());
+        _sub1 = _savePosition
+            .Where(_ => _internalChange == false)
+            .ThrottleLast(TimeSpan.FromSeconds(1))
+            .Subscribe(_ => SaveLayout());
     }
 
     protected override void OnClosing(WindowClosingEventArgs e)
@@ -53,9 +65,9 @@ public partial class ShellWindow : Window, IExportable
         }
 
         _internalChange = true;
-        _logger.ZLogTrace($"Load {nameof(ShellWindow)} layout");
 
         var shellViewConfig = _configuration.Get<ShellWindowConfig>();
+        _logger.ZLogTrace($"Load {nameof(ShellWindow)} layout: {shellViewConfig}");
 
         if (shellViewConfig.IsMaximized)
         {
@@ -109,7 +121,6 @@ public partial class ShellWindow : Window, IExportable
             return;
         }
 
-        _logger.ZLogTrace($"Save {nameof(ShellWindow)} layout");
         ShellWindowConfig shellViewConfig;
         if (WindowState == WindowState.Maximized)
         {
@@ -123,9 +134,11 @@ public partial class ShellWindow : Window, IExportable
                 Width = Width,
                 PositionX = Position.X,
                 PositionY = Position.Y,
+                IsMaximized = false,
             };
         }
 
+        _logger.ZLogTrace($"Save {nameof(ShellWindow)} layout: {shellViewConfig}");
         _configuration.Set(shellViewConfig);
     }
 

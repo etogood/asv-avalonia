@@ -4,7 +4,7 @@ using R3;
 
 namespace Asv.Avalonia.Example;
 
-public interface IFlightModeContext : IPage
+public interface IFlightMode : IPage
 {
     ObservableList<IMapWidget> Widgets { get; }
     ObservableList<IMapAnchor> Anchors { get; }

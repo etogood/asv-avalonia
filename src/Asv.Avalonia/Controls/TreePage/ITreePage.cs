@@ -4,7 +4,7 @@ using R3;
 
 namespace Asv.Avalonia;
 
-public interface ITreePage : ITitledViewModel
+public interface ITreePage : IHeadlinedViewModel
 {
     string? ParentId { get; }
     string? Status { get; }
@@ -12,7 +12,7 @@ public interface ITreePage : ITitledViewModel
     int Order { get; }
 }
 
-public class TreePage : TitledViewModel, ITreePage
+public class TreePage : HeadlinedViewModel, ITreePage
 {
     private string? _status;
 
@@ -27,7 +27,7 @@ public class TreePage : TitledViewModel, ITreePage
     {
         NavigateTo = navigateTo;
         ParentId = parentId;
-        Title = title;
+        Header = title;
         Icon = icon;
     }
 

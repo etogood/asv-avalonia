@@ -37,5 +37,12 @@ public sealed class NullNavigationService : INavigationService
         return ValueTask.FromResult<IRoutable>(Shell);
     }
 
+    public ValueTask GoHomeAsync()
+    {
+        return ValueTask.CompletedTask;
+    }
+
+    public ReactiveCommand GoHome { get; } = new();
+
     public IExportInfo Source => SystemModule.Instance;
 }

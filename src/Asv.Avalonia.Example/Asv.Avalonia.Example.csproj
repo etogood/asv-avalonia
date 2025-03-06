@@ -52,15 +52,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <AdditionalFiles Include="Pages\Document\DocumentPageView.axaml" />
+      <UpToDateCheckInput Remove="Pages\Home\HomePageView.axaml" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Pages\Settings\" />
-      <Folder Include="Services\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <UpToDateCheckInput Remove="Views\MainView.axaml" />
-    </ItemGroup>
+   
 </Project>

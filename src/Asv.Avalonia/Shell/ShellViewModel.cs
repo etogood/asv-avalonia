@@ -1,6 +1,8 @@
 using Asv.Common;
+using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;
+using ZLogger;
 
 namespace Asv.Avalonia;
 
@@ -9,8 +11,9 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
     private readonly ObservableList<IPage> _pages;
     private readonly IContainerHost _container;
     private readonly ICommandService _cmd;
+    private readonly ILogger<ShellViewModel> _logger;
 
-    protected ShellViewModel(IContainerHost ioc, string id)
+    protected ShellViewModel(IContainerHost ioc, ILoggerFactory loggerFactory, string id)
         : base(id)
     {
         ArgumentNullException.ThrowIfNull(ioc);
@@ -18,6 +21,7 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
         _cmd = ioc.GetExport<ICommandService>();
         Navigation = ioc.GetExport<INavigationService>();
         _pages = new ObservableList<IPage>();
+        _logger = loggerFactory.CreateLogger<ShellViewModel>();
         PagesView = _pages.ToNotifyCollectionChangedSlim();
         ErrorState = new BindableReactiveProperty<ShellErrorState>(ShellErrorState.Normal);
         Close = new ReactiveCommand((_, c) => CloseAsync(c));
@@ -26,8 +30,7 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
         SelectedPage = new BindableReactiveProperty<IPage>();
         MainMenu = new ObservableList<IMenuItem>();
         MainMenuView = new MenuTree(MainMenu).DisposeItWith(Disposable);
-        MainMenu.ObserveAdd().Subscribe(x => x.Value.Parent = this).DisposeItWith(Disposable);
-        MainMenu.ObserveRemove().Subscribe(x => x.Value.Parent = null).DisposeItWith(Disposable);
+        MainMenu.ObserveRoutableParent(this).DisposeItWith(Disposable);
     }
 
     #region MainMenu
@@ -105,8 +108,16 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
 
         if (e is PageCloseRequestedEvent close)
         {
+            _logger.ZLogInformation($"Close page [{close.Page.Id}]");
+
             // TODO: save page layout
             _pages.Remove(close.Page);
+            close.Page.Parent = null;
+            close.Page.Dispose();
+            if (_pages.Count == 0)
+            {
+                await Navigation.GoHomeAsync();
+            }
         }
     }
 

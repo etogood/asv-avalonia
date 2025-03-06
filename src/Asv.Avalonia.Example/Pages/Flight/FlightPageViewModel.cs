@@ -14,9 +14,10 @@ using R3;
 namespace Asv.Avalonia.Example;
 
 [ExportPage(PageId)]
-public class FlightPageViewModel : PageViewModel<IFlightModeContext>, IFlightModeContext
+public class FlightPageViewModel : PageViewModel<IFlightMode>, IFlightMode
 {
-    public const string PageId = "Flight";
+    public const string PageId = "flight";
+    public const MaterialIconKind PageIcon = MaterialIconKind.MapSearch;
 
     public FlightPageViewModel()
         : this(DesignTime.CommandService)
@@ -45,6 +46,7 @@ public class FlightPageViewModel : PageViewModel<IFlightModeContext>, IFlightMod
         : base(PageId, cmd)
     {
         Title.Value = "Flight";
+        Icon.Value = PageIcon;
         Anchors = [];
         AnchorsView = Anchors.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
         Widgets = [];

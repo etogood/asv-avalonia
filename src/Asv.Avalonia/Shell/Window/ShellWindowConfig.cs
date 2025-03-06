@@ -7,4 +7,7 @@ public class ShellWindowConfig
     public int PositionX { get; set; }
     public int PositionY { get; set; }
     public bool IsMaximized { get; set; }
+
+    public override string ToString() =>
+        $"MAX:{IsMaximized}, X:{PositionX}, Y:{PositionY}, W:{Width:F0}, H:{Height:F0}";
 }

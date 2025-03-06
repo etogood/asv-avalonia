@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Platform.Storage;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia;
@@ -17,8 +18,8 @@ public class DesktopShellViewModel : ShellViewModel
     private readonly IContainerHost _ioc;
 
     [ImportingConstructor]
-    public DesktopShellViewModel(IContainerHost ioc)
-        : base(ioc, ShellId)
+    public DesktopShellViewModel(IContainerHost ioc, ILoggerFactory loggerFactory)
+        : base(ioc, loggerFactory, ShellId)
     {
         _ioc = ioc;
         var wnd = ioc.GetExport<ShellWindow>();

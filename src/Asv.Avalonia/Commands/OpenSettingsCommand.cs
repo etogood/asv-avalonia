@@ -17,7 +17,7 @@ public class OpenSettingsCommand() : OpenPageCommandBase(SettingsPageViewModel.P
         Id = Id,
         Name = "Settings",
         Description = "Open settings",
-        Icon = MaterialIconKind.Cog,
+        Icon = SettingsPageViewModel.PageIcon,
         DefaultHotKey = KeyGesture.Parse("Ctrl+F1"),
         Source = SystemModule.Instance,
     };

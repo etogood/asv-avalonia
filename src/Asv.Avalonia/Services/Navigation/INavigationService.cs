@@ -15,4 +15,6 @@ public interface INavigationService : IExportable
     ReadOnlyReactiveProperty<IRoutable?> SelectedControl { get; }
     ReadOnlyReactiveProperty<string[]> SelectedControlPath { get; }
     ValueTask<IRoutable> GoTo(string[] path);
+    ValueTask GoHomeAsync();
+    ReactiveCommand GoHome { get; }
 }

@@ -3,44 +3,21 @@ using Avalonia.Input;
 
 namespace Asv.Avalonia
 {
-    public class MenuItem : TitledViewModel, IMenuItem
+    public class MenuItem : ActionViewModel, IMenuItem
     {
-        private bool _isVisible = true;
         private bool _staysOpenOnClick;
         private bool _isEnabled = true;
         private KeyGesture? _hotKey;
-        private ICommand? _command;
-        private object? _commandParameter;
 
         public MenuItem(string id, string header, string? parentId = null)
             : base(id)
         {
             ParentId = parentId;
             Order = 0;
-            Title = header;
+            Header = header;
         }
 
         public string? ParentId { get; }
-
-        public int Order { get; set; }
-
-        public ICommand? Command
-        {
-            get => _command;
-            set => SetField(ref _command, value);
-        }
-
-        public object? CommandParameter
-        {
-            get => _commandParameter;
-            set => SetField(ref _commandParameter, value);
-        }
-
-        public bool IsVisible
-        {
-            get => _isVisible;
-            set => SetField(ref _isVisible, value);
-        }
 
         public bool StaysOpenOnClick
         {
