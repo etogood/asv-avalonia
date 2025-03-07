@@ -55,17 +55,7 @@ public abstract class RoutableViewModel(NavigationId id) : DisposableViewModel(i
 
     public virtual ValueTask<IRoutable> Navigate(NavigationId id)
     {
-        var children = GetRoutableChildren();
-
-        foreach (var child in children)
-        {
-            if (id == child.Id)
-            {
-                return ValueTask.FromResult(child);
-            }
-        }
-
-        return ValueTask.FromResult<IRoutable>(this);
+        return ValueTask.FromResult(GetRoutableChildren().FirstOrDefault(x => x.Id == id) ?? this);
     }
 
     public abstract IEnumerable<IRoutable> GetRoutableChildren();
