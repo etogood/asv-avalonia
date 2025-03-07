@@ -22,11 +22,6 @@ public class HomePageItemViewModel : RoutableViewModel
     public NotifyCollectionChangedSynchronizedViewList<IActionViewModel> ActionsView { get; }
     public NotifyCollectionChangedSynchronizedViewList<IHeadlinedViewModel> PropertiesView { get; }
 
-    public override ValueTask<IRoutable> Navigate(string id)
-    {
-        return ValueTask.FromResult(GetRoutableChildren().FirstOrDefault(x => x.Id == id) ?? this);
-    }
-
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
         foreach (var model in PropertiesView)
