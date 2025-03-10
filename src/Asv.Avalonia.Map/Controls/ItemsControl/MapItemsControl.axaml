@@ -2,7 +2,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:Asv.Avalonia.Map"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-        xmlns:avalonia1="clr-namespace:Asv.Avalonia;assembly=Asv.Avalonia">
+        xmlns:avalonia1="clr-namespace:Asv.Avalonia;assembly=Asv.Avalonia"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"
+        xmlns:generic="clr-namespace:System.Collections.Generic;assembly=System.Collections">
     <Design.PreviewWith>
         <Panel Width="1000" Height="250">
             <controls:MapItemsControl CenterMap="{controls:GeoPoint 53,53}" >
@@ -18,6 +20,9 @@
                                   
                                       CenterX="{controls:HorizontalOffset Center}"
                                       CenterY="{controls:VerticalOffset Bottom}">
+                    <controls:MapItem.Polygon>
+                        
+                    </controls:MapItem.Polygon>
                     <avalonia:MaterialIcon x:Name="PART_Icon" Width="40" Height="40" Kind="MapMarker" />
                 </controls:MapItem>
         
@@ -54,6 +59,7 @@
                         CenterMap="{TemplateBinding CenterMap}" 
                         Provider="{TemplateBinding Provider}"/>
                     <controls:AnnotationLayer x:Name="PART_AnnotationLayer" ItemTemplate="{TemplateBinding AnnotationTemplate}" Source="{TemplateBinding}" />
+                    <controls:PolygonLayer x:Name="PART_PolygonLayer" Source="{TemplateBinding}"/>
                     <ItemsPresenter Name="PART_ItemsPresenter"
                                     ItemsPanel="{TemplateBinding ItemsPanel}"
                                     Margin="{TemplateBinding Padding}"/>

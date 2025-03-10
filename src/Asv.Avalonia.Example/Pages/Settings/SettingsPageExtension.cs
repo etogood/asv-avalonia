@@ -1,5 +1,7 @@
 ﻿using System.Composition;
+using Asv.Common;
 using Material.Icons;
+using R3;
 
 namespace Asv.Avalonia.Example;
 
@@ -7,22 +9,16 @@ namespace Asv.Avalonia.Example;
 [method: ImportingConstructor]
 public class SettingsPageExtension() : IExtensionFor<ISettingsPage>
 {
-    private TreePage? _node4;
-
-    public void Extend(ISettingsPage context)
+    public void Extend(ISettingsPage context, CompositeDisposable contextDispose)
     {
-        _node4 = new TreePage(
-            SettingsConnectionViewModel.SubPageId,
-            "Connection",
-            MaterialIconKind.Connection,
-            SettingsConnectionViewModel.SubPageId,
-            NavigationId.Empty
+        context.Nodes.Add(
+            new TreePage(
+                SettingsConnectionViewModel.SubPageId,
+                "Connection",
+                MaterialIconKind.Connection,
+                SettingsConnectionViewModel.SubPageId,
+                NavigationId.Empty
+            ).DisposeItWith(contextDispose)
         );
-        context.Nodes.Add(_node4);
-    }
-
-    public void Dispose()
-    {
-        _node4?.Dispose();
     }
 }

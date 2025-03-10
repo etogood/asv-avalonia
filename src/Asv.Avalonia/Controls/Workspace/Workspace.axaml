@@ -1,0 +1,57 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:avalonia="clr-namespace:Asv.Avalonia">
+    <Design.PreviewWith>
+        <Panel Width="1024" Height="500">
+            <avalonia:Workspace BorderBrush="Red" BorderThickness="3" >
+                <avalonia:WorkspaceItem Header="HEADER1" Position="Right">
+                    <StackPanel>
+                        <TextBlock Text="AAAA"/>
+                        <TextBox></TextBox>
+                    </StackPanel>
+                </avalonia:WorkspaceItem>
+                <avalonia:WorkspaceItem Header="HEADER2" Position="Right">
+                    <StackPanel>
+                        <TextBlock Text="AAAA"/>
+                        <TextBox></TextBox>
+                    </StackPanel>
+                </avalonia:WorkspaceItem>
+                <avalonia:WorkspaceItem Header="HEADER2" Position="Left">
+                    <StackPanel>
+                        <TextBlock Text="AAAA"/>
+                        <TextBox></TextBox>
+                    </StackPanel>
+                </avalonia:WorkspaceItem>
+                <avalonia:WorkspaceItem Header="HEADER3" Position="Bottom">
+                    <StackPanel>
+                        <TextBlock Text="AAAA"/>
+                        <TextBox></TextBox>
+                    </StackPanel>
+                </avalonia:WorkspaceItem>
+                <avalonia:WorkspaceItem Header="HEADER3" Position="Bottom">
+                    <StackPanel>
+                        <TextBlock Text="AAAA"/>
+                        <TextBox></TextBox>
+                    </StackPanel>
+                </avalonia:WorkspaceItem>
+            </avalonia:Workspace>
+        </Panel>
+        
+        
+    </Design.PreviewWith>
+    <Style Selector="avalonia|Workspace">
+        <!-- Set Defaults -->
+        <Setter Property="ItemsPanel">
+            <ItemsPanelTemplate>
+                <avalonia:WorkspacePanel/>
+            </ItemsPanelTemplate>
+        </Setter>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ItemsPresenter Name="PART_ItemsPresenter"
+                                ItemsPanel="{TemplateBinding ItemsPanel}"
+                                Margin="{TemplateBinding Padding}"/>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

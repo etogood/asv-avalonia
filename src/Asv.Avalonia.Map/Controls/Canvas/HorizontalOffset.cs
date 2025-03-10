@@ -15,6 +15,8 @@ public class HorizontalOffsetExtension(HorizontalOffsetEnum offsetType) : Markup
 
 public readonly struct HorizontalOffset(HorizontalOffsetEnum offsetType, double offset)
 {
+    public static readonly HorizontalOffset Default = new(HorizontalOffsetEnum.Center, 0);
+
     public HorizontalOffsetEnum OffsetType => offsetType;
     public double Offset => offset;
 

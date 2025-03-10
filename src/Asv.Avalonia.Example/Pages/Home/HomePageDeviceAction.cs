@@ -13,7 +13,7 @@ public abstract class HomePageDeviceAction : AsyncDisposableOnce, IExtensionFor<
     private IClientDevice? _device;
     private HomePageDevice? _context;
 
-    public void Extend(IHomePageItem context)
+    public void Extend(IHomePageItem context, CompositeDisposable contextDispose)
     {
         if (context is HomePageDevice item)
         {

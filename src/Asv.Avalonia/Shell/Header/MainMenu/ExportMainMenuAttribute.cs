@@ -1,5 +1,6 @@
 ﻿using System.Composition;
 using Asv.Common;
+using R3;
 
 namespace Asv.Avalonia;
 
@@ -13,23 +14,10 @@ public class ExportMainMenuAttribute() : ExportAttribute(Contract, typeof(IMenuI
 [method: ImportingConstructor]
 public class MainMenuDefaultMenuExtender(
     [ImportMany(ExportMainMenuAttribute.Contract)] IEnumerable<IMenuItem> items
-) : AsyncDisposableOnce, IExtensionFor<IShell>
+) : IExtensionFor<IShell>
 {
-    public void Extend(IShell context)
+    public void Extend(IShell context, CompositeDisposable contextDispose)
     {
-        context.MainMenu.AddRange(items);
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            foreach (var item in items)
-            {
-                item.Dispose();
-            }
-        }
-
-        base.Dispose(disposing);
+        context.MainMenu.AddRange(items.Select(x => x.DisposeItWith(contextDispose)));
     }
 }

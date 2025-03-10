@@ -23,7 +23,7 @@ public class FlightPageViewModel : PageViewModel<IFlightMode>, IFlightMode
         : this(DesignTime.CommandService)
     {
         DesignTime.ThrowIfNotDesignMode();
-        var drone = new MapAnchor("1")
+        var drone = new MapAnchor<IMapAnchor>("1")
         {
             Icon = MaterialIconKind.Navigation,
             Location = new GeoPoint(53, 53, 100),
@@ -39,6 +39,7 @@ public class FlightPageViewModel : PageViewModel<IFlightMode>, IFlightMode
             TimeSpan.FromSeconds(1),
             TimeSpan.FromSeconds(1)
         );
+        Widgets.Add(new UavWidgetViewModel { Header = "Device11" });
     }
 
     [ImportingConstructor]
@@ -54,37 +55,6 @@ public class FlightPageViewModel : PageViewModel<IFlightMode>, IFlightMode
         Widgets.SetRoutableParent(this, true).DisposeItWith(Disposable);
         WidgetsView = Widgets.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
         SelectedAnchor = new BindableReactiveProperty<IMapAnchor?>().DisposeItWith(Disposable);
-
-        for (int i = 0; i < 10; i++)
-        {
-            var drone = new MapAnchor($"anchor_{i}")
-            {
-                Icon = MaterialIconKind.Navigation,
-                Location = new GeoPoint(
-                    53 + Random.Shared.NextDouble(),
-                    53 + Random.Shared.NextDouble(),
-                    100
-                ),
-                Azimuth = Random.Shared.NextDouble() * 360,
-            };
-            Anchors.Add(drone);
-        }
-
-        var azimuth = 0;
-        TimeProvider.System.CreateTimer(
-            x =>
-            {
-                foreach (var anchor in Anchors.Cast<MapAnchor>())
-                {
-                    anchor.Azimuth = (azimuth++ * 10) % 360;
-                    anchor.Title = $"{anchor.Azimuth} deg";
-                    anchor.Location = anchor.Location.RadialPoint(100, anchor.Azimuth);
-                }
-            },
-            null,
-            TimeSpan.FromSeconds(1),
-            TimeSpan.FromSeconds(1)
-        );
     }
 
     public NotifyCollectionChangedSynchronizedViewList<IMapWidget> WidgetsView { get; }

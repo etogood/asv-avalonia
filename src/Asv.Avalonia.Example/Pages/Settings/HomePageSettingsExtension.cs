@@ -1,12 +1,15 @@
 ﻿using Asv.Common;
+using R3;
 
 namespace Asv.Avalonia.Example;
 
 [ExportExtensionFor<IHomePage>]
-public class HomePageSettingsExtension : AsyncDisposableOnce, IExtensionFor<IHomePage>
+public class HomePageSettingsExtension : IExtensionFor<IHomePage>
 {
-    public void Extend(IHomePage context)
+    public void Extend(IHomePage context, CompositeDisposable contextDispose)
     {
-        context.Tools.Add(OpenSettingsCommand.StaticInfo.CreateAction());
+        context.Tools.Add(
+            OpenSettingsCommand.StaticInfo.CreateAction().DisposeItWith(contextDispose)
+        );
     }
 }

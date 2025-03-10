@@ -97,7 +97,7 @@
                                             <ColumnDefinition SharedSizeGroup="Value" Width="Auto"/>
                                             <ColumnDefinition Width="20"/>
                                         </Grid.ColumnDefinitions>
-                                        <avalonia:MaterialIcon Foreground="{Binding IconBrush}" Classes="small" Grid.Column="0" Kind="{Binding Icon}" VerticalAlignment="Center"/>
+                                        <avalonia:MaterialIcon Classes="small" Grid.Column="0" Kind="{Binding Icon}" VerticalAlignment="Center"/>
                                         <TextBlock Grid.Column="2" Text="{Binding Header}" VerticalAlignment="Center" />
                                         <TextBlock Grid.Column="4" Text="{Binding Description}"  VerticalAlignment="Center"/>
                                     </Grid>

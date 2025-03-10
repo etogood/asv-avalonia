@@ -1,0 +1,51 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:avalonia="clr-namespace:Asv.Avalonia">
+    <Design.PreviewWith>
+        <StackPanel Spacing="4" Width="200">
+            <avalonia:WorkspaceItem Background="Black" Header="HEADER">
+                <StackPanel>
+                    <TextBlock Text="AAAA"/>
+                    <TextBox></TextBox>
+                </StackPanel>
+            </avalonia:WorkspaceItem>
+            <avalonia:WorkspaceItem Width="200" Background="Black" Header="asdasd" >
+                <StackPanel>
+                    <TextBlock Text="AAAA"/>
+                    <TextBox></TextBox>
+                </StackPanel>
+            </avalonia:WorkspaceItem>
+        </StackPanel>
+        
+    </Design.PreviewWith>
+
+    <Style Selector="avalonia|WorkspaceItem">
+        <!-- Set Defaults -->
+        <Setter Property="Padding" Value="8"></Setter>
+        <Setter Property="avalonia:WorkspacePanel.Dock" Value="{Binding Position, RelativeSource={RelativeSource Self}}"/>
+        <Setter Property="Background" Value="{DynamicResource RegionBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="{DynamicResource ThemeBorderThickness}"/>
+        <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Expander
+                    Background="{TemplateBinding Background}" 
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}" 
+                    Padding="{TemplateBinding Padding}"
+                    HeaderTemplate="{TemplateBinding HeaderTemplate}"
+                    Header="{TemplateBinding Header}">
+                    <ContentPresenter Name="PART_ContentPresenter"
+                                      Grid.Row="1"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      Content="{TemplateBinding Content}"
+                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      RenderTransformOrigin="0,0"/>    
+                </Expander>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>
