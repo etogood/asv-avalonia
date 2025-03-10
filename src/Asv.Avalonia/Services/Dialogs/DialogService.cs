@@ -1,12 +1,9 @@
 ﻿using System.Composition;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
-using R3;
 
 namespace Asv.Avalonia;
 
@@ -196,8 +193,7 @@ public sealed class DialogService : IDialogService
             Content = new TextBlock { Text = message, TextWrapping = TextWrapping.Wrap },
             PrimaryButtonText = RS.DialogButton_Yes,
             SecondaryButtonText = RS.DialogButton_No,
-
-            // DefaultButton = ContentDialogButton.Primary,
+            DefaultButton = ContentDialogButton.Primary,
         };
 
         var result = await dialogContent.ShowAsync();
