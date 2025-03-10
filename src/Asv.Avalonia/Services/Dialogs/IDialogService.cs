@@ -88,7 +88,7 @@ public interface IDialogService
     /// </summary>
     /// <param name="title">The title of the dialog.</param>
     /// <param name="message">The message displayed in the dialog.</param>
-    /// <returns>True if Yes is selected, false if No is selected.</returns>
+    /// <returns>True if the primary button is pressed, false if the secondary button is pressed.</returns>
     Task<bool> ShowYesNoDialog(string title, string message);
 
     /// <summary>

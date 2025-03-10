@@ -11,7 +11,7 @@ using Avalonia.VisualTree;
 namespace Asv.Avalonia;
 
 /// <summary>
-/// Presents a asynchronous dialog to the user.
+/// Presents an asynchronous dialog to the user.
 /// <remarks>
 /// Code was taken from: https://github.com/amwx/FluentAvalonia.
 /// </remarks>
@@ -255,6 +255,7 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
         }
 
         _lastFocus = topLevel.FocusManager?.GetFocusedElement();
+        TrySetDataContext();
 
         ol.Children.Add(_host);
 
@@ -269,6 +270,38 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
         Loaded += DialogLoaded;
 
         return await _tcs.Task;
+    }
+
+    private bool TrySetDataContext()
+    {
+        if (_lastFocus is not InputElement last)
+        {
+            return false;
+        }
+
+        var attemptsCount = 0;
+        var routable = last.DataContext as IRoutable;
+        var parent = last.Parent;
+        while (routable is null)
+        {
+            if (parent is null)
+            {
+                return false;
+            }
+
+            if (attemptsCount > 100)
+            {
+                return false;
+            }
+
+            routable = parent.DataContext as IRoutable;
+            parent = parent.Parent;
+            attemptsCount++;
+        }
+
+        DataContext = routable;
+
+        return true;
     }
 
     /// <summary>
@@ -350,15 +383,11 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
 
     private void HideCore()
     {
-        // v2 - No longer disabling the dialog during a deferral so we need to make sure that if
-        //      multiple requests to close come in, we don't handle them
         if (_hasDeferralActive)
         {
             return;
         }
 
-        // v2- Changed to match logic in TeachingTip for deferral, fixing #239 where cancel
-        //     was being handled before the deferral.
         var args = new ContentDialogClosingEventArgs(_result);
 
         var deferral = new Deferral(async () =>
@@ -445,7 +474,6 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
         }
 
         _hotkeyDownVisual = null;
-
         _tcs.TrySetResult(_result);
     }
 
