@@ -149,6 +149,15 @@
     <data name="ShellView_WindowControlButton_Close" xml:space="preserve">
         <value>Close</value>
     </data>
+    <data name="ShellView_WindowControlButton_Maximize" xml:space="preserve">
+        <value>Full screen</value>
+    </data>
+    <data name="ShellView_WindowControlButton_Minimize" xml:space="preserve">
+        <value>Window mode</value>
+    </data>
+    <data name="ShellView_WindowControlButton_Collapse" xml:space="preserve">
+        <value>Collapse</value>
+    </data>
     <data name="PluginInstallerViewModel_InstallDialog_SecondaryButtonText" xml:space="preserve">
         <value>Cancel</value></data>
     <data name="PluginInstallerViewModel_InstallDialog_PrimaryButtonText" xml:space="preserve">

@@ -1,4 +1,9 @@
+using System.ComponentModel;
 using Asv.Common;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Material.Icons;
 using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;
@@ -25,6 +30,8 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
         PagesView = _pages.ToNotifyCollectionChangedSlim();
         ErrorState = new BindableReactiveProperty<ShellErrorState>(ShellErrorState.Normal);
         Close = new ReactiveCommand((_, c) => CloseAsync(c));
+        ChangeWindowState = new ReactiveCommand((_, c) => ChangeWindowModeAsync(c));
+        Collapse = new ReactiveCommand((_, c) => CollapseAsync(c));
         Title = new BindableReactiveProperty<string>();
 
         SelectedPage = new BindableReactiveProperty<IPage>();
@@ -44,6 +51,33 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
     public ReactiveCommand Close { get; }
 
     protected virtual ValueTask CloseAsync(CancellationToken cancellationToken)
+    {
+        return ValueTask.CompletedTask;
+    }
+
+    #endregion
+
+    #region ChangeWindowState
+
+    // TODO: Move to DesktopShellViewModel later
+    public BindableReactiveProperty<MaterialIconKind> WindowSateIconKind { get; } = new();
+
+    // TODO: Move to DesktopShellViewModel later
+    public BindableReactiveProperty<string> WindowStateHeader { get; } = new();
+
+    public ReactiveCommand ChangeWindowState { get; }
+
+    protected virtual ValueTask ChangeWindowModeAsync(CancellationToken cancellationToken)
+    {
+        return ValueTask.CompletedTask;
+    }
+
+    #endregion
+
+    #region Collapse
+    public ReactiveCommand Collapse { get; }
+
+    protected virtual ValueTask CollapseAsync(CancellationToken cancellationToken)
     {
         return ValueTask.CompletedTask;
     }

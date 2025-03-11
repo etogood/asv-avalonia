@@ -137,6 +137,15 @@
     <data name="ShellView_WindowControlButton_Close" xml:space="preserve">
         <value>Закрыть</value>
     </data>
+    <data name="ShellView_WindowControlButton_Maximize" xml:space="preserve">
+        <value>Во весь экран</value>
+    </data>
+    <data name="ShellView_WindowControlButton_Minimize" xml:space="preserve">
+        <value>Оконный режим</value>
+    </data>
+    <data name="ShellView_WindowControlButton_Collapse" xml:space="preserve">
+        <value>Свернуть</value>
+    </data>
     <data name="PluginInstallerViewModel_InstallDialog_Title" xml:space="preserve">
         <value>Установщик плагинов</value>
     </data>
