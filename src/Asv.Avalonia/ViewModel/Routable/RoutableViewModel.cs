@@ -1,5 +1,3 @@
-using R3;
-
 namespace Asv.Avalonia;
 
 public abstract class RoutableViewModel(NavigationId id) : DisposableViewModel(id), IRoutable

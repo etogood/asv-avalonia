@@ -18,8 +18,23 @@ namespace Asv.Avalonia;
 /// </summary>
 public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
 {
-    public ContentDialog()
+    private IInputElement? _lastFocus;
+    private Control? _originalHost;
+    private int _originalHostIndex;
+    private DialogHost? _host;
+    private ContentDialogResult _result;
+    private TaskCompletionSource<ContentDialogResult> _tcs;
+    private Button? _primaryButton;
+    private Button? _secondaryButton;
+    private Button? _closeButton;
+    private bool _hasDeferralActive;
+    private Visual? _hotkeyDownVisual;
+
+    private readonly INavigationService _navigation;
+
+    public ContentDialog(INavigationService navigationService)
     {
+        _navigation = navigationService;
         PseudoClasses.Add(ContentDialogPseudoClasses.s_pcHidden);
     }
 
@@ -257,6 +272,7 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
         _lastFocus = topLevel.FocusManager?.GetFocusedElement();
         TrySetDataContext();
 
+        // TrySetDataContext();
         ol.Children.Add(_host);
 
         // Make the dialog visible
@@ -274,6 +290,11 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
 
     private bool TrySetDataContext()
     {
+        if (Content is not IRoutable routableContent)
+        {
+            throw new Exception($"{nameof(Content)} is not {typeof(IRoutable)}");
+        }
+
         if (_lastFocus is not InputElement last)
         {
             return false;
@@ -299,8 +320,8 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
             attemptsCount++;
         }
 
-        DataContext = routable;
-
+        routableContent.Parent = routable;
+        DataContext = routableContent;
         return true;
     }
 
@@ -440,7 +461,12 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
             _lastFocus = null;
         }
 
-        var ol = OverlayLayer.GetOverlayLayer(_host!);
+        if (_host is null)
+        {
+            throw new Exception($"{nameof(_host)} is null");
+        }
+
+        var ol = OverlayLayer.GetOverlayLayer(_host);
 
         // If OverlayLayer isn't found here, this may be a reentrant call (hit ESC multiple times quickly, etc)
         // Don't fail, and return. If this isn't reentrant, there's bigger issues...
@@ -449,9 +475,9 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
             return;
         }
 
-        ol.Children.Remove(_host!);
+        ol.Children.Remove(_host);
 
-        _host!.Content = null;
+        _host.Content = null;
 
         if (_originalHost != null)
         {
@@ -474,6 +500,18 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
         }
 
         _hotkeyDownVisual = null;
+
+        // Move focus to the previous IRoutable
+        if (DataContext is IRoutable routable)
+        {
+            if (routable.Parent is null)
+            {
+                return;
+            }
+
+            _navigation.ForceFocus(routable.Parent);
+        }
+
         _tcs.TrySetResult(_result);
     }
 
@@ -715,18 +753,4 @@ public partial class ContentDialog : ContentControl, ICustomKeyboardNavigation
         // Now that we've fully initialized here, raise the Opened event
         OnOpened();
     }
-
-    // Store the last element focused before showing the dialog, so we can
-    // restore it when it closes
-    private IInputElement? _lastFocus;
-    private Control? _originalHost;
-    private int _originalHostIndex;
-    private DialogHost? _host;
-    private ContentDialogResult _result;
-    private TaskCompletionSource<ContentDialogResult> _tcs;
-    private Button? _primaryButton;
-    private Button? _secondaryButton;
-    private Button? _closeButton;
-    private bool _hasDeferralActive;
-    private Visual? _hotkeyDownVisual;
 }

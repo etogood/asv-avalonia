@@ -4,7 +4,8 @@ using Exception = System.Exception;
 
 namespace Asv.Avalonia;
 
-public class SourceViewModel : ViewModelBaseWithValidation
+// TODO: add validation
+public class SourceViewModel : DialogViewModelBase
 {
     public const string ViewModelId = "plugins.sources.source.dialog";
 
@@ -35,8 +36,6 @@ public class SourceViewModel : ViewModelBaseWithValidation
                 );
             }
         });
-
-        SubscribeToErrorsChanged();
     }
 
     public SourceViewModel(
@@ -49,37 +48,46 @@ public class SourceViewModel : ViewModelBaseWithValidation
         _mng = mng;
         _viewModel = viewModel;
 
-        Name = new BindableReactiveProperty<string>(
-            _viewModel?.Name.Value ?? string.Empty
-        ).EnableValidation();
+        Name = new BindableReactiveProperty<string>(_viewModel?.Name.Value ?? string.Empty);
         SourceUri = new BindableReactiveProperty<string>(
             _viewModel?.SourceUri.Value ?? string.Empty
-        ).EnableValidation();
+        );
         Username = new BindableReactiveProperty<string?>(_viewModel?.Model.Username);
         Password = new BindableReactiveProperty<string>();
 
         ApplyCommand = new ReactiveCommand((_, _) => Update(), configureAwait: false);
 
-        _sub1 = Name.Subscribe(x =>
-        {
-            if (string.IsNullOrWhiteSpace(x))
+        _sub1 = Name.EnableValidation(
+            value =>
             {
-                Name.OnErrorResume(
-                    new Exception(RS.SourceViewModel_SourceViewModel_NameIsRequired)
-                );
-            }
-        });
-        _sub2 = SourceUri.Subscribe(x =>
-        {
-            if (string.IsNullOrWhiteSpace(x))
-            {
-                SourceUri.OnErrorResume(
-                    new Exception(RS.SourceViewModel_SourceViewModel_SourceUriIsRequired)
-                );
-            }
-        });
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    return ValueTask.FromResult<ValidationResult>(
+                        new Exception(RS.SourceViewModel_SourceViewModel_NameIsRequired)
+                    );
+                }
 
-        SubscribeToErrorsChanged();
+                return ValidationResult.Success;
+            },
+            this,
+            true
+        );
+
+        _sub2 = SourceUri.EnableValidation(
+            x =>
+            {
+                if (string.IsNullOrWhiteSpace(x))
+                {
+                    return ValueTask.FromResult<ValidationResult>(
+                        new Exception(RS.SourceViewModel_SourceViewModel_SourceUriIsRequired)
+                    );
+                }
+
+                return ValidationResult.Success;
+            },
+            this,
+            true
+        );
     }
 
     public BindableReactiveProperty<string> Name { get; set; }
@@ -92,9 +100,9 @@ public class SourceViewModel : ViewModelBaseWithValidation
     {
         ArgumentNullException.ThrowIfNull(dialog);
 
-        _sub3 = IsValid.Subscribe(x =>
+        _sub3 = IsValid.Subscribe(b =>
         {
-            dialog.IsPrimaryButtonEnabled = x.IsSuccess;
+            dialog.IsPrimaryButtonEnabled = b;
         });
         dialog.PrimaryButtonCommand = ApplyCommand;
     }
@@ -111,6 +119,11 @@ public class SourceViewModel : ViewModelBaseWithValidation
         );
 
         return ValueTask.CompletedTask;
+    }
+
+    public override IEnumerable<IRoutable> GetRoutableChildren()
+    {
+        return [];
     }
 
     #region Dispose

@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Avalonia.Controls;
-using Avalonia.Media;
 using Avalonia.Platform.Storage;
 
 namespace Asv.Avalonia;
@@ -12,11 +11,13 @@ namespace Asv.Avalonia;
 public sealed class DialogService : IDialogService
 {
     private readonly IShellHost _host;
+    private readonly INavigationService _navigation;
 
     [ImportingConstructor]
-    public DialogService(IShellHost host)
+    public DialogService(IShellHost host, INavigationService navigationService)
     {
         _host = host;
+        _navigation = navigationService;
     }
 
     public IShellHost ShellHost { get; set; }
@@ -187,10 +188,12 @@ public sealed class DialogService : IDialogService
 
     public async Task<bool> ShowYesNoDialog(string title, string message)
     {
-        var dialogContent = new ContentDialog
+        using var vm = new DialogItemTextViewModel { Message = message };
+
+        var dialogContent = new ContentDialog(_navigation)
         {
             Title = title,
-            Content = new TextBlock { Text = message, TextWrapping = TextWrapping.Wrap },
+            Content = vm,
             PrimaryButtonText = RS.DialogButton_Yes,
             SecondaryButtonText = RS.DialogButton_No,
             DefaultButton = ContentDialogButton.Primary,
@@ -203,10 +206,11 @@ public sealed class DialogService : IDialogService
 
     public async Task<bool> ShowSaveCancelDialog(string title, string message)
     {
-        var dialogContent = new ContentDialog
+        using var vm = new DialogItemTextViewModel { Message = message };
+        var dialogContent = new ContentDialog(_navigation)
         {
             Title = title,
-            Content = new TextBlock { Text = message },
+            Content = vm,
             PrimaryButtonText = RS.DialogButton_Save,
             SecondaryButtonText = RS.DialogButton_DontSave,
             DefaultButton = ContentDialogButton.Primary,
@@ -219,10 +223,11 @@ public sealed class DialogService : IDialogService
 
     public async Task<string?> ShowInputDialog(string title, string message)
     {
-        var dialogContent = new ContentDialog
+        using var vm = new DialogItemTextBoxViewModel { Message = message };
+        var dialogContent = new ContentDialog(_navigation)
         {
             Title = title,
-            Content = new TextBox { Watermark = message },
+            Content = vm,
             PrimaryButtonText = RS.DialogButton_Yes,
             SecondaryButtonText = RS.DialogButton_No,
             DefaultButton = ContentDialogButton.Primary,
@@ -232,10 +237,12 @@ public sealed class DialogService : IDialogService
 
         if (result == ContentDialogResult.Primary)
         {
-            if (dialogContent.Content is TextBox box)
-            {
-                return box.Text;
-            }
+            return vm.Input.CurrentValue;
+        }
+
+        if (vm.Parent is not null)
+        {
+            await vm.Navigate(vm.Parent.Id);
         }
 
         return null;

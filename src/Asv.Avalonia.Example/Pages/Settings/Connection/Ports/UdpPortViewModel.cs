@@ -2,14 +2,14 @@
 using System.Composition;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using R3;
 using ZLogger;
 
 namespace Asv.Avalonia.Example;
 
-public partial class UdpPortViewModel : RoutableViewModel
+// TODO: add validation
+public partial class UdpPortViewModel : DialogViewModelBase
 {
     private readonly IMavlinkConnectionService _connectionService;
     private readonly ILogger _log;
@@ -27,6 +27,7 @@ public partial class UdpPortViewModel : RoutableViewModel
         _log = logFactory.CreateLogger<UdpPortViewModel>();
         var currentIndex =
             connectionService.Connections.Count(pair => pair.Value.TypeInfo.Scheme == "udp") + 1;
+        IsValid.Value = false;
         TitleInput = new BindableReactiveProperty<string>($"New UDP {currentIndex}");
         LocalPortInput.Subscribe(_ => ValidateAndUpdate());
         RemotePortInput.Subscribe(_ => ValidateAndUpdate());
@@ -37,7 +38,7 @@ public partial class UdpPortViewModel : RoutableViewModel
 
     public void AddUdpPort()
     {
-        if (!IsInputValid.CurrentValue)
+        if (!IsValid.CurrentValue)
         {
             _log.ZLogError($"Unable To create TCP connection. Input is not valid");
             return;
@@ -60,7 +61,7 @@ public partial class UdpPortViewModel : RoutableViewModel
             int.TryParse(LocalPortInput.CurrentValue, out var localPort)
             && localPort is <= ushort.MaxValue and >= 0;
         var isLocalValid = isLocalIpValid && isLocalPortValid;
-        IsInputValid.Value = isLocalValid;
+        IsValid.Value = isLocalValid;
         if (!IsRemoteInput.CurrentValue)
         {
             return;
@@ -70,11 +71,10 @@ public partial class UdpPortViewModel : RoutableViewModel
         var isRemotePortValid =
             int.TryParse(RemotePortInput.CurrentValue, out var remotePort)
             && remotePort is <= ushort.MaxValue and >= 0;
-        IsInputValid.Value = isLocalValid && isRemoteIpValid && isRemotePortValid;
+        IsValid.Value = isLocalValid && isRemoteIpValid && isRemotePortValid;
     }
 
     public BindableReactiveProperty<string> TitleInput { get; set; }
-    public ReactiveProperty<bool> IsInputValid { get; set; } = new();
     public BindableReactiveProperty<string> LocalIpAddressInput { get; set; } = new(string.Empty);
     public BindableReactiveProperty<string> LocalPortInput { get; set; } = new();
     public BindableReactiveProperty<bool> IsRemoteInput { get; set; } = new(false);

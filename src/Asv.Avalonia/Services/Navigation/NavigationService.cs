@@ -166,6 +166,11 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
 
     #region Focus
 
+    public void ForceFocus(IRoutable? routable)
+    {
+        FocusControlChanged(routable);
+    }
+
     private void GotFocusHandler(TopLevel top, GotFocusEventArgs args)
     {
         Debug.WriteLine($"GotFocusHandler: {args.Source}");

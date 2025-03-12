@@ -73,18 +73,16 @@ public class CommandService : AsyncDisposableOnce, ICommandService
             }
 
             var gesture = new KeyGesture(keyEventArgs.Key, keyEventArgs.KeyModifiers);
-            var commandFactory = _gestureVsCommand.GetValueOrDefault(gesture);
-            if (commandFactory == null)
+            var command = _gestureVsCommand.GetValueOrDefault(gesture);
+            if (command == null)
             {
                 return;
             }
 
             // TODO: check if we need to request params through the QuickPick dialog
-            await InternalExecute(
-                commandFactory,
-                _nav.SelectedControl.CurrentValue,
-                Persistable.Empty,
-                CancellationToken.None
+            await _nav.SelectedControl.CurrentValue.ExecuteCommand(
+                command.Info.Id,
+                Persistable.Empty
             );
         }
         catch (Exception e)

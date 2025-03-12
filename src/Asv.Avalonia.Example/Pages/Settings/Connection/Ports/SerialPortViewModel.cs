@@ -14,7 +14,8 @@ using ZLogger;
 
 namespace Asv.Avalonia.Example;
 
-public class SerialPortViewModel : RoutableViewModel
+// TODO: add validation
+public class SerialPortViewModel : DialogViewModelBase
 {
     private readonly IMavlinkConnectionService? _service;
     private readonly ILogger _log;
@@ -38,14 +39,138 @@ public class SerialPortViewModel : RoutableViewModel
         var currentIndex =
             service.Connections.Count(pair => pair.Value.TypeInfo.Scheme == "serial") + 1;
         Title = new BindableReactiveProperty<string>($"New Serial {currentIndex}");
-        WriteBufferSizeInput.Subscribe(_ => ValidateAndUpdate());
-        DataBitsInput.Subscribe(_ => ValidateAndUpdate());
-        WriteTimeOutInput.Subscribe(_ => ValidateAndUpdate());
-        SelectedBoundRateInput.Subscribe(_ => ValidateAndUpdate());
-        Title.Subscribe(_ => ValidateAndUpdate());
-        SelectedPortInput.Subscribe(_ => ValidateAndUpdate());
-        ParityInput.Subscribe(_ => ValidateAndUpdate());
-        StopBitsInput.Subscribe(_ => ValidateAndUpdate());
+        IsValid.Value = false;
+        _sub1 = WriteBufferSizeInput.EnableValidation(
+            value =>
+            {
+                if (!int.TryParse(value, out _))
+                {
+                    return ValueTask.FromResult<ValidationResult>(
+                        new Exception($"{nameof(WriteBufferSizeInput)} is not int")
+                    );
+                }
+
+                return ValidationResult.Success;
+            },
+            this,
+            true
+        );
+
+        _sub2 = DataBitsInput.EnableValidation(
+            value =>
+            {
+                if (!int.TryParse(value, out _))
+                {
+                    return ValueTask.FromResult<ValidationResult>(
+                        new Exception($"{nameof(DataBitsInput)} is not int")
+                    );
+                }
+
+                return ValidationResult.Success;
+            },
+            this,
+            true
+        );
+
+        _sub3 = WriteTimeOutInput.EnableValidation(
+            value =>
+            {
+                if (!int.TryParse(value, out _))
+                {
+                    return ValueTask.FromResult<ValidationResult>(
+                        new Exception($"{nameof(WriteTimeOutInput)} is not int")
+                    );
+                }
+
+                return ValidationResult.Success;
+            },
+            this,
+            true
+        );
+
+        _sub4 = SelectedBoundRateInput.EnableValidation(
+            value =>
+            {
+                if (!int.TryParse(value, out _))
+                {
+                    return ValueTask.FromResult<ValidationResult>(
+                        new Exception($"{nameof(SelectedBoundRateInput)} is not int")
+                    );
+                }
+
+                return ValidationResult.Success;
+            },
+            this,
+            true
+        );
+
+        _sub5 = Title.EnableValidation(
+            value =>
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    return ValueTask.FromResult<ValidationResult>(
+                        new Exception($"{nameof(Title)} is empty or null")
+                    );
+                }
+
+                return ValidationResult.Success;
+            },
+            this,
+            true
+        );
+
+        _sub6 = SelectedPortInput.EnableValidation(
+            value =>
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    return ValueTask.FromResult<ValidationResult>(
+                        new Exception($"{nameof(SelectedPortInput)} is empty or null")
+                    );
+                }
+
+                return ValidationResult.Success;
+            },
+            this,
+            true
+        );
+
+        _sub7 = ParityInput.EnableValidation(
+            value =>
+            {
+                if (value is null)
+                {
+                    return ValueTask.FromResult<ValidationResult>(
+                        new Exception($"{nameof(ParityInput)} is null")
+                    );
+                }
+
+                return ValidationResult.Success;
+            },
+            this,
+            true
+        );
+
+        _sub8 = StopBitsInput.EnableValidation(
+            value =>
+            {
+                if (value is null)
+                {
+                    return ValueTask.FromResult<ValidationResult>(
+                        new Exception($"{nameof(StopBitsInput)} is null")
+                    );
+                }
+
+                return ValidationResult.Success;
+            },
+            this,
+            true
+        );
+
+        _sub9 = WriteBufferSizeInput.Subscribe(v => WriteBufferSize.Value = int.Parse(v));
+        _sub10 = DataBitsInput.Subscribe(v => DataBits.Value = int.Parse(v));
+        _sub11 = WriteTimeOutInput.Subscribe(v => WriteTimeOut.Value = int.Parse(v));
 
         Ports = _myCache.ToNotifyCollectionChanged();
         Observable
@@ -118,48 +243,11 @@ public class SerialPortViewModel : RoutableViewModel
         }
     }
 
-    private void ValidateAndUpdate()
-    {
-        var isWriteBufferValid = int.TryParse(
-            WriteBufferSizeInput.CurrentValue,
-            out var writeBuffer
-        );
-        var isDataBitsValid = int.TryParse(DataBitsInput.CurrentValue, out var dataBits);
-        var isWriteTimeoutValid = int.TryParse(
-            WriteTimeOutInput.CurrentValue,
-            out var writeTimeout
-        );
-        var isBoundRateValid = int.TryParse(SelectedBoundRateInput.CurrentValue, out _);
-        var isTitleValid = !string.IsNullOrEmpty(Title.CurrentValue);
-        var isPortValid = !string.IsNullOrEmpty(SelectedPortInput.CurrentValue);
-        var isStopBitsValid = StopBitsInput.CurrentValue is not null;
-        var isParityValid = ParityInput.CurrentValue is not null;
-        var isValid =
-            isWriteBufferValid
-            && isDataBitsValid
-            && isWriteTimeoutValid
-            && isBoundRateValid
-            && isTitleValid
-            && isPortValid
-            && isStopBitsValid
-            && isParityValid;
-
-        if (isValid)
-        {
-            WriteBufferSize.Value = writeBuffer;
-            DataBits.Value = dataBits;
-            WriteTimeOut.Value = writeTimeout;
-        }
-
-        IsValid.Value = isValid;
-    }
-
     public NotifyCollectionChangedSynchronizedViewList<string> Ports { get; set; }
 
     public BindableReactiveProperty<Array> BoundRates { get; } =
         new(new[] { 9600, 14400, 19200, 38400, 56000, 57600, 115200, 128000, 256000 });
 
-    public ReactiveProperty<bool> IsValid { get; set; } = new(false);
     public BindableReactiveProperty<string> Title { get; set; }
     public BindableReactiveProperty<string> SelectedBoundRateInput { get; set; } = new();
     public BindableReactiveProperty<string> SelectedPortInput { get; set; } = new();
@@ -177,4 +265,40 @@ public class SerialPortViewModel : RoutableViewModel
     public BindableReactiveProperty<StopBits?> StopBitsInput { get; set; } = new();
 
     public BindableReactiveProperty<Array> StopBitsArr => new(Enum.GetValues<StopBits>());
+
+    #region Dispose
+
+    private readonly IDisposable _sub1;
+    private readonly IDisposable _sub2;
+    private readonly IDisposable _sub3;
+    private readonly IDisposable _sub4;
+    private readonly IDisposable _sub5;
+    private readonly IDisposable _sub6;
+    private readonly IDisposable _sub7;
+    private readonly IDisposable _sub8;
+    private readonly IDisposable _sub9;
+    private readonly IDisposable _sub10;
+    private readonly IDisposable _sub11;
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _sub1.Dispose();
+            _sub2.Dispose();
+            _sub3.Dispose();
+            _sub4.Dispose();
+            _sub5.Dispose();
+            _sub6.Dispose();
+            _sub7.Dispose();
+            _sub8.Dispose();
+            _sub9.Dispose();
+            _sub10.Dispose();
+            _sub11.Dispose();
+        }
+
+        base.Dispose(disposing);
+    }
+
+    #endregion
 }
