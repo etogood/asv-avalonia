@@ -13,13 +13,10 @@ using R3;
 namespace Asv.Avalonia.Example;
 
 [ExportExtensionFor<IHomePage>]
-public class HomePageDeviceListExtension : AsyncDisposableOnce, IExtensionFor<IHomePage>
+public class HomePageDeviceListExtension : IExtensionFor<IHomePage>
 {
-    private IDisposable? _sub1;
-    private IDisposable? _sub2;
     private readonly IMavlinkConnectionService _svc;
     private readonly IContainerHost _container;
-    private IHomePage _context;
 
     [ImportingConstructor]
     public HomePageDeviceListExtension(IMavlinkConnectionService svc, IContainerHost container)
@@ -30,80 +27,19 @@ public class HomePageDeviceListExtension : AsyncDisposableOnce, IExtensionFor<IH
         _container = container;
     }
 
-    public void Extend(IHomePage context)
+    public void Extend(IHomePage context, CompositeDisposable contextDispose)
     {
-        Debug.Assert(_context == null, "_context == null");
-
-        _context = context;
-        _sub1 = _svc.DevicesExplorer.Devices.ObserveAdd().Select(x => x.Value).Subscribe(Add);
-
-        _sub2 = _svc.DevicesExplorer.Devices.ObserveRemove().Select(x => x.Value).Subscribe(Remove);
-
-        foreach (var device in _svc.DevicesExplorer.Devices)
-        {
-            Add(device);
-        }
+        _svc.DevicesExplorer.Devices.PopulateTo(context.Items, TryAdd, Remove)
+            .DisposeItWith(contextDispose);
     }
 
-    private void Add(KeyValuePair<DeviceId, IClientDevice> e)
+    private bool Remove(KeyValuePair<DeviceId, IClientDevice> model, HomePageDevice vm)
     {
-        Debug.Assert(_context != null, "_context != null");
-        var device = new HomePageDevice(e.Value);
-        _context.Items.Add(device);
+        return model.Key == vm.Device.Id;
     }
 
-    private void Remove(KeyValuePair<DeviceId, IClientDevice> arg)
+    private HomePageDevice TryAdd(KeyValuePair<DeviceId, IClientDevice> arg)
     {
-        Debug.Assert(_context != null, "_context != null");
-        var itemToDelete = _context.Items.FirstOrDefault(x =>
-            x is HomePageDevice adapter && adapter.Device.Id == arg.Key
-        );
-        if (itemToDelete == null)
-        {
-            return;
-        }
-
-        _context.Items.Remove(itemToDelete);
-        itemToDelete.Dispose();
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            _sub1?.Dispose();
-            _sub2?.Dispose();
-        }
-
-        base.Dispose(disposing);
-    }
-
-    protected override async ValueTask DisposeAsyncCore()
-    {
-        if (_sub1 != null)
-        {
-            await CastAndDispose(_sub1);
-        }
-
-        if (_sub2 != null)
-        {
-            await CastAndDispose(_sub2);
-        }
-
-        await base.DisposeAsyncCore();
-
-        return;
-
-        static async ValueTask CastAndDispose(IDisposable resource)
-        {
-            if (resource is IAsyncDisposable resourceAsyncDisposable)
-            {
-                await resourceAsyncDisposable.DisposeAsync();
-            }
-            else
-            {
-                resource.Dispose();
-            }
-        }
+        return new HomePageDevice(arg.Value);
     }
 }

@@ -26,6 +26,7 @@ public class VerticalOffsetExtension : MarkupExtension
 
 public readonly struct VerticalOffset(VerticalOffsetEnum offsetType, double offset)
 {
+    public static readonly VerticalOffset Default = new(VerticalOffsetEnum.Center, 0);
     public VerticalOffsetEnum OffsetType => offsetType;
     public double Offset => offset;
 

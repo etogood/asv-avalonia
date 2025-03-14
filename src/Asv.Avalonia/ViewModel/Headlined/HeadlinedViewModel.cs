@@ -12,7 +12,7 @@ public class HeadlinedViewModel(NavigationId id) : RoutableViewModel(id), IHeadl
     private string? _title;
     private MaterialIconKind? _icon;
     private string? _description;
-    private IBrush? _iconBrush;
+    private IBrush? _iconBrush = Brushes.Violet;
 
     /// <summary>
     /// Gets or sets the icon associated with the view model.

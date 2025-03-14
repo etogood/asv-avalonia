@@ -13,7 +13,10 @@ public interface IMap : IRoutable
     BindableReactiveProperty<IMapAnchor?> SelectedAnchor { get; }
 }
 
-public interface IMapWidget : IRoutable { }
+public interface IMapWidget : IHeadlinedViewModel
+{
+    public WorkspaceDock Position { get; }
+}
 
 public class MapViewModel : RoutableViewModel, IMap
 {
@@ -21,7 +24,7 @@ public class MapViewModel : RoutableViewModel, IMap
         : this("id")
     {
         DesignTime.ThrowIfNotDesignMode();
-        var drone = new MapAnchor("1")
+        var drone = new MapAnchor<IMapAnchor>("1")
         {
             Icon = MaterialIconKind.Navigation,
             Location = new GeoPoint(53, 53, 100),
@@ -81,6 +84,12 @@ public class MapViewModel : RoutableViewModel, IMap
 
     protected override void Dispose(bool disposing)
     {
-        throw new NotImplementedException();
+        if (disposing)
+        {
+            WidgetsView.Dispose();
+            AnchorsView.Dispose();
+        }
+
+        base.Dispose(disposing);
     }
 }

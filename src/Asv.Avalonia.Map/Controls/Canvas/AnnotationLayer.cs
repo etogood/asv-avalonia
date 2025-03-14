@@ -1,10 +1,14 @@
-﻿using Asv.Common;
+﻿using System.Collections.Specialized;
+using System.Diagnostics;
+using Asv.Common;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Controls.Templates;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Media;
+using ObservableCollections;
 using R3;
 
 namespace Asv.Avalonia.Map;
@@ -17,13 +21,13 @@ public class AnnotationLayer : Canvas
         {
             if (e.Sender is AnnotationLayer layer)
             {
-                layer.UpdateAnnotationsFromChildren();
+                layer.MapControlSourceUpdated(e);
             }
         });
     }
 
     private readonly List<MapAnnotation> _annotations = new();
-    private Subject<Unit> _renderRequestSubject = new();
+    private readonly Subject<Unit> _renderRequestSubject = new();
 
     public AnnotationLayer()
     {
@@ -33,6 +37,14 @@ public class AnnotationLayer : Canvas
             .ThrottleLastFrame(1)
             .Subscribe(_ => UpdateAnnotationsFromChildren())
             .AddTo(ref disposeBuilder);
+    }
+
+    protected override void OnUnloaded(RoutedEventArgs e)
+    {
+        _renderRequestSubject.Dispose();
+        _annotations.ForEach(a => a.Dispose());
+        _annotations.Clear();
+        base.OnUnloaded(e);
     }
 
     #region ItemTemplate
@@ -88,13 +100,79 @@ public class AnnotationLayer : Canvas
 
     #endregion
 
-    protected override Size ArrangeOverride(Size finalSize)
+    private void MapControlSourceUpdated(AvaloniaPropertyChangedEventArgs<MapItemsControl?> e)
     {
-        _renderRequestSubject.OnNext(Unit.Default);
-        return base.ArrangeOverride(finalSize);
+        if (e.OldValue is { HasValue: true, Value: not null })
+        {
+            e.OldValue.Value.PropertyChanged -= SourcePropertyChanged;
+            e.OldValue.Value.ItemsView.CollectionChanged -= SourceChanged;
+        }
+
+        if (e.NewValue is { HasValue: true, Value: not null })
+        {
+            e.NewValue.Value.PropertyChanged += SourcePropertyChanged;
+            e.NewValue.Value.ItemsView.CollectionChanged += SourceChanged;
+        }
     }
 
-    public void UpdateAnnotationsFromChildren()
+    private void SourcePropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.Property == MapItemsControl.ZoomProperty)
+        {
+            _renderRequestSubject.OnNext(Unit.Default);
+        }
+
+        if (e.Property == MapItemsControl.CenterMapProperty)
+        {
+            _renderRequestSubject.OnNext(Unit.Default);
+        }
+
+        if (e.Property == MapItemsControl.ProviderProperty)
+        {
+            _renderRequestSubject.OnNext(Unit.Default);
+        }
+    }
+
+    private void SourceChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        Debug.Assert(Source != null, nameof(Source) + " != null");
+        if (e.NewItems != null)
+        {
+            foreach (var item in e.NewItems)
+            {
+                var container = item as MapItem ?? Source.ContainerFromItem(item) as MapItem;
+                if (container == null)
+                {
+                    continue;
+                }
+                container.PropertyChanged += ContainerOnPropertyChanged;
+                _renderRequestSubject.OnNext(Unit.Default);
+            }
+        }
+        if (e.OldItems != null)
+        {
+            foreach (var item in e.OldItems)
+            {
+                var container = item as MapItem ?? Source.ContainerFromItem(item) as MapItem;
+                if (container == null)
+                {
+                    continue;
+                }
+                container.PropertyChanged -= ContainerOnPropertyChanged;
+                _renderRequestSubject.OnNext(Unit.Default);
+            }
+        }
+    }
+
+    private void ContainerOnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.Property == MapItem.LocationProperty)
+        {
+            _renderRequestSubject.OnNext(Unit.Default);
+        }
+    }
+
+    private void UpdateAnnotationsFromChildren()
     {
         if (Source == null || ItemTemplate == null)
             return;
@@ -219,7 +297,7 @@ public class AnnotationLayer : Canvas
     {
         if (Source == null || _annotations.Count == 0)
             return;
-
+        Debug.WriteLine("ArrangeAnnotations");
         const int baseMaxIterations = 100;
         const double repulsionStrength = 1000.0;
         const double attractionStrength = 0.1;

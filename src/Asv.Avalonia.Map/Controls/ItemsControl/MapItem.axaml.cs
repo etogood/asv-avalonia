@@ -1,5 +1,6 @@
 ﻿using Asv.Common;
 using Avalonia;
+using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Mixins;
@@ -7,6 +8,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
+using Avalonia.Media;
 using R3;
 
 namespace Asv.Avalonia.Map;
@@ -143,36 +145,6 @@ public class MapItem : ContentControl, ISelectable
 
     #endregion
 
-    protected override Size ArrangeOverride(Size finalSize)
-    {
-        return base.ArrangeOverride(finalSize);
-    }
-
-    /*protected override void OnPointerEntered(PointerEventArgs e)
-    {
-        PseudoClasses.Add(":pointerover");
-    }
-
-    protected override void OnPointerExited(PointerEventArgs e)
-    {
-        PseudoClasses.Remove(":pointerover");
-    }
-
-    protected override void OnPointerPressed(PointerPressedEventArgs e)
-    {
-        base.OnPointerPressed(e);
-        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
-        {
-            PseudoClasses.Add(":pressed");
-        }
-    }*/
-
-    /*protected override void OnPointerReleased(PointerReleasedEventArgs e)
-    {
-        base.OnPointerReleased(e);
-        PseudoClasses.Remove(":pressed");
-    }*/
-
     #region IsSelected
 
     public static readonly StyledProperty<bool> IsSelectedProperty = AvaloniaProperty.Register<
@@ -187,4 +159,70 @@ public class MapItem : ContentControl, ISelectable
     }
 
     #endregion
+
+    #region Polygon
+
+    private IList<GeoPoint>? _polygon;
+
+    public static readonly DirectProperty<MapItem, IList<GeoPoint>?> PolygonProperty =
+        AvaloniaProperty.RegisterDirect<MapItem, IList<GeoPoint>?>(
+            nameof(Polygon),
+            o => o.Polygon,
+            (o, v) => o.Polygon = v
+        );
+
+    public IList<GeoPoint>? Polygon
+    {
+        get => _polygon;
+        set => SetAndRaise(PolygonProperty, ref _polygon, value);
+    }
+
+    #endregion
+
+    #region IsPolygonClosed
+
+    public static readonly StyledProperty<bool> IsPolygonClosedProperty = AvaloniaProperty.Register<
+        MapItem,
+        bool
+    >(nameof(IsPolygonClosed));
+
+    public bool IsPolygonClosed
+    {
+        get => GetValue(IsPolygonClosedProperty);
+        set => SetValue(IsPolygonClosedProperty, value);
+    }
+
+    #endregion
+
+    #region Pen
+
+    public static readonly StyledProperty<IPen?> PenProperty = AvaloniaProperty.Register<
+        MapItem,
+        IPen?
+    >(nameof(Pen));
+
+    public IPen? Pen
+    {
+        get => GetValue(PenProperty);
+        set => SetValue(PenProperty, value);
+    }
+
+    #endregion
+
+    #region Fill
+
+    public static readonly StyledProperty<IBrush?> FillProperty = AvaloniaProperty.Register<
+        MapItem,
+        IBrush?
+    >(nameof(Fill));
+
+    public IBrush? Fill
+    {
+        get => GetValue(FillProperty);
+        set => SetValue(FillProperty, value);
+    }
+
+    #endregion
 }
+
+public class GeoPointCollection : AvaloniaList<GeoPoint> { }

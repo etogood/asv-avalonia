@@ -29,7 +29,7 @@ public class MapExamplePageViewModel : PageViewModel<IMapContext>, IMapContext
         Title.OnNext(RS.MapExamplePageViewModel_Title);
         Anchors = new MapViewModel("asdasd");
         Anchors.Anchors.Add(
-            new MapAnchor("1")
+            new MapAnchor<IMapAnchor>("1")
             {
                 Icon = MaterialIconKind.Navigation,
                 Location = new GeoPoint(53, 53, 0),

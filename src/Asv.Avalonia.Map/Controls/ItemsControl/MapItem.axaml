@@ -20,6 +20,9 @@
     
     <Style Selector="controls|MapItem">
         <Setter Property="Focusable" Value="True"/>
+        <Setter Property="Pen">
+            <Pen Brush="Blue" Thickness="1"/>
+        </Setter>
         <Style Selector="^ Path">
             <Setter Property="StrokeThickness" Value="0.5"/>
             <Setter Property="Stroke" Value="BlueViolet"/>

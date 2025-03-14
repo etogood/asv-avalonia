@@ -364,7 +364,14 @@ public class MapItemsControl : SelectingItemsControl
     {
         base.OnPointerWheelChanged(e);
         var newZoom = _zoom;
-
+        if (Selection.SelectedItem != null)
+        {
+            CenterMap =
+                (
+                    Selection.SelectedItem as MapItem
+                    ?? ContainerFromItem(Selection.SelectedItem) as MapItem
+                )?.Location ?? CenterMap;
+        }
         if (e.Delta.Y > 0 && _zoom < 19)
         {
             newZoom++;

@@ -1,4 +1,5 @@
 using System.Composition;
+using Asv.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using ZLogger;
@@ -72,7 +73,12 @@ public abstract class ExtendableViewModel<TSelfInterface> : RoutableViewModel
                 {
                     try
                     {
-                        extension.Value.Extend(context);
+                        extension.Value.Extend(context, Disposable);
+                        if (extension.Value is IDisposable disposable)
+                        {
+                            Disposable.Add(disposable);
+                        }
+
                         logger.ZLogTrace($"Applying extension {extension} to {GetType().Name}");
                     }
                     catch (Exception e)
@@ -100,28 +106,4 @@ public abstract class ExtendableViewModel<TSelfInterface> : RoutableViewModel
     /// Derived classes must implement this method to provide additional logic after extension loading.
     /// </summary>
     protected abstract void AfterLoadExtensions();
-
-    /// <summary>
-    /// Disposes of the extensions when the view model is being disposed.
-    /// Ensures that all created extensions are properly cleaned up.
-    /// </summary>
-    /// <param name="disposing">Indicates whether the object is being disposed explicitly.</param>
-    protected override void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            if (Extensions != null)
-            {
-                foreach (var item in Extensions)
-                {
-                    if (item.IsValueCreated)
-                    {
-                        item.Value.Dispose();
-                    }
-                }
-            }
-        }
-
-        base.Dispose(disposing);
-    }
 }

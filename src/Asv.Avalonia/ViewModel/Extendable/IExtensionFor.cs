@@ -1,4 +1,5 @@
 using System.Composition;
+using R3;
 
 namespace Asv.Avalonia;
 
@@ -7,13 +8,14 @@ namespace Asv.Avalonia;
 /// This interface allows modular enhancements to be dynamically applied to existing objects.
 /// </summary>
 /// <typeparam name="T">The type of object that the extension applies to.</typeparam>
-public interface IExtensionFor<in T> : IDisposable
+public interface IExtensionFor<in T>
 {
     /// <summary>
     /// Applies the extension logic to the given context.
     /// </summary>
     /// <param name="context">The target object to extend.</param>
-    void Extend(T context);
+    /// <param name="contextDispose">Disposable collection, that disposed with context.</param>
+    void Extend(T context, CompositeDisposable contextDispose);
 }
 
 /// <summary>
