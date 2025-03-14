@@ -3,7 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:avalonia="clr-namespace:Asv.Avalonia;assembly=Asv.Avalonia"
-             xmlns:global="clr-namespace:"
              xmlns:avalonia1="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Asv.Avalonia.ShellView"
@@ -70,7 +69,17 @@
                 <avalonia1:MaterialIcon Kind="DotsVertical"/>
                 <DropDownButton.Flyout>
                     <MenuFlyout>
-                        <MenuItem Icon="{avalonia1:MaterialIconExt Kind=Close}" Command="{Binding Close}" Header="{x:Static avalonia:RS.ShellView_WindowControlButton_Close}"/>
+                        <MenuItem 
+                            Icon="{avalonia1:MaterialIconExt Kind=Close}" Command="{Binding Close}" 
+                            Header="{x:Static avalonia:RS.ShellView_WindowControlButton_Close}"/>
+                        <MenuItem 
+                            Icon="{Binding WindowSateIconKind.Value, Converter={StaticResource MaterialIconConverter}}" 
+                            Command="{Binding ChangeWindowState}" 
+                            Header="{Binding WindowStateHeader.Value}" />
+                        <MenuItem 
+                            Icon="{avalonia1:MaterialIconExt Kind=Minimize}" 
+                            Command="{Binding Collapse}" 
+                            Header="{x:Static avalonia:RS.ShellView_WindowControlButton_Collapse}"/>
                     </MenuFlyout>
                 </DropDownButton.Flyout>
             </DropDownButton>

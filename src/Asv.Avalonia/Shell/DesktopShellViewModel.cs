@@ -1,8 +1,10 @@
 using System.Composition;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Platform.Storage;
+using Material.Icons;
 using Microsoft.Extensions.Logging;
 using R3;
 
@@ -14,7 +16,6 @@ public class DesktopShellViewModelConfig { }
 public class DesktopShellViewModel : ShellViewModel
 {
     public const string ShellId = "shell.desktop";
-
     private readonly IContainerHost _ioc;
 
     [ImportingConstructor]
@@ -36,9 +37,20 @@ public class DesktopShellViewModel : ShellViewModel
 
         OpenFileCommand = new ReactiveCommand<string>(OpenFile);
 
-        // Устанавливаем окно как drop target
+        // Set window as the drop target
         DragDrop.SetAllowDrop(wnd, true);
         wnd.AddHandler(DragDrop.DropEvent, OnFileDrop);
+
+        WindowSateIconKind.Value =
+            wnd.WindowState == WindowState.FullScreen
+                ? MaterialIconKind.CollapseAll
+                : MaterialIconKind.Maximize;
+
+        WindowStateHeader.Value =
+            wnd.WindowState == WindowState.FullScreen
+                ? RS.ShellView_WindowControlButton_Minimize
+                : RS.ShellView_WindowControlButton_Maximize;
+
         lifetime.MainWindow = wnd;
         lifetime.MainWindow.Show();
     }
@@ -78,6 +90,53 @@ public class DesktopShellViewModel : ShellViewModel
         )
         {
             lifetime.Shutdown();
+        }
+
+        return ValueTask.CompletedTask;
+    }
+
+    protected override ValueTask ChangeWindowModeAsync(CancellationToken cancellationToken)
+    {
+        if (
+            Application.Current?.ApplicationLifetime
+            is not IClassicDesktopStyleApplicationLifetime lifetime
+        )
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        var window = lifetime.MainWindow;
+        if (window == null)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        window.WindowState =
+            window.WindowState == WindowState.FullScreen
+                ? WindowState.Normal
+                : WindowState.FullScreen;
+        WindowSateIconKind.Value =
+            window.WindowState == WindowState.FullScreen
+                ? MaterialIconKind.CollapseAll
+                : MaterialIconKind.Maximize;
+        WindowStateHeader.Value =
+            window.WindowState == WindowState.FullScreen
+                ? RS.ShellView_WindowControlButton_Minimize
+                : RS.ShellView_WindowControlButton_Maximize;
+
+        return ValueTask.CompletedTask;
+    }
+
+    protected override ValueTask CollapseAsync(CancellationToken cancellationToken)
+    {
+        var appLifetime = Application.Current?.ApplicationLifetime;
+        if (appLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
+        {
+            var window = lifetime.MainWindow;
+            if (window != null)
+            {
+                window.WindowState = WindowState.Minimized;
+            }
         }
 
         return ValueTask.CompletedTask;

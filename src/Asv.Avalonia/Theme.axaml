@@ -1,7 +1,8 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-        xmlns:system="clr-namespace:System;assembly=System.Runtime">
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"
+        xmlns:avalonia1="clr-namespace:Asv.Avalonia">
     <Design.PreviewWith>
         <Grid ColumnDefinitions="*,*">
             <ThemeVariantScope RequestedThemeVariant="Dark">
@@ -41,6 +42,7 @@
                 <MergeResourceInclude Source="avares://Asv.Avalonia/Controls/ContentDialog/ContentDialogStyles.axaml"/>
                 <MergeResourceInclude Source="avares://Asv.Avalonia/Controls/AdaptiveTabControlStrip/AdaptiveTabStripTabControl.axaml" />
             </ResourceDictionary.MergedDictionaries>
+            <avalonia1:MaterialIconConverter x:Key="MaterialIconConverter" />
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
                     
