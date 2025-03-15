@@ -6,12 +6,13 @@ namespace Asv.Avalonia;
 public class PluginInstaller(
     IConfiguration cfg,
     ILoggerFactory loggerFactory,
-    IPluginManager manager
+    IPluginManager manager,
+    INavigationService navigationService
 )
 {
     public async Task ShowInstallDialog()
     {
-        var dialog = new ContentDialog
+        var dialog = new ContentDialog(navigationService)
         {
             Title = RS.PluginInstallerViewModel_InstallDialog_Title,
             CloseButtonText = RS.PluginInstallerViewModel_InstallDialog_SecondaryButtonText,

@@ -24,6 +24,8 @@ public class SettingsConnectionViewModel : RoutableViewModel, ISettingsSubPage
         ));
     private readonly IMavlinkConnectionService _connectionService;
     private IConfiguration _cfg;
+    private readonly INavigationService _navigation;
+
     public BindableReactiveProperty<SettingsConnectionItemViewModel> SelectedItem { get; set; }
     public const string SubPageId = "settings.connection";
     public NotifyCollectionChangedSynchronizedViewList<SettingsConnectionItemViewModel> Items { get; set; }
@@ -32,12 +34,14 @@ public class SettingsConnectionViewModel : RoutableViewModel, ISettingsSubPage
     public SettingsConnectionViewModel(
         IConfiguration cfg,
         IMavlinkConnectionService connectionService,
-        ILoggerFactory logFactory
+        ILoggerFactory logFactory,
+        INavigationService navigation
     )
         : base(SubPageId)
     {
         _cfg = cfg;
         _connectionService = connectionService;
+        _navigation = navigation;
 
         Items = Connections.ToNotifyCollectionChanged();
         connectionService.Router.PortAdded.Subscribe(_ => UpdateView());
@@ -50,15 +54,15 @@ public class SettingsConnectionViewModel : RoutableViewModel, ISettingsSubPage
                     connectionService,
                     logFactory
                 );
-                var dialog = new ContentDialog()
+                var dialog = new ContentDialog(_navigation)
                 {
                     PrimaryButtonText = "Create",
                     SecondaryButtonText = "Cancel",
                     IsPrimaryButtonEnabled = serial.IsValid.CurrentValue,
                     IsSecondaryButtonEnabled = true,
                     Content = serial,
-                    PrimaryButtonCommand = new ReactiveCommand(_ => serial.AddSerialPort()),
                 };
+                dialog.PrimaryButtonCommand = new ReactiveCommand(_ => serial.AddSerialPort());
                 serial.IsValid.Subscribe(enabled =>
                 {
                     dialog.IsPrimaryButtonEnabled = enabled;
@@ -71,20 +75,20 @@ public class SettingsConnectionViewModel : RoutableViewModel, ISettingsSubPage
             async (_, ct) =>
             {
                 var udp = new UdpPortViewModel("serial.dialog", connectionService, logFactory);
-                var dialog = new ContentDialog()
+                var dialog = new ContentDialog(_navigation)
                 {
                     PrimaryButtonText = "Create",
                     SecondaryButtonText = "Cancel",
-                    IsPrimaryButtonEnabled = udp.IsInputValid.CurrentValue,
+                    IsPrimaryButtonEnabled = udp.IsValid.CurrentValue,
                     IsSecondaryButtonEnabled = true,
                     Content = udp,
-                    PrimaryButtonCommand = new ReactiveCommand(_ =>
-                    {
-                        udp.AddUdpPort();
-                    }),
                 };
+                dialog.PrimaryButtonCommand = new ReactiveCommand(_ =>
+                {
+                    udp.AddUdpPort();
+                });
 
-                udp.IsInputValid.Subscribe(enabled =>
+                udp.IsValid.Subscribe(enabled =>
                 {
                     dialog.IsPrimaryButtonEnabled = enabled;
                 });
@@ -96,18 +100,18 @@ public class SettingsConnectionViewModel : RoutableViewModel, ISettingsSubPage
             async (_, ct) =>
             {
                 var tcp = new TcpPortViewModel("serial.dialog", connectionService, logFactory);
-                var dialog = new ContentDialog()
+                var dialog = new ContentDialog(navigation)
                 {
                     PrimaryButtonText = "Create",
                     SecondaryButtonText = "Cancel",
                     IsPrimaryButtonEnabled = tcp.IsValid.CurrentValue,
                     IsSecondaryButtonEnabled = true,
                     Content = tcp,
-                    PrimaryButtonCommand = new ReactiveCommand(_ =>
-                    {
-                        tcp.AddTcpPort();
-                    }),
                 };
+                dialog.PrimaryButtonCommand = new ReactiveCommand(_ =>
+                {
+                    tcp.AddTcpPort();
+                });
 
                 tcp.IsValid.Subscribe(enabled =>
                 {

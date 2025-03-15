@@ -44,6 +44,11 @@ public sealed class NullNavigationService : INavigationService
         return ValueTask.CompletedTask;
     }
 
+    public void ForceFocus(IRoutable? routable)
+    {
+        return;
+    }
+
     public ReactiveCommand GoHome { get; } = new();
 
     public IExportInfo Source => SystemModule.Instance;

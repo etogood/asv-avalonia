@@ -1,7 +1,6 @@
 ﻿using Asv.Cfg;
 using Microsoft.Extensions.Logging;
 using R3;
-using ZLogger;
 
 namespace Asv.Avalonia;
 
@@ -10,7 +9,7 @@ public class PluginInstallerViewModelConfig
     public string NugetPackageFilePath { get; set; }
 }
 
-public class PluginInstallerViewModel : ViewModelBaseWithValidation
+public class PluginInstallerViewModel : DialogViewModelBase
 {
     public const string ViewModelId = "plugins.installed.installer.dialog";
 
@@ -33,24 +32,28 @@ public class PluginInstallerViewModel : ViewModelBaseWithValidation
 
         _manager = manager;
         var config = cfg.Get<PluginInstallerViewModelConfig>();
-        NugetPackageFilePath = new BindableReactiveProperty<string>(
-            config.NugetPackageFilePath
-        ).EnableValidation();
-        _sub1 = NugetPackageFilePath.Subscribe(x =>
-        {
-            if (string.IsNullOrWhiteSpace(x))
-            {
-                NugetPackageFilePath.OnErrorResume(
-                    new Exception(RS.SourceViewModel_SourceViewModel_NameIsRequired)
-                );
-                return;
-            }
+        NugetPackageFilePath = new BindableReactiveProperty<string>(config.NugetPackageFilePath);
 
-            config.NugetPackageFilePath = NugetPackageFilePath.Value;
+        _sub1 = NugetPackageFilePath.EnableValidation(
+            value =>
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    return ValueTask.FromResult<ValidationResult>(
+                        new Exception(RS.SourceViewModel_SourceViewModel_NameIsRequired)
+                    );
+                }
+
+                return ValidationResult.Success;
+            },
+            this,
+            true
+        );
+        _sub3 = NugetPackageFilePath.Subscribe(value =>
+        {
+            config.NugetPackageFilePath = value;
             cfg.Set(config);
         });
-
-        SubscribeToErrorsChanged();
     }
 
     public BindableReactiveProperty<string> NugetPackageFilePath { get; set; }
@@ -76,9 +79,9 @@ public class PluginInstallerViewModel : ViewModelBaseWithValidation
     {
         ArgumentNullException.ThrowIfNull(dialog);
 
-        _sub2 = IsValid.Subscribe(validationResult =>
+        _sub2 = IsValid.Subscribe(isValid =>
         {
-            dialog.IsPrimaryButtonEnabled = validationResult.IsSuccess;
+            dialog.IsPrimaryButtonEnabled = isValid;
         });
 
         dialog.PrimaryButtonCommand = new ReactiveCommand<IProgress<double>>(
@@ -86,10 +89,16 @@ public class PluginInstallerViewModel : ViewModelBaseWithValidation
         );
     }
 
+    public override IEnumerable<IRoutable> GetRoutableChildren()
+    {
+        return [];
+    }
+
     #region Dispose
 
     private readonly IDisposable _sub1;
     private IDisposable _sub2;
+    private readonly IDisposable _sub3;
 
     protected override void Dispose(bool isDisposing)
     {
@@ -97,6 +106,7 @@ public class PluginInstallerViewModel : ViewModelBaseWithValidation
         {
             _sub1.Dispose();
             _sub2.Dispose();
+            _sub3.Dispose();
         }
 
         base.Dispose(isDisposing);

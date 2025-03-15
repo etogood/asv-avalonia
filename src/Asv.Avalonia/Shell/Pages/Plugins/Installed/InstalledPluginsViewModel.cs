@@ -1,5 +1,6 @@
 ﻿using System.Composition;
 using Asv.Cfg;
+using Material.Icons;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using ObservableCollections;
@@ -11,10 +12,12 @@ namespace Asv.Avalonia;
 public class InstalledPluginsViewModel : PageViewModel<InstalledPluginsViewModel>
 {
     public const string PageId = "plugins.installed";
+    public const MaterialIconKind PageIcon = MaterialIconKind.Plugin;
 
     private readonly IPluginManager _manager;
     private readonly ILoggerFactory _loggerFactory;
     private readonly IConfiguration _cfg;
+    private readonly INavigationService _navigation;
     protected readonly ObservableList<ILocalPluginInfo> Plugins;
 
     public InstalledPluginsViewModel()
@@ -22,7 +25,8 @@ public class InstalledPluginsViewModel : PageViewModel<InstalledPluginsViewModel
             DesignTime.CommandService,
             DesignTime.PluginManager,
             NullLoggerFactory.Instance,
-            new InMemoryConfiguration()
+            new InMemoryConfiguration(),
+            NullNavigationService.Instance
         )
     {
         DesignTime.ThrowIfNotDesignMode();
@@ -38,12 +42,14 @@ public class InstalledPluginsViewModel : PageViewModel<InstalledPluginsViewModel
         ICommandService cmd,
         IPluginManager manager,
         ILoggerFactory loggerFactory,
-        IConfiguration cfg
+        IConfiguration cfg,
+        INavigationService navigationService
     )
         : base(PageId, cmd)
     {
         _manager = manager;
         _loggerFactory = loggerFactory;
+        _navigation = navigationService;
         _cfg = cfg;
         Plugins = new ObservableList<ILocalPluginInfo>();
 
@@ -85,7 +91,7 @@ public class InstalledPluginsViewModel : PageViewModel<InstalledPluginsViewModel
 
     private async Task InstallManuallyImpl()
     {
-        var installer = new PluginInstaller(_cfg, _loggerFactory, _manager);
+        var installer = new PluginInstaller(_cfg, _loggerFactory, _manager, _navigation);
         await installer.ShowInstallDialog();
     }
 

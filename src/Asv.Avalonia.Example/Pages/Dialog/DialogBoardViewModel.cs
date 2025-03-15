@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
+using Material.Icons;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using R3;
@@ -12,6 +13,7 @@ namespace Asv.Avalonia.Example;
 public class DialogBoardViewModel : PageViewModel<DialogBoardViewModel>
 {
     public const string PageId = "dialog";
+    public const MaterialIconKind PageIcon = MaterialIconKind.Dialogue;
 
     private readonly IDialogService _dialogService;
     private readonly ILogger<DialogBoardViewModel> _logger;

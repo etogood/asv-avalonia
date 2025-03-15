@@ -109,6 +109,14 @@
           <DependentUpon>GeoPointEditor.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Services\Dialogs\ViewModels\DialogTextView.axaml.cs">
+          <DependentUpon>DialogTextView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Services\Dialogs\ViewModels\DialogTextView.axaml.cs">
+          <DependentUpon>DialogTextView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>

@@ -14,6 +14,7 @@ public class PluginsSourcesViewModel : PageViewModel<PluginsSourcesViewModel>
     public const string PageId = "plugins.sources";
 
     private readonly IPluginManager _mng;
+    private readonly INavigationService _navigation;
     private readonly ILoggerFactory _loggerFactory;
     private readonly ILogger _logger;
     private readonly ReactiveCommand _update;
@@ -21,7 +22,12 @@ public class PluginsSourcesViewModel : PageViewModel<PluginsSourcesViewModel>
     private readonly ISynchronizedView<IPluginServerInfo, PluginSourceViewModel> _view;
 
     public PluginsSourcesViewModel()
-        : this(DesignTime.CommandService, DesignTime.PluginManager, NullLoggerFactory.Instance)
+        : this(
+            DesignTime.CommandService,
+            DesignTime.PluginManager,
+            NullLoggerFactory.Instance,
+            NullNavigationService.Instance
+        )
     {
         DesignTime.ThrowIfNotDesignMode();
         _items = new ObservableList<IPluginServerInfo>(
@@ -51,11 +57,13 @@ public class PluginsSourcesViewModel : PageViewModel<PluginsSourcesViewModel>
     public PluginsSourcesViewModel(
         ICommandService cmd,
         IPluginManager mng,
-        ILoggerFactory loggerFactory
+        ILoggerFactory loggerFactory,
+        INavigationService navigationService
     )
         : base(PageId, cmd)
     {
         _mng = mng;
+        _navigation = navigationService;
         _loggerFactory = loggerFactory;
         _logger = loggerFactory.CreateLogger<PluginsSourcesViewModel>();
         _items = new ObservableList<IPluginServerInfo>();
@@ -89,7 +97,7 @@ public class PluginsSourcesViewModel : PageViewModel<PluginsSourcesViewModel>
 
     private async ValueTask AddImpl(Unit unit, CancellationToken token)
     {
-        var dialog = new ContentDialog
+        var dialog = new ContentDialog(_navigation)
         {
             Title = RS.PluginsSourcesViewModel_AddImpl_Title,
             PrimaryButtonText = RS.PluginsSourcesViewModel_AddImpl_Add,
@@ -116,7 +124,7 @@ public class PluginsSourcesViewModel : PageViewModel<PluginsSourcesViewModel>
             return;
         }
 
-        var dialog = new ContentDialog
+        var dialog = new ContentDialog(_navigation)
         {
             Title = RS.PluginsSourcesViewModel_EditImpl_Title,
             PrimaryButtonText = RS.PluginsSourcesViewModel_EditImpl_Save,
