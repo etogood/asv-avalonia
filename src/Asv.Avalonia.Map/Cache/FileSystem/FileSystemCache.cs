@@ -28,6 +28,7 @@ public class FileSystemCache : TileCache
             _logger.ZLogInformation($"Create map cache directory: {_cacheDirectory}");
             Directory.CreateDirectory(_cacheDirectory);
         }
+
         // TODO: limit size of file cache
     }
 
@@ -78,6 +79,7 @@ public class FileSystemCache : TileCache
                 }
             }
         }
+
         return Path.Combine(tileFolder, $"{key.X}_{key.Y}.{TileFileExtension}");
     }
 
