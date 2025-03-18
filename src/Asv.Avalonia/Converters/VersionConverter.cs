@@ -5,6 +5,8 @@ namespace Asv.Avalonia
 {
     public class VersionConverter : IValueConverter
     {
+        private string _versionPart = string.Empty;
+
         public object? Convert(
             object? value,
             Type targetType,
@@ -18,6 +20,7 @@ namespace Asv.Avalonia
             }
 
             var plusIndex = version.IndexOf('+');
+            _versionPart = version[plusIndex..];
             return plusIndex >= 0 ? version[..plusIndex] : version;
         }
 
@@ -28,7 +31,12 @@ namespace Asv.Avalonia
             CultureInfo culture
         )
         {
-            throw new NotImplementedException();
+            if (value is string version)
+            {
+                return version + _versionPart;
+            }
+
+            return value;
         }
     }
 }
