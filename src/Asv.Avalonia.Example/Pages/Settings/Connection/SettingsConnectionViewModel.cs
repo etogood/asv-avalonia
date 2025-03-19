@@ -25,14 +25,15 @@ public class SettingsConnectionViewModel : RoutableViewModel, ISettingsSubPage
         ));
 
     private readonly IMavlinkConnectionService _connectionService;
-    public BindableReactiveProperty<SettingsConnectionItemViewModel> SelectedItem { get; set; } = new();
+    public BindableReactiveProperty<SettingsConnectionItemViewModel> SelectedItem { get; set; } =
+        new();
     public const string SubPageId = "settings.connection";
     public NotifyCollectionChangedSynchronizedViewList<SettingsConnectionItemViewModel> Items { get; set; }
 
     [ImportingConstructor]
     public SettingsConnectionViewModel(
         IMavlinkConnectionService connectionService,
-        ILoggerFactory logFactory, 
+        ILoggerFactory logFactory,
         INavigationService navigationService
     )
         : base(SubPageId)
@@ -40,28 +41,40 @@ public class SettingsConnectionViewModel : RoutableViewModel, ISettingsSubPage
         _connectionService = connectionService;
 
         Items = Connections.ToNotifyCollectionChanged();
-        AddSerialPortCommand = new ReactiveCommand(
-             _ =>
-            {
-                var serial = new SerialPortViewModel("serial.dialog", connectionService, logFactory, this, navigationService);
-                 serial.ApplyAddDialog();
-            }
-        );
-        AddUdpPortCommand = new ReactiveCommand(
-             _ =>
-            {
-                var udp = new UdpPortViewModel("udp.dialog", connectionService, logFactory, this, navigationService);
-                udp.ApplyAddDialog();
-            }
-        );
-        AddTcpPortCommand = new ReactiveCommand(
-             _ =>
-            {
-                var tcp = new TcpPortViewModel("tcp.dialog", connectionService, logFactory, this, navigationService);
-                tcp.ApplyAddDialog();
-            }
-        );
-        EditPortCommand = new ReactiveCommand( _ =>
+        AddSerialPortCommand = new ReactiveCommand(_ =>
+        {
+            var serial = new SerialPortViewModel(
+                "serial.dialog",
+                connectionService,
+                logFactory,
+                this,
+                navigationService
+            );
+            serial.ApplyAddDialog();
+        });
+        AddUdpPortCommand = new ReactiveCommand(_ =>
+        {
+            var udp = new UdpPortViewModel(
+                "udp.dialog",
+                connectionService,
+                logFactory,
+                this,
+                navigationService
+            );
+            udp.ApplyAddDialog();
+        });
+        AddTcpPortCommand = new ReactiveCommand(_ =>
+        {
+            var tcp = new TcpPortViewModel(
+                "tcp.dialog",
+                connectionService,
+                logFactory,
+                this,
+                navigationService
+            );
+            tcp.ApplyAddDialog();
+        });
+        EditPortCommand = new ReactiveCommand(_ =>
         {
             if (SelectedItem == null)
             {
@@ -72,21 +85,40 @@ public class SettingsConnectionViewModel : RoutableViewModel, ISettingsSubPage
             {
                 case SerialProtocolPort serialProtocolPort:
                 {
-                    var dialog = new SerialPortViewModel(serialProtocolPort, SelectedItem.CurrentValue.Name.CurrentValue, connectionService, this, navigationService);
+                    var dialog = new SerialPortViewModel(
+                        serialProtocolPort,
+                        SelectedItem.CurrentValue.Name.CurrentValue,
+                        connectionService,
+                        this,
+                        navigationService
+                    );
                     dialog.ApplyEditDialog();
                     break;
                 }
 
                 case UdpProtocolPort udpProtocolPort:
                 {
-                    var dialog = new UdpPortViewModel(udpProtocolPort, SelectedItem.CurrentValue.Name.CurrentValue, connectionService, this, navigationService);
+                    var dialog = new UdpPortViewModel(
+                        udpProtocolPort,
+                        SelectedItem.CurrentValue.Name.CurrentValue,
+                        connectionService,
+                        this,
+                        navigationService
+                    );
                     dialog.ApplyEditDialog();
                     break;
                 }
 
-                case TcpClientProtocolPort or TcpServerProtocolPort:
+                case TcpClientProtocolPort
+                or TcpServerProtocolPort:
                 {
-                    var dialog = new TcpPortViewModel(SelectedItem.CurrentValue.Port.CurrentValue, SelectedItem.CurrentValue.Name.CurrentValue, connectionService, navigationService, this);
+                    var dialog = new TcpPortViewModel(
+                        SelectedItem.CurrentValue.Port.CurrentValue,
+                        SelectedItem.CurrentValue.Name.CurrentValue,
+                        connectionService,
+                        navigationService,
+                        this
+                    );
                     dialog.ApplyEditDialog();
                     break;
                 }
@@ -94,11 +126,10 @@ public class SettingsConnectionViewModel : RoutableViewModel, ISettingsSubPage
         });
     }
 
-    public SettingsConnectionViewModel() : base(String.Empty)
+    public SettingsConnectionViewModel()
+        : base(String.Empty)
     {
-        if (Design.IsDesignMode)
-        {
-        }
+        if (Design.IsDesignMode) { }
     }
 
     public ReactiveCommand AddSerialPortCommand { get; set; }
