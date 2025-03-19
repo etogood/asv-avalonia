@@ -64,6 +64,7 @@ public class MemoryTileCache : TileCache
                 _cache.Remove(key);
                 return;
             }
+
             _cache.Set(key, value, CreateOptions(value));
         }
     }
