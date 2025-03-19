@@ -48,21 +48,27 @@ public class UdpPortViewModel : DialogViewModelBase
         _log = logFactory.CreateLogger<UdpPortViewModel>();
         var currentIndex =
             connectionService.Connections.Count(pair => pair.Value.TypeInfo.Scheme == "udp") + 1;
-        TitleInput = new BindableReactiveProperty<string>($"New UDP {currentIndex}").EnableValidation();
-        LocalIpAddressInput = new BindableReactiveProperty<string>(DefaultIpAddressConst).EnableValidation();
+        TitleInput = new BindableReactiveProperty<string>(
+            $"New UDP {currentIndex}"
+        ).EnableValidation();
+        LocalIpAddressInput = new BindableReactiveProperty<string>(
+            DefaultIpAddressConst
+        ).EnableValidation();
         LocalPortInput = new BindableReactiveProperty<string>(DefaultPortConst).EnableValidation();
         RemotePortInput = new BindableReactiveProperty<string>(DefaultPortConst).EnableValidation();
-        RemoteIpAddressInput = new BindableReactiveProperty<string>(DefaultIpAddressConst).EnableValidation();
+        RemoteIpAddressInput = new BindableReactiveProperty<string>(
+            DefaultIpAddressConst
+        ).EnableValidation();
         IsRemoteInput = new BindableReactiveProperty<bool>();
 
         SubscribeToValidation();
     }
 
     public UdpPortViewModel(
-        UdpProtocolPort oldPort, 
+        UdpProtocolPort oldPort,
         string name,
         IMavlinkConnectionService service,
-        IRoutable parent, 
+        IRoutable parent,
         INavigationService navigation
     )
         : base("dialog.udpEdit")
@@ -78,8 +84,12 @@ public class UdpPortViewModel : DialogViewModelBase
 
         var remote = cfg.GetRemoteEndpoint();
         TitleInput = new BindableReactiveProperty<string>(name).EnableValidation();
-        LocalIpAddressInput = new BindableReactiveProperty<string>(cfg.Host ?? string.Empty).EnableValidation();
-        LocalPortInput = new BindableReactiveProperty<string>(cfg.Port!.ToString()!).EnableValidation();
+        LocalIpAddressInput = new BindableReactiveProperty<string>(
+            cfg.Host ?? string.Empty
+        ).EnableValidation();
+        LocalPortInput = new BindableReactiveProperty<string>(
+            cfg.Port!.ToString()!
+        ).EnableValidation();
         IsRemoteInput = new BindableReactiveProperty<bool>(remote is not null);
         RemotePortInput = new BindableReactiveProperty<string>().EnableValidation();
         RemoteIpAddressInput = new BindableReactiveProperty<string>().EnableValidation();
@@ -95,17 +105,23 @@ public class UdpPortViewModel : DialogViewModelBase
     private void SubscribeToValidation()
     {
         _sub1 = TitleInput.EnableValidation(
-            t => string.IsNullOrWhiteSpace(t)
-                ? ValueTask.FromResult<ValidationResult>(new Exception("Name is required"))
-                : ValidationResult.Success,
+            t =>
+                string.IsNullOrWhiteSpace(t)
+                    ? ValueTask.FromResult<ValidationResult>(new Exception("Name is required"))
+                    : ValidationResult.Success,
             this,
-            true);
+            true
+        );
         _sub2 = LocalIpAddressInput.EnableValidation(
-            t => !IPEndPoint.TryParse(t, out _)
-                ? ValueTask.FromResult<ValidationResult>(new Exception("Wrong IP address value"))
-                : ValidationResult.Success,
+            t =>
+                !IPEndPoint.TryParse(t, out _)
+                    ? ValueTask.FromResult<ValidationResult>(
+                        new Exception("Wrong IP address value")
+                    )
+                    : ValidationResult.Success,
             this,
-            true);
+            true
+        );
         _sub3 = RemoteIpAddressInput.EnableValidation(
             t =>
             {
@@ -115,11 +131,14 @@ public class UdpPortViewModel : DialogViewModelBase
                 }
 
                 return !IPEndPoint.TryParse(t, out _)
-                    ? ValueTask.FromResult<ValidationResult>(new Exception("Wrong IP address value"))
+                    ? ValueTask.FromResult<ValidationResult>(
+                        new Exception("Wrong IP address value")
+                    )
                     : ValidationResult.Success;
             },
             this,
-            true);
+            true
+        );
         _sub4 = LocalPortInput.EnableValidation(
             p =>
             {
@@ -127,42 +146,52 @@ public class UdpPortViewModel : DialogViewModelBase
                 {
                     if (port is > ushort.MaxValue or < ushort.MinValue)
                     {
-                        return ValueTask.FromResult<ValidationResult>(new Exception("Port value out of bounds"));
+                        return ValueTask.FromResult<ValidationResult>(
+                            new Exception("Port value out of bounds")
+                        );
                     }
                 }
                 else
                 {
-                    return ValueTask.FromResult<ValidationResult>(new Exception("Invalid port value"));
+                    return ValueTask.FromResult<ValidationResult>(
+                        new Exception("Invalid port value")
+                    );
                 }
 
                 return ValidationResult.Success;
-            }, 
-            this, 
-            true);
+            },
+            this,
+            true
+        );
         _sub5 = RemotePortInput.EnableValidation(
             p =>
-        {
-            if (!IsRemoteInput.CurrentValue)
             {
-                return ValidationResult.Success;
-            }
-
-            if (int.TryParse(p, out var port))
-            {
-                if (port is > ushort.MaxValue or < ushort.MinValue)
+                if (!IsRemoteInput.CurrentValue)
                 {
-                    return ValueTask.FromResult<ValidationResult>(new Exception("Port value out of bounds"));
+                    return ValidationResult.Success;
                 }
-            }
-            else
-            {
-                return ValueTask.FromResult<ValidationResult>(new Exception("Invalid port value"));
-            }
 
-            return ValidationResult.Success;
-        },
+                if (int.TryParse(p, out var port))
+                {
+                    if (port is > ushort.MaxValue or < ushort.MinValue)
+                    {
+                        return ValueTask.FromResult<ValidationResult>(
+                            new Exception("Port value out of bounds")
+                        );
+                    }
+                }
+                else
+                {
+                    return ValueTask.FromResult<ValidationResult>(
+                        new Exception("Invalid port value")
+                    );
+                }
+
+                return ValidationResult.Success;
+            },
             this,
-            true);
+            true
+        );
     }
 
     public void ApplyAddDialog()
@@ -176,15 +205,21 @@ public class UdpPortViewModel : DialogViewModelBase
             Content = this,
             PrimaryButtonCommand = new ReactiveCommand(_ =>
             {
-                var persistable = new Persistable<KeyValuePair<string, string>>(PersistInputValueUdp());
-                var cmd = new InternalContextCommand(AddConnectionPortHistoryCommand.Id, _parent, persistable);
+                var persistable = new Persistable<KeyValuePair<string, string>>(
+                    PersistInputValueUdp()
+                );
+                var cmd = new InternalContextCommand(
+                    AddConnectionPortHistoryCommand.Id,
+                    _parent,
+                    persistable
+                );
                 Task.Run(() => cmd.Execute(persistable));
             }),
         };
 
         IsValid.Subscribe(enabled => dialog.IsPrimaryButtonEnabled = enabled);
 
-         dialog.ShowAsync();
+        dialog.ShowAsync();
     }
 
     public void ApplyEditDialog()
@@ -199,19 +234,25 @@ public class UdpPortViewModel : DialogViewModelBase
             PrimaryButtonCommand = new ReactiveCommand(_ =>
             {
                 _connectionService.RemovePort(_oldPort, false);
-                var persistable = new Persistable<EditConnectionPersistable>(new EditConnectionPersistable()
-                {
-                    NewValue = PersistInputValueUdp(),
-                    Port = _oldPort,
-                }); 
-                var cmd = new InternalContextCommand(EditConnectionPortHistoryCommand.Id, _parent, persistable);
+                var persistable = new Persistable<EditConnectionPersistable>(
+                    new EditConnectionPersistable()
+                    {
+                        NewValue = PersistInputValueUdp(),
+                        Port = _oldPort,
+                    }
+                );
+                var cmd = new InternalContextCommand(
+                    EditConnectionPortHistoryCommand.Id,
+                    _parent,
+                    persistable
+                );
                 cmd.Execute(persistable);
             }),
         };
 
         IsValid.Subscribe(enabled => dialog.IsPrimaryButtonEnabled = enabled);
 
-         dialog.ShowAsync();
+        dialog.ShowAsync();
     }
 
     private KeyValuePair<string, string> PersistInputValueUdp()
