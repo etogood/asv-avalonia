@@ -5,6 +5,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Asv.Common;
 using Asv.IO;
 using Avalonia.Controls;
 using DotNext.Collections.Generic;
@@ -17,19 +18,6 @@ namespace Asv.Avalonia.Example;
 
 public class SerialPortViewModel : DialogViewModelBase
 {
-    #region Subs
-
-    private IDisposable _titleSub;
-    private IDisposable _bufferSizeSub;
-    private IDisposable _selectedPortSub;
-    private IDisposable _boundRateSub;
-    private IDisposable _paritySub;
-    private IDisposable _timeoutSub;
-    private IDisposable _stopBitsSub;
-    private IDisposable _dataBitsSub;
-
-    #endregion
-
     private readonly IMavlinkConnectionService? _service;
     private readonly INavigationService _navigation;
     private readonly IRoutable _parent;
@@ -95,28 +83,20 @@ public class SerialPortViewModel : DialogViewModelBase
             return;
         }
 
-        Title = new BindableReactiveProperty<string>(name).EnableValidation();
+        Title = new BindableReactiveProperty<string>(name);
 
-        SelectedBaudRateInput = new BindableReactiveProperty<string>(
-            config.BoundRate.ToString()
-        ).EnableValidation();
-        SelectedPortInput = new BindableReactiveProperty<string>(
-            config.PortName ?? string.Empty
-        ).EnableValidation();
-        ParityInput = new BindableReactiveProperty<Parity?>(config.Parity).EnableValidation();
-        DataBitsInput = new BindableReactiveProperty<string>(
-            config.DataBits.ToString()
-        ).EnableValidation();
-        StopBitsInput = new BindableReactiveProperty<StopBits?>(config.StopBits).EnableValidation();
-        WriteTimeOutInput = new BindableReactiveProperty<string>(
-            config.WriteTimeout.ToString()
-        ).EnableValidation();
+        SelectedBaudRateInput = new BindableReactiveProperty<string>(config.BoundRate.ToString());
+        SelectedPortInput = new BindableReactiveProperty<string>(config.PortName ?? string.Empty);
+        ParityInput = new BindableReactiveProperty<Parity?>(config.Parity);
+        DataBitsInput = new BindableReactiveProperty<string>(config.DataBits.ToString());
+        StopBitsInput = new BindableReactiveProperty<StopBits?>(config.StopBits);
+        WriteTimeOutInput = new BindableReactiveProperty<string>(config.WriteTimeout.ToString());
         WriteBufferSizeInput = new BindableReactiveProperty<string>(
             config.WriteBufferSize.ToString()
-        ).EnableValidation();
+        );
         Ports = _myCache.ToNotifyCollectionChanged();
 
-        Observable
+        _sub1 = Observable
             .Timer(TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(1))
             .Subscribe(_ => UpdateSerialPorts());
         SubscribeToValidation();
@@ -231,9 +211,9 @@ public class SerialPortViewModel : DialogViewModelBase
                     persist
                 );
                 Task.Run(() => cmd.Execute(persist));
-            }),
+            }).DisposeItWith(Disposable),
         };
-        IsValid.Subscribe(enabled => dialog.IsPrimaryButtonEnabled = enabled);
+        _sub2 = IsValid.Subscribe(enabled => dialog.IsPrimaryButtonEnabled = enabled);
         dialog.ShowAsync();
     }
 
@@ -261,9 +241,9 @@ public class SerialPortViewModel : DialogViewModelBase
                     persist
                 );
                 cmd.Execute(persist);
-            }),
+            }).DisposeItWith(Disposable),
         };
-        IsValid.Subscribe(enabled => dialog.IsPrimaryButtonEnabled = enabled);
+        _sub3 = IsValid.Subscribe(enabled => dialog.IsPrimaryButtonEnabled = enabled);
         dialog.ShowAsync();
     }
 
@@ -333,18 +313,18 @@ public class SerialPortViewModel : DialogViewModelBase
     public BindableReactiveProperty<Array> BaudRates { get; } =
         new(new[] { 9600, 14400, 19200, 38400, 56000, 57600, 115200, 128000, 256000 });
 
-    public BindableReactiveProperty<string> Title { get; set; }
-    public BindableReactiveProperty<string> SelectedBaudRateInput { get; set; }
-    public BindableReactiveProperty<string> SelectedPortInput { get; set; }
+    public BindableReactiveProperty<string> Title { get; }
+    public BindableReactiveProperty<string> SelectedBaudRateInput { get; }
+    public BindableReactiveProperty<string> SelectedPortInput { get; }
     public BindableReactiveProperty<Array> ParityValues => new(Enum.GetValues<Parity>());
-    public BindableReactiveProperty<Parity?> ParityInput { get; set; }
+    public BindableReactiveProperty<Parity?> ParityInput { get; }
 
-    public BindableReactiveProperty<string> WriteTimeOutInput { get; set; }
+    public BindableReactiveProperty<string> WriteTimeOutInput { get; }
 
-    public BindableReactiveProperty<string> WriteBufferSizeInput { get; set; }
+    public BindableReactiveProperty<string> WriteBufferSizeInput { get; }
     public BindableReactiveProperty<Array> DataBitsValues => new(new[] { 5, 6, 7, 8 });
-    public BindableReactiveProperty<string> DataBitsInput { get; set; }
-    public BindableReactiveProperty<StopBits?> StopBitsInput { get; set; }
+    public BindableReactiveProperty<string> DataBitsInput { get; }
+    public BindableReactiveProperty<StopBits?> StopBitsInput { get; }
 
     public BindableReactiveProperty<Array> StopBitsArr => new(Enum.GetValues<StopBits>());
 
@@ -352,6 +332,20 @@ public class SerialPortViewModel : DialogViewModelBase
     {
         return [];
     }
+
+    #region Dispose
+
+    private readonly IDisposable _sub1;
+    private IDisposable _sub2;
+    private IDisposable _sub3;
+    private IDisposable _titleSub;
+    private IDisposable _bufferSizeSub;
+    private IDisposable _selectedPortSub;
+    private IDisposable _boundRateSub;
+    private IDisposable _paritySub;
+    private IDisposable _timeoutSub;
+    private IDisposable _stopBitsSub;
+    private IDisposable _dataBitsSub;
 
     protected override void Dispose(bool disposing)
     {
@@ -365,8 +359,26 @@ public class SerialPortViewModel : DialogViewModelBase
             _stopBitsSub.Dispose();
             _dataBitsSub.Dispose();
             _timeoutSub.Dispose();
+            Title.Dispose();
+            WriteBufferSizeInput.Dispose();
+            SelectedPortInput.Dispose();
+            SelectedBaudRateInput.Dispose();
+            ParityInput.Dispose();
+            WriteTimeOutInput.Dispose();
+            StopBitsInput.Dispose();
+            DataBitsInput.Dispose();
+            Ports.Dispose();
+            ParityValues.Dispose();
+            StopBitsInput.Dispose();
+            StopBitsArr.Dispose();
+            _myCache.Clear();
+            _sub1.Dispose();
+            _sub2.Dispose();
+            _sub3.Dispose();
         }
 
         base.Dispose(disposing);
     }
+
+    #endregion
 }

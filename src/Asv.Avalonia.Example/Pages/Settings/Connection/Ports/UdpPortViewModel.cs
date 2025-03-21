@@ -4,6 +4,7 @@ using System.Composition;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Asv.Common;
 using Asv.IO;
 using Microsoft.Extensions.Logging;
 using R3;
@@ -13,16 +14,6 @@ namespace Asv.Avalonia.Example;
 
 public class UdpPortViewModel : DialogViewModelBase
 {
-    #region Subs
-
-    private IDisposable _sub1;
-    private IDisposable _sub2;
-    private IDisposable _sub3;
-    private IDisposable _sub4;
-    private IDisposable _sub5;
-
-    #endregion
-
     private readonly IRoutable _parent;
     private readonly ILogger _log;
     private readonly IProtocolPort _oldPort;
@@ -48,17 +39,11 @@ public class UdpPortViewModel : DialogViewModelBase
         _log = logFactory.CreateLogger<UdpPortViewModel>();
         var currentIndex =
             connectionService.Connections.Count(pair => pair.Value.TypeInfo.Scheme == "udp") + 1;
-        TitleInput = new BindableReactiveProperty<string>(
-            $"New UDP {currentIndex}"
-        ).EnableValidation();
-        LocalIpAddressInput = new BindableReactiveProperty<string>(
-            DefaultIpAddressConst
-        ).EnableValidation();
-        LocalPortInput = new BindableReactiveProperty<string>(DefaultPortConst).EnableValidation();
-        RemotePortInput = new BindableReactiveProperty<string>(DefaultPortConst).EnableValidation();
-        RemoteIpAddressInput = new BindableReactiveProperty<string>(
-            DefaultIpAddressConst
-        ).EnableValidation();
+        TitleInput = new BindableReactiveProperty<string>($"New UDP {currentIndex}");
+        LocalIpAddressInput = new BindableReactiveProperty<string>(DefaultIpAddressConst);
+        LocalPortInput = new BindableReactiveProperty<string>(DefaultPortConst);
+        RemotePortInput = new BindableReactiveProperty<string>(DefaultPortConst);
+        RemoteIpAddressInput = new BindableReactiveProperty<string>(DefaultIpAddressConst);
         IsRemoteInput = new BindableReactiveProperty<bool>();
 
         SubscribeToValidation();
@@ -82,17 +67,15 @@ public class UdpPortViewModel : DialogViewModelBase
             return;
         }
 
+        ArgumentNullException.ThrowIfNull(cfg.Port);
+
         var remote = cfg.GetRemoteEndpoint();
-        TitleInput = new BindableReactiveProperty<string>(name).EnableValidation();
-        LocalIpAddressInput = new BindableReactiveProperty<string>(
-            cfg.Host ?? string.Empty
-        ).EnableValidation();
-        LocalPortInput = new BindableReactiveProperty<string>(
-            cfg.Port!.ToString()!
-        ).EnableValidation();
+        TitleInput = new BindableReactiveProperty<string>(name);
+        LocalIpAddressInput = new BindableReactiveProperty<string>(cfg.Host ?? string.Empty);
+        LocalPortInput = new BindableReactiveProperty<string>(cfg.Port.Value.ToString());
         IsRemoteInput = new BindableReactiveProperty<bool>(remote is not null);
-        RemotePortInput = new BindableReactiveProperty<string>().EnableValidation();
-        RemoteIpAddressInput = new BindableReactiveProperty<string>().EnableValidation();
+        RemotePortInput = new BindableReactiveProperty<string>();
+        RemoteIpAddressInput = new BindableReactiveProperty<string>();
         if (remote != null)
         {
             RemotePortInput.Value = remote.Port.ToString();
@@ -214,10 +197,12 @@ public class UdpPortViewModel : DialogViewModelBase
                     persistable
                 );
                 Task.Run(() => cmd.Execute(persistable));
-            }),
+            }).DisposeItWith(Disposable),
         };
 
-        IsValid.Subscribe(enabled => dialog.IsPrimaryButtonEnabled = enabled);
+        _sub6 = IsValid
+            .Subscribe(enabled => dialog.IsPrimaryButtonEnabled = enabled)
+            .DisposeItWith(Disposable);
 
         dialog.ShowAsync();
     }
@@ -247,10 +232,10 @@ public class UdpPortViewModel : DialogViewModelBase
                     persistable
                 );
                 cmd.Execute(persistable);
-            }),
+            }).DisposeItWith(Disposable),
         };
 
-        IsValid.Subscribe(enabled => dialog.IsPrimaryButtonEnabled = enabled);
+        _sub7 = IsValid.Subscribe(enabled => dialog.IsPrimaryButtonEnabled = enabled);
 
         dialog.ShowAsync();
     }
@@ -273,18 +258,28 @@ public class UdpPortViewModel : DialogViewModelBase
         return new KeyValuePair<string, string>(TitleInput.Value, connectionString);
     }
 
-    public BindableReactiveProperty<string> TitleInput { get; set; }
-    public BindableReactiveProperty<string> LocalIpAddressInput { get; set; }
-    public BindableReactiveProperty<string> LocalPortInput { get; set; }
-    public BindableReactiveProperty<bool> IsRemoteInput { get; set; }
+    public BindableReactiveProperty<string> TitleInput { get; }
+    public BindableReactiveProperty<string> LocalIpAddressInput { get; }
+    public BindableReactiveProperty<string> LocalPortInput { get; }
+    public BindableReactiveProperty<bool> IsRemoteInput { get; }
     public static string[] PresetIpValues => [DefaultIpAddressConst, "127.0.0.1"];
-    public BindableReactiveProperty<string> RemoteIpAddressInput { get; set; }
-    public BindableReactiveProperty<string> RemotePortInput { get; set; }
+    public BindableReactiveProperty<string> RemoteIpAddressInput { get; }
+    public BindableReactiveProperty<string> RemotePortInput { get; }
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
         return [];
     }
+
+    #region Dispose
+
+    private IDisposable _sub1;
+    private IDisposable _sub2;
+    private IDisposable _sub3;
+    private IDisposable _sub4;
+    private IDisposable _sub5;
+    private IDisposable _sub6;
+    private IDisposable _sub7;
 
     protected override void Dispose(bool disposing)
     {
@@ -295,8 +290,18 @@ public class UdpPortViewModel : DialogViewModelBase
             _sub3.Dispose();
             _sub4.Dispose();
             _sub5.Dispose();
+            _sub6.Dispose();
+            _sub7.Dispose();
+            TitleInput.Dispose();
+            LocalIpAddressInput.Dispose();
+            LocalPortInput.Dispose();
+            RemoteIpAddressInput.Dispose();
+            RemotePortInput.Dispose();
+            IsRemoteInput.Dispose();
         }
 
         base.Dispose(disposing);
     }
+
+    #endregion
 }
