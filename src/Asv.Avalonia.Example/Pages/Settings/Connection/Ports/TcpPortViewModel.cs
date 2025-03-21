@@ -4,6 +4,7 @@ using System.Composition;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Asv.Common;
 using Asv.IO;
 using Microsoft.Extensions.Logging;
 using R3;
@@ -13,9 +14,6 @@ namespace Asv.Avalonia.Example;
 
 public class TcpPortViewModel : DialogViewModelBase
 {
-    private IDisposable _sub1;
-    private IDisposable _sub2;
-    private IDisposable _sub3;
     private readonly IRoutable _parent;
     private readonly ILogger _log;
     private readonly IProtocolPort _oldPort;
@@ -38,19 +36,15 @@ public class TcpPortViewModel : DialogViewModelBase
         _parent = parent;
         CreationNumber =
             connectionService.Connections.Count(_ => _.Value.TypeInfo.Scheme == "tcp") + 1;
-        Title = new BindableReactiveProperty<string>(
-            $"New TCP {CreationNumber}"
-        ).EnableValidation();
-        PortInput = new BindableReactiveProperty<string>(DefaultPortConst).EnableValidation();
-        IpAddressInput = new BindableReactiveProperty<string>(
-            DefaultIpAddressConst
-        ).EnableValidation();
+        Title = new BindableReactiveProperty<string>($"New TCP {CreationNumber}");
+        PortInput = new BindableReactiveProperty<string>(DefaultPortConst);
+        IpAddressInput = new BindableReactiveProperty<string>(DefaultIpAddressConst);
         _log = logFactory.CreateLogger<TcpPortViewModel>();
         SubscribeToValidation();
     }
 
     public TcpPortViewModel(
-        IProtocolPort oldport,
+        IProtocolPort oldPort,
         string name,
         IMavlinkConnectionService connectionService,
         INavigationService navigation,
@@ -60,21 +54,31 @@ public class TcpPortViewModel : DialogViewModelBase
     {
         _connectionService = connectionService;
         _navigation = navigation;
-        _oldPort = oldport;
+        _oldPort = oldPort;
         _parent = parent;
 
-        switch (oldport)
+        switch (oldPort)
         {
             case TcpClientProtocolPort client:
+                ArgumentNullException.ThrowIfNull(client.Config.Port);
+                ArgumentException.ThrowIfNullOrWhiteSpace(client.Config.Host);
+
                 Title = new BindableReactiveProperty<string>(name);
-                PortInput = new BindableReactiveProperty<string>(client.Config.Port.ToString()!);
-                IpAddressInput = new BindableReactiveProperty<string>(client.Config.Host!);
+                PortInput = new BindableReactiveProperty<string>(
+                    client.Config.Port.Value.ToString()
+                );
+                IpAddressInput = new BindableReactiveProperty<string>(client.Config.Host);
                 IsTcpIpServer = new BindableReactiveProperty<bool>();
                 break;
             case TcpServerProtocolPort server:
+                ArgumentNullException.ThrowIfNull(server.Config.Port);
+                ArgumentException.ThrowIfNullOrWhiteSpace(server.Config.Host);
+
                 Title = new BindableReactiveProperty<string>(name);
-                PortInput = new BindableReactiveProperty<string>(server.Config.Port.ToString()!);
-                IpAddressInput = new BindableReactiveProperty<string>(server.Config.Host!);
+                PortInput = new BindableReactiveProperty<string>(
+                    server.Config.Port.Value.ToString()
+                );
+                IpAddressInput = new BindableReactiveProperty<string>(server.Config.Host);
                 IsTcpIpServer = new BindableReactiveProperty<bool>(true);
                 break;
         }
@@ -160,9 +164,9 @@ public class TcpPortViewModel : DialogViewModelBase
                     persistable
                 );
                 Task.Run(() => cmd.Execute(persistable));
-            }),
+            }).DisposeItWith(Disposable),
         };
-        IsValid.Subscribe(enabled => dialog.IsPrimaryButtonEnabled = enabled);
+        _sub4 = IsValid.Subscribe(enabled => dialog.IsPrimaryButtonEnabled = enabled);
 
         dialog.ShowAsync();
     }
@@ -192,9 +196,9 @@ public class TcpPortViewModel : DialogViewModelBase
                     persistable
                 );
                 cmd.Execute(persistable);
-            }),
+            }).DisposeItWith(Disposable),
         };
-        IsValid.Subscribe(enabled => dialog.IsPrimaryButtonEnabled = enabled);
+        _sub5 = IsValid.Subscribe(enabled => dialog.IsPrimaryButtonEnabled = enabled);
         dialog.ShowAsync();
     }
 
@@ -213,27 +217,43 @@ public class TcpPortViewModel : DialogViewModelBase
         return new KeyValuePair<string, string>(Title.CurrentValue, connection);
     }
 
-    private int CreationNumber { get; set; }
-    public BindableReactiveProperty<string> Title { get; set; }
-    public BindableReactiveProperty<string> IpAddressInput { get; set; }
+    private int CreationNumber { get; }
+    public BindableReactiveProperty<string> Title { get; }
+    public BindableReactiveProperty<string> IpAddressInput { get; }
     public static string[] PresetIpValues => [DefaultIpAddressConst, "127.0.0.1"];
-    public BindableReactiveProperty<string> PortInput { get; set; }
-    public BindableReactiveProperty<bool> IsTcpIpServer { get; set; } = new(false);
+    public BindableReactiveProperty<string> PortInput { get; }
+    public BindableReactiveProperty<bool> IsTcpIpServer { get; } = new(false);
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
         return [];
     }
 
+    #region Dispose
+
+    private IDisposable _sub1;
+    private IDisposable _sub2;
+    private IDisposable _sub3;
+    private IDisposable _sub4;
+    private IDisposable _sub5;
+
     protected override void Dispose(bool disposing)
     {
         if (disposing)
         {
+            Title.Dispose();
+            IpAddressInput.Dispose();
+            PortInput.Dispose();
+            IsTcpIpServer.Dispose();
             _sub1.Dispose();
             _sub2.Dispose();
             _sub3.Dispose();
+            _sub4.Dispose();
+            _sub5.Dispose();
         }
 
         base.Dispose(disposing);
     }
+
+    #endregion
 }
