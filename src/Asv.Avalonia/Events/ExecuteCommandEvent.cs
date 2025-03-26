@@ -1,10 +1,10 @@
 ﻿namespace Asv.Avalonia;
 
-public class ExecuteCommandEvent(IRoutable source, string commandId, IPersistable commandParameter)
+public class ExecuteCommandEvent(IRoutable source, string commandId, ICommandArg commandArg)
     : AsyncRoutedEvent(source)
 {
     public string CommandId { get; } = commandId;
-    public IPersistable CommandParameter { get; } = commandParameter;
+    public ICommandArg CommandArg { get; } = commandArg;
 }
 
 public static class ExecuteCommandEventMixin
@@ -12,14 +12,14 @@ public static class ExecuteCommandEventMixin
     public static ValueTask ExecuteCommand(
         this IRoutable src,
         string commandId,
-        IPersistable commandParameter
+        ICommandArg commandArg
     )
     {
-        return src.Rise(new ExecuteCommandEvent(src, commandId, commandParameter));
+        return src.Rise(new ExecuteCommandEvent(src, commandId, commandArg));
     }
 
     public static ValueTask ExecuteCommand(this IRoutable src, string commandId)
     {
-        return src.Rise(new ExecuteCommandEvent(src, commandId, Persistable.Empty));
+        return src.Rise(new ExecuteCommandEvent(src, commandId, CommandArg.Empty));
     }
 }

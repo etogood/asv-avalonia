@@ -1,7 +1,9 @@
 ﻿using System;
+using Asv.Avalonia.Example.Api;
 using Asv.Avalonia.Map;
 using Avalonia;
 using Avalonia.Controls;
+using PluginManagerMixin = Asv.Avalonia.Plugins.PluginManagerMixin;
 
 namespace Asv.Avalonia.Example.Desktop;
 
@@ -13,35 +15,29 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        using var app = AppHost
-            .CreateBuilder()
-            .UseLogToConsoleOnDebug()
-            .UseAppPath(opt => opt.WithRelativeFolder("data"))
-            .UseJsonUserConfig(opt =>
-                opt.WithFileName("user_settings.json").WithAutoSave(TimeSpan.FromSeconds(1))
-            )
-            .UseAppInfo(opt => opt.FillFromAssembly(typeof(App).Assembly))
-            .UseSoloRun(opt => opt.WithArgumentForwarding())
-            .UseLogService(opt => opt.WithRelativeFolder("logs"))
-            .UseAsvMap()
-            .UsePluginManager(options =>
-            {
-                options.WithApiPackage("Asv.Drones.Gui.Api", "1.0.0");
-                options.WithPluginPrefix("Asv.Drones.Gui.Plugin.");
-            })
-            .Build()
-            .ExitIfNotFirstInstance();
+        var builder = AppHost.CreateBuilder(args);
 
-        try
-        {
-            BuildAvaloniaApp()
-                .StartWithClassicDesktopLifetime(args, ShutdownMode.OnMainWindowClose);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            app.HandleApplicationCrash(e);
-        }
+        PluginManagerMixin.UsePluginManager(
+            builder
+                .UseAvalonia(BuildAvaloniaApp)
+                .UseLogToConsoleOnDebug()
+                .UseAppPath(opt => opt.WithRelativeFolder("data"))
+                .UseJsonUserConfig(opt =>
+                    opt.WithFileName("user_settings.json").WithAutoSave(TimeSpan.FromSeconds(1))
+                )
+                .UseAppInfo(opt => opt.FillFromAssembly(typeof(App).Assembly))
+                .UseSoloRun(opt => opt.WithArgumentForwarding())
+                .UseLogService(opt => opt.WithRelativeFolder("logs"))
+                .UseAsvMap(),
+            options =>
+            {
+                options.WithApiPackage(typeof(Class1).Assembly);
+                options.WithPluginPrefix("Asv.Avalonia.Example.Plugin.");
+            }
+        );
+
+        using var host = builder.Build();
+        host.StartWithClassicDesktopLifetime(args, ShutdownMode.OnMainWindowClose);
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.

@@ -1,10 +1,8 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+﻿using Avalonia.Controls;
 
 namespace Asv.Avalonia.Example;
 
-[ExportViewFor(typeof(MavParamsPageViewModel))]
+[ExportViewFor(typeof(MavParamsPageViewModelViewModel))]
 public partial class MavParamsPageView : UserControl
 {
     public MavParamsPageView()

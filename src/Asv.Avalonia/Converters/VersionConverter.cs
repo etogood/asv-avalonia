@@ -20,7 +20,6 @@ namespace Asv.Avalonia
             }
 
             var plusIndex = version.IndexOf('+');
-            _versionPart = version[plusIndex..];
             return plusIndex >= 0 ? version[..plusIndex] : version;
         }
 

@@ -1,8 +1,7 @@
-﻿using Asv.Common;
+﻿using System.Diagnostics.Metrics;
 using Avalonia.Media.Imaging;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using R3;
 using ZLogger;
 
 namespace Asv.Avalonia.Map;
@@ -28,8 +27,17 @@ public class MemoryTileCache : TileCache
     private readonly ILogger<MemoryTileCache> _logger;
     private readonly TimeSpan _expirationAfter;
     private readonly int _sizeLimitBytes;
+    private readonly Counter<int> _meterGet;
+    private readonly Counter<int> _meterSet;
+    private readonly Counter<int> _meterClear;
+    private readonly ObservableGauge<int> _meterCount;
+    private readonly ObservableGauge<long> _meterSize;
 
-    public MemoryTileCache(MemoryTileCacheConfig config, ILoggerFactory factory)
+    public MemoryTileCache(
+        MemoryTileCacheConfig config,
+        ILoggerFactory factory,
+        IMeterFactory meterFactory
+    )
         : base(config, factory)
     {
         ArgumentNullException.ThrowIfNull(config);
@@ -52,11 +60,26 @@ public class MemoryTileCache : TileCache
                 TrackStatistics = true,
             }
         );
+
+        var meter = meterFactory.Create(MapMetric.BaseName);
+        _meterGet = meter.CreateCounter<int>("cache_memory_get");
+        _meterSet = meter.CreateCounter<int>("cache_memory_set");
+        _meterClear = meter.CreateCounter<int>("cache_memory_evict");
+        _meterCount = meter.CreateObservableGauge("cache_memory_count", () => _cache.Count);
+        _meterSize = meter.CreateObservableGauge(
+            "cache_memory_size",
+            () => (_cache.GetCurrentStatistics()?.CurrentEstimatedSize ?? 0L) / (1024 * 1024),
+            "MB"
+        );
     }
 
     public override Bitmap? this[TileKey key]
     {
-        get => _cache.Get<Bitmap>(key);
+        get
+        {
+            _meterGet.Add(1);
+            return _cache.Get<Bitmap>(key);
+        }
         set
         {
             if (value == null)
@@ -65,6 +88,7 @@ public class MemoryTileCache : TileCache
                 return;
             }
 
+            _meterSet.Add(1);
             _cache.Set(key, value, CreateOptions(value));
         }
     }
@@ -105,6 +129,7 @@ public class MemoryTileCache : TileCache
         _logger.ZLogTrace($"Evict {key} {reason}");
         if (value is IDisposable disposable)
         {
+            _meterClear.Add(1);
             disposable.Dispose();
         }
     }

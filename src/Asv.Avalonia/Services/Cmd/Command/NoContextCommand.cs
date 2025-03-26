@@ -4,7 +4,7 @@ public abstract class NoContextCommand : AsyncCommand
 {
     public override bool CanExecute(
         IRoutable context,
-        IPersistable parameter,
+        ICommandArg parameter,
         out IRoutable targetContext
     )
     {
@@ -12,17 +12,17 @@ public abstract class NoContextCommand : AsyncCommand
         return true;
     }
 
-    public override ValueTask<IPersistable?> Execute(
+    public override ValueTask<ICommandArg?> Execute(
         IRoutable context,
-        IPersistable newValue,
+        ICommandArg newValue,
         CancellationToken cancel = default
     )
     {
         return InternalExecute(newValue, cancel);
     }
 
-    protected abstract ValueTask<IPersistable?> InternalExecute(
-        IPersistable newValue,
+    protected abstract ValueTask<ICommandArg?> InternalExecute(
+        ICommandArg newValue,
         CancellationToken cancel
     );
 }

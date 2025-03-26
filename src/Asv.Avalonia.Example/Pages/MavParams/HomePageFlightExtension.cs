@@ -1,4 +1,4 @@
-﻿using System.Composition;
+﻿using Asv.Avalonia.IO;
 using Asv.IO;
 using Asv.Mavlink;
 using Material.Icons;
@@ -6,11 +6,11 @@ using Material.Icons;
 namespace Asv.Avalonia.Example;
 
 [ExportExtensionFor<IHomePageItem>]
-public class HomePageParamsDeviceAction : HomePageDeviceAction
+public class HomePageParamsDeviceItemAction : HomePageDeviceItemAction
 {
     protected override IActionViewModel? TryCreateAction(
         IClientDevice device,
-        HomePageDevice context
+        HomePageDeviceItem context
     )
     {
         if (device.GetMicroservice<IParamsClientEx>() == null)
@@ -24,7 +24,7 @@ public class HomePageParamsDeviceAction : HomePageDeviceAction
             Header = "Params editor",
             Description = "Edit mavlink device parameters",
             Command = new BindableAsyncCommand(OpenMavParamsCommand.Id, context),
-            CommandParameter = new Persistable<string>(device.Id.AsString()),
+            CommandParameter = new StringCommandArg(device.Id.AsString()),
         };
     }
 }

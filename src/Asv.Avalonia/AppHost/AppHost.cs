@@ -1,33 +1,18 @@
-﻿using System.Composition.Hosting;
-using Asv.Common;
-using Microsoft.Extensions.Configuration;
+﻿using Asv.Common;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ZLogger;
 
 namespace Asv.Avalonia;
 
-public class AppHost : AsyncDisposableWithCancel
+public class AppHost : AsyncDisposableWithCancel, IHost
 {
-    private readonly ServiceProvider _services;
-    private readonly IConfiguration _config;
-
     #region Static
 
     private static AppHost? _instance;
 
-    public static AppHostBuilder CreateBuilder()
-    {
-        return CreateBuilder(configurationBuilder =>
-        {
-            configurationBuilder
-                .AddJsonFile("app_settings.json", optional: true, reloadOnChange: false)
-                .AddEnvironmentVariables()
-                .AddCommandLine(Environment.GetCommandLineArgs());
-        });
-    }
-
-    public static AppHostBuilder CreateBuilder(Action<IConfigurationBuilder> configurationBuilder)
+    public static AppHostBuilder CreateBuilder(string[] args)
     {
         if (_instance != null)
         {
@@ -36,9 +21,9 @@ public class AppHost : AsyncDisposableWithCancel
             );
         }
 
-        var builder = new ConfigurationBuilder();
-        configurationBuilder(builder);
-        return new AppHostBuilder(builder.Build());
+        var builder = Host.CreateApplicationBuilder(args);
+        builder.Logging.ClearProviders();
+        return new AppHostBuilder(builder);
     }
 
     public static AppHost Instance
@@ -58,17 +43,18 @@ public class AppHost : AsyncDisposableWithCancel
 
     #endregion
 
-    internal AppHost(ServiceProvider serviceProvider, IConfiguration config)
+    private readonly IHost _host;
+
+    internal AppHost(IHost host)
     {
+        _host = host;
         _instance = this;
-        _services = serviceProvider;
-        _config = config;
     }
 
     public T GetService<T>()
         where T : notnull
     {
-        return _services.GetRequiredService<T>();
+        return _host.Services.GetRequiredService<T>();
     }
 
     public void HandleApplicationCrash(Exception e)
@@ -77,4 +63,16 @@ public class AppHost : AsyncDisposableWithCancel
             .CreateLogger<AppHost>()
             .ZLogCritical(e, $"Application crashed: {e.Message}");
     }
+
+    public Task StartAsync(CancellationToken cancellationToken = default)
+    {
+        return _host.StartAsync(cancellationToken);
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken = default)
+    {
+        return _host.StopAsync(cancellationToken);
+    }
+
+    public IServiceProvider Services => _host.Services;
 }

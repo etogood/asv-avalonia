@@ -6,11 +6,9 @@ using R3;
 namespace Asv.Avalonia;
 
 [ExportSettings(SubPageId)]
-public class SettingsKeymapViewModel : RoutableViewModel, ISettingsSubPage
+public class SettingsKeymapViewModel : SettingsSubPage
 {
-    private readonly ObservableList<ICommandInfo> _observableList;
     private readonly ISynchronizedView<ICommandInfo, SettingsKeyMapItemViewModel> _view;
-    private readonly IDisposable _sub1;
     public const string SubPageId = "settings.hotkeys";
 
     public SettingsKeymapViewModel()
@@ -23,17 +21,19 @@ public class SettingsKeymapViewModel : RoutableViewModel, ISettingsSubPage
     public SettingsKeymapViewModel(ICommandService svc)
         : base(SubPageId)
     {
-        SearchText = new BindableReactiveProperty<string>();
-        _observableList = new ObservableList<ICommandInfo>(svc.Commands);
-        SelectedItem = new BindableReactiveProperty<SettingsKeyMapItemViewModel>();
+        SearchText = new BindableReactiveProperty<string>().DisposeItWith(Disposable);
+        var observableList = new ObservableList<ICommandInfo>(svc.Commands);
+        SelectedItem = new BindableReactiveProperty<SettingsKeyMapItemViewModel>().DisposeItWith(
+            Disposable
+        );
         ResetHotKeysToDefaultCommand = new ReactiveCommand(ResetHotkeys).DisposeItWith(Disposable);
 
-        _view = _observableList
+        _view = observableList
             .CreateView(x => new SettingsKeyMapItemViewModel(x, svc))
             .DisposeItWith(Disposable);
         _view.SetRoutableParentForView(this, true).DisposeItWith(Disposable);
         Items = _view.ToNotifyCollectionChanged().DisposeItWith(Disposable);
-        _sub1 = SearchText
+        SearchText
             .ThrottleLast(TimeSpan.FromMilliseconds(500))
             .Subscribe(x =>
             {
@@ -68,12 +68,15 @@ public class SettingsKeymapViewModel : RoutableViewModel, ISettingsSubPage
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
-        return _view;
-    }
+        foreach (var child in base.GetRoutableChildren())
+        {
+            yield return child;
+        }
 
-    public ValueTask Init(ISettingsPage context)
-    {
-        return ValueTask.CompletedTask;
+        foreach (var model in _view)
+        {
+            yield return model;
+        }
     }
 
     private void ResetHotkeys(Unit unit)
@@ -84,5 +87,5 @@ public class SettingsKeymapViewModel : RoutableViewModel, ISettingsSubPage
         }
     }
 
-    public IExportInfo Source => SystemModule.Instance;
+    public override IExportInfo Source => SystemModule.Instance;
 }

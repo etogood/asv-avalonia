@@ -1,5 +1,4 @@
 using System.Composition;
-using Avalonia;
 using Avalonia.Input;
 using Material.Icons;
 
@@ -28,13 +27,13 @@ public class OpenDebugWindowCommand(ExportFactory<IDebugWindow> factory) : NoCon
 
     public override ICommandInfo Info => StaticInfo;
 
-    protected override ValueTask<IPersistable?> InternalExecute(
-        IPersistable newValue,
+    protected override ValueTask<ICommandArg?> InternalExecute(
+        ICommandArg newValue,
         CancellationToken cancel
     )
     {
         var wnd = new DebugWindow { DataContext = factory.CreateExport().Value, Topmost = true };
         wnd.Show();
-        return ValueTask.FromResult<IPersistable?>(null);
+        return ValueTask.FromResult<ICommandArg?>(null);
     }
 }

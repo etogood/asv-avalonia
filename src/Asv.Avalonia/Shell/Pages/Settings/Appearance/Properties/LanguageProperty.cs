@@ -42,7 +42,7 @@ public class LanguageProperty : RoutableViewModel
         }
 
         _internalChange = true;
-        var newValue = new Persistable<string>(userValue.Id);
+        var newValue = new StringCommandArg(userValue.Id);
         await this.ExecuteCommand(ChangeLanguageCommand.Id, newValue);
         _internalChange = false;
 

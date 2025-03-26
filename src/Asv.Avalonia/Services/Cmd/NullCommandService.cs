@@ -1,5 +1,4 @@
 using Avalonia.Input;
-using Material.Icons;
 using R3;
 
 namespace Asv.Avalonia;
@@ -23,7 +22,7 @@ public class NullCommandService : ICommandService
     public ValueTask Execute(
         string commandId,
         IRoutable context,
-        IPersistable param,
+        ICommandArg param,
         CancellationToken cancel = default
     )
     {

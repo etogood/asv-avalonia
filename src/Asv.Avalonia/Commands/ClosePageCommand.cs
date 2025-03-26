@@ -26,9 +26,9 @@ public class ClosePageCommand : ContextCommand<IPage>
 
     public override ICommandInfo Info => StaticInfo;
 
-    protected override async ValueTask<IPersistable?> InternalExecute(
+    protected override async ValueTask<ICommandArg?> InternalExecute(
         IPage context,
-        IPersistable newValue,
+        ICommandArg newValue,
         CancellationToken cancel
     )
     {
