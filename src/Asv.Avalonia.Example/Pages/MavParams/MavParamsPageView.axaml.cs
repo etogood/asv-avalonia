@@ -2,7 +2,7 @@
 
 namespace Asv.Avalonia.Example;
 
-[ExportViewFor(typeof(MavParamsPageViewModelViewModel))]
+[ExportViewFor(typeof(MavParamsPageViewModel))]
 public partial class MavParamsPageView : UserControl
 {
     public MavParamsPageView()
