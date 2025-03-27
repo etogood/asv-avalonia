@@ -49,12 +49,6 @@
       <ProjectReference Include="..\Asv.Avalonia.Example.Api\Asv.Avalonia.Example.Api.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <UpToDateCheckInput Remove="Pages\Settings\Connection\Ports\SerialPortView.axaml" />
-      <UpToDateCheckInput Remove="Pages\Settings\Connection\Ports\TcpPortView.axaml" />
-      <UpToDateCheckInput Remove="Pages\Settings\Connection\Ports\UdpPortView.axaml" />
-      <UpToDateCheckInput Remove="Pages\Settings\Connection\SettingsConnectionView.axaml" />
-    </ItemGroup>
 
    
 </Project>
