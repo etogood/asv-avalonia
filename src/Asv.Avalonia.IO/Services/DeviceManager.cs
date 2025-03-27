@@ -83,10 +83,17 @@ public class DeviceManager : IDeviceManager, IDisposable, IAsyncDisposable
         _config = cfgSvc.Get<DeviceManagerConfig>();
         foreach (var cs in _config.Connections)
         {
-            Router.AddPort(cs);
+            var port = Router.AddPort(cs);
+            // we don't dispose this subscription because it will be disposed with PortRemoved
+            port.IsEnabled.Subscribe(_ => SaveConfig());
         }
 
-        _sub1 = Router.PortAdded.Subscribe(_ => SaveConfig());
+        _sub1 = Router.PortAdded.Subscribe(port =>
+        {
+            SaveConfig();
+            // we don't dispose this subscription because it will be disposed with PortRemoved
+            port.IsEnabled.Subscribe(_ => SaveConfig());
+        });
         _sub2 = Router.PortRemoved.Subscribe(_ => SaveConfig());
     }
 
