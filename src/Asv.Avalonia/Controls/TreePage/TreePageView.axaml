@@ -12,7 +12,7 @@
     </Design.DataContext>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="35" />
+            <RowDefinition MinHeight="40" MaxHeight="40" Height="40" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
