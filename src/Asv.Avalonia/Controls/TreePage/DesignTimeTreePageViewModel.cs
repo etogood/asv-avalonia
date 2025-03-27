@@ -1,3 +1,4 @@
+using System.Windows.Input;
 using Material.Icons;
 using ObservableCollections;
 using R3;
@@ -11,6 +12,9 @@ public interface IDesignTimeTreePage : IPage
     BindableReactiveProperty<ObservableTreeNode<ITreePage, NavigationId>?> SelectedNode { get; }
     BindableReactiveProperty<ITreeSubpage?> SelectedPage { get; }
     ISynchronizedViewList<BreadCrumbItem> BreadCrumb { get; }
+    bool IsMenuVisible { get; }
+    ReactiveCommand ShowMenuCommand { get; }
+    ReactiveCommand HideMenuCommand { get; }
 }
 
 public class DesignTimeTreePageViewModel : TreePageViewModel<IPage, ITreeSubpage<IPage>>
