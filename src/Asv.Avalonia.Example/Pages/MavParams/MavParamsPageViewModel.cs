@@ -10,21 +10,21 @@ namespace Asv.Avalonia.Example;
 public interface IMavParamsPageViewModel : IDevicePage { }
 
 [ExportPage(PageId)]
-public class MavParamsPageViewModelViewModel
+public class MavParamsPageViewModel
     : DevicePageViewModel<IMavParamsPageViewModel>,
         IMavParamsPageViewModel
 {
     public const string PageId = "mav-params";
     public const MaterialIconKind PageIcon = MaterialIconKind.CogTransferOutline;
 
-    public MavParamsPageViewModelViewModel()
+    public MavParamsPageViewModel()
         : this(devices: null!, NullCommandService.Instance)
     {
         DesignTime.ThrowIfNotDesignMode();
     }
 
     [ImportingConstructor]
-    public MavParamsPageViewModelViewModel(IDeviceManager devices, ICommandService cmd)
+    public MavParamsPageViewModel(IDeviceManager devices, ICommandService cmd)
         : base(PageId, devices, cmd)
     {
         Title.Value = "Params";
