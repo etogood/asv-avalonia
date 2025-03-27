@@ -13,6 +13,7 @@ public abstract class TreePageViewModel<TContext, TSubPage>
     private readonly IContainerHost _container;
     private readonly ObservableList<BreadCrumbItem> _breadCrumbSource;
     private bool _internalNavigate;
+    private bool _isMenuVisible = true;
 
     public TreePageViewModel(NavigationId id, ICommandService cmd, IContainerHost container)
         : base(id, cmd)
@@ -30,7 +31,27 @@ public abstract class TreePageViewModel<TContext, TSubPage>
         _breadCrumbSource = [];
         BreadCrumb = _breadCrumbSource.ToViewList().DisposeItWith(Disposable);
         SelectedNode.SubscribeAwait(SelectedNodeChanged).DisposeItWith(Disposable);
+        ShowMenuCommand = new ReactiveCommand(_ => ShowMenu(true)).DisposeItWith(Disposable);
+        HideMenuCommand = new ReactiveCommand(_ => ShowMenu(false)).DisposeItWith(Disposable);
     }
+
+    #region Menu
+
+    public ReactiveCommand ShowMenuCommand { get; }
+    public ReactiveCommand HideMenuCommand { get; }
+
+    private void ShowMenu(bool value)
+    {
+        IsMenuVisible = value;
+    }
+
+    public bool IsMenuVisible
+    {
+        get => _isMenuVisible;
+        set => SetField(ref _isMenuVisible, value);
+    }
+
+    #endregion
 
     private async ValueTask SelectedNodeChanged(
         ObservableTreeNode<ITreePage, NavigationId>? node,
@@ -104,6 +125,7 @@ public abstract class TreePageViewModel<TContext, TSubPage>
     public ObservableTree<ITreePage, NavigationId> TreeView { get; }
     public BindableReactiveProperty<ITreeSubpage?> SelectedPage { get; }
     public ISynchronizedViewList<BreadCrumbItem> BreadCrumb { get; }
+
     public BindableReactiveProperty<ObservableTreeNode<
         ITreePage,
         NavigationId
