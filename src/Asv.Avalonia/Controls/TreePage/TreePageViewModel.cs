@@ -19,7 +19,6 @@ public abstract class TreePageViewModel<TContext, TSubPage>
         : base(id, cmd)
     {
         _container = container;
-        IsCompactMode = new BindableReactiveProperty<bool>().DisposeItWith(Disposable);
         Nodes = [];
         Nodes.SetRoutableParent(this, true);
         TreeView = new TreePageMenu(Nodes).DisposeItWith(Disposable);
@@ -76,6 +75,13 @@ public abstract class TreePageViewModel<TContext, TSubPage>
         await Navigate(node.Base.NavigateTo);
     }
 
+    protected virtual ITreeSubpage? CreateDefaultPage()
+    {
+        return SelectedNode.Value != null
+            ? new GroupTreePageItemViewModel(SelectedNode.Value, Navigate)
+            : null;
+    }
+
     public override async ValueTask<IRoutable> Navigate(NavigationId id)
     {
         if (SelectedPage.Value != null && SelectedPage.Value.Id == id)
@@ -90,7 +96,7 @@ public abstract class TreePageViewModel<TContext, TSubPage>
             _internalNavigate = false;
         }
 
-        var newPage = await CreateSubPage(id);
+        var newPage = await CreateSubPage(id) ?? CreateDefaultPage();
         if (newPage == null)
         {
             return this;
@@ -131,7 +137,6 @@ public abstract class TreePageViewModel<TContext, TSubPage>
         NavigationId
     >?> SelectedNode { get; }
     public ObservableList<ITreePage> Nodes { get; }
-    public BindableReactiveProperty<bool> IsCompactMode { get; }
 
     protected override TContext GetContext()
     {

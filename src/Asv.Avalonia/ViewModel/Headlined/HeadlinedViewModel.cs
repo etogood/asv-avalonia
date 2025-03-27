@@ -13,6 +13,7 @@ public class HeadlinedViewModel(NavigationId id) : RoutableViewModel(id), IHeadl
     private MaterialIconKind? _icon;
     private string? _description;
     private IBrush? _iconBrush = Brushes.Violet;
+    private bool _isVisible = true;
 
     /// <summary>
     /// Gets or sets the icon associated with the view model.
@@ -27,6 +28,12 @@ public class HeadlinedViewModel(NavigationId id) : RoutableViewModel(id), IHeadl
     {
         get => _iconBrush;
         set => SetField(ref _iconBrush, value);
+    }
+
+    public bool IsVisible
+    {
+        get => _isVisible;
+        set => SetField(ref _isVisible, value);
     }
 
     /// <summary>

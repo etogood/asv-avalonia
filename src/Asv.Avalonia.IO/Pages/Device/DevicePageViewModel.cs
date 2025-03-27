@@ -9,11 +9,13 @@ public abstract class DevicePageViewModel<T> : PageViewModel<T>, IDevicePage
     where T : class, IDevicePage
 {
     private readonly IDeviceManager? _devices;
+    private readonly Subject<IClientDevice> _afterDeviceInitializedCallback;
 
     protected DevicePageViewModel(NavigationId id, IDeviceManager devices, ICommandService cmd)
         : base(id, cmd)
     {
         _devices = devices;
+        _afterDeviceInitializedCallback = new Subject<IClientDevice>().DisposeItWith(Disposable);
     }
 
     protected override void InternalInitArgs(string? args)
@@ -38,10 +40,10 @@ public abstract class DevicePageViewModel<T> : PageViewModel<T>, IDevicePage
 
     protected virtual void AfterDeviceInitialized(IClientDevice device)
     {
-        AfterDeviceInitializedCallback?.Invoke(device);
+        _afterDeviceInitializedCallback.OnNext(device);
     }
 
     public IClientDevice? Device { get; private set; }
 
-    public Action<IClientDevice>? AfterDeviceInitializedCallback { get; set; }
+    public Observable<IClientDevice> OnDeviceInitialized => _afterDeviceInitializedCallback;
 }

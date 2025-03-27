@@ -15,8 +15,7 @@ public interface ITreeSubpage<in TContext> : ITreeSubpage
     ValueTask Init(TContext context);
 }
 
-public abstract class TreeSubpage<TContext> : RoutableViewModel, ITreeSubpage<TContext>
-    where TContext : class, IPage
+public abstract class TreeSubpage : RoutableViewModel, ITreeSubpage
 {
     protected TreeSubpage(NavigationId id)
         : base(id)
@@ -25,13 +24,11 @@ public abstract class TreeSubpage<TContext> : RoutableViewModel, ITreeSubpage<TC
         MenuView = new MenuTree(Menu).DisposeItWith(Disposable);
     }
 
-    public abstract ValueTask Init(TContext context);
-
-    public override IEnumerable<IRoutable> GetRoutableChildren() => Menu;
-
-    public abstract IExportInfo Source { get; }
     public MenuTree MenuView { get; }
     public ObservableList<IMenuItem> Menu { get; } = [];
+    public abstract IExportInfo Source { get; }
+
+    public override IEnumerable<IRoutable> GetRoutableChildren() => Menu;
 
     protected override void Dispose(bool disposing)
     {
@@ -42,4 +39,12 @@ public abstract class TreeSubpage<TContext> : RoutableViewModel, ITreeSubpage<TC
 
         base.Dispose(disposing);
     }
+}
+
+public abstract class TreeSubpage<TContext>(NavigationId id)
+    : TreeSubpage(id),
+        ITreeSubpage<TContext>
+    where TContext : class, IPage
+{
+    public abstract ValueTask Init(TContext context);
 }

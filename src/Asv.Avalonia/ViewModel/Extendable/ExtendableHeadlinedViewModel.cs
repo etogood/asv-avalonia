@@ -13,6 +13,7 @@ public abstract class ExtendableHeadlinedViewModel<TSelfInterface>(NavigationId 
     private string? _header;
     private string? _description;
     private int _order;
+    private bool _isVisible = true;
 
     public MaterialIconKind? Icon
     {
@@ -36,6 +37,12 @@ public abstract class ExtendableHeadlinedViewModel<TSelfInterface>(NavigationId 
     {
         get => _description;
         set => SetField(ref _description, value);
+    }
+
+    public bool IsVisible
+    {
+        get => _isVisible;
+        set => SetField(ref _isVisible, value);
     }
 
     public int Order

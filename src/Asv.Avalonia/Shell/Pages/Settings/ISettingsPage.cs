@@ -7,7 +7,6 @@ namespace Asv.Avalonia;
 public interface ISettingsPage : IPage
 {
     ObservableList<ITreePage> Nodes { get; }
-    BindableReactiveProperty<bool> IsCompactMode { get; }
 }
 
 public interface ISettingsSubPage : ITreeSubpage<ISettingsPage> { }

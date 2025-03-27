@@ -25,6 +25,8 @@ public interface IHeadlinedViewModel : IRoutable
     /// </summary>
     string? Description { get; set; }
 
+    bool IsVisible { get; set; }
+
     /// <summary>
     /// Gets or sets the order of the view model.
     /// </summary>

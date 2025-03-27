@@ -1,4 +1,5 @@
 ﻿using Asv.IO;
+using R3;
 
 namespace Asv.Avalonia.IO;
 
@@ -6,5 +7,5 @@ public interface IDevicePage : IPage
 {
     IClientDevice? Device { get; }
 
-    Action<IClientDevice>? AfterDeviceInitializedCallback { set; }
+    Observable<IClientDevice> OnDeviceInitialized { get; }
 }

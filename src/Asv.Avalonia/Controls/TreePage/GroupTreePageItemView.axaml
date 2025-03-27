@@ -2,7 +2,27 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avalonia="clr-namespace:Asv.Avalonia"
+             xmlns:avalonia1="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Asv.Avalonia.GroupTreePageItemView">
-    Welcome to Avalonia!
+             x:Class="Asv.Avalonia.GroupTreePageItemView"
+             x:Name="PART_Root"
+             x:DataType="avalonia:GroupTreePageItemViewModel">
+    <Design.DataContext>
+        <avalonia:GroupTreePageItemViewModel/>
+    </Design.DataContext>
+    
+    <ItemsControl HorizontalAlignment="Left" ItemsSource="{Binding Node.Items}">
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+                <Button Command="{ReflectionBinding DataContext.NavigateCommand, ElementName=PART_Root}" MinWidth="250" Margin="4" CommandParameter="{Binding Base.NavigateTo}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <avalonia1:MaterialIcon Kind="{Binding Base.Icon}"/>
+                        <TextBlock Text="{Binding Base.Header}"/>
+                    </StackPanel>
+                </Button>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
 </UserControl>

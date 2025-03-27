@@ -1,4 +1,5 @@
 using Material.Icons;
+using R3;
 
 namespace Asv.Avalonia;
 
@@ -7,6 +8,7 @@ public interface ITreePage : IHeadlinedViewModel
     NavigationId ParentId { get; }
     string? Status { get; }
     NavigationId NavigateTo { get; }
+    ReactiveCommand NavigateCommand { get; }
 }
 
 public class TreePage : HeadlinedViewModel, ITreePage
@@ -29,6 +31,7 @@ public class TreePage : HeadlinedViewModel, ITreePage
     }
 
     public NavigationId NavigateTo { get; }
+    public ReactiveCommand NavigateCommand { get; }
     public NavigationId ParentId { get; }
 
     public string? Status

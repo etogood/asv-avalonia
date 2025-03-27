@@ -36,8 +36,9 @@
                   SelectionMode="Single"
                   ItemsSource="{Binding TreeView.Items}">
             <TreeView.Styles>
-                <Style Selector="TreeViewItem">
+                <Style Selector="TreeViewItem" x:DataType="avalonia:IHeadlinedViewModel">
                     <Setter Property="HorizontalAlignment" Value="Stretch" />
+                    <Setter Property="IsVisible" Value="{Binding IsVisible}" />
                 </Style>
             </TreeView.Styles>
             <TreeView.ItemTemplate>

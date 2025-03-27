@@ -7,7 +7,6 @@ namespace Asv.Avalonia;
 
 public interface IDesignTimeTreePage : IPage
 {
-    BindableReactiveProperty<bool> IsCompactMode { get; }
     ObservableTree<ITreePage, NavigationId> TreeView { get; }
     BindableReactiveProperty<ObservableTreeNode<ITreePage, NavigationId>?> SelectedNode { get; }
     BindableReactiveProperty<ITreeSubpage?> SelectedPage { get; }

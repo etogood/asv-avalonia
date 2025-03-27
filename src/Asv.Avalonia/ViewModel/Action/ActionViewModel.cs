@@ -6,7 +6,6 @@ public class ActionViewModel(string id) : HeadlinedViewModel(id), IActionViewMod
 {
     private ICommand? _command;
     private object? _commandParameter;
-    private bool _isVisible = true;
 
     public ICommand? Command
     {
@@ -18,11 +17,5 @@ public class ActionViewModel(string id) : HeadlinedViewModel(id), IActionViewMod
     {
         get => _commandParameter;
         set => SetField(ref _commandParameter, value);
-    }
-
-    public bool IsVisible
-    {
-        get => _isVisible;
-        set => SetField(ref _isVisible, value);
     }
 }
