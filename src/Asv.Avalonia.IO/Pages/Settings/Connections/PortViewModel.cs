@@ -32,7 +32,7 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
         TagsView = TagsSource.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
         _hasValidationError = new BindableReactiveProperty<bool>().DisposeItWith(Disposable);
         _hasChanges = new BindableReactiveProperty<bool>().DisposeItWith(Disposable);
-        SaveChangesCommand = new ReactiveCommand(SaveChanges).DisposeItWith(Disposable);
+        SaveChangesCommand = new ReactiveCommand(x=>Task.Factory.StartNew(SaveChanges,null, TaskCreationOptions.LongRunning)).DisposeItWith(Disposable);
         _hasValidationError
             .Subscribe(x => SaveChangesCommand.ChangeCanExecute(!x))
             .DisposeItWith(Disposable);
@@ -85,21 +85,28 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
 
     public ReactiveCommand SaveChangesCommand { get; }
 
-    private ValueTask SaveChanges(Unit arg1, CancellationToken cancel)
+    private async void SaveChanges(object? state)
     {
-        if (Port == null)
+        try
         {
-            return ValueTask.CompletedTask;
+            if (Port == null)
+            {
+                return;
+            }
+            InternalSaveChanges(Port.Config);
+            await this.ExecuteCommand(
+                ProtocolPortCommand.StaticInfo.Id,
+                new ActionCommandArg(
+                    Port.Id,
+                    Port.Config.AsUri().ToString(),
+                    CommandParameterActionType.Change
+                )
+            );
         }
-        InternalSaveChanges(Port.Config);
-        return this.ExecuteCommand(
-            ProtocolPortCommand.StaticInfo.Id,
-            new ActionCommandArg(
-                Port.Id,
-                Port.Config.AsUri().ToString(),
-                CommandParameterActionType.Change
-            )
-        );
+        catch (Exception e)
+        {
+            // TODO handle exception
+        }
     }
 
     public ReactiveCommand RemovePortCommand { get; }

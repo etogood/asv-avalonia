@@ -22,8 +22,7 @@ public class DeviceManager : IDeviceManager, IDisposable, IAsyncDisposable
 {
     private readonly IConfiguration _cfgSvc;
     private readonly ImmutableArray<IDeviceManagerExtension> _extensions;
-    private readonly IDisposable _sub1;
-    private readonly IDisposable _sub2;
+    private IDisposable? _sub1;
     private readonly DeviceManagerConfig _config;
 
     private static readonly ImmutableSolidColorBrush[] DeviceColors =
@@ -79,22 +78,18 @@ public class DeviceManager : IDeviceManager, IDisposable, IAsyncDisposable
                 }
             }
         );
+        _config = _cfgSvc.Get<DeviceManagerConfig>();
+        Task.Factory.StartNew(LoadPortsAtBackground, null, TaskCreationOptions.LongRunning);
+    }
 
-        _config = cfgSvc.Get<DeviceManagerConfig>();
+    private void LoadPortsAtBackground(object? obj)
+    {
         foreach (var cs in _config.Connections)
         {
-            var port = Router.AddPort(cs);
-            // we don't dispose this subscription because it will be disposed with PortRemoved
-            port.IsEnabled.Subscribe(_ => SaveConfig());
+            Router.AddPort(cs);
         }
 
-        _sub1 = Router.PortAdded.Subscribe(port =>
-        {
-            SaveConfig();
-            // we don't dispose this subscription because it will be disposed with PortRemoved
-            port.IsEnabled.Subscribe(_ => SaveConfig());
-        });
-        _sub2 = Router.PortRemoved.Subscribe(_ => SaveConfig());
+        _sub1 = Router.PortUpdated.Subscribe(_ => SaveConfig());
     }
 
     private void SaveConfig()
@@ -134,16 +129,14 @@ public class DeviceManager : IDeviceManager, IDisposable, IAsyncDisposable
 
     public void Dispose()
     {
-        _sub1.Dispose();
-        _sub2.Dispose();
+        _sub1?.Dispose();
         Router.Dispose();
         Explorer.Dispose();
     }
 
     public async ValueTask DisposeAsync()
     {
-        await CastAndDispose(_sub1);
-        await CastAndDispose(_sub2);
+        if (_sub1 != null) await CastAndDispose(_sub1);
         await Router.DisposeAsync();
         await Explorer.DisposeAsync();
 
