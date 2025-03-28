@@ -38,7 +38,7 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
             .DisposeItWith(Disposable);
         CancelChangesCommand = new ReactiveCommand(CancelChanges).DisposeItWith(Disposable);
         IsEnabled = new BindableReactiveProperty<bool>().DisposeItWith(Disposable);
-        IsEnabled.SubscribeAwait(ChangeEnabled, AwaitOperation.Drop).DisposeItWith(Disposable);
+        IsEnabled.SubscribeAwait(ChangeEnabled, AwaitOperation.Drop, false).DisposeItWith(Disposable);
         AddToValidation(Name = new BindableReactiveProperty<string>(), ValidateName);
 
         RemovePortCommand = new ReactiveCommand(RemovePort).DisposeItWith(Disposable);
