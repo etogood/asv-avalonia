@@ -31,7 +31,8 @@ public class SettingsKeymapViewModel : SettingsSubPage
         _view = observableList
             .CreateView(x => new SettingsKeyMapItemViewModel(x, svc))
             .DisposeItWith(Disposable);
-        _view.SetRoutableParentForView(this, true).DisposeItWith(Disposable);
+        _view.DisposeMany().DisposeItWith(Disposable);
+        _view.SetRoutableParentForView(this).DisposeItWith(Disposable);
         Items = _view.ToNotifyCollectionChanged().DisposeItWith(Disposable);
         SearchText
             .ThrottleLast(TimeSpan.FromMilliseconds(500))
