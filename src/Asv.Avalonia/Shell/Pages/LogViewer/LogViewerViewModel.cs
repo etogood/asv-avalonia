@@ -4,8 +4,6 @@ using Asv.Common;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
-using FluentAvalonia.UI.Controls;
-using FluentAvalonia.UI.Data;
 using Material.Icons;
 using Material.Icons.Avalonia;
 using Microsoft.Extensions.Logging;
@@ -14,27 +12,37 @@ using R3;
 
 namespace Asv.Avalonia;
 
-[ExportPage(PageId)]
-public class LogViewerViewModel : PageViewModel<LogViewerViewModel>
+public enum SortDirection
 {
-    public const string PageId = "log_viewer";
+    Up,
+    Dowm,
+}
+
+[ExportPage(PageId)]
+public class LogViewerViewModel : PageViewModel<LogViewerViewModel>, IPage
+{
+    public const string PageId = "logviewer";
     private const int MinPageIndex = 1;
+    public const MaterialIconKind PageIcon = MaterialIconKind.Journal;
 
     private readonly ILogService _log;
+    private readonly INavigationService _navigationService;
 
     private readonly HashSet<LogLevel> _logLevels;
     private readonly HashSet<string> _logCategories;
     private readonly HashSet<string> _logThreadIds;
 
     private readonly ObservableList<LogItemViewModel> _logItems;
-
-    public LogViewerViewModel()
-        : this(DesignTime.CommandService, DesignTime.LogService) { }
-
+    
+    // public LogViewerViewModel()
+    //     : this(DesignTime.CommandService, DesignTime.LogService, DesignTime.Navigation)
+    // {
+    // }
     [ImportingConstructor]
-    public LogViewerViewModel(ICommandService cmd, ILogService log)
+    public LogViewerViewModel(ICommandService cmd, ILogService log, INavigationService navigationService)
         : base(PageId, cmd)
     {
+        _navigationService = navigationService;
         _log = log;
 
         Icon.OnNext(MaterialIconKind.Journal);
@@ -209,7 +217,7 @@ public class LogViewerViewModel : PageViewModel<LogViewerViewModel>
             },
         };
 
-        var confirmDialog = new ContentDialog
+        var confirmDialog = new ContentDialog(_navigationService)
         {
             Title = titlePanel,
             Content = RS.LogViewerViewModel_ClearDialog_Content,
@@ -227,7 +235,7 @@ public class LogViewerViewModel : PageViewModel<LogViewerViewModel>
         }
     }
 
-    public override ValueTask<IRoutable> Navigate(string id)
+    public override ValueTask<IRoutable> Navigate(NavigationId id)
     {
         return ValueTask.FromResult<IRoutable>(this);
     }
@@ -237,5 +245,9 @@ public class LogViewerViewModel : PageViewModel<LogViewerViewModel>
         return [];
     }
 
-    protected override void AfterLoadExtensions() { }
+    protected override void AfterLoadExtensions()
+    {
+    }
+
+    public override IExportInfo Source => SystemModule.Instance;
 }

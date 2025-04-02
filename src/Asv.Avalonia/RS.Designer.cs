@@ -834,6 +834,123 @@ namespace Asv.Avalonia {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Log viewer.
+        /// </summary>
+        public static string LogViewer_Title {
+            get {
+                return ResourceManager.GetString("LogViewer_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Categories.
+        /// </summary>
+        public static string LogViewerView_Categories {
+            get {
+                return ResourceManager.GetString("LogViewerView_Categories", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Levels.
+        /// </summary>
+        public static string LogViewerView_Levels {
+            get {
+                return ResourceManager.GetString("LogViewerView_Levels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search in messages.
+        /// </summary>
+        public static string LogViewerView_SearchText_Watermark {
+            get {
+                return ResourceManager.GetString("LogViewerView_SearchText_Watermark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to By:.
+        /// </summary>
+        public static string LogViewerView_TextBlock_By_Title {
+            get {
+                return ResourceManager.GetString("LogViewerView_TextBlock_By_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filtered: {0}.
+        /// </summary>
+        public static string LogViewerView_TextBlock_FilteredItemsCount {
+            get {
+                return ResourceManager.GetString("LogViewerView_TextBlock_FilteredItemsCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to On page: {0}.
+        /// </summary>
+        public static string LogViewerView_TextBlock_PageItemsCount {
+            get {
+                return ResourceManager.GetString("LogViewerView_TextBlock_PageItemsCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total: {0}.
+        /// </summary>
+        public static string LogViewerView_TextBlock_TotalItemsCount {
+            get {
+                return ResourceManager.GetString("LogViewerView_TextBlock_TotalItemsCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Threads.
+        /// </summary>
+        public static string LogViewerView_Threads {
+            get {
+                return ResourceManager.GetString("LogViewerView_Threads", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string LogViewerViewModel_ClearDialog_CloseButton {
+            get {
+                return ResourceManager.GetString("LogViewerViewModel_ClearDialog_CloseButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete the log?.
+        /// </summary>
+        public static string LogViewerViewModel_ClearDialog_Content {
+            get {
+                return ResourceManager.GetString("LogViewerViewModel_ClearDialog_Content", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string LogViewerViewModel_ClearDialog_PrimaryButton {
+            get {
+                return ResourceManager.GetString("LogViewerViewModel_ClearDialog_PrimaryButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log deletion.
+        /// </summary>
+        public static string LogViewerViewModel_ClearDialog_Title {
+            get {
+                return ResourceManager.GetString("LogViewerViewModel_ClearDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Longitude unit.
         /// </summary>
         public static string Longitude_Description {
