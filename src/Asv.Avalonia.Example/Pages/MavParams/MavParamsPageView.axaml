@@ -53,7 +53,9 @@
                             <DockPanel Background="Transparent" Name="ItemDockPanel" LastChildFill="True" DoubleTapped="ItemDockPanel_DoubleTapped">
                                 <ToggleButton ToolTip.Tip="{x:Static example:RS.ParametersEditorPageView_StarButton_ToolTip}"
                                               IsChecked="{Binding IsStarred.Value}" Margin="10 0 0 0"
-                                              BorderThickness="0" DockPanel.Dock="Right">
+                                              BorderThickness="0" DockPanel.Dock="Right"
+                                              IsEnabled="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                              DoubleTapped="Button_DoubleTapped">
                                     <avalonia:MaterialIcon Width="20" Height="20" Kind="{Binding StarKind.Value}" />
                                 </ToggleButton>
                                 <avalonia:MaterialIcon IsVisible="{Binding IsPinned.Value}" Width="20"

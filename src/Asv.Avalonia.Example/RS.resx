@@ -78,4 +78,7 @@
     <data name="ParamPageViewModel_DataLossDialog_CloseButtonText" xml:space="preserve">
         <value>Cancel</value>
     </data>
+    <data name="MavParamsPageViewModel_DeviceName_Unknown" xml:space="preserve">
+        <value>Unknown</value>
+    </data>
 </root>

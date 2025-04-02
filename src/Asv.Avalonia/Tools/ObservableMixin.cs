@@ -103,9 +103,7 @@ public static class ObservableMixin
         return new CompositeDisposable(sub1, sub2);
     }
 
-    public static IDisposable DisposeRemovedViewItems<TModel, TView>(
-        this ISynchronizedView<TModel, TView> src
-    )
+    public static IDisposable DisposeMany<TModel, TView>(this ISynchronizedView<TModel, TView> src)
         where TView : IDisposable
     {
         return src.ObserveRemove().Subscribe(x => x.Value.View.Dispose());
@@ -116,4 +114,60 @@ public static class ObservableMixin
     {
         return src.ObserveRemove().Subscribe(x => x.Value.Dispose());
     }
+
+    #region ClearWithItemsDispose
+
+    public static void ClearWithItemsDispose<T>(this ObservableList<T> src)
+        where T : IDisposable
+    {
+        src.CollectionItemsDispose();
+        src.Clear();
+    }
+
+    public static void ClearWithItemsDispose<TKey, TValue>(
+        this ObservableDictionary<TKey, TValue> src
+    )
+        where TKey : notnull
+        where TValue : IDisposable
+    {
+        src.CollectionItemsDispose();
+        src.Clear();
+    }
+
+    public static void ClearWithItemsDispose<T>(this ObservableQueue<T> src)
+        where T : IDisposable
+    {
+        src.CollectionItemsDispose();
+        src.Clear();
+    }
+
+    public static void ClearWithItemsDispose<T>(this ObservableStack<T> src)
+        where T : IDisposable
+    {
+        src.CollectionItemsDispose();
+        src.Clear();
+    }
+
+    private static void CollectionItemsDispose<T>(this IObservableCollection<T> src)
+        where T : IDisposable
+    {
+        foreach (var item in src)
+        {
+            item.Dispose();
+        }
+    }
+
+    private static void CollectionItemsDispose<TKey, TValue>(
+        this IObservableCollection<KeyValuePair<TKey, TValue>> src
+    )
+        where TKey : notnull
+        where TValue : IDisposable
+    {
+        foreach (var item in src)
+        {
+            item.Value.Dispose();
+        }
+    }
+
+    #endregion
 }

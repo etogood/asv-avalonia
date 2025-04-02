@@ -12,16 +12,31 @@ public partial class MavParamsPageView : UserControl
         InitializeComponent();
     }
 
-    private void ItemDockPanel_DoubleTapped(object? sender, RoutedEventArgs e) // TODO: Think about a way to replace it
+    private void ItemDockPanel_DoubleTapped(object? sender, RoutedEventArgs e)
     {
         if (Design.IsDesignMode)
         {
             return;
         }
 
-        if (DataContext is MavParamsPageViewModel viewModel)
+        if (DataContext is not MavParamsPageViewModel viewModel)
+        {
+            return;
+        }
+
+        if (sender is not DockPanel { DataContext: { } item })
+        {
+            return;
+        }
+
+        if (ReferenceEquals(viewModel.SelectedItem.Value, item))
         {
             viewModel.SelectedItem.Value?.PinItem.Execute(Unit.Default);
         }
+    }
+
+    private void Button_DoubleTapped(object? sender, RoutedEventArgs e)
+    {
+        e.Handled = true;
     }
 }

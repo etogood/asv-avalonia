@@ -12,8 +12,7 @@ public static class RoutableMixin
 {
     public static IDisposable SetRoutableParentForView<TModel, TView>(
         this ISynchronizedView<TModel, TView> src,
-        IRoutable parent,
-        bool disposeRemovedView
+        IRoutable parent
     )
         where TView : class, IRoutable
     {
@@ -26,10 +25,6 @@ public static class RoutableMixin
             .Subscribe(x =>
             {
                 x.Value.View.Parent = null;
-                if (disposeRemovedView)
-                {
-                    x.Value.View.Dispose();
-                }
             });
         return new CompositeDisposable(sub1, sub2);
     }

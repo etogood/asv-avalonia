@@ -39,7 +39,8 @@ public class SettingsConnectionViewModel
         _containerHost = containerHost;
         ObservableList<IProtocolPort> source = [];
         var sourceSyncView = source.CreateView(CreatePort).DisposeItWith(Disposable);
-        sourceSyncView.SetRoutableParentForView(this, true).DisposeItWith(Disposable);
+        sourceSyncView.DisposeMany().DisposeItWith(Disposable);
+        sourceSyncView.SetRoutableParentForView(this).DisposeItWith(Disposable);
 
         View = sourceSyncView.ToNotifyCollectionChanged().DisposeItWith(Disposable);
         View.CollectionChanged += (sender, args) =>
@@ -55,7 +56,7 @@ public class SettingsConnectionViewModel
             source.Add(port);
         }
 
-        deviceManager.Router.PortAdded.Subscribe(x =>source.Add(x) ).DisposeItWith(Disposable);
+        deviceManager.Router.PortAdded.Subscribe(x => source.Add(x)).DisposeItWith(Disposable);
         deviceManager.Router.PortRemoved.Subscribe(x => source.Remove(x)).DisposeItWith(Disposable);
     }
 

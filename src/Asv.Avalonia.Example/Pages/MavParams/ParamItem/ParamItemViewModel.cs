@@ -351,7 +351,6 @@ public class ParamItemViewModel : RoutableViewModel // TODO: Сделать вс
             _sub2.Dispose();
             _sub3.Dispose();
             _sub4.Dispose();
-            _paramItem.Dispose();
             IsSynced.Dispose();
             IsStarred.Dispose();
             IsPinned.Dispose();
