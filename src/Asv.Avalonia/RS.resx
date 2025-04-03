@@ -536,4 +536,10 @@
     <data name="ChangeThemeCommand_CommandInfo_Name" xml:space="preserve">
         <value>Change theme</value>
     </data>
+    <data name="ChangeBoolPropertyCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Change bool property</value>
+    </data>
+    <data name="ChangeBoolPropertyCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Command changes the value of a property with the bool type</value>
+    </data>
 </root>

@@ -2,16 +2,16 @@ using R3;
 
 namespace Asv.Avalonia;
 
-public class HistoricalStringProperty : RoutableViewModel, IHistoricalProperty<string?>
+public sealed class HistoricalStringProperty : HistoricalPropertyBase<string?, string?>
 {
     private readonly ReactiveProperty<string?> _modelValue;
     private readonly IList<Func<string?, ValidationResult>> _validationRules = [];
 
     private bool _internalChange;
 
-    public ReactiveProperty<string?> ModelValue => _modelValue;
-    public BindableReactiveProperty<string?> ViewValue { get; } = new();
-    public BindableReactiveProperty<bool> IsSelected { get; } = new();
+    public override ReactiveProperty<string?> ModelValue => _modelValue;
+    public override BindableReactiveProperty<string?> ViewValue { get; } = new();
+    public override BindableReactiveProperty<bool> IsSelected { get; } = new();
 
     public HistoricalStringProperty(
         string id,
@@ -49,7 +49,7 @@ public class HistoricalStringProperty : RoutableViewModel, IHistoricalProperty<s
         _validationRules.Add(validationFunc);
     }
 
-    private Exception? ValidateValue(string? userValue)
+    protected override Exception? ValidateValue(string? userValue)
     {
         foreach (var rule in _validationRules)
         {
@@ -63,7 +63,7 @@ public class HistoricalStringProperty : RoutableViewModel, IHistoricalProperty<s
         return null;
     }
 
-    private async ValueTask OnChangedByUser(string? userValue, CancellationToken cancel)
+    protected override async ValueTask OnChangedByUser(string? userValue, CancellationToken cancel)
     {
         if (_internalChange)
         {
@@ -74,7 +74,7 @@ public class HistoricalStringProperty : RoutableViewModel, IHistoricalProperty<s
         await this.ExecuteCommand(ChangeStringPropertyCommand.Id, newValue);
     }
 
-    private void OnChangeByModel(string? modelValue)
+    protected override void OnChangeByModel(string? modelValue)
     {
         _internalChange = true;
         ViewValue.OnNext(modelValue);

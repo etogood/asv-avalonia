@@ -12,7 +12,7 @@ public class TryCloseWithApprovalDialogViewModel : DialogViewModelBase
         Message = RS.ParamPageViewModel_DataLossDialog_Content;
     }
 
-    public readonly string Message;
+    public string Message { get; }
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
