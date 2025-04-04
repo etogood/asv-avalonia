@@ -9,7 +9,6 @@ namespace Asv.Avalonia.IO;
 
 public class PortViewModel : RoutableViewModel, IPortViewModel
 {
-    private readonly IDeviceManager _manager;
     private MaterialIconKind? _icon;
     private readonly List<INotifyDataErrorInfo> _validateProperties = new();
     private readonly BindableReactiveProperty<bool> _hasChanges;
@@ -56,7 +55,10 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
         }
 
         if (Port.IsEnabled.CurrentValue == isEnabled)
+        {
             return;
+        }
+
         await Task.Factory.StartNew(
             () =>
             {
@@ -97,6 +99,7 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
             {
                 return;
             }
+
             InternalSaveChanges(Port.Config);
             await this.ExecuteCommand(
                 ProtocolPortCommand.StaticInfo.Id,
@@ -192,10 +195,12 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
         {
             return new Exception("Port name is required");
         }
+
         if (arg.Length > 50)
         {
             return new Exception("Port name is too long. Max length is 50 characters");
         }
+
         return null;
     }
 
@@ -234,6 +239,7 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
         get => _icon;
         set => SetField(ref _icon, value);
     }
+
     public BindableReactiveProperty<bool> IsEnabled { get; }
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
