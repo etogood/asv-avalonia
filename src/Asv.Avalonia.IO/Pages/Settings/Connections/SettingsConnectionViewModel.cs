@@ -75,6 +75,7 @@ public class SettingsConnectionViewModel
                 {
                     SelectedItem = View.FirstOrDefault();
                 }
+
                 break;
             case NotifyCollectionChangedAction.Replace:
                 break;

@@ -53,6 +53,7 @@ public class ProtocolPortCommand(IDeviceManager manager) : NoContextCommand
                 _ => throw new ArgumentOutOfRangeException(),
             };
         }
+
         return ValueTask.FromResult<ICommandArg?>(null);
     }
 
@@ -65,10 +66,12 @@ public class ProtocolPortCommand(IDeviceManager manager) : NoContextCommand
             rollback = CreateChangeArg(portToDelete, portToDelete.Config);
             manager.Router.RemovePort(portToDelete);
         }
+
         if (string.IsNullOrWhiteSpace(action.Value))
         {
             throw new ArgumentException("Invalid port configuration");
         }
+
         var newConfig = new ProtocolPortConfig(new Uri(action.Value));
         manager.Router.AddPort(newConfig.AsUri());
         return ValueTask.FromResult(rollback);
@@ -80,11 +83,13 @@ public class ProtocolPortCommand(IDeviceManager manager) : NoContextCommand
         {
             throw new ArgumentException("Invalid port configuration");
         }
+
         var config = new ProtocolPortConfig(new Uri(action.Value));
         if (string.IsNullOrWhiteSpace(config.Name))
         {
             config.Name = $"New {config.Scheme} port {manager.Router.Ports.Length + 1}";
         }
+
         var newPort = manager.Router.AddPort(config.AsUri());
         return new ValueTask<ICommandArg?>(CreateRemoveArg(newPort));
     }

@@ -48,10 +48,12 @@ public class SerialPortViewModel : PortViewModel
         {
             return new Exception("Baud rate is required");
         }
+
         if (int.TryParse(arg, out int baudRate) == false)
         {
             return new Exception("Invalid baud rate: must be a number");
         }
+
         if (baudRate < 0)
         {
             return new Exception("Invalid baud rate: must be a positive number");
