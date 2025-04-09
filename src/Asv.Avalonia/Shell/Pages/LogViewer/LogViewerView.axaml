@@ -11,31 +11,30 @@
         <Grid RowDefinitions="Auto,8,*,8,Auto">
             <DockPanel Grid.Row="0">
                 <DropDownButton Margin="4 0 0 0" DockPanel.Dock="Right">
-                    <Button.Flyout>
+                    <DropDownButton.Flyout>
                         <Flyout>
                             <StackPanel Spacing="8">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <Button Command="{CompiledBinding SelectAllThreadIdsCommand}">
-                                        <avalonia:MaterialIcon Kind="CheckboxMultipleMarked" />
-                                    </Button>
-                                    <Button Command="{CompiledBinding DeselectAllThreadIdsCommand}">
-                                        <avalonia:MaterialIcon Kind="CheckboxMultipleBlank" />
-                                    </Button>
+                                    <!-- <Button Command="{CompiledBinding SelectAllThreadIdsCommand}"> -->
+                                    <!--     <avalonia:MaterialIcon Kind="CheckboxMultipleMarked" /> -->
+                                    <!-- </Button> -->
+                                    <!-- <Button Command="{CompiledBinding DeselectAllThreadIdsCommand}"> -->
+                                    <!--     <avalonia:MaterialIcon Kind="CheckboxMultipleBlank" /> -->
+                                    <!-- </Button> -->
                                 </StackPanel>
                                 <ListBox MaxHeight="150" SelectionMode="Multiple, Toggle"
-                                         SelectionChanged="ListBox_OnSelectionChanged"
                                          ItemsSource="{CompiledBinding AvailableThreadIds}"
                                          SelectedItems="{CompiledBinding SelectedThreadIds}" />
                             </StackPanel>
                         </Flyout>
-                    </Button.Flyout>
+                    </DropDownButton.Flyout>
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <avalonia:MaterialIcon Kind="ConsoleLine" />
                         <TextBlock Text="{x:Static gui:RS.LogViewerView_Threads}" />
                     </StackPanel>
                 </DropDownButton>
                 <DropDownButton Margin="4 0" DockPanel.Dock="Right">
-                    <Button.Flyout>
+                    <DropDownButton.Flyout>
                         <Flyout>
                             <StackPanel Spacing="8">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
@@ -47,12 +46,11 @@
                                     </Button>
                                 </StackPanel>
                                 <ListBox MaxHeight="150" SelectionMode="Multiple, Toggle"
-                                         SelectionChanged="ListBox_OnSelectionChanged"
                                          ItemsSource="{CompiledBinding AvailableCategories}"
                                          SelectedItems="{CompiledBinding SelectedCategories}" />
                             </StackPanel>
                         </Flyout>
-                    </Button.Flyout>
+                    </DropDownButton.Flyout>
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <avalonia:MaterialIcon Kind="Graph" />
                         <TextBlock Text="{x:Static gui:RS.LogViewerView_Categories}" />
@@ -71,7 +69,6 @@
                                     </Button>
                                 </StackPanel>
                                 <ListBox MaxHeight="150" SelectionMode="Multiple, Toggle"
-                                         SelectionChanged="ListBox_OnSelectionChanged"
                                          ItemsSource="{CompiledBinding AvailableLevels}"
                                          SelectedItems="{CompiledBinding SelectedLevels}" />
                             </StackPanel>
@@ -110,6 +107,9 @@
                                     <Grid.Styles>
                                         <Style Selector="TextBlock">
                                             <Setter Property="FontFamily" Value="Consolas" />
+                                        </Style>
+                                        <Style Selector="TextBlock">
+                                            <Setter Property="MaxHeight" Value="40"/>
                                         </Style>
                                         <Style Selector="TextBlock.Trace">
                                             <Setter Property="Foreground" Value="#6D788C" />
@@ -152,7 +152,7 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition SharedSizeGroup="Icon" Width="Auto" />
                                         <ColumnDefinition SharedSizeGroup="Timestamp" Width="Auto" />
-                                        <ColumnDefinition SharedSizeGroup="Class" Width="Auto" />
+                                        <ColumnDefinition SharedSizeGroup="Class" Width="*" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Name="Icon" Margin="4 0" Grid.Column="0" Spacing="8"
@@ -167,7 +167,6 @@
                                                                Classes.Fatal="{Binding IsFatal}"
                                                                HorizontalAlignment="Center"
                                                                Kind="{CompiledBinding Kind}" />
-                                        
                                     </StackPanel>
                                     <TextBlock Classes.Debug="{Binding IsDebug}"
                                                Classes.Trace="{Binding IsTrace}"
@@ -177,7 +176,7 @@
                                                Classes.Fatal="{Binding IsFatal}"
                                                Name="Timestamp" Grid.Column="1" Margin="4 0" VerticalAlignment="Top"
                                                HorizontalAlignment="Center"
-                                               Text="{CompiledBinding Timestamp}" TextWrapping="Wrap" />
+                                               Text="{CompiledBinding Timestamp}" TextTrimming="CharacterEllipsis" />
                                     <TextBlock Classes.Debug="{Binding IsDebug}"
                                                Classes.Trace="{Binding IsTrace}"
                                                Classes.Information="{Binding IsInfo}"
@@ -186,7 +185,7 @@
                                                Classes.Fatal="{Binding IsFatal}"
                                                Name="Class" Grid.Column="2" Margin="4 0" VerticalAlignment="Top"
                                                HorizontalAlignment="Left"
-                                               Text="{CompiledBinding Category}" TextWrapping="Wrap" />
+                                               Text="{CompiledBinding Category}" TextTrimming="CharacterEllipsis" />
                                     <TextBlock Classes.Debug="{Binding IsDebug}"
                                                Classes.Trace="{Binding IsTrace}"
                                                Classes.Information="{Binding IsInfo}"
@@ -194,15 +193,13 @@
                                                Classes.Error="{Binding IsError}"
                                                Classes.Fatal="{Binding IsFatal}"
                                                Name="Message" Grid.Column="3" Margin="4 0"
-                                               Text="{CompiledBinding Message}" TextWrapping="WrapWithOverflow" />
+                                               Text="{CompiledBinding Message}"  TextTrimming="CharacterEllipsis"/>
                                 </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ListBox>
                 </ScrollViewer>
             </DockPanel>
-
-
             <DockPanel Grid.Row="4" LastChildFill="True">
                 <Button Command="{CompiledBinding ClearLogsCommand}" VerticalAlignment="Stretch" Margin="0 0 4 0"
                         DockPanel.Dock="Left">

@@ -1,22 +1,12 @@
 ﻿using System.Composition;
 using Asv.Avalonia.Comparers;
 using Asv.Common;
-using Avalonia.Controls;
-using Avalonia.Layout;
-using Avalonia.Media;
 using Material.Icons;
-using Material.Icons.Avalonia;
 using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;
 
 namespace Asv.Avalonia;
-
-public enum SortDirection
-{
-    Up,
-    Dowm,
-}
 
 [ExportPage(PageId)]
 public class LogViewerViewModel : PageViewModel<LogViewerViewModel>, IPage
@@ -26,23 +16,20 @@ public class LogViewerViewModel : PageViewModel<LogViewerViewModel>, IPage
     public const MaterialIconKind PageIcon = MaterialIconKind.Journal;
 
     private readonly ILogService _log;
-    private readonly INavigationService _navigationService;
+    private readonly IDialogService _dialogService;
 
     private readonly HashSet<LogLevel> _logLevels;
     private readonly HashSet<string> _logCategories;
     private readonly HashSet<string> _logThreadIds;
 
-    private readonly ObservableList<LogItemViewModel> _logItems;
-    
-    // public LogViewerViewModel()
-    //     : this(DesignTime.CommandService, DesignTime.LogService, DesignTime.Navigation)
-    // {
-    // }
+    private readonly List<LogItemViewModel> _logItems;
+    private readonly ObservableList<LogItemViewModel> _writableLogItems;
+
     [ImportingConstructor]
-    public LogViewerViewModel(ICommandService cmd, ILogService log, INavigationService navigationService)
+    public LogViewerViewModel(ICommandService cmd, ILogService log, IDialogService dialogService)
         : base(PageId, cmd)
     {
-        _navigationService = navigationService;
+        _dialogService = dialogService;
         _log = log;
 
         Icon.OnNext(MaterialIconKind.Journal);
@@ -52,29 +39,12 @@ public class LogViewerViewModel : PageViewModel<LogViewerViewModel>, IPage
         _logCategories = new HashSet<string>();
         _logThreadIds = new HashSet<string>();
 
-        _logItems = new ObservableList<LogItemViewModel>();
-
-        using (var logView = _logItems.CreateView(x => x))
-        {
-            logView.AttachFilter(FilterItem);
-            _logItems.Sort(new LogItemDescendingComparer());
-            LogItemsView = logView.ToNotifyCollectionChanged();
-        }
-
-        _log.LoadItemsFromLogFile()
-            .ForEach(x => _logItems.Add(new LogItemViewModel(x.Timestamp.Ticks, x)));
-
-        _logItems.Select(_ => _.Level).ForEach(level => _logLevels.Add(level));
-        _logItems.Select(_ => _.Category).ForEach(category => _logCategories.Add(category));
-
+        _logItems = new List<LogItemViewModel>();
         PageSize = new BindableReactiveProperty<int>(PageSizes[0]);
         FilteredItemsCount = new BindableReactiveProperty<int>();
-
         TotalItemsCount = new BindableReactiveProperty<int>(_logItems.Count);
-        TotalPagesCount = new BindableReactiveProperty<int>(
-            (int)Math.Ceiling((double)TotalItemsCount.Value / PageSize.Value)
-        );
-
+        TotalPagesCount = new BindableReactiveProperty<int>(TotalItemsCount.Value / PageSize.Value);
+        TotalItemsCount.Subscribe(_ => TotalPagesCount.Value = _ / PageSize.Value);
         SelectedLevels = new ObservableList<LogLevel>()
             .CreateWritableView(x => x)
             .ToWritableNotifyCollectionChanged();
@@ -84,45 +54,14 @@ public class LogViewerViewModel : PageViewModel<LogViewerViewModel>, IPage
         SelectedThreadIds = new ObservableList<string>()
             .CreateWritableView(x => x)
             .ToWritableNotifyCollectionChanged();
-
         AvailableLevels.ForEach(level => SelectedLevels.Add(level));
         AvailableCategories.ForEach(cls => SelectedCategories.Add(cls));
         AvailableThreadIds.ForEach(thread => SelectedThreadIds.Add(thread));
-
         SearchText = new BindableReactiveProperty<string>();
         CurrentPageIndex = new BindableReactiveProperty<int>();
-
         SearchText.Subscribe(_ => CurrentPageIndex.OnNext(1));
-
-        Observable
-            .CombineLatest(PageSize, FilteredItemsCount)
-            .Subscribe(tuple =>
-            {
-                var pageSize = tuple[0];
-                var filteredCount = tuple[1];
-
-                TotalPagesCount.OnNext((int)Math.Ceiling((double)filteredCount / pageSize));
-                if (CurrentPageIndex.Value > TotalPagesCount.Value)
-                {
-                    CurrentPageIndex.OnNext(TotalPagesCount.Value);
-                }
-
-                if (CurrentPageIndex.Value < MinPageIndex)
-                {
-                    CurrentPageIndex.OnNext(MinPageIndex);
-                }
-            });
-
         MoveToPreviousPageCommand = new ReactiveCommand(_ => MoveToPreviousPage());
-        Observable
-            .CombineLatest(CurrentPageIndex, TotalPagesCount)
-            .Subscribe(x => MoveToPreviousPageCommand.ChangeCanExecute(x[0] > MinPageIndex));
-
         MoveToNextPageCommand = new ReactiveCommand(_ => MoveToNextPage());
-        Observable
-            .CombineLatest(CurrentPageIndex, TotalPagesCount)
-            .Subscribe(x => MoveToPreviousPageCommand.ChangeCanExecute(x[0] > x[1]));
-
         ClearSearchTextCommand = new ReactiveCommand(_ => SearchText.OnNext(string.Empty));
         SearchText.Subscribe(text =>
             ClearSearchTextCommand.ChangeCanExecute(!string.IsNullOrEmpty(text))
@@ -144,28 +83,75 @@ public class LogViewerViewModel : PageViewModel<LogViewerViewModel>, IPage
         DeselectAllLevelsCommand = new ReactiveCommand(_ => SelectedLevels.Clear());
 
         ClearLogsCommand = new ReactiveCommand(ClearLogs);
+        _log.LoadItemsFromLogFile()
+            .ForEach(x => _logItems.Add(new LogItemViewModel(x.Timestamp.Ticks, x)));
+        _logItems.Select(_ => _.Level).ForEach(level => _logLevels.Add(level));
+        _logItems.Select(_ => _.Category).ForEach(category => _logCategories.Add(category));
+        TotalItemsCount.Value = _logItems.Count;
+        _log.OnMessage.Subscribe(message =>
+        {
+            if (message is not null)
+            {
+                _logItems.Add(new LogItemViewModel(message.Timestamp.Ticks, message));
+            }
+        });
+        _writableLogItems = new ObservableList<LogItemViewModel>(_logItems);
+        var logView = _writableLogItems.CreateWritableView(x => x);
+        logView.DisposeRemovedViewItems();
+       
+         logView.AttachFilter(FilterItem);
+        _writableLogItems.SetRoutableParent(this, false);
+        _writableLogItems.Sort(LogItemDescendingComparer.Instance);
+        LogItemsView = logView.ToWritableNotifyCollectionChanged();
+        LogItemsView.SyncCollection(
+            logView.Skip(PageSize.Value * CurrentPageIndex.Value).Take(PageSize.Value),
+            a => LogItemsView.Remove(a), 
+            x => LogItemsView.Add(x), LogItemDescendingComparer.Instance);
+        Observable
+            .CombineLatest(PageSize, CurrentPageIndex)
+            .Subscribe(tuple =>
+            {
+                var pageSize = tuple[0];
+                var currentIndex = tuple[1];
+
+                if (FilteredItemsCount.Value != 0)
+                {
+                    TotalPagesCount.OnNext(FilteredItemsCount.Value / pageSize);
+                }
+
+                if (currentIndex < MinPageIndex)
+                {
+                    CurrentPageIndex.OnNext(MinPageIndex);
+                }
+
+                if (currentIndex > TotalPagesCount.Value)
+                {
+                    CurrentPageIndex.OnNext(TotalPagesCount.Value);
+                }
+
+                if (_writableLogItems.Count != 0 )
+                {
+                    _writableLogItems.Clear();     
+                }
+               
+                _writableLogItems.AddRange(_logItems.Skip(PageSize.Value * CurrentPageIndex.Value).Take(PageSize.Value));
+            });
     }
 
     public static List<int> PageSizes => [25, 50, 100, 200];
-
     public IEnumerable<LogLevel> AvailableLevels => _logLevels;
     public IEnumerable<string> AvailableCategories => _logCategories;
     public IEnumerable<string> AvailableThreadIds => _logThreadIds;
-
-    public BindableReactiveProperty<int> TotalItemsCount { get; set; }
-    public BindableReactiveProperty<int> FilteredItemsCount { get; set; }
-    public BindableReactiveProperty<string> SearchText { get; set; }
-    public BindableReactiveProperty<int> CurrentPageIndex { get; set; }
-    public BindableReactiveProperty<int> TotalPagesCount { get; set; }
-    public BindableReactiveProperty<int> PageSize { get; set; }
-    public BindableReactiveProperty<SortDirection> SortDirectionType { get; set; }
-
+    public BindableReactiveProperty<int> TotalItemsCount { get; }
+    public BindableReactiveProperty<int> FilteredItemsCount { get; }
+    public BindableReactiveProperty<string> SearchText { get; }
+    public BindableReactiveProperty<int> CurrentPageIndex { get; }
+    public BindableReactiveProperty<int> TotalPagesCount { get; }
+    public BindableReactiveProperty<int> PageSize { get; }
     public NotifyCollectionChangedSynchronizedViewList<LogItemViewModel> LogItemsView { get; set; }
-
     public NotifyCollectionChangedSynchronizedViewList<LogLevel> SelectedLevels { get; set; }
     public NotifyCollectionChangedSynchronizedViewList<string> SelectedCategories { get; set; }
     public NotifyCollectionChangedSynchronizedViewList<string> SelectedThreadIds { get; set; }
-
     public ReactiveCommand SelectAllThreadIdsCommand { get; }
     public ReactiveCommand DeselectAllThreadIdsCommand { get; }
     public ReactiveCommand SelectAllCategoriesCommand { get; }
@@ -182,10 +168,13 @@ public class LogViewerViewModel : PageViewModel<LogViewerViewModel>, IPage
         var containsMessage =
             string.IsNullOrEmpty(SearchText.Value)
             || item.Message.Contains(SearchText.Value, StringComparison.CurrentCultureIgnoreCase);
-        var containsLevel = SelectedLevels.Contains(item.Level);
-        var containsClass = SelectedCategories.Contains(item.Category);
+        FilteredItemsCount.Value = TotalItemsCount.Value;
 
-        return containsMessage && containsLevel && containsClass;
+        // var containsLevel = SelectedLevels.Contains(item.Level);
+        // var containsClass = SelectedCategories.Contains(item.Category);
+        return containsMessage;
+
+        // && containsLevel && containsClass;
     }
 
     private void MoveToPreviousPage()
@@ -200,49 +189,19 @@ public class LogViewerViewModel : PageViewModel<LogViewerViewModel>, IPage
 
     private async ValueTask ClearLogs(Unit unit, CancellationToken ct)
     {
-        var titlePanel = new StackPanel
-        {
-            Orientation = Orientation.Horizontal,
-            Spacing = 8,
-            Children =
-            {
-                new MaterialIcon
-                {
-                    Foreground = new SolidColorBrush(Colors.Yellow),
-                    Height = 20,
-                    Width = 20,
-                    Kind = MaterialIconKind.Warning,
-                },
-                new TextBlock { Text = RS.LogViewerViewModel_ClearDialog_Title },
-            },
-        };
-
-        var confirmDialog = new ContentDialog(_navigationService)
-        {
-            Title = titlePanel,
-            Content = RS.LogViewerViewModel_ClearDialog_Content,
-            PrimaryButtonText = RS.LogViewerViewModel_ClearDialog_PrimaryButton,
-            CloseButtonText = RS.LogViewerViewModel_ClearDialog_CloseButton,
-        };
-
-        var result = await confirmDialog.ShowAsync();
-
-        if (result is ContentDialogResult.Primary)
+        var result = await _dialogService.ShowYesNoDialog(RS.LogViewerViewModel_ClearDialog_Title,
+            RS.LogViewerViewModel_ClearDialog_Content);
+        if (result)
         {
             _logItems.Clear();
             _log.DeleteLogFile();
             _log.Warning(nameof(LogViewerViewModel), "Log have been cleared!");
         }
     }
-
-    public override ValueTask<IRoutable> Navigate(NavigationId id)
-    {
-        return ValueTask.FromResult<IRoutable>(this);
-    }
-
+    
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
-        return [];
+        return _logItems;
     }
 
     protected override void AfterLoadExtensions()

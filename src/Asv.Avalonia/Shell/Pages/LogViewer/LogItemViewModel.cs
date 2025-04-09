@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 namespace Asv.Avalonia;
 
 public class LogItemViewModel(long itemIndex, LogMessage msg)
-    : DisposableViewModel($"log_item[{itemIndex}]")
+    : RoutableViewModel($"log_item{itemIndex}")
 {
     public long Index { get; } = itemIndex;
 
@@ -31,4 +31,8 @@ public class LogItemViewModel(long itemIndex, LogMessage msg)
     public bool IsWarning { get; } = msg.LogLevel == LogLevel.Warning;
     public bool IsError { get; } = msg.LogLevel == LogLevel.Error;
     public bool IsFatal { get; } = msg.LogLevel == LogLevel.Critical;
+    public override IEnumerable<IRoutable> GetRoutableChildren()
+    {
+        return [];
+    }
 }

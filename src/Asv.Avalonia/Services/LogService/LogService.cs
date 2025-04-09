@@ -1,3 +1,4 @@
+using System.Composition;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using R3;
@@ -10,13 +11,57 @@ public class LogServiceConfig
     public string LogFolder { get; set; } = "logs";
 }
 
-public class LogService : ILogService
+[Export(typeof(ILogService))]
+[Shared]
+public class LogService : ILogService, IExportable
 {
     private readonly ILoggerFactory _factory;
     private readonly ReactiveProperty<LogMessage?> _onMessage = new();
     private readonly ILogger<LogService> _logger;
     private readonly string _logsFolder;
+    
+    [ImportingConstructor]
+    public LogService()
+    {
+        _logsFolder = Path.Combine(AppContext.BaseDirectory, "logs");
+        if (!Directory.Exists(_logsFolder))
+        {
+            Directory.CreateDirectory(_logsFolder);
+        }
 
+        _factory = LoggerFactory.Create(builder =>
+        {
+            builder.ClearProviders();
+            builder.SetMinimumLevel(LogLevel.Information);
+            builder.AddZLoggerRollingFile(options =>
+            {
+                options.FilePathSelector = (dt, index) =>
+                    $"{_logsFolder}/{dt:yyyy-MM-dd}_{index}.logs";
+                options.UseJsonFormatter();
+                options.RollingSizeKB = 1_000_000;
+            });
+            if (true)
+            {
+                builder.AddZLoggerConsole(options =>
+                {
+                    options.IncludeScopes = true;
+                    options.OutputEncodingToUtf8 = false;
+                    options.UsePlainTextFormatter(formatter =>
+                    {
+                        formatter.SetPrefixFormatter(
+                            $"{0:HH:mm:ss.fff} | ={1:short}= | {2, -40} ",
+                            (in MessageTemplate template, in LogInfo info) =>
+                                template.Format(info.Timestamp, info.LogLevel, info.Category)
+                        );
+
+                        // formatter.SetExceptionFormatter((writer, ex) => Utf8StringInterpolation.Utf8String.Format(writer, $"{ex.Message}"));
+                    });
+                });
+            }
+        });
+        _logger = _factory.CreateLogger<LogService>();
+    }
+    
     public LogService(string logFolder, int rollingSizeKb, LogLevel minLevel, bool logToConsole)
     {
         _logsFolder = logFolder;
@@ -140,4 +185,6 @@ public class LogService : ILogService
         _onMessage.Dispose();
         _factory.Dispose();
     }
+
+    public IExportInfo Source => SystemModule.Instance;
 }

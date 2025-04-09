@@ -2,9 +2,7 @@
 using System.Diagnostics;
 using Asv.Cfg;
 using Asv.Common;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.LogicalTree;
 using Microsoft.Extensions.Logging;

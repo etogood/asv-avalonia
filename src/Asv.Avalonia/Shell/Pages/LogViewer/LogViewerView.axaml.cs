@@ -11,12 +11,5 @@ public partial class LogViewerView : UserControl
     {
         InitializeComponent();
     }
-
-    private void ListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
-    {
-        if (DataContext is LogViewerViewModel viewModel)
-        {
-            //viewModel.UpdatePage();
-        }
-    }
+    
 }
