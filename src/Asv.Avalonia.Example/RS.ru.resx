@@ -71,8 +71,65 @@
     <data name="ParamPageViewModel_DataLossDialog_CloseButtonText" xml:space="preserve">
         <value>Отмена</value>
     </data>
+    <data name="Unit_Byte_Abbreviation" xml:space="preserve">
+        <value>байт</value>
+    </data>
+    <data name="Unit_Gigabyte_Abbreviation" xml:space="preserve">
+        <value>ГБ</value>
+    </data>
+    <data name="Unit_Kilobyte_Abbreviation" xml:space="preserve">
+        <value>КБ</value>
+    </data>
+    <data name="Unit_Megabyte_Abbreviation" xml:space="preserve">
+        <value>МБ</value>
+    </data>
+    <data name="Unit_Terabyte_Abbreviation" xml:space="preserve">
+        <value>ТБ</value>
+    </data>
+    <data name="FileBrowserViewModel_UploadingDialog_Title" xml:space="preserve">
+        <value>Выгрузка</value>
+    </data>
+    <data name="FileBrowserViewModel_UploadingDialog_Message" xml:space="preserve">
+        <value>Вы хотите загрузить файл '{0}' на устройство?</value>
+    </data>
+    <data name="FileBrowserViewModel_DownloadDialog_Title" xml:space="preserve">
+        <value>Загрузка</value>
+    </data>
+    <data name="FileBrowserViewModel_DownloadDialog_Message" xml:space="preserve">
+        <value>Вы хотите скачать файл '{0}'?</value>
+    </data>
+    <data name="FileBrowserViewModel_FileDownloadedSuccessfully" xml:space="preserve">
+        <value>Файл успешно загружен: {0}</value>
+    </data>
+    <data name="FileBrowserViewModel_RemoveDialog_Title" xml:space="preserve">
+        <value>Удаление</value>
+    </data>
+    <data name="FileBrowserViewModel_RemoveDialog_Message" xml:space="preserve">
+        <value>Вы хотите удалить элемент?</value>
+    </data>
+    <data name="FileBrowserViewModel_BurstDownloadDialog_Title" xml:space="preserve">
+        <value>Загрузка (пакетная)</value>
+    </data>
+    <data name="FileBrowserViewModel_BurstDownloadDialog_PrimaryButtonText" xml:space="preserve">
+        <value>Загрузить</value>
+    </data>
+    <data name="FileBrowserViewModel_BurstDownloadDialog_SecondaryButtonText" xml:space="preserve">
+        <value>Отмена</value>
+    </data>
     <data name="MavParamsPageViewModel_DeviceName_Unknown" xml:space="preserve">
         <value>Неизвестно</value>
+    </data>
+    <data name="FileBrowserView_Watermark_Local" xml:space="preserve">
+        <value>Локальные файлы</value>
+    </data>
+    <data name="FileBrowserView_Watermark_Remote" xml:space="preserve">
+        <value>Удалённые файлы</value>
+    </data>
+    <data name="FileBrowserView_Button_Download_Content" xml:space="preserve">
+        <value>Загрузить</value>
+    </data>
+    <data name="FileBrowserView_Button_BurstDownload_Content" xml:space="preserve">
+        <value>Загрузить (пакетами)</value>
     </data>
     <data name="Not_Available" xml:space="preserve">
         <value>Н/Д</value>
