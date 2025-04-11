@@ -534,4 +534,10 @@
     <data name="ChangeThemeCommand_CommandInfo_Name" xml:space="preserve">
         <value>Сменить тему</value>
     </data>
+    <data name="ChangeBoolPropertyCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Измнить свойство типа бул</value>
+    </data>
+    <data name="ChangeBoolPropertyCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда меняет значение свойства с типом бул</value>
+    </data>
 </root>

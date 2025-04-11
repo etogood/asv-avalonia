@@ -1,36 +1,47 @@
 using System;
 using System.Collections.Generic;
 using System.Composition;
+using Material.Icons;
 using R3;
 
 namespace Asv.Avalonia.Example;
 
 [ExportPage(PageId)]
-public class TestUnitsPageViewModel : PageViewModel<TestUnitsPageViewModel>
+public class TestHistoryPropertiesPageViewModel : PageViewModel<TestHistoryPropertiesPageViewModel>
 {
     public const string PageId = "test.history.properties";
+    public const MaterialIconKind PageIcon = MaterialIconKind.TestTube;
 
-    private ReactiveProperty<double> _speed;
-    private ReactiveProperty<string?> _stringWithoutValidation;
-    private ReactiveProperty<string?> _stringWithOneValidation;
-    private ReactiveProperty<string?> _stringWithManyValidations;
+    private readonly ReactiveProperty<double> _speed;
+    private readonly ReactiveProperty<bool> _isTurnedOn;
+    private readonly ReactiveProperty<string?> _stringWithoutValidation;
+    private readonly ReactiveProperty<string?> _stringWithOneValidation;
+    private readonly ReactiveProperty<string?> _stringWithManyValidations;
 
-    public TestUnitsPageViewModel()
+    public TestHistoryPropertiesPageViewModel()
         : this(DesignTime.UnitService, DesignTime.CommandService)
     {
         DesignTime.ThrowIfNotDesignMode();
     }
 
     [ImportingConstructor]
-    public TestUnitsPageViewModel(IUnitService unit, ICommandService commandService)
+    public TestHistoryPropertiesPageViewModel(IUnitService unit, ICommandService commandService)
         : base(PageId, commandService)
     {
         Title.OnNext("Test History Properties");
         var un = unit.Units[VelocityBase.Id];
         _speed = new ReactiveProperty<double>(double.NaN);
+        _isTurnedOn = new ReactiveProperty<bool>();
         _stringWithoutValidation = new ReactiveProperty<string?>();
         _stringWithOneValidation = new ReactiveProperty<string?>();
         _stringWithManyValidations = new ReactiveProperty<string?>();
+
+        IsTurnedOn = new HistoricalBoolProperty($"{PageId}.{nameof(Speed)}", _isTurnedOn)
+        {
+            Parent = this,
+        };
+
+        TurnOn = new ReactiveCommand(_ => IsTurnedOn.ViewValue.Value = !IsTurnedOn.ViewValue.Value);
 
         Speed = new HistoricalUnitProperty($"{PageId}.{nameof(Speed)}", _speed, un)
         {
@@ -92,12 +103,14 @@ public class TestUnitsPageViewModel : PageViewModel<TestUnitsPageViewModel>
         };
     }
 
+    public ReactiveCommand TurnOn { get; }
     public HistoricalUnitProperty Speed { get; }
+    public HistoricalBoolProperty IsTurnedOn { get; }
     public HistoricalStringProperty StringPropWithoutValidation { get; }
     public HistoricalStringProperty StringPropWithOneValidation { get; }
     public HistoricalStringProperty StringPropWithManyValidations { get; }
 
-    protected override TestUnitsPageViewModel GetContext()
+    protected override TestHistoryPropertiesPageViewModel GetContext()
     {
         return this;
     }
@@ -106,10 +119,30 @@ public class TestUnitsPageViewModel : PageViewModel<TestUnitsPageViewModel>
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
+        yield return IsTurnedOn;
         yield return Speed;
         yield return StringPropWithoutValidation;
         yield return StringPropWithOneValidation;
     }
 
     public override IExportInfo Source => SystemModule.Instance;
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            TurnOn.Dispose();
+            _speed.Dispose();
+            _isTurnedOn.Dispose();
+            _stringWithoutValidation.Dispose();
+            _stringWithOneValidation.Dispose();
+            _stringWithManyValidations.Dispose();
+            Speed.Dispose();
+            StringPropWithoutValidation.Dispose();
+            StringPropWithOneValidation.Dispose();
+            StringPropWithManyValidations.Dispose();
+        }
+
+        base.Dispose(disposing);
+    }
 }

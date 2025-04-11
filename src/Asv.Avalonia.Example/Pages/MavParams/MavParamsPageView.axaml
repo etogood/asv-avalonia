@@ -19,7 +19,7 @@
         <DockPanel Margin="5" Grid.Column="0" LastChildFill="True">
             <DockPanel DockPanel.Dock="Top" LastChildFill="True">
                 <ToggleButton ToolTip.Tip="{x:Static example:RS.ParametersEditorPageView_StarsToggleButton_ToolTip}"
-                              IsChecked="{CompiledBinding ShowStaredOnly.Value}" Margin="4 0 0 0" DockPanel.Dock="Right" Width="30"
+                              IsChecked="{CompiledBinding ShowStaredOnly.ViewValue.Value}" Margin="4 0 0 0" DockPanel.Dock="Right" Width="30"
                               Height="30">
                     <avalonia:MaterialIcon Kind="Star" />
                 </ToggleButton>
@@ -32,7 +32,7 @@
                         Height="30">
                     <avalonia:MaterialIcon Kind="PinOff" />
                 </Button>
-                <TextBox x:Name="SearchBox" Text="{Binding SearchText.Value}" Margin="4 0 0 0"
+                <TextBox x:Name="SearchBox" Text="{Binding SearchText.ViewValue.Value}" Margin="4 0 0 0"
                          Watermark="{x:Static example:RS.ParametersEditorPageViewModel_Search}">
                     <TextBox.InnerRightContent>
                         <Button Command="{Binding Clear}" Background="Transparent" BorderThickness="0" Width="30"
@@ -52,13 +52,13 @@
                         <DataTemplate DataType="example:ParamItemViewModel">
                             <DockPanel Background="Transparent" Name="ItemDockPanel" LastChildFill="True" DoubleTapped="ItemDockPanel_DoubleTapped">
                                 <ToggleButton ToolTip.Tip="{x:Static example:RS.ParametersEditorPageView_StarButton_ToolTip}"
-                                              IsChecked="{Binding IsStarred.Value}" Margin="10 0 0 0"
+                                              IsChecked="{Binding IsStarred.ViewValue.Value}" Margin="10 0 0 0"
                                               BorderThickness="0" DockPanel.Dock="Right"
                                               IsEnabled="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
                                               DoubleTapped="Button_DoubleTapped">
                                     <avalonia:MaterialIcon Width="20" Height="20" Kind="{Binding StarKind.Value}" />
                                 </ToggleButton>
-                                <avalonia:MaterialIcon IsVisible="{Binding IsPinned.Value}" Width="20"
+                                <avalonia:MaterialIcon IsVisible="{Binding IsPinned.ViewValue.Value}" Width="20"
                                                        Margin="10 0 0 0" DockPanel.Dock="Right" Kind="Pin" />
                                 <avalonia:MaterialIcon IsVisible="{Binding !IsSynced.Value}" Width="20"
                                                        Margin="10 0 0 0" DockPanel.Dock="Right" Kind="FloppyDisk"

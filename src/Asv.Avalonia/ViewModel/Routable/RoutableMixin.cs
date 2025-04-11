@@ -16,16 +16,9 @@ public static class RoutableMixin
     )
         where TView : class, IRoutable
     {
-        var sub1 = src.ObserveAdd()
-            .Subscribe(x =>
-            {
-                x.Value.View.Parent = parent;
-            });
-        var sub2 = src.ObserveRemove()
-            .Subscribe(x =>
-            {
-                x.Value.View.Parent = null;
-            });
+        src.ForEach(item => item.Parent = parent);
+        var sub1 = src.ObserveAdd().Subscribe(x => x.Value.View.Parent = parent);
+        var sub2 = src.ObserveRemove().Subscribe(x => x.Value.View.Parent = null);
         return new CompositeDisposable(sub1, sub2);
     }
 

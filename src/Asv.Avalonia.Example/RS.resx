@@ -64,7 +64,7 @@
         <value>Star this parameter</value>
     </data>
     <data name="ParamPageViewModel_DataLossDialog_Content" xml:space="preserve">
-        <value>You're trying to open another menu folder, but you have unsaved changes in the current one. Do you want to save them?</value>
+        <value>You have unsaved changes. Do you want to save them?</value>
     </data>
     <data name="ParamPageViewModel_DataLossDialog_Title" xml:space="preserve">
         <value>Potential data loss warning</value>

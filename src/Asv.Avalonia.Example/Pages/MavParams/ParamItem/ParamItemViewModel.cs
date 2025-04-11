@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Asv.Common;
 using Asv.Mavlink;
 using Asv.Mavlink.Common;
@@ -20,10 +21,15 @@ public class ParamItemViewModelConfig
     public bool IsPinned { get; set; }
 }
 
-public class ParamItemViewModel : RoutableViewModel // TODO: Сделать все свойства и команды рутбл
+public class ParamItemViewModel : RoutableViewModel
 {
     private readonly ILogger _log;
     private readonly ParamItem _paramItem;
+    private readonly ReactiveProperty<string?> _value;
+    private readonly ReactiveProperty<bool> _isPinned;
+    private readonly ReactiveProperty<bool> _isStarred;
+    private readonly ReactiveProperty<bool> _isWriting;
+    private readonly ReactiveProperty<bool> _isUpdate;
     private bool _internalUpdate;
 
     public ParamItemViewModel()
@@ -31,7 +37,6 @@ public class ParamItemViewModel : RoutableViewModel // TODO: Сделать вс
     {
         DesignTime.ThrowIfNotDesignMode();
 
-        // var t = new ParamItem();
         Name = "param" + Guid.NewGuid();
         DisplayName = Name;
         Description = "Design description";
@@ -61,15 +66,25 @@ public class ParamItemViewModel : RoutableViewModel // TODO: Сделать вс
         IsRebootRequired = paramItem.Info.IsRebootRequired;
         var fromCfg = config.Params.FirstOrDefault(p => p.Name == Name);
 
-        IsUpdate = new BindableReactiveProperty<bool>();
-        IsWriting = new BindableReactiveProperty<bool>();
-        IsPinned = new BindableReactiveProperty<bool>();
-        IsStarred = new BindableReactiveProperty<bool>(fromCfg?.IsStarred ?? false);
-        Value = new BindableReactiveProperty<string>();
-        StarKind = new BindableReactiveProperty<MaterialIconKind>();
-        IsSynced = new BindableReactiveProperty<bool>();
+        _isPinned = new ReactiveProperty<bool>();
+        _isStarred = new ReactiveProperty<bool>(fromCfg?.IsStarred ?? false);
+        _value = new ReactiveProperty<string?>();
 
-        PinItem = new ReactiveCommand(_ => IsPinned.Value = !IsPinned.Value);
+        _isUpdate = new BindableReactiveProperty<bool>();
+        _isWriting = new BindableReactiveProperty<bool>();
+        IsPinned = new HistoricalBoolProperty($"{id}.{nameof(IsPinned)}", _isPinned)
+        {
+            Parent = this,
+        };
+        IsStarred = new HistoricalBoolProperty($"{id}.{nameof(IsStarred)}", _isStarred)
+        {
+            Parent = this,
+        };
+        Value = new HistoricalStringProperty($"{id}.{nameof(Value)}", _value) { Parent = this };
+        IsSynced = new BindableReactiveProperty<bool>();
+        StarKind = new BindableReactiveProperty<MaterialIconKind>();
+
+        PinItem = new ReactiveCommand(_ => IsPinned.ViewValue.Value = !IsPinned.ViewValue.Value);
 
         _sub = paramItem.IsSynced.AsObservable().Subscribe(_ => IsSynced.Value = _);
 
@@ -80,7 +95,7 @@ public class ParamItemViewModel : RoutableViewModel // TODO: Сделать вс
                 return;
             }
 
-            Value.Value = param.Type switch
+            Value.ModelValue.Value = param.Type switch
             {
                 MavParamType.MavParamTypeUint8 => ((byte)param).ToString(),
                 MavParamType.MavParamTypeInt8 => ((sbyte)param).ToString(),
@@ -97,11 +112,11 @@ public class ParamItemViewModel : RoutableViewModel // TODO: Сделать вс
                 MavParamType.MavParamTypeReal64 => ((double)param).ToString(
                     CultureInfo.InvariantCulture
                 ),
-                _ => Value.Value,
+                _ => Value.ViewValue.Value,
             };
         });
 
-        _sub2 = Value.Subscribe(val =>
+        _sub2 = Value.ViewValue.Subscribe(val =>
         {
             _internalUpdate = true;
             switch (paramItem.Type)
@@ -191,7 +206,7 @@ public class ParamItemViewModel : RoutableViewModel // TODO: Сделать вс
                 {
                     if (
                         float.TryParse(
-                            val.Replace(",", "."),
+                            val?.Replace(",", "."),
                             CultureInfo.InvariantCulture,
                             out var result
                         )
@@ -210,49 +225,15 @@ public class ParamItemViewModel : RoutableViewModel // TODO: Сделать вс
             _internalUpdate = false;
         });
 
-        Write = new ReactiveCommand(
-            async (_, cancel) =>
-            {
-                try
-                {
-                    IsWriting.Value = true;
-                    await paramItem.Write(cancel);
-                }
-                catch (Exception ex)
-                {
-                    _log.LogError(ex, "Write {Name} error", Name);
-                }
-                finally
-                {
-                    IsWriting.Value = false;
-                }
-            }
-        );
+        Write = new BindableAsyncCommand(WriteParamCommand.Id, this);
 
-        Update = new ReactiveCommand(
-            async (_, cancel) =>
-            {
-                try
-                {
-                    IsUpdate.Value = true;
-                    await paramItem.Read(cancel);
-                }
-                catch (Exception ex)
-                {
-                    _log.LogError(ex, "Read {Name} error", Name);
-                }
-                finally
-                {
-                    IsUpdate.Value = false;
-                }
-            }
-        );
+        Update = new BindableAsyncCommand(UpdateParamCommand.Id, this);
 
-        _sub3 = IsStarred.Subscribe(isStarted =>
+        _sub3 = IsStarred.ViewValue.Subscribe(isStarted =>
             StarKind.Value = isStarted ? MaterialIconKind.Star : MaterialIconKind.StarBorder
         );
 
-        _sub4 = IsStarred.Subscribe(_ =>
+        _sub4 = IsStarred.ViewValue.Subscribe(_ =>
         {
             var existItem = config.Params.FirstOrDefault(__ => __.Name == Name);
 
@@ -264,8 +245,8 @@ public class ParamItemViewModel : RoutableViewModel // TODO: Сделать вс
             config.Params.Add(
                 new ParamItemViewModelConfig
                 {
-                    IsStarred = IsStarred.CurrentValue,
-                    IsPinned = IsPinned.CurrentValue,
+                    IsStarred = IsStarred.ViewValue.CurrentValue,
+                    IsPinned = IsPinned.ViewValue.CurrentValue,
                     Name = Name,
                 }
             );
@@ -274,27 +255,25 @@ public class ParamItemViewModel : RoutableViewModel // TODO: Сделать вс
 
     public string Name { get; }
 
-    public string DisplayName { get; set; }
-    public string Units { get; set; }
-    public ReactiveCommand Update { get; set; }
-    public ReactiveCommand Write { get; }
+    public string DisplayName { get; init; }
+    public string Units { get; }
+    public ICommand Update { get; }
+    public ICommand Write { get; }
     public ReactiveCommand PinItem { get; }
     public string ValueDescription { get; }
     public string Description { get; }
     public bool IsRebootRequired { get; }
-    public BindableReactiveProperty<bool> IsPinned { get; }
     public BindableReactiveProperty<bool> IsSynced { get; }
-    public BindableReactiveProperty<string> Value { get; }
-    public BindableReactiveProperty<bool> IsStarred { get; }
-    private BindableReactiveProperty<bool> IsWriting { get; }
-    private BindableReactiveProperty<bool> IsUpdate { get; }
     public BindableReactiveProperty<MaterialIconKind> StarKind { get; }
+    public HistoricalBoolProperty IsPinned { get; }
+    public HistoricalStringProperty Value { get; }
+    public HistoricalBoolProperty IsStarred { get; }
 
     public bool Filter(string searchText, bool starredOnly)
     {
         if (starredOnly)
         {
-            if (!IsStarred.Value)
+            if (!IsStarred.ViewValue.Value)
             {
                 return false;
             }
@@ -312,26 +291,62 @@ public class ParamItemViewModel : RoutableViewModel // TODO: Сделать вс
     {
         return new ParamItemViewModelConfig
         {
-            IsStarred = IsStarred.Value,
-            IsPinned = IsPinned.Value,
+            IsStarred = IsStarred.ViewValue.Value,
+            IsPinned = IsPinned.ViewValue.Value,
             Name = Name,
         };
     }
 
     public void SetConfig(ParamItemViewModelConfig item)
     {
-        IsStarred.Value = item.IsStarred;
-        IsPinned.Value = item.IsPinned;
+        IsStarred.ViewValue.Value = item.IsStarred;
+        IsPinned.ViewValue.Value = item.IsPinned;
     }
 
-    public async Task WriteParamData(CancellationToken cancel)
+    internal async ValueTask UpdateImpl(CancellationToken cancel)
+    {
+        try
+        {
+            _isUpdate.Value = true;
+            await _paramItem.Read(cancel);
+        }
+        catch (Exception ex)
+        {
+            _log.LogError(ex, "Read {Name} error", Name);
+        }
+        finally
+        {
+            _isUpdate.Value = false;
+        }
+    }
+
+    internal async ValueTask WriteImpl(CancellationToken cancel)
+    {
+        try
+        {
+            _isWriting.Value = true;
+            await _paramItem.Write(cancel);
+        }
+        catch (Exception ex)
+        {
+            _log.LogError(ex, "Write {Name} error", Name);
+        }
+        finally
+        {
+            _isWriting.Value = false;
+        }
+    }
+
+    internal async Task WriteParamData(CancellationToken cancel)
     {
         await _paramItem.Write(cancel);
     }
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
-        return [];
+        yield return IsPinned;
+        yield return IsStarred;
+        yield return Value;
     }
 
     #region Dispose
@@ -351,15 +366,15 @@ public class ParamItemViewModel : RoutableViewModel // TODO: Сделать вс
             _sub2.Dispose();
             _sub3.Dispose();
             _sub4.Dispose();
+            _isPinned.Dispose();
+            _isStarred.Dispose();
+            _isWriting.Dispose();
+            _isUpdate.Dispose();
             IsSynced.Dispose();
             IsStarred.Dispose();
             IsPinned.Dispose();
             Value.Dispose();
-            Update.Dispose();
-            Write.Dispose();
             PinItem.Dispose();
-            IsWriting.Dispose();
-            IsUpdate.Dispose();
             StarKind.Dispose();
         }
 

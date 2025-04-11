@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using R3;
 
 namespace Asv.Avalonia;
@@ -9,7 +8,8 @@ public static class BindableReactivePropertyMixin
         this BindableReactiveProperty<T> prop,
         Func<T, ValueTask<ValidationResult>> validationFunc,
         IRoutable source,
-        bool isForceValidation = false
+        bool isForceValidation = false,
+        AwaitOperation awaitOperation = AwaitOperation.Sequential
     )
     {
         prop.EnableValidation();
@@ -29,7 +29,8 @@ public static class BindableReactivePropertyMixin
                 }
 
                 await source.Rise(new ValidationEvent(source, prop, result));
-            }
+            },
+            awaitOperation
         );
     }
 }
