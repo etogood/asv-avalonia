@@ -546,7 +546,7 @@
         <value>Delete</value>
     </data>
     <data name="LogViewerViewModel_ClearDialog_Content" xml:space="preserve">
-        <value>Are you sure you want to delete the log?</value>
+        <value>Are you sure you want to clear the logs?</value>
     </data>
     <data name="LogViewerViewModel_ClearDialog_CloseButton" xml:space="preserve">
         <value>Cancel</value>
@@ -574,5 +574,17 @@
     </data>
     <data name="LogViewerView_TextBlock_PageItemsCount" xml:space="preserve">
         <value>On page: {0}</value>
+    </data>
+    <data name="LogViewerView_Apply_Filters_Button" xml:space="preserve">
+        <value>Apply Filters</value>
+    </data>
+    <data name="LogViewView_Sources_Text" xml:space="preserve">
+        <value>Sources</value>
+    </data>
+    <data name="LogViewView_Levels_Text" xml:space="preserve">
+        <value>Levels</value>
+    </data>
+    <data name="LogViewerView_Button_Filters" xml:space="preserve">
+        <value>Filters</value>
     </data>
 </root>

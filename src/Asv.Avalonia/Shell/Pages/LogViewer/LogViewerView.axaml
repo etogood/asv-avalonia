@@ -13,7 +13,7 @@
                 <ToggleButton Margin="4 0" DockPanel.Dock="Right" IsChecked="{CompiledBinding IsFiltersVisible.Value}">
                     <Grid ColumnDefinitions="Auto,4,*">
                         <avalonia:MaterialIcon Kind="Filter" />
-                        <TextBlock Grid.Column="2" Text="Filters" />
+                        <TextBlock Grid.Column="2" Text="{x:Static gui:RS.LogViewerView_Button_Filters}" />
                     </Grid>
                 </ToggleButton>
                 <TextBox Margin="0 0 4 0" DockPanel.Dock="Left"
@@ -190,9 +190,9 @@
                    IsVisible="{Binding IsFiltersVisible.Value}">
                 <ScrollViewer>
                     <Grid RowDefinitions="Auto,*,4,*" Margin="4,4">
-                        <Button Margin="4,4" Command="{Binding ApplyFilters}" Content="Apply Filters"/>
+                        <Button Margin="4,4" Command="{Binding ApplyFilters}" Content="{x:Static gui:RS.LogViewerView_Apply_Filters_Button}"/>
                         <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,4,Auto,2,Auto" Grid.Row="1">
-                            <TextBlock Grid.Column="0" Text="Levels" />
+                            <TextBlock Grid.Column="0" Text="{x:Static gui:RS.LogViewView_Levels_Text}" />
                             <Button Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right"
                                     Command="{CompiledBinding SelectAllLevelsCommand}">
                                 <avalonia:MaterialIcon Kind="CheckboxMultipleMarked" />
@@ -215,7 +215,7 @@
                         <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,4,Auto,2,Auto" Grid.Row="3">
                             <TextBlock Grid.Row="0"
                                        Grid.Column="0"
-                                       Text="Categories" />
+                                       Text="{x:Static gui:RS.LogViewView_Sources_Text}" />
                             <Button Grid.Row="0"
                                     Grid.Column="2"
                                     HorizontalAlignment="Right"
@@ -242,10 +242,8 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
                         </Grid>
-
                     </Grid>
                 </ScrollViewer>
-
             </Panel>
         </Grid>
     </DockPanel>

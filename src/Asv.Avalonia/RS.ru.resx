@@ -544,7 +544,7 @@
         <value>Удалить</value>
     </data>
     <data name="LogViewerViewModel_ClearDialog_Content" xml:space="preserve">
-        <value>Вы уверены что хотите удалить журнал?</value>
+        <value>Вы уверены что хотите очистить журнал?</value>
     </data>
     <data name="LogViewerViewModel_ClearDialog_CloseButton" xml:space="preserve">
         <value>Отмена</value>
@@ -572,5 +572,17 @@
     </data>
     <data name="LogViewerView_TextBlock_PageItemsCount" xml:space="preserve">
         <value>На странице: {0}</value>
+    </data>
+    <data name="LogViewerView_Apply_Filters_Button" xml:space="preserve">
+        <value>Применить фильтры</value>
+    </data>
+    <data name="LogViewView_Sources_Text" xml:space="preserve">
+        <value>Источники</value>
+    </data>
+    <data name="LogViewView_Levels_Text" xml:space="preserve">
+        <value>Уровни</value>
+    </data>
+    <data name="LogViewerView_Button_Filters" xml:space="preserve">
+        <value>Фильтры</value>
     </data>
 </root>

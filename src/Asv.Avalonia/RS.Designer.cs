@@ -843,6 +843,24 @@ namespace Asv.Avalonia {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Apply Filters.
+        /// </summary>
+        public static string LogViewerView_Apply_Filters_Button {
+            get {
+                return ResourceManager.GetString("LogViewerView_Apply_Filters_Button", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filters.
+        /// </summary>
+        public static string LogViewerView_Button_Filters {
+            get {
+                return ResourceManager.GetString("LogViewerView_Button_Filters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Categories.
         /// </summary>
         public static string LogViewerView_Categories {
@@ -924,7 +942,7 @@ namespace Asv.Avalonia {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete the log?.
+        ///   Looks up a localized string similar to Are you sure you want to clear the logs?.
         /// </summary>
         public static string LogViewerViewModel_ClearDialog_Content {
             get {
@@ -947,6 +965,24 @@ namespace Asv.Avalonia {
         public static string LogViewerViewModel_ClearDialog_Title {
             get {
                 return ResourceManager.GetString("LogViewerViewModel_ClearDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Levels.
+        /// </summary>
+        public static string LogViewView_Levels_Text {
+            get {
+                return ResourceManager.GetString("LogViewView_Levels_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sources.
+        /// </summary>
+        public static string LogViewView_Sources_Text {
+            get {
+                return ResourceManager.GetString("LogViewView_Sources_Text", resourceCulture);
             }
         }
         
