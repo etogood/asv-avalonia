@@ -28,7 +28,7 @@ public partial class ShellWindow : Window, IExportable
             }
         });
     }
-    
+
     [ImportingConstructor]
     public ShellWindow(IConfiguration configuration, ILoggerFactory logger)
     {
@@ -162,7 +162,7 @@ public partial class ShellWindow : Window, IExportable
             vm.UpdateWindowStateUI(WindowState);
         }
     }
-    
+
     private void WindowBase_OnPositionChanged(object? sender, PixelPointEventArgs e)
     {
         if (_internalChange)
