@@ -204,10 +204,14 @@ public class MissionProgressViewModel : RoutableViewModel
         _missionClient.Current.Subscribe(i => CurrentIndex.Value = i).DisposeItWith(Disposable);
         InitiateMissionPoints(_cts.Token)
             .SafeFireAndForget(ex => log.LogError(ex, "Mission progress error"));
-        _distanceBeforeMission = GeoMath.Distance(
-            _positionClient.Current.CurrentValue,
-            _missionClient.MissionItems[0].Location.Value
-        );
+
+        _distanceBeforeMission =
+            _missionClient.MissionItems.Count == 0
+                ? 0
+                : GeoMath.Distance(
+                    _positionClient.Current.CurrentValue,
+                    _missionClient.MissionItems[0].Location.Value
+                );
         TotalDistance.Value = DistanceUnitItem.Value.Current.Value.Print(
             _totalMissionDistance + (_distanceBeforeMission * 1000),
             "N2"
