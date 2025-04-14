@@ -4,11 +4,14 @@ using R3;
 namespace Asv.Avalonia.IO;
 
 [ExportExtensionFor<ISettingsConnectionSubPage>]
-public class SettingsConnectionSerialExtension : IExtensionFor<ISettingsConnectionSubPage>
+public class SettingsConnectionSerialPortExtension : IExtensionFor<ISettingsConnectionSubPage>
 {
     public void Extend(ISettingsConnectionSubPage context, CompositeDisposable contextDispose)
     {
-        var menu = new MenuItem(SerialProtocolPort.Scheme, $"Add {SerialProtocolPort.Info.Name}");
+        var menu = new MenuItem(
+            SerialProtocolPort.Scheme,
+            $"{RS.SettingsConnectionSerialExtension_MenuItem_Header}"
+        );
         menu.Icon = SerialPortViewModel.DefaultIcon;
         menu.Command = new BindableAsyncCommand(ProtocolPortCommand.Id, menu);
         var defaultConfig = SerialProtocolPortConfig.CreateDefault();
