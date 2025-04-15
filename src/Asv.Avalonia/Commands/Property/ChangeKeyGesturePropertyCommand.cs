@@ -1,21 +1,22 @@
 using System.Composition;
+using Avalonia.Input;
 using Material.Icons;
 
 namespace Asv.Avalonia;
 
 [ExportCommand]
 [Shared]
-public class ChangeStringPropertyCommand : ContextCommand<IHistoricalProperty<string?>>
+public class ChangeKeyGesturePropertyCommand : ContextCommand<IHistoricalProperty<KeyGesture?>>
 {
     #region Static
 
-    public const string Id = $"{BaseId}.property.string";
+    public const string Id = $"{BaseId}.property.keygesture";
 
     private static readonly ICommandInfo StaticInfo = new CommandInfo
     {
         Id = Id,
-        Name = RS.ChangeStringPropertyCommand_CommandInfo_Name,
-        Description = RS.ChangeStringPropertyCommand_CommandInfo_Description,
+        Name = RS.ChangeKeyGesturePropertyCommand_CommandInfo_Name,
+        Description = RS.ChangeKeyGesturePropertyCommand_CommandInfo_Description,
         Icon = MaterialIconKind.PropertyTag,
         HotKeyInfo = new HotKeyInfo { DefaultHotKey = null },
         Source = SystemModule.Instance,
@@ -26,17 +27,17 @@ public class ChangeStringPropertyCommand : ContextCommand<IHistoricalProperty<st
     #endregion
 
     protected override ValueTask<ICommandArg?> InternalExecute(
-        IHistoricalProperty<string?> context,
+        IHistoricalProperty<KeyGesture?> context,
         ICommandArg newValue,
         CancellationToken cancel
     )
     {
-        if (newValue is not StringCommandArg value)
+        if (newValue is not KeyGestureCommandArg value)
         {
-            throw new CommandArgMismatchException(typeof(StringCommandArg));
+            throw new CommandArgMismatchException(typeof(KeyGestureCommandArg));
         }
 
-        var oldValue = new StringCommandArg(context.ModelValue.Value ?? string.Empty);
+        var oldValue = new KeyGestureCommandArg(context.ModelValue.Value);
         context.ModelValue.OnNext(value.Value);
         return ValueTask.FromResult<ICommandArg?>(oldValue);
     }

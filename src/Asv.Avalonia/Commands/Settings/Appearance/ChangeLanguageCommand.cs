@@ -17,7 +17,7 @@ public class ChangeLanguageCommand : NoContextCommand
         Name = RS.ChangeLanguageCommand_CommandInfo_Name,
         Description = RS.ChangeLanguageCommand_CommandInfo_Description,
         Icon = MaterialIconKind.Translate,
-        DefaultHotKey = null,
+        HotKeyInfo = new HotKeyInfo { DefaultHotKey = null },
         Source = SystemModule.Instance,
     };
 
@@ -41,7 +41,6 @@ public class ChangeLanguageCommand : NoContextCommand
     {
         if (newValue is StringCommandArg themeName)
         {
-            // execute with parameter
             var oldValue = _svc.CurrentLanguage.Value.Id;
             var language = _svc.AvailableLanguages.FirstOrDefault(x => x.Id == themeName.Value);
             if (language is not null)
@@ -53,7 +52,6 @@ public class ChangeLanguageCommand : NoContextCommand
         }
         else
         {
-            // execute without parameter
             var oldValue = _svc.CurrentLanguage.Value.Id;
             var temp = _svc.AvailableLanguages.ToList();
             var index = temp.IndexOf(_svc.CurrentLanguage.Value);
