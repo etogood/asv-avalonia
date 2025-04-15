@@ -255,6 +255,9 @@
             <Setter Property="Foreground" Value="{DynamicResource   TextControlForegroundDisabled}"/>
         </Style>
     </Style>
+    <Style Selector="TextBox">
+       <Setter Property="IsUndoEnabled" Value="False"/>
+    </Style>
     
     
     
