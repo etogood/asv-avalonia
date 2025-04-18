@@ -60,13 +60,13 @@ public sealed class ChangeCurrentUnitItemCommand : NoContextCommand
         unit.AvailableUnits.TryGetValue(memento.Value, out var unitItem);
         if (unitItem is not null)
         {
-            unit.Current.Value = unitItem;
+            unit.CurrentUnitItem.Value = unitItem;
         }
 
         return ValueTask.FromResult<ICommandArg?>(
             new ActionCommandArg(
                 unit.UnitId,
-                unit.Current.Value.UnitItemId,
+                unit.CurrentUnitItem.Value.UnitItemId,
                 CommandParameterActionType.Change
             )
         );

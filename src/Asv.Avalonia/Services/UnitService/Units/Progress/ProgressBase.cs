@@ -1,30 +1,24 @@
-using System.Composition;
+﻿using System.Composition;
 using Asv.Cfg;
 using Material.Icons;
 
 namespace Asv.Avalonia;
 
-internal sealed class FieldStrengthConfig
+internal sealed class ProgressConfig
 {
     public string? CurrentUnitItemId { get; set; }
 }
 
 [ExportUnit]
 [Shared]
-public sealed class FieldStrengthBase : UnitBase
+public sealed class ProgressBase : UnitBase
 {
-    public const string Id = "field.strength";
-
-    public override MaterialIconKind Icon => MaterialIconKind.HighVoltage;
-    public override string Name => RS.FieldStrength_Name;
-    public override string Description => RS.FieldStrength_Description;
-    public override string UnitId => Id;
-
-    private readonly FieldStrengthConfig? _config;
+    public const string Id = "progress";
+    private readonly ProgressConfig? _config;
     private readonly IConfiguration _cfgSvc;
 
     [ImportingConstructor]
-    public FieldStrengthBase(
+    public ProgressBase(
         [Import] IConfiguration cfgSvc,
         [ImportMany(Id)] IEnumerable<IUnitItem> items
     )
@@ -32,7 +26,8 @@ public sealed class FieldStrengthBase : UnitBase
     {
         ArgumentNullException.ThrowIfNull(cfgSvc);
         _cfgSvc = cfgSvc;
-        _config = cfgSvc.Get<FieldStrengthConfig>();
+        _config = cfgSvc.Get<ProgressConfig>();
+
         if (_config.CurrentUnitItemId is null)
         {
             return;
@@ -60,4 +55,9 @@ public sealed class FieldStrengthBase : UnitBase
         _config.CurrentUnitItemId = unitItem.UnitItemId;
         _cfgSvc.Set(_config);
     }
+
+    public override MaterialIconKind Icon => MaterialIconKind.ProgressDownload;
+    public override string Name => RS.Progress_Name;
+    public override string Description => RS.Progress_Description;
+    public override string UnitId => Id;
 }

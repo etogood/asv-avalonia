@@ -9,11 +9,11 @@ public class MeasureUnitViewModel : RoutableViewModel
     public MeasureUnitViewModel(IUnit item)
         : base(item.UnitId)
     {
-        SelectedItem = new BindableReactiveProperty<IUnitItem>(item.Current.CurrentValue);
+        SelectedItem = new BindableReactiveProperty<IUnitItem>(item.CurrentUnitItem.CurrentValue);
         Base = item;
         _internalChange = true;
         _sub1 = SelectedItem.SubscribeAwait(OnChangedByUser);
-        _sub2 = item.Current.Subscribe(OnChangeByModel);
+        _sub2 = item.CurrentUnitItem.Subscribe(OnChangeByModel);
         _internalChange = false;
     }
 
@@ -59,12 +59,18 @@ public class MeasureUnitViewModel : RoutableViewModel
 
         return Base.Name.Contains(search, StringComparison.OrdinalIgnoreCase)
             || Base.Description.Contains(search, StringComparison.OrdinalIgnoreCase)
-            || Base.Current.CurrentValue.Name.Contains(search, StringComparison.OrdinalIgnoreCase)
-            || Base.Current.CurrentValue.Description.Contains(
+            || Base.CurrentUnitItem.CurrentValue.Name.Contains(
                 search,
                 StringComparison.OrdinalIgnoreCase
             )
-            || Base.Current.CurrentValue.Symbol.Contains(search, StringComparison.OrdinalIgnoreCase)
+            || Base.CurrentUnitItem.CurrentValue.Description.Contains(
+                search,
+                StringComparison.OrdinalIgnoreCase
+            )
+            || Base.CurrentUnitItem.CurrentValue.Symbol.Contains(
+                search,
+                StringComparison.OrdinalIgnoreCase
+            )
             || Base.AvailableUnits.Values.First(u => u.IsInternationalSystemUnit)
                 .Name.Contains(search, StringComparison.OrdinalIgnoreCase)
             || Base.AvailableUnits.Values.First(u => u.IsInternationalSystemUnit)

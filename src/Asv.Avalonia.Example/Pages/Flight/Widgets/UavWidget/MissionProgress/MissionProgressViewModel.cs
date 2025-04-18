@@ -123,15 +123,15 @@ public class MissionProgressViewModel : RoutableViewModel
             .DisposeItWith(Disposable);
         _positionClient
             .HomeDistance.Subscribe(d =>
-                HomeDistance.Value = DistanceUnitItem.Value.Current.Value.Print(d, "N2")
+                HomeDistance.Value = DistanceUnitItem.Value.CurrentUnitItem.Value.Print(d, "N2")
             )
             .DisposeItWith(Disposable);
         _positionClient
             .TargetDistance.Subscribe(d =>
             {
                 TargetDistance.Value = d is double.NaN
-                    ? RS.Not_Available
-                    : DistanceUnitItem.Value.Current.Value.Print(d, "N2");
+                    ? RS.NotANumber
+                    : DistanceUnitItem.Value.CurrentUnitItem.Value.Print(d, "N2");
             })
             .DisposeItWith(Disposable);
         _missionClient
@@ -139,7 +139,7 @@ public class MissionProgressViewModel : RoutableViewModel
             {
                 var missionDistance = d * 1000;
                 var totalDistance = missionDistance;
-                MissionDistance.Value = DistanceUnitItem.Value.Current.Value.Print(
+                MissionDistance.Value = DistanceUnitItem.Value.CurrentUnitItem.Value.Print(
                     totalDistance,
                     "N2"
                 );
@@ -164,7 +164,7 @@ public class MissionProgressViewModel : RoutableViewModel
                     totalDistance = missionDistance;
                 }
 
-                TotalDistance.Value = DistanceUnitItem.Value.Current.Value.Print(
+                TotalDistance.Value = DistanceUnitItem.Value.CurrentUnitItem.Value.Print(
                     totalDistance,
                     "N2"
                 );
@@ -212,7 +212,7 @@ public class MissionProgressViewModel : RoutableViewModel
                     _positionClient.Current.CurrentValue,
                     _missionClient.MissionItems[0].Location.Value
                 );
-        TotalDistance.Value = DistanceUnitItem.Value.Current.Value.Print(
+        TotalDistance.Value = DistanceUnitItem.Value.CurrentUnitItem.Value.Print(
             _totalMissionDistance + (_distanceBeforeMission * 1000),
             "N2"
         );
@@ -221,7 +221,7 @@ public class MissionProgressViewModel : RoutableViewModel
         );
         if (rtl is not null)
         {
-            TotalDistance.Value = DistanceUnitItem.Value.Current.Value.Print(
+            TotalDistance.Value = DistanceUnitItem.Value.CurrentUnitItem.Value.Print(
                 _totalMissionDistance + (_distanceBeforeMission * 2000),
                 "N2"
             );
@@ -343,10 +343,10 @@ public class MissionProgressViewModel : RoutableViewModel
 
     public BindableReactiveProperty<IUnit> DistanceUnitItem { get; } = new();
     public BindableReactiveProperty<double> DownloadProgress { get; } = new();
-    public BindableReactiveProperty<string> MissionDistance { get; } = new(RS.Not_Available);
-    public BindableReactiveProperty<string> TotalDistance { get; } = new(RS.Not_Available);
-    public BindableReactiveProperty<string> HomeDistance { get; } = new(RS.Not_Available);
-    public BindableReactiveProperty<string> TargetDistance { get; } = new(RS.Not_Available);
+    public BindableReactiveProperty<string> MissionDistance { get; } = new(RS.NotANumber);
+    public BindableReactiveProperty<string> TotalDistance { get; } = new(RS.NotANumber);
+    public BindableReactiveProperty<string> HomeDistance { get; } = new(RS.NotANumber);
+    public BindableReactiveProperty<string> TargetDistance { get; } = new(RS.NotANumber);
     public BindableReactiveProperty<bool> IsDownloaded { get; } = new(false);
     public BindableReactiveProperty<double> PathProgress { get; } = new(0);
 

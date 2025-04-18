@@ -41,7 +41,7 @@ public sealed class LongitudeBase : UnitBase
         AvailableUnits.TryGetValue(_config.CurrentUnitItemId, out var unit);
         if (unit is not null)
         {
-            Current.OnNext(unit);
+            CurrentUnitItem.OnNext(unit);
         }
     }
 

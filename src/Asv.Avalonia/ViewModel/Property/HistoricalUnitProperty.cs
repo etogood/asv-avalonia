@@ -46,12 +46,12 @@ public sealed class HistoricalUnitProperty : HistoricalPropertyBase<double, stri
         _internalChange = false;
 
         _sub3 = _modelValue.Subscribe(OnChangeByModel);
-        _sub4 = unit.Current.Subscribe(_ => OnChangeByModel(modelValue.CurrentValue));
+        _sub4 = unit.CurrentUnitItem.Subscribe(_ => OnChangeByModel(modelValue.CurrentValue));
     }
 
     protected override Exception? ValidateValue(string? userValue)
     {
-        var result = _unit.Current.CurrentValue.ValidateValue(userValue);
+        var result = _unit.CurrentUnitItem.CurrentValue.ValidateValue(userValue);
         if (result.IsSuccess)
         {
             return null;
@@ -67,7 +67,7 @@ public sealed class HistoricalUnitProperty : HistoricalPropertyBase<double, stri
             return;
         }
 
-        var value = _unit.Current.CurrentValue.ParseToSi(userValue);
+        var value = _unit.CurrentUnitItem.CurrentValue.ParseToSi(userValue);
         var newValue = new DoubleCommandArg(value);
         await this.ExecuteCommand(ChangeDoublePropertyCommand.Id, newValue);
     }
@@ -75,7 +75,7 @@ public sealed class HistoricalUnitProperty : HistoricalPropertyBase<double, stri
     protected override void OnChangeByModel(double modelValue)
     {
         _internalChange = true;
-        ViewValue.OnNext(_unit.Current.CurrentValue.PrintFromSi(modelValue, _format));
+        ViewValue.OnNext(_unit.CurrentUnitItem.CurrentValue.PrintFromSi(modelValue, _format));
         _internalChange = false;
     }
 
