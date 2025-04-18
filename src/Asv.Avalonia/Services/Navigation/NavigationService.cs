@@ -2,9 +2,7 @@
 using System.Diagnostics;
 using Asv.Cfg;
 using Asv.Common;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.LogicalTree;
 using Microsoft.Extensions.Logging;
@@ -129,6 +127,11 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
             _logger.ZLogWarning(
                 $"Selected control {routable} has invalid path: {string.Join(",", path)}"
             );
+            return;
+        }
+
+        if (_selectedControl.Value?.Id == routable.Id && _selectedControlPath.Value == path)
+        {
             return;
         }
 
@@ -272,7 +275,9 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
 
     public async ValueTask GoHomeAsync()
     {
-        await GoTo(new NavigationPath(HomePageViewModel.PageId));
+        var home = await GoTo(new NavigationPath(HomePageViewModel.PageId));
+
+        FocusControlChanged(home);
     }
 
     public ReactiveCommand GoHome { get; }

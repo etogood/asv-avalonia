@@ -26,6 +26,7 @@ public abstract class PageViewModel<TContext> : ExtendableViewModel<TContext>, I
             var reasons = await this.RequestChildCloseApproval();
             if (reasons.Count != 0)
             {
+                // TODO: send a callback with restrictions. If you have any restriction just call its callback before you close the page.
                 // TODO: ask user to save changes
             }
 

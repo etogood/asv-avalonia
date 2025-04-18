@@ -19,7 +19,7 @@ public class OpenSettingsCommand(INavigationService nav)
         Name = "Settings",
         Description = "Open settings",
         Icon = SettingsPageViewModel.PageIcon,
-        DefaultHotKey = KeyGesture.Parse("Ctrl+F1"),
+        DefaultHotKey = KeyGesture.Parse("Ctrl+S"),
         Source = SystemModule.Instance,
     };
 
