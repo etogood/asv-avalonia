@@ -256,9 +256,9 @@
         </Style>
     </Style>
     <Style Selector="TextBox">
-       <Setter Property="IsUndoEnabled" Value="False"/>
+        <Setter Property="IsUndoEnabled" Value="False"/>
     </Style>
-    
-    
-    
+    <Style Selector="avalonia1|ContentDialog TextBox">
+            <Setter Property="IsUndoEnabled" Value="True"/>            
+    </Style>
 </Styles>
