@@ -269,4 +269,46 @@
     <data name="FileBrowserView_Button_BurstDownload_Content" xml:space="preserve">
         <value>Burst download</value>
     </data>
+    <data name="UnpinAllParamsCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Unpin all params</value>
+    </data>
+    <data name="WriteParamCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Command that writes the param to the mavlink device</value>
+    </data>
+    <data name="WritePatamCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Write param</value>
+    </data>
+    <data name="UnpinAllParamsCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Command removes all pinned items from the params page</value>
+    </data>
+    <data name="StopUpdateParamsCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Stop refreshing params</value>
+    </data>
+    <data name="StopUpdateParamsCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Command to stop receiving parameters from the mavlink device</value>
+    </data>
+    <data name="UpdateParamsCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Refresh params</value>
+    </data>
+    <data name="UpdateParamsCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Command that refreshes params from the mavlink device</value>
+    </data>
+    <data name="UpdateParamCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Update param</value>
+    </data>
+    <data name="UpdateParamCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Command that updates param from the mavlink device</value>
+    </data>
+    <data name="OpenMavParamsCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Open mavlink params</value>
+    </data>
+    <data name="OpenMavParamsCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Command opens mavlink params editor</value>
+    </data>
+    <data name="HomePageParamsDeviceItemAction_ActionViewModel_Header" xml:space="preserve">
+        <value>Params editor</value>
+    </data>
+    <data name="HomePageParamsDeviceItemAction_ActionViewModel_Description" xml:space="preserve">
+        <value>Edit mavlink device parameters</value>
+    </data>
 </root>

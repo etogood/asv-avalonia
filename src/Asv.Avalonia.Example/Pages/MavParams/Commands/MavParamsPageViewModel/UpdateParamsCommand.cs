@@ -12,8 +12,8 @@ public class UpdateParamsCommand : ContextCommand<MavParamsPageViewModel>
     internal static readonly ICommandInfo StaticInfo = new CommandInfo
     {
         Id = Id,
-        Name = "Refresh params",
-        Description = "Command that refreshes params from the drone",
+        Name = RS.UpdateParamsCommand_CommandInfo_Name,
+        Description = RS.UpdateParamsCommand_CommandInfo_Description,
         Icon = MaterialIconKind.Refresh,
         DefaultHotKey = null, // TODO: make a key bind when new key listener system appears
         Source = SystemModule.Instance,

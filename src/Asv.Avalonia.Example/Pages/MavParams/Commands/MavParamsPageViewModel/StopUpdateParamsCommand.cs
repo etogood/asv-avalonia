@@ -12,8 +12,8 @@ public class StopUpdateParamsCommand : ContextCommand<MavParamsPageViewModel>
     internal static readonly ICommandInfo StaticInfo = new CommandInfo
     {
         Id = Id,
-        Name = "Stop refreshing params",
-        Description = "Command to stop receiving parameters from the drone",
+        Name = RS.StopUpdateParamsCommand_CommandInfo_Name,
+        Description = RS.StopUpdateParamsCommand_CommandInfo_Description,
         Icon = MaterialIconKind.CancelCircle,
         DefaultHotKey = null, // TODO: make a key bind when new key listener system appears
         Source = SystemModule.Instance,

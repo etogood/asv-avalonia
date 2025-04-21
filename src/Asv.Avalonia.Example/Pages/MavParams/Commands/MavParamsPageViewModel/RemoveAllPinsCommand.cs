@@ -15,8 +15,8 @@ public class RemoveAllPinsCommand : ContextCommand<MavParamsPageViewModel>
     internal static readonly ICommandInfo StaticInfo = new CommandInfo
     {
         Id = Id,
-        Name = "Unpin all params",
-        Description = "Command removes all pinned items from the params page",
+        Name = RS.UnpinAllParamsCommand_CommandInfo_Name,
+        Description = RS.UnpinAllParamsCommand_CommandInfo_Description,
         Icon = MaterialIconKind.PinOff,
         DefaultHotKey = null, // TODO: make a key bind when new key listener system appears
         Source = SystemModule.Instance,

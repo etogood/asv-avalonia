@@ -13,8 +13,8 @@ public class WriteParamCommand : ContextCommand<ParamItemViewModel>
     internal static readonly ICommandInfo StaticInfo = new CommandInfo
     {
         Id = Id,
-        Name = "Write param",
-        Description = "Command that writes the param to the drone",
+        Name = RS.WritePatamCommand_CommandInfo_Name,
+        Description = RS.WriteParamCommand_CommandInfo_Description,
         Icon = MaterialIconKind.Upload,
         DefaultHotKey = null, // TODO: make a key bind when new key listener system appears
         Source = SystemModule.Instance,
@@ -22,13 +22,13 @@ public class WriteParamCommand : ContextCommand<ParamItemViewModel>
 
     public override ICommandInfo Info => StaticInfo;
 
-    protected override ValueTask<ICommandArg?> InternalExecute(
+    protected override async ValueTask<ICommandArg?> InternalExecute(
         ParamItemViewModel context,
         ICommandArg newValue,
         CancellationToken cancel
     )
     {
-        context.WriteImpl(cancel).SafeFireAndForget();
-        return default;
+        await context.WriteImpl(cancel);
+        return null;
     }
 }
