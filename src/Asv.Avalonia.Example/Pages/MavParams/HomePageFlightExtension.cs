@@ -21,8 +21,8 @@ public class HomePageParamsDeviceItemAction : HomePageDeviceItemAction
         return new ActionViewModel("params")
         {
             Icon = MaterialIconKind.CogTransferOutline,
-            Header = "Params editor",
-            Description = "Edit mavlink device parameters",
+            Header = RS.HomePageParamsDeviceItemAction_ActionViewModel_Header,
+            Description = RS.HomePageParamsDeviceItemAction_ActionViewModel_Description,
             Command = new BindableAsyncCommand(OpenMavParamsCommand.Id, context),
             CommandParameter = new StringCommandArg(device.Id.AsString()),
         };

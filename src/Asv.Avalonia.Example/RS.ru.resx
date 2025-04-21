@@ -257,4 +257,46 @@
     <data name="MissionProgressViewModel_MissionFlightTime_Symbol" xml:space="preserve">
         <value>мин</value>
     </data>
+    <data name="UnpinAllParamsCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Снять пины со всех параметров</value>
+    </data>
+    <data name="WriteParamCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда записывает параметр в мавлинк устройство</value>
+    </data>
+    <data name="WritePatamCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Записать параметр</value>
+    </data>
+    <data name="UnpinAllParamsCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда снимает пины со всех параметров на странице параметров</value>
+    </data>
+    <data name="StopUpdateParamsCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда останавливает получение параметров с устройства мавлинк</value>
+    </data>
+    <data name="StopUpdateParamsCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Остановить получение параметров</value>
+    </data>
+    <data name="UpdateParamsCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Обновить параметры</value>
+    </data>
+    <data name="UpdateParamsCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда обновляет параметры с устройства мавлинк</value>
+    </data>
+    <data name="UpdateParamCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Обновить параметр</value>
+    </data>
+    <data name="UpdateParamCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда обновляет один параметр с устройства мавлинк</value>
+    </data>
+    <data name="OpenMavParamsCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Открыть параметры устройства мавлинк</value>
+    </data>
+    <data name="OpenMavParamsCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда открывает реадактор мавлинк параметров</value>
+    </data>
+    <data name="HomePageParamsDeviceItemAction_ActionViewModel_Header" xml:space="preserve">
+        <value>Редактор параметров</value>
+    </data>
+    <data name="HomePageParamsDeviceItemAction_ActionViewModel_Description" xml:space="preserve">
+        <value>Изменить параметры мавлинк устройства</value>
+    </data>
 </root>

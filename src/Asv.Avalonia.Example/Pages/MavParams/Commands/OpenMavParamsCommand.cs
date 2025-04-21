@@ -14,8 +14,8 @@ public class OpenMavParamsCommand(INavigationService nav)
     public static readonly ICommandInfo StaticInfo = new CommandInfo
     {
         Id = Id,
-        Name = "Open mavlink params",
-        Description = "Open mavlink params editor",
+        Name = RS.OpenMavParamsCommand_CommandInfo_Name,
+        Description = RS.OpenMavParamsCommand_CommandInfo_Description,
         Icon = MavParamsPageViewModel.PageIcon,
         Source = SystemModule.Instance,
         DefaultHotKey = null,
