@@ -27,9 +27,9 @@ public abstract class UnitBase : IUnit
         }
 
         InternationalSystemUnit = defaultUnit[0].Value;
-        Current = new ReactiveProperty<IUnitItem>(InternationalSystemUnit);
+        CurrentUnitItem = new ReactiveProperty<IUnitItem>(InternationalSystemUnit);
 
-        _sub1 = Current.Subscribe(SetUnitItem);
+        _sub1 = CurrentUnitItem.Subscribe(SetUnitItem);
     }
 
     protected abstract void SetUnitItem(IUnitItem unitItem);
@@ -39,7 +39,7 @@ public abstract class UnitBase : IUnit
     public abstract string Name { get; }
     public abstract string Description { get; }
     public abstract string UnitId { get; }
-    public ReactiveProperty<IUnitItem> Current { get; }
+    public ReactiveProperty<IUnitItem> CurrentUnitItem { get; }
     public IUnitItem InternationalSystemUnit { get; }
 
     #region Dispose
@@ -49,7 +49,7 @@ public abstract class UnitBase : IUnit
     public void Dispose()
     {
         _sub1.Dispose();
-        Current.Dispose();
+        CurrentUnitItem.Dispose();
     }
 
     #endregion

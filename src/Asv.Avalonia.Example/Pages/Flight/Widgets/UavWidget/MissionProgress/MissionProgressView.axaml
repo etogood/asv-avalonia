@@ -40,7 +40,7 @@
                         MainBrush="{DynamicResource NavyMainBrush}"
                         SecondaryBrush="{DynamicResource NavySecondaryBrush}"
                         Title="{x:Static example:RS.MissionProgressView_MissionDistanceRTT}"
-                        Units="{Binding DistanceUnitItem.Value.Current.Value.Symbol}"
+                        Units="{Binding DistanceUnitItem.Value.CurrentUnitItem.Value.Symbol}"
                         IsBusy="False"
                         Icon="MapMarkerDistance"
                         CornerRadius="4">
@@ -59,7 +59,7 @@
                         MainBrush="{DynamicResource NavyMainBrush}"
                         SecondaryBrush="{DynamicResource NavySecondaryBrush}"
                         Title="{x:Static example:RS.MissionProgressView_TotalDistanceRTT}"
-                        Units="{Binding DistanceUnitItem.Value.Current.Value.Symbol}"
+                        Units="{Binding DistanceUnitItem.Value.CurrentUnitItem.Value.Symbol}"
                         IsBusy="False"
                         Icon="LocationDistance"
                         CornerRadius="4">
@@ -78,7 +78,7 @@
                         MainBrush="{DynamicResource NavyMainBrush}"
                         SecondaryBrush="{DynamicResource NavySecondaryBrush}"
                         Title="{x:Static example:RS.MissionProgressView_HomeDistance}"
-                        Units="{Binding DistanceUnitItem.Value.Current.Value.Symbol}"
+                        Units="{Binding DistanceUnitItem.Value.CurrentUnitItem.Value.Symbol}"
                         IsBusy="False"
                         Icon="Home"
                         CornerRadius="4">
@@ -97,7 +97,7 @@
                         MainBrush="{DynamicResource NavyMainBrush}"
                         SecondaryBrush="{DynamicResource NavySecondaryBrush}"
                         Title="{x:Static example:RS.MissionProgressView_TargetDistance}"
-                        Units="{Binding DistanceUnitItem.Value.Current.Value.Symbol}"
+                        Units="{Binding DistanceUnitItem.Value.CurrentUnitItem.Value.Symbol}"
                         IsBusy="False"
                         Icon="Target"
                         CornerRadius="4">

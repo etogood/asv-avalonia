@@ -21,7 +21,7 @@ public class SetAltitudeDialogViewModel : DialogViewModelBase
         _sub1 = Altitude.EnableValidation(
             s =>
             {
-                var valid = AltitudeUnit.Value.Current.Value.ValidateValue(s);
+                var valid = AltitudeUnit.Value.CurrentUnitItem.Value.ValidateValue(s);
                 return valid;
             },
             this,
@@ -43,7 +43,9 @@ public class SetAltitudeDialogViewModel : DialogViewModelBase
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary)
         {
-            AltitudeResult.Value = AltitudeUnit.Value.Current.Value.ParseToSi(Altitude.Value);
+            AltitudeResult.Value = AltitudeUnit.Value.CurrentUnitItem.Value.ParseToSi(
+                Altitude.Value
+            );
         }
 
         return result;

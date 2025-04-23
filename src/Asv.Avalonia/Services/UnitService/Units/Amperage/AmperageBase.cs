@@ -4,21 +4,26 @@ using Material.Icons;
 
 namespace Asv.Avalonia;
 
-internal sealed class CapacityConfig
+internal sealed class AmperageConfig
 {
     public string? CurrentUnitItemId { get; set; }
 }
 
 [ExportUnit]
 [Shared]
-public class CapacityBase : UnitBase
+public class AmperageBase : UnitBase
 {
-    public const string Id = "capacity";
-    private readonly CapacityConfig? _config;
+    private readonly AmperageConfig? _config;
     private readonly IConfiguration _cfgSvc;
+    public const string Id = "amperage";
+
+    public override MaterialIconKind Icon => MaterialIconKind.Electricity;
+    public override string Name => RS.Amperage_Name;
+    public override string Description => RS.Amperage_Description;
+    public override string UnitId => Id;
 
     [ImportingConstructor]
-    public CapacityBase(
+    public AmperageBase(
         [Import] IConfiguration cfgSvc,
         [ImportMany(Id)] IEnumerable<IUnitItem> items
     )
@@ -26,17 +31,7 @@ public class CapacityBase : UnitBase
     {
         ArgumentNullException.ThrowIfNull(cfgSvc);
         _cfgSvc = cfgSvc;
-        _config = cfgSvc.Get<CapacityConfig>();
-        if (_config.CurrentUnitItemId is null)
-        {
-            return;
-        }
-
-        AvailableUnits.TryGetValue(_config.CurrentUnitItemId, out var unit);
-        if (unit is not null)
-        {
-            CurrentUnitItem.OnNext(unit);
-        }
+        _config = cfgSvc.Get<AmperageConfig>();
     }
 
     protected override void SetUnitItem(IUnitItem unitItem)
@@ -54,9 +49,4 @@ public class CapacityBase : UnitBase
         _config.CurrentUnitItemId = unitItem.UnitItemId;
         _cfgSvc.Set(_config);
     }
-
-    public override MaterialIconKind Icon => MaterialIconKind.Battery;
-    public override string Name => RS.Mah_UnitItem_Name;
-    public override string Description => RS.Capacity_UnitItem_Description;
-    public override string UnitId => Id;
 }
