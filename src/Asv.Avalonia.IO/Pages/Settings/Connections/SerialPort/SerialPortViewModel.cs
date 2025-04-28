@@ -107,7 +107,11 @@ public class SerialPortViewModel : PortViewModel
     {
         TagsSource.Clear();
         TagsSource.Add(
-            new TagViewModel(nameof(config.Scheme)) { Value = "SERIAL", TagType = TagType.Info }
+            new TagViewModel(nameof(config.Scheme))
+            {
+                Value = RS.SerialPortViewModel_TagViewModel_Value,
+                TagType = TagType.Info,
+            }
         );
         TagsSource.Add(
             new TagViewModel(nameof(config.PortName))

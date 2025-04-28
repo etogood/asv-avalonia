@@ -7,7 +7,7 @@ using R3;
 
 namespace Asv.Avalonia.IO;
 
-public class TcpClientPortViewModelConfig
+public class TcpPortViewModelConfig
 {
     public Dictionary<string, string> HostHistory { get; set; } =
         new() { { "127.0.0.1", "localhost" }, { "172.16.0.1", "Base station" } };
@@ -22,27 +22,27 @@ public class TcpClientPortViewModelConfig
 }
 
 [Export(TcpClientProtocolPort.Scheme, typeof(IPortViewModel))]
-public class TcpClientPortViewModel : PortViewModel
+public class TcpPortViewModel : PortViewModel
 {
     private readonly IConfiguration _cfgSvc;
     private readonly ObservableList<string> _hostHistorySource;
     public const MaterialIconKind DefaultIcon = MaterialIconKind.UploadNetworkOutline;
 
-    public TcpClientPortViewModel()
+    public TcpPortViewModel()
     {
         DesignTime.ThrowIfNotDesignMode();
-        Config = new TcpClientPortViewModelConfig();
+        Config = new TcpPortViewModelConfig();
         UpdateTags(TcpClientProtocolPortConfig.CreateDefault());
     }
 
     [ImportingConstructor]
-    public TcpClientPortViewModel(IConfiguration cfgSvc)
+    public TcpPortViewModel(IConfiguration cfgSvc)
         : base($"{TcpClientProtocolPort.Scheme}-editor")
     {
         _cfgSvc = cfgSvc;
         Icon = DefaultIcon;
         _hostHistorySource = [];
-        Config = _cfgSvc.Get<TcpClientPortViewModelConfig>();
+        Config = _cfgSvc.Get<TcpPortViewModelConfig>();
         AddToValidation(Host = new BindableReactiveProperty<string>(), HostValidate);
         AddToValidation(PortNumber = new BindableReactiveProperty<string>(), PortValidate);
     }
@@ -52,7 +52,7 @@ public class TcpClientPortViewModel : PortViewModel
         return null;
     }
 
-    public TcpClientPortViewModelConfig Config { get; }
+    public TcpPortViewModelConfig Config { get; }
 
     private Exception? HostValidate(string arg)
     {
@@ -96,7 +96,7 @@ public class TcpClientPortViewModel : PortViewModel
         TagsSource.Add(
             new TagViewModel(nameof(config.Scheme))
             {
-                Value = "TCP CLIENT",
+                Value = RS.TcpPortViewModel_TagViewModel_Value,
                 TagType = TagType.Info2,
             }
         );
