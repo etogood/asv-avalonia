@@ -942,6 +942,15 @@ namespace Asv.Avalonia {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Progress in parts.
+        /// </summary>
+        public static string InParts_Progress_Description {
+            get {
+                return ResourceManager.GetString("InParts_Progress_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to In parts.
         /// </summary>
         public static string InParts_UnitItem_Name {

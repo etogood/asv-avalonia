@@ -5,7 +5,7 @@ namespace Asv.Avalonia;
 [ExportUnitItem(DdmGpBase.Id)]
 [Shared]
 [method: ImportingConstructor]
-public sealed class MicroAmpRuDdmGpUnit() : UnitItemBase(0.175 / 250)
+public sealed class MicroAmpRuDdmGpUnit() : UnitItemBase(250 / 0.175)
 {
     public const string Id = $"{DdmGpBase.Id}.micro.amp.ru";
 

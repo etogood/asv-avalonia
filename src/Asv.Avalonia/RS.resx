@@ -683,4 +683,7 @@
     <data name="Mah_Capacity_Description" xml:space="preserve">
         <value>Capacity in milliampere per hour</value>
     </data>
+    <data name="InParts_Progress_Description" xml:space="preserve">
+        <value>Progress in parts</value>
+    </data>
 </root>

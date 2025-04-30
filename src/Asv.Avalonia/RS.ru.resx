@@ -681,4 +681,7 @@
     <data name="Mah_Capacity_Description" xml:space="preserve">
         <value>Емкость в миллиамперах в час</value>
     </data>
+    <data name="InParts_Progress_Description" xml:space="preserve">
+        <value>Прогресс в частях</value>
+    </data>
 </root>
