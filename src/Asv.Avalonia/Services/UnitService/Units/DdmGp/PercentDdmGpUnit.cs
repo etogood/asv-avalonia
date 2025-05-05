@@ -5,7 +5,7 @@ namespace Asv.Avalonia;
 [ExportUnitItem(DdmGpBase.Id)]
 [Shared]
 [method: ImportingConstructor]
-public sealed class PercentDdmGpUnit() : UnitItemBase(0.01)
+public sealed class PercentDdmGpUnit() : UnitItemBase(100)
 {
     public const string Id = $"{DdmGpBase.Id}.percent";
 
