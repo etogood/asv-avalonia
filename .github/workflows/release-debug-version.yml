@@ -34,7 +34,8 @@ jobs:
 
       - name: Restore dependencies
         run: |
-          dotnet restore ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj   
+          dotnet restore ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj 
+          dotnet restore ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.DC.csproj  
           dotnet restore ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.IO.csproj    
           dotnet restore ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.Map.csproj       
           dotnet restore ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.Plugins.csproj
@@ -43,6 +44,7 @@ jobs:
       - name: Build projects
         run: |
           dotnet build ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj --configuration Release --no-restore
+          dotnet build ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.DC.csproj --configuration Release --no-restore 
           dotnet build ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.IO.csproj --configuration Release --no-restore
           dotnet build ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.Map.csproj --configuration Release --no-restore
           dotnet build ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.Plugins.csproj --configuration Release --no-restore
