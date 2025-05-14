@@ -90,7 +90,7 @@ jobs:
 
       - name: Push packages to Github
         run: |
-          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}${{ env.PROJECT_NAME }}.${{ env.VERSION }}.nupkg -k ${{ secrets.GIHUB_NUGET_AUTH_TOKEN }} --skip-duplicate -s ${{ env.GITHUB_PACKAGES_URL }}
-          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}${{ env.PROJECT_NAME }}.IO.${{ env.VERSION }}.nupkg -k ${{ secrets.GIHUB_NUGET_AUTH_TOKEN }} --skip-duplicate -s ${{ env.GITHUB_PACKAGES_URL }}
-          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}${{ env.PROJECT_NAME }}.Map.${{ env.VERSION }}.nupkg -k ${{ secrets.GIHUB_NUGET_AUTH_TOKEN }} --skip-duplicate -s ${{ env.GITHUB_PACKAGES_URL }}
-          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}${{ env.PROJECT_NAME }}.Plugins.${{ env.VERSION }}.nupkg -k ${{ secrets.GIHUB_NUGET_AUTH_TOKEN }} --skip-duplicate -s ${{ env.GITHUB_PACKAGES_URL }}
+          dotnet nuget push ${{ env.PROJECT_NAME }}.${{ env.VERSION }}.nupkg -k ${{ secrets.GIHUB_NUGET_AUTH_TOKEN }} --skip-duplicate -s ${{ env.GITHUB_PACKAGES_URL }}
+          dotnet nuget push ${{ env.PROJECT_NAME }}.IO.${{ env.VERSION }}.nupkg -k ${{ secrets.GIHUB_NUGET_AUTH_TOKEN }} --skip-duplicate -s ${{ env.GITHUB_PACKAGES_URL }}
+          dotnet nuget push ${{ env.PROJECT_NAME }}.Map.${{ env.VERSION }}.nupkg -k ${{ secrets.GIHUB_NUGET_AUTH_TOKEN }} --skip-duplicate -s ${{ env.GITHUB_PACKAGES_URL }}
+          dotnet nuget push ${{ env.PROJECT_NAME }}.Plugins.${{ env.VERSION }}.nupkg -k ${{ secrets.GIHUB_NUGET_AUTH_TOKEN }} --skip-duplicate -s ${{ env.GITHUB_PACKAGES_URL }}
