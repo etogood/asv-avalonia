@@ -80,15 +80,16 @@ jobs:
 
       - name: Pack projects to Nuget
         run: |
-          cd src
-          dotnet pack -c Release --no-build --no-restore -p:PackageVersion=${{ env.VERSION }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+          dotnet pack ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj -c Release /p:Version="${{ env.VERSION }}" --no-build -o .
+          dotnet pack ./src/${{ env.PROJECT_NAME }}.IO/${{ env.PROJECT_NAME }}.IO.csproj -c Release /p:Version="${{ env.VERSION }}" --no-build -o .
+          dotnet pack ./src/${{ env.PROJECT_NAME }}.Map/${{ env.PROJECT_NAME }}.Map.csproj -c Release /p:Version="${{ env.VERSION }}" --no-build -o .
+          dotnet pack ./src/${{ env.PROJECT_NAME }}.Plugins/${{ env.PROJECT_NAME }}.Plugins.csproj -c Release /p:Version="${{ env.VERSION }}" --no-build -o .
 
       - name: List output files
         run: ls -la
 
       - name: Push packages to Github
         run: |
-          cd src
           dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}${{ env.PROJECT_NAME }}.${{ env.VERSION }}.nupkg -k ${{ secrets.GIHUB_NUGET_AUTH_TOKEN }} --skip-duplicate -s ${{ env.GITHUB_PACKAGES_URL }}
           dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}${{ env.PROJECT_NAME }}.IO.${{ env.VERSION }}.nupkg -k ${{ secrets.GIHUB_NUGET_AUTH_TOKEN }} --skip-duplicate -s ${{ env.GITHUB_PACKAGES_URL }}
           dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}${{ env.PROJECT_NAME }}.Map.${{ env.VERSION }}.nupkg -k ${{ secrets.GIHUB_NUGET_AUTH_TOKEN }} --skip-duplicate -s ${{ env.GITHUB_PACKAGES_URL }}
