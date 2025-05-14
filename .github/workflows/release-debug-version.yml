@@ -35,19 +35,19 @@ jobs:
       - name: Restore dependencies
         run: |
           dotnet restore ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj 
-          dotnet restore ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.DC.csproj  
-          dotnet restore ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.IO.csproj    
-          dotnet restore ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.Map.csproj       
-          dotnet restore ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.Plugins.csproj
+          dotnet restore ./src/${{ env.PROJECT_NAME }}.DC/${{ env.PROJECT_NAME }}.DC.csproj  
+          dotnet restore ./src/${{ env.PROJECT_NAME }}.IO/${{ env.PROJECT_NAME }}.IO.csproj    
+          dotnet restore ./src/${{ env.PROJECT_NAME }}.Map/${{ env.PROJECT_NAME }}.Map.csproj       
+          dotnet restore ./src/${{ env.PROJECT_NAME }}.Plugins/${{ env.PROJECT_NAME }}.Plugins.csproj
           
 
       - name: Build projects
         run: |
           dotnet build ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj --configuration Release --no-restore
-          dotnet build ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.DC.csproj --configuration Release --no-restore 
-          dotnet build ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.IO.csproj --configuration Release --no-restore
-          dotnet build ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.Map.csproj --configuration Release --no-restore
-          dotnet build ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.Plugins.csproj --configuration Release --no-restore
+          dotnet build ./src/${{ env.PROJECT_NAME }}.DC/${{ env.PROJECT_NAME }}.DC.csproj --configuration Release --no-restore 
+          dotnet build ./src/${{ env.PROJECT_NAME }}.IO/${{ env.PROJECT_NAME }}.IO.csproj --configuration Release --no-restore
+          dotnet build ./src/${{ env.PROJECT_NAME }}.Map/${{ env.PROJECT_NAME }}.Map.csproj --configuration Release --no-restore
+          dotnet build ./src/${{ env.PROJECT_NAME }}.Plugins/${{ env.PROJECT_NAME }}.Plugins.csproj --configuration Release --no-restore
 
       - name: Set version variable
         env:
@@ -74,9 +74,9 @@ jobs:
         run: |
           dotnet tool install -g dotnet-setversion    
           setversion ${{ env.VERSION }} ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj    
-          setversion ${{ env.VERSION }} ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.IO.csproj    
-          setversion ${{ env.VERSION }} ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.Map.csproj       
-          setversion ${{ env.VERSION }} ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.Plugins.csproj
+          setversion ${{ env.VERSION }} ./src/${{ env.PROJECT_NAME }}.IO/${{ env.PROJECT_NAME }}.IO.csproj    
+          setversion ${{ env.VERSION }} ./src/${{ env.PROJECT_NAME }}.Map/${{ env.PROJECT_NAME }}.Map.csproj       
+          setversion ${{ env.VERSION }} ./src/${{ env.PROJECT_NAME }}.Plugins/${{ env.PROJECT_NAME }}.Plugins.csproj
 
       - name: Pack projects to Nuget
         run: |
