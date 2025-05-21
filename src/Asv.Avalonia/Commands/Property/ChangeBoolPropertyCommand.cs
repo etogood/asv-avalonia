@@ -17,7 +17,7 @@ public class ChangeBoolPropertyCommand : ContextCommand<IHistoricalProperty<bool
         Name = RS.ChangeBoolPropertyCommand_CommandInfo_Name,
         Description = RS.ChangeBoolPropertyCommand_CommandInfo_Description,
         Icon = MaterialIconKind.PropertyTag,
-        DefaultHotKey = null,
+        HotKeyInfo = new HotKeyInfo { DefaultHotKey = null },
         Source = SystemModule.Instance,
     };
 
@@ -33,9 +33,7 @@ public class ChangeBoolPropertyCommand : ContextCommand<IHistoricalProperty<bool
     {
         if (newValue is not BoolCommandArg value)
         {
-            throw new InvalidCastException(
-                $"Invalid value type. Argument must be {nameof(BoolCommandArg)}"
-            );
+            throw new CommandArgMismatchException(typeof(BoolCommandArg));
         }
 
         var oldValue = new BoolCommandArg(context.ModelValue.Value);

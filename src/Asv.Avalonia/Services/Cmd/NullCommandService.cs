@@ -34,7 +34,7 @@ public class NullCommandService : ICommandService
         // Do nothing
     }
 
-    public KeyGesture? GetHostKey(string commandId)
+    public KeyGesture? GetHotKey(string commandId)
     {
         return KeyGesture.Parse("Ctrl + X");
     }

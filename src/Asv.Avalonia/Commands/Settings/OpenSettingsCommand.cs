@@ -16,10 +16,10 @@ public class OpenSettingsCommand(INavigationService nav)
     public static readonly ICommandInfo StaticInfo = new CommandInfo
     {
         Id = Id,
-        Name = "Settings",
-        Description = "Open settings",
+        Name = RS.OpenSettingsCommand_CommandInfo_Name,
+        Description = RS.OpenSettingsCommand_CommandInfo_Description,
         Icon = SettingsPageViewModel.PageIcon,
-        DefaultHotKey = KeyGesture.Parse("Ctrl+S"),
+        HotKeyInfo = new HotKeyInfo { DefaultHotKey = KeyGesture.Parse("Ctrl+S") },
         Source = SystemModule.Instance,
     };
 

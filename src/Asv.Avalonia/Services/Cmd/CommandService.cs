@@ -61,6 +61,11 @@ public class CommandService : AsyncDisposableOnce, ICommandService
     {
         try
         {
+            if (keyEventArgs.Handled)
+            {
+                return;
+            }
+
             if (keyEventArgs.KeyModifiers == KeyModifiers.None)
             {
                 // we don't want to handle key events without modifiers
@@ -133,13 +138,13 @@ public class CommandService : AsyncDisposableOnce, ICommandService
         // define hotkeys according to loaded CommandInfo
         foreach (var value in _commands.Values)
         {
-            if (value.Info.DefaultHotKey == null)
+            if (value.Info.HotKeyInfo.DefaultHotKey == null)
             {
                 continue;
             }
 
-            keyVsCommandBuilder.Add(value.Info.DefaultHotKey, value);
-            commandVsKeyBuilder.Add(value.Info.Id, value.Info.DefaultHotKey);
+            keyVsCommandBuilder.Add(value.Info.HotKeyInfo.DefaultHotKey, value);
+            commandVsKeyBuilder.Add(value.Info.Id, value.Info.HotKeyInfo.DefaultHotKey);
         }
 
         var config = _cfg.Get<CommandServiceConfig>();
@@ -203,13 +208,13 @@ public class CommandService : AsyncDisposableOnce, ICommandService
                 continue;
             }
 
-            command.Info.CustomHotKey = keyGesture; // set the custom value manually
+            command.Info.HotKeyInfo.CustomHotKey.Value = keyGesture; // set the custom value manually
 
-            if (command.Info.CustomHotKey == keyGesture)
+            if (command.Info.HotKeyInfo.CustomHotKey.Value == keyGesture)
             {
-                if (command.Info.DefaultHotKey is not null)
+                if (command.Info.HotKeyInfo.DefaultHotKey is not null)
                 {
-                    keyVsCommandBuilder.Remove(command.Info.DefaultHotKey); // remove command with default key value
+                    keyVsCommandBuilder.Remove(command.Info.HotKeyInfo.DefaultHotKey); // remove command with default key value
                 }
             }
 
@@ -252,7 +257,7 @@ public class CommandService : AsyncDisposableOnce, ICommandService
     public void SetHotKey(string commandId, KeyGesture hotKey)
     {
         ArgumentNullException.ThrowIfNull(hotKey);
-        if (_commands.ContainsKey(commandId) == false)
+        if (!_commands.ContainsKey(commandId))
         {
             throw new CommandNotFoundException(commandId);
         }
@@ -264,7 +269,7 @@ public class CommandService : AsyncDisposableOnce, ICommandService
         );
     }
 
-    public KeyGesture GetHostKey(string commandId)
+    public KeyGesture GetHotKey(string commandId)
     {
         if (_commandsVsGesture.TryGetValue(commandId, out var gesture))
         {

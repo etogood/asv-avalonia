@@ -18,7 +18,7 @@ public sealed class ChangeCurrentUnitItemCommand : NoContextCommand
         Name = RS.ChangeCurrentUnitItemCommand_CommandInfo_Name,
         Description = RS.ChangeCurrentUnitItemCommand_CommandInfo_Description,
         Icon = MaterialIconKind.Settings,
-        DefaultHotKey = null,
+        HotKeyInfo = new HotKeyInfo { DefaultHotKey = null },
         Source = SystemModule.Instance,
     };
 
@@ -43,7 +43,7 @@ public sealed class ChangeCurrentUnitItemCommand : NoContextCommand
         if (newValue is not ActionCommandArg memento)
         {
             return ValueTask.FromException<ICommandArg?>(
-                new InvalidOperationException("Unable to perform action. Pass a valid parameter.")
+                new CommandArgMismatchException(typeof(ActionCommandArg))
             );
         }
 

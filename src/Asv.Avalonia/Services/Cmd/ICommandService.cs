@@ -14,7 +14,7 @@ public interface ICommandService : IExportable
         CancellationToken cancel = default
     );
     void SetHotKey(string commandId, KeyGesture hotKey);
-    KeyGesture? GetHostKey(string commandId);
+    KeyGesture? GetHotKey(string commandId);
     Observable<CommandEventArgs> OnCommand { get; }
     ValueTask Undo(CommandSnapshot command, CancellationToken cancel = default);
     ValueTask Redo(CommandSnapshot command, CancellationToken cancel = default);

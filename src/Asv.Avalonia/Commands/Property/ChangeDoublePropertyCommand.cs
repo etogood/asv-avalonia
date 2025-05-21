@@ -17,7 +17,7 @@ public class ChangeDoublePropertyCommand : ContextCommand<IHistoricalProperty<do
         Name = RS.ChangeDoublePropertyCommand_CommandInfo_Name,
         Description = RS.ChangeDoublePropertyCommand_CommandInfo_Description,
         Icon = MaterialIconKind.PropertyTag,
-        DefaultHotKey = null,
+        HotKeyInfo = new HotKeyInfo { DefaultHotKey = null },
         Source = SystemModule.Instance,
     };
 
@@ -33,7 +33,7 @@ public class ChangeDoublePropertyCommand : ContextCommand<IHistoricalProperty<do
     {
         if (newValue is not DoubleCommandArg value)
         {
-            throw new InvalidCastException("Invalid value type. Persistable must be double");
+            throw new CommandArgMismatchException(typeof(DoubleCommandArg));
         }
 
         var oldValue = new DoubleCommandArg(context.ModelValue.Value);
