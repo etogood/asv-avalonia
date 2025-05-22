@@ -125,13 +125,25 @@ public class UavWidgetViewModel : ExtendableHeadlinedViewModel<IUavFlightWidget>
         TakeOff = new ReactiveCommand(
             async (_, _) =>
             {
-                using var dialog = new SetAltitudeDialogViewModel(navigation, unitService);
-                var result = await dialog.ApplyDialog();
+                using var vm = new SetAltitudeDialogViewModel(AltitudeUnit);
+                var dialog = new ContentDialog(vm, navigation)
+                {
+                    PrimaryButtonText =
+                        RS.SetAltitudeDialogViewModel_ApplyDialog_PrimaryButton_TakeOff,
+                    SecondaryButtonText =
+                        RS.SetAltitudeDialogViewModel_ApplyDialog_SecondaryButton_Cancel,
+                    IsSecondaryButtonEnabled = true,
+                };
+
+                var result = await dialog.ShowAsync();
+
                 if (result == ContentDialogResult.Primary)
                 {
                     await this.ExecuteCommand(
                         TakeOffCommand.Id,
-                        new DoubleCommandArg(dialog.AltitudeResult.Value)
+                        new DoubleCommandArg(
+                            AltitudeUnit.CurrentUnitItem.CurrentValue.ParseToSi(vm.Altitude.Value)
+                        )
                     );
                 }
             }
