@@ -1,10 +1,10 @@
 ﻿using Asv.Common;
 using R3;
 
-namespace Asv.Avalonia;
+namespace Asv.Avalonia.LogViewer;
 
 [ExportExtensionFor<IHomePage>]
-public class HomePageLogViewerExtension : IExtensionFor<IHomePage>
+public sealed class HomePageLogViewerExtension : IExtensionFor<IHomePage>
 {
     public void Extend(IHomePage context, CompositeDisposable contextDispose)
     {

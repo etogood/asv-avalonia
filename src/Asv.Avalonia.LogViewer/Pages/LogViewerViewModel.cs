@@ -1,5 +1,4 @@
 ﻿using System.Composition;
-using Asv.Avalonia.Comparers;
 using Asv.Common;
 using Avalonia.Controls;
 using Material.Icons;
@@ -7,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;
 
-namespace Asv.Avalonia;
+namespace Asv.Avalonia.LogViewer;
 
 public sealed class LogViewerFilterItem(string name, bool isSelected)
 {
@@ -18,7 +17,7 @@ public sealed class LogViewerFilterItem(string name, bool isSelected)
 [ExportPage(PageId)]
 public class LogViewerViewModel : PageViewModel<LogViewerViewModel>, IPage
 {
-    public const string PageId = "logviewer";
+    public const string PageId = "log.viewer";
     private const int MinPageIndex = 1;
     public const MaterialIconKind PageIcon = MaterialIconKind.Journal;
 
@@ -31,7 +30,8 @@ public class LogViewerViewModel : PageViewModel<LogViewerViewModel>, IPage
     private readonly List<LogItemViewModel> _logItems;
     private readonly ObservableList<LogItemViewModel> _writableLogItems;
 
-    public LogViewerViewModel() : base(DesignTime.Id, NullCommandService.Instance)
+    public LogViewerViewModel()
+        : base(DesignTime.Id, NullCommandService.Instance)
     {
         if (Design.IsDesignMode)
         {
@@ -49,7 +49,7 @@ public class LogViewerViewModel : PageViewModel<LogViewerViewModel>, IPage
                 new("Information", true),
             };
             AvailableLevels = _logLevels.ToNotifyCollectionChangedSlim();
-            AvailableCategories = _logCategories.ToNotifyCollectionChangedSlim();       
+            AvailableCategories = _logCategories.ToNotifyCollectionChangedSlim();
         }
     }
 
@@ -74,28 +74,47 @@ public class LogViewerViewModel : PageViewModel<LogViewerViewModel>, IPage
         SearchText = new BindableReactiveProperty<string>();
         CurrentPageIndex = new BindableReactiveProperty<int>();
         SearchText.Subscribe(_ => CurrentPageIndex.OnNext(1)).DisposeItWith(Disposable);
-        MoveToPreviousPageCommand = new ReactiveCommand(_ => MoveToPreviousPage()).DisposeItWith(Disposable);
-        MoveToNextPageCommand = new ReactiveCommand(_ => MoveToNextPage()).DisposeItWith(Disposable);
-        ClearSearchTextCommand = new ReactiveCommand(_ => SearchText.OnNext(string.Empty)).DisposeItWith(Disposable);
-        SearchText.Subscribe(text => ClearSearchTextCommand.ChangeCanExecute(!string.IsNullOrEmpty(text))).DisposeItWith(Disposable);
+        MoveToPreviousPageCommand = new ReactiveCommand(_ => MoveToPreviousPage()).DisposeItWith(
+            Disposable
+        );
+        MoveToNextPageCommand = new ReactiveCommand(_ => MoveToNextPage()).DisposeItWith(
+            Disposable
+        );
+        ClearSearchTextCommand = new ReactiveCommand(_ =>
+            SearchText.OnNext(string.Empty)
+        ).DisposeItWith(Disposable);
+        SearchText
+            .Subscribe(text => ClearSearchTextCommand.ChangeCanExecute(!string.IsNullOrEmpty(text)))
+            .DisposeItWith(Disposable);
 
-        SelectAllCategoriesCommand = new ReactiveCommand(_ => _logCategories.ForEach(cls => cls.IsSelected.Value = true)).DisposeItWith(Disposable);
-        DeselectAllCategoriesCommand = new ReactiveCommand(_ => _logCategories.ForEach(cls => cls.IsSelected.Value = false)).DisposeItWith(Disposable);
+        SelectAllCategoriesCommand = new ReactiveCommand(_ =>
+            _logCategories.ForEach(cls => cls.IsSelected.Value = true)
+        ).DisposeItWith(Disposable);
+        DeselectAllCategoriesCommand = new ReactiveCommand(_ =>
+            _logCategories.ForEach(cls => cls.IsSelected.Value = false)
+        ).DisposeItWith(Disposable);
 
-        SelectAllLevelsCommand = new ReactiveCommand(_ => _logLevels.ForEach(level => level.IsSelected.Value = true)).DisposeItWith(Disposable);
-        DeselectAllLevelsCommand = new ReactiveCommand(_ => _logLevels.ForEach(level => level.IsSelected.Value = false)).DisposeItWith(Disposable);
+        SelectAllLevelsCommand = new ReactiveCommand(_ =>
+            _logLevels.ForEach(level => level.IsSelected.Value = true)
+        ).DisposeItWith(Disposable);
+        DeselectAllLevelsCommand = new ReactiveCommand(_ =>
+            _logLevels.ForEach(level => level.IsSelected.Value = false)
+        ).DisposeItWith(Disposable);
 
         ClearLogsCommand = new ReactiveCommand(ClearLogs).DisposeItWith(Disposable);
         _log.LoadItemsFromLogFile()
             .ForEach(x => _logItems.Add(new LogItemViewModel(x.Timestamp.Ticks, x)));
-        _logItems.Select(viewModel => viewModel.Level).ForEach(level =>
-        {
-            if (_logLevels.FirstOrDefault(item => item.Name == level.ToString()) is null)
+        _logItems
+            .Select(viewModel => viewModel.Level)
+            .ForEach(level =>
             {
-                _logLevels.Add(new LogViewerFilterItem(level.ToString(), true));
-            }
-        });
-        _logItems.Select(viewModel => viewModel.Category)
+                if (_logLevels.FirstOrDefault(item => item.Name == level.ToString()) is null)
+                {
+                    _logLevels.Add(new LogViewerFilterItem(level.ToString(), true));
+                }
+            });
+        _logItems
+            .Select(viewModel => viewModel.Category)
             .ForEach(category =>
             {
                 if (_logCategories.FirstOrDefault(item => item.Name == category) is null)
@@ -103,24 +122,27 @@ public class LogViewerViewModel : PageViewModel<LogViewerViewModel>, IPage
                     _logCategories.Add(new LogViewerFilterItem(category, true));
                 }
             });
-        AvailableCategories = _logCategories.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
+        AvailableCategories = _logCategories
+            .ToNotifyCollectionChangedSlim()
+            .DisposeItWith(Disposable);
         AvailableLevels = _logLevels.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
         TotalItemsCount.Value = _logItems.Count;
         _log.OnMessage.Subscribe(message =>
-        {
-            if (message is not null)
             {
-                _logItems.Add(new LogItemViewModel(message.Timestamp.Ticks, message));
-            }
-        }).DisposeItWith(Disposable);
+                if (message is not null)
+                {
+                    _logItems.Add(new LogItemViewModel(message.Timestamp.Ticks, message));
+                }
+            })
+            .DisposeItWith(Disposable);
         _writableLogItems = new ObservableList<LogItemViewModel>();
         var logView = _writableLogItems.CreateWritableView(x => x).DisposeItWith(Disposable);
         logView.DisposeRemovedViewItems().DisposeItWith(Disposable);
         logView.AttachFilter(FilterItem);
         _writableLogItems.SetRoutableParent(this, false);
-        
+
         LogItemsView = logView.ToWritableNotifyCollectionChanged().DisposeItWith(Disposable);
-        
+
         ApplyFilters = new ReactiveCommand(_ =>
         {
             CurrentPageIndex.OnNext(1);
@@ -132,9 +154,9 @@ public class LogViewerViewModel : PageViewModel<LogViewerViewModel>, IPage
             .Subscribe(tuple =>
             {
                 var currentIndex = tuple[1];
-                
+
                 UpdateFilteredItems();
-                
+
                 if (currentIndex < MinPageIndex)
                 {
                     CurrentPageIndex.OnNext(MinPageIndex);
@@ -144,26 +166,39 @@ public class LogViewerViewModel : PageViewModel<LogViewerViewModel>, IPage
                 {
                     CurrentPageIndex.OnNext(TotalPagesCount.Value);
                 }
-            }).DisposeItWith(Disposable);
+            })
+            .DisposeItWith(Disposable);
     }
-    
+
     private void UpdateFilteredItems()
     {
-        var filteredItems = _logItems.Where(item =>
-        {
-            var containsMessage =
-                string.IsNullOrEmpty(SearchText.Value)
-                || item.Message.Contains(SearchText.Value, StringComparison.CurrentCultureIgnoreCase);
-            
-            var isSelectedLevel = _logLevels.FirstOrDefault(filterItem => filterItem.Name == item.Level.ToString())?.IsSelected.Value ?? false;
-            var isSelectedCategory =
-                _logCategories.FirstOrDefault(filterItem => filterItem.Name == item.Category)?.IsSelected.Value ?? false;
-            
-            return containsMessage && isSelectedLevel && isSelectedCategory;
-        }).OrderByDescending(x => x, LogItemDescendingComparer.Instance).ToList();
+        var filteredItems = _logItems
+            .Where(item =>
+            {
+                var containsMessage =
+                    string.IsNullOrEmpty(SearchText.Value)
+                    || item.Message.Contains(
+                        SearchText.Value,
+                        StringComparison.CurrentCultureIgnoreCase
+                    );
+
+                var isSelectedLevel =
+                    _logLevels
+                        .FirstOrDefault(filterItem => filterItem.Name == item.Level.ToString())
+                        ?.IsSelected.Value ?? false;
+                var isSelectedCategory =
+                    _logCategories
+                        .FirstOrDefault(filterItem => filterItem.Name == item.Category)
+                        ?.IsSelected.Value ?? false;
+
+                return containsMessage && isSelectedLevel && isSelectedCategory;
+            })
+            .OrderByDescending(x => x, LogItemDescendingComparer.Instance)
+            .ToList();
 
         FilteredItemsCount.Value = filteredItems.Count;
-        TotalPagesCount.Value = (int)Math.Ceiling((double)FilteredItemsCount.Value / PageSize.Value);
+        TotalPagesCount.Value = (int)
+            Math.Ceiling((double)FilteredItemsCount.Value / PageSize.Value);
 
         var skip = (CurrentPageIndex.Value - 1) * PageSize.Value;
         var pageItems = filteredItems.Skip(skip).Take(PageSize.Value).ToList();
@@ -200,11 +235,16 @@ public class LogViewerViewModel : PageViewModel<LogViewerViewModel>, IPage
         var containsMessage =
             string.IsNullOrEmpty(SearchText.Value)
             || item.Message.Contains(SearchText.Value, StringComparison.CurrentCultureIgnoreCase);
-        
-        var isSelectedLevel = _logLevels.FirstOrDefault(filterItem => filterItem.Name == item.Level.ToString())?.IsSelected.Value ?? false;
+
+        var isSelectedLevel =
+            _logLevels
+                .FirstOrDefault(filterItem => filterItem.Name == item.Level.ToString())
+                ?.IsSelected.Value ?? false;
         var isSelectedCategory =
-            _logCategories.FirstOrDefault(filterItem => filterItem.Name == item.Category)?.IsSelected.Value ?? false;
-        
+            _logCategories
+                .FirstOrDefault(filterItem => filterItem.Name == item.Category)
+                ?.IsSelected.Value ?? false;
+
         return containsMessage && isSelectedLevel && isSelectedCategory;
     }
 
@@ -220,8 +260,10 @@ public class LogViewerViewModel : PageViewModel<LogViewerViewModel>, IPage
 
     private async ValueTask ClearLogs(Unit unit, CancellationToken ct)
     {
-        var result = await _dialogService.ShowYesNoDialog(RS.LogViewerViewModel_ClearDialog_Title,
-            RS.LogViewerViewModel_ClearDialog_Content);
+        var result = await _dialogService.ShowYesNoDialog(
+            RS.LogViewerViewModel_ClearDialog_Title,
+            RS.LogViewerViewModel_ClearDialog_Content
+        );
         if (result)
         {
             _logItems.Clear();
@@ -235,9 +277,7 @@ public class LogViewerViewModel : PageViewModel<LogViewerViewModel>, IPage
         return _logItems;
     }
 
-    protected override void AfterLoadExtensions()
-    {
-    }
+    protected override void AfterLoadExtensions() { }
 
-    public override IExportInfo Source => SystemModule.Instance;
+    public override IExportInfo Source => LogViewerModule.Instance;
 }

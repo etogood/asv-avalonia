@@ -1,7 +1,7 @@
 ﻿using Material.Icons;
 using Microsoft.Extensions.Logging;
 
-namespace Asv.Avalonia;
+namespace Asv.Avalonia.LogViewer;
 
 public class LogItemViewModel(long itemIndex, LogMessage msg)
     : RoutableViewModel($"log_item{itemIndex}")
@@ -31,6 +31,7 @@ public class LogItemViewModel(long itemIndex, LogMessage msg)
     public bool IsWarning { get; } = msg.LogLevel == LogLevel.Warning;
     public bool IsError { get; } = msg.LogLevel == LogLevel.Error;
     public bool IsFatal { get; } = msg.LogLevel == LogLevel.Critical;
+
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
         return [];

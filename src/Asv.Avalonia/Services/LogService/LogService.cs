@@ -19,7 +19,7 @@ public class LogService : ILogService, IExportable
     private readonly ReactiveProperty<LogMessage?> _onMessage = new();
     private readonly ILogger<LogService> _logger;
     private readonly string _logsFolder;
-    
+
     [ImportingConstructor]
     public LogService()
     {
@@ -61,7 +61,7 @@ public class LogService : ILogService, IExportable
         });
         _logger = _factory.CreateLogger<LogService>();
     }
-    
+
     public LogService(string logFolder, int rollingSizeKb, LogLevel minLevel, bool logToConsole)
     {
         _logsFolder = logFolder;

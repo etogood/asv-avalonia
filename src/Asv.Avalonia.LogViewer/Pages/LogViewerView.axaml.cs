@@ -1,8 +1,6 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+﻿using Avalonia.Controls;
 
-namespace Asv.Avalonia;
+namespace Asv.Avalonia.LogViewer;
 
 [ExportViewFor(typeof(LogViewerViewModel))]
 public partial class LogViewerView : UserControl
@@ -11,5 +9,4 @@ public partial class LogViewerView : UserControl
     {
         InitializeComponent();
     }
-    
 }

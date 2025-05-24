@@ -1,6 +1,8 @@
-﻿namespace Asv.Avalonia.Comparers;
+﻿namespace Asv.Avalonia.LogViewer;
 
-public class LogItemDescendingComparer : IComparer<LogItemViewModel>, IEqualityComparer<LogItemViewModel>
+public sealed class LogItemDescendingComparer
+    : IComparer<LogItemViewModel>,
+        IEqualityComparer<LogItemViewModel>
 {
     public int Compare(LogItemViewModel? x, LogItemViewModel? y)
     {
@@ -11,15 +13,14 @@ public class LogItemDescendingComparer : IComparer<LogItemViewModel>, IEqualityC
 
         return -1;
     }
-    
+
     public static LogItemDescendingComparer Instance { get; } = new();
-    private LogItemDescendingComparer()
-    {
-    }
+
+    private LogItemDescendingComparer() { }
 
     public bool Equals(LogItemViewModel? x, LogItemViewModel? y)
     {
-      return Compare(x, y) == 0;
+        return Compare(x, y) == 0;
     }
 
     public int GetHashCode(LogItemViewModel obj)

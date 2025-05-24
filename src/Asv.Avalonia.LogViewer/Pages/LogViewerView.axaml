@@ -2,22 +2,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:gui="clr-namespace:Asv.Avalonia"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:logViewer="clr-namespace:Asv.Avalonia.LogViewer"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
-             x:Class="Asv.Avalonia.LogViewerView"
-             x:DataType="gui:LogViewerViewModel">
+             x:Class="Asv.Avalonia.LogViewer.LogViewerView"
+             x:DataType="logViewer:LogViewerViewModel">
+    <Design.DataContext>
+        <logViewer:LogViewerViewModel/>
+    </Design.DataContext>
+    
     <DockPanel Margin="8">
         <Grid RowDefinitions="Auto,8,*,8,Auto" ColumnDefinitions="*,Auto">
             <DockPanel Grid.Row="0">
                 <ToggleButton Margin="4 0" DockPanel.Dock="Right" IsChecked="{CompiledBinding IsFiltersVisible.Value}">
                     <Grid ColumnDefinitions="Auto,4,*">
                         <avalonia:MaterialIcon Kind="Filter" />
-                        <TextBlock Grid.Column="2" Text="{x:Static gui:RS.LogViewerView_Button_Filters}" />
+                        <TextBlock Grid.Column="2" Text="{x:Static logViewer:RS.LogViewerView_Button_Filters}" />
                     </Grid>
                 </ToggleButton>
                 <TextBox Margin="0 0 4 0" DockPanel.Dock="Left"
-                         VerticalAlignment="Center" Watermark="{x:Static gui:RS.LogViewerView_SearchText_Watermark}"
+                         VerticalAlignment="Center" Watermark="{x:Static logViewer:RS.LogViewerView_SearchText_Watermark}"
                          Text="{CompiledBinding SearchText.Value}">
                     <TextBox.InnerLeftContent>
                         <avalonia:MaterialIcon Margin="4 0" Kind="TabFind" />
@@ -149,7 +153,7 @@
                 <TextBlock Margin="4 0"
                            VerticalAlignment="Center"
                            DockPanel.Dock="Right"
-                           Text="{x:Static gui:RS.LogViewerView_TextBlock_By_Title}" />
+                           Text="{x:Static logViewer:RS.LogViewerView_TextBlock_By_Title}" />
                 <!-- By: -->
                 <Button Command="{CompiledBinding MoveToNextPageCommand}" VerticalAlignment="Stretch" Margin="4 0"
                         DockPanel.Dock="Right">
@@ -179,20 +183,20 @@
                 </Button>
                 <WrapPanel VerticalAlignment="Center">
                     <TextBlock Margin="4 0"
-                               Text="{CompiledBinding TotalItemsCount.Value, StringFormat={x:Static gui:RS.LogViewerView_TextBlock_TotalItemsCount}}" />
+                               Text="{CompiledBinding TotalItemsCount.Value, StringFormat={x:Static logViewer:RS.LogViewerView_TextBlock_TotalItemsCount}}" />
                     <TextBlock Margin="4 0"
-                               Text="{CompiledBinding FilteredItemsCount.Value, StringFormat={x:Static gui:RS.LogViewerView_TextBlock_FilteredItemsCount}}" />
+                               Text="{CompiledBinding FilteredItemsCount.Value, StringFormat={x:Static logViewer:RS.LogViewerView_TextBlock_FilteredItemsCount}}" />
                     <TextBlock Margin="4 0"
-                               Text="{CompiledBinding LogItemsView.Count, StringFormat={x:Static gui:RS.LogViewerView_TextBlock_PageItemsCount}}" />
+                               Text="{CompiledBinding LogItemsView.Count, StringFormat={x:Static logViewer:RS.LogViewerView_TextBlock_PageItemsCount}}" />
                 </WrapPanel>
             </DockPanel>
             <Panel Grid.Row="0" Grid.Column="1" Grid.RowSpan="5" Margin="4,4"
                    IsVisible="{Binding IsFiltersVisible.Value}">
                 <ScrollViewer>
                     <Grid RowDefinitions="Auto,*,4,*" Margin="4,4">
-                        <Button Margin="4,4" Command="{Binding ApplyFilters}" Content="{x:Static gui:RS.LogViewerView_Apply_Filters_Button}"/>
+                        <Button Margin="4,4" Command="{Binding ApplyFilters}" Content="{x:Static logViewer:RS.LogViewerView_Apply_Filters_Button}"/>
                         <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,4,Auto,2,Auto" Grid.Row="1">
-                            <TextBlock Grid.Column="0" Text="{x:Static gui:RS.LogViewView_Levels_Text}" />
+                            <TextBlock Grid.Column="0" Text="{x:Static logViewer:RS.LogViewView_Levels_Text}" />
                             <Button Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right"
                                     Command="{CompiledBinding SelectAllLevelsCommand}">
                                 <avalonia:MaterialIcon Kind="CheckboxMultipleMarked" />
@@ -204,7 +208,7 @@
                             <ItemsControl Grid.Row="1" Grid.Column="0" ItemsSource="{Binding AvailableLevels}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <CheckBox x:DataType="gui:LogViewerFilterItem"
+                                        <CheckBox x:DataType="logViewer:LogViewerFilterItem"
                                                   HorizontalAlignment="Stretch"
                                                   IsChecked="{Binding IsSelected.Value}"
                                                   Content="{Binding Name}" />
@@ -215,7 +219,7 @@
                         <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,4,Auto,2,Auto" Grid.Row="3">
                             <TextBlock Grid.Row="0"
                                        Grid.Column="0"
-                                       Text="{x:Static gui:RS.LogViewView_Sources_Text}" />
+                                       Text="{x:Static logViewer:RS.LogViewView_Sources_Text}" />
                             <Button Grid.Row="0"
                                     Grid.Column="2"
                                     HorizontalAlignment="Right"
@@ -234,7 +238,7 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <CheckBox HorizontalAlignment="Stretch"
-                                                  x:DataType="gui:LogViewerFilterItem"
+                                                  x:DataType="logViewer:LogViewerFilterItem"
                                                   Content="{Binding Name}"
                                                   IsChecked="{Binding IsSelected.Value}"
                                                   />
