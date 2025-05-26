@@ -37,7 +37,7 @@ jobs:
           dotnet restore ./src/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj 
           dotnet restore ./src/${{ env.PROJECT_NAME }}.DC/${{ env.PROJECT_NAME }}.DC.csproj  
           dotnet restore ./src/${{ env.PROJECT_NAME }}.IO/${{ env.PROJECT_NAME }}.IO.csproj    
-          dotnet restore ./src/${{ env.PROJECT_NAME }}.Map/${{ env.PROJECT_NAME }}.Map.csproj       
+          dotnet restore ./src/${{ env.PROJECT_NAME }}.GeoMap/${{ env.PROJECT_NAME }}.GeoMap.csproj       
           dotnet restore ./src/${{ env.PROJECT_NAME }}.Plugins/${{ env.PROJECT_NAME }}.Plugins.csproj
           
 
