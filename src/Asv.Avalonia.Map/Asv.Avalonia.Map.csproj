@@ -26,6 +26,7 @@
         </WarningsAsErrors>
     </PropertyGroup>
     <ItemGroup>
+        <ProjectReference Include="..\Asv.Avalonia\Asv.Avalonia.csproj" />
         <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="$(DotNetVersion)" />
         <PackageReference Include="Roslynator.Analyzers" Version="4.13.1">
@@ -37,7 +38,6 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="ZLogger" Version="$(ZLoggerVersion)" />
-        <ProjectReference Include="..\Asv.Avalonia\Asv.Avalonia.csproj" />
     </ItemGroup>
     <ItemGroup>
       <Compile Update="Controls\MapView\MapItemsControl.axaml.cs">

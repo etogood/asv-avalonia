@@ -20,6 +20,7 @@ public static class LogServiceMixin
             .AddOptions<LogServiceConfig>()
             .Bind(builder.Configuration);
         loggingBuilder.Build(builder, options);
+
         return builder;
     }
 }

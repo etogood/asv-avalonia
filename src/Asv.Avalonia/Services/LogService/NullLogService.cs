@@ -48,4 +48,6 @@ public class NullLogService : ILogService
     {
         return ArraySegment<LogMessage>.Empty;
     }
+
+    public IExportInfo Source => SystemModule.Instance;
 }

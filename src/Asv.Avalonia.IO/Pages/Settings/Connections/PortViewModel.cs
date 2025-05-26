@@ -193,12 +193,12 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
     {
         if (string.IsNullOrWhiteSpace(arg))
         {
-            return new Exception(RS.PortViewModel_ValidateName_PortNameRequiredException);
+            return new Exception("Port name is required");
         }
 
         if (arg.Length > 50)
         {
-            return new Exception(RS.PortViewModel_ValidateName_PortNameTooLongException);
+            return new Exception("Port name is too long. Max length is 50 characters");
         }
 
         return null;
