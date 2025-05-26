@@ -4,12 +4,12 @@ namespace Asv.Avalonia.LogViewer;
 
 [ExportCommand]
 [method: ImportingConstructor]
-public class OpenLogViewerPageCommand(INavigationService nav)
+public sealed class OpenLogViewerPageCommand(INavigationService nav)
     : OpenPageCommandBase(LogViewerViewModel.PageId, nav)
 {
     #region Static
 
-    public const string Id = $"{BaseId}.open.logview";
+    public const string Id = $"{BaseId}.open.{LogViewerViewModel.PageId}";
 
     public static readonly ICommandInfo StaticInfo = new CommandInfo // TODO: Localize
     {

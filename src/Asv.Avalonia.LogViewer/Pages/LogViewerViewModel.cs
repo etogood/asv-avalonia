@@ -8,14 +8,25 @@ using R3;
 
 namespace Asv.Avalonia.LogViewer;
 
-public sealed class LogViewerFilterItem(string name, bool isSelected)
+public sealed class LogViewerFilterItem : IDisposable
 {
-    public string Name { get; set; } = name;
-    public BindableReactiveProperty<bool> IsSelected { get; } = new(isSelected);
+    public string Name { get; set; }
+    public BindableReactiveProperty<bool> IsSelected { get; }
+
+    public LogViewerFilterItem(string name, bool isSelected)
+    {
+        Name = name;
+        IsSelected = new BindableReactiveProperty<bool>(isSelected);
+    }
+
+    public void Dispose()
+    {
+        IsSelected.Dispose();
+    }
 }
 
 [ExportPage(PageId)]
-public class LogViewerViewModel : PageViewModel<LogViewerViewModel>, IPage
+public sealed class LogViewerViewModel : PageViewModel<LogViewerViewModel>
 {
     public const string PageId = "log.viewer";
     private const int MinPageIndex = 1;
