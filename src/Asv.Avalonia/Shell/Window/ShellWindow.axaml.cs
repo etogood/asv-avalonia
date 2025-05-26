@@ -24,6 +24,7 @@ public partial class ShellWindow : Window, IExportable
             if (x.Sender is ShellWindow window)
             {
                 window._savePosition?.OnNext(Unit.Default);
+                window.UpdateWindowStateUI();
             }
         });
     }
@@ -152,6 +153,14 @@ public partial class ShellWindow : Window, IExportable
 
         _logger.ZLogTrace($"Save {nameof(ShellWindow)} layout: {shellViewConfig}");
         _configuration.Set(shellViewConfig);
+    }
+
+    private void UpdateWindowStateUI()
+    {
+        if (DataContext is DesktopShellViewModel vm)
+        {
+            vm.UpdateWindowStateUI(WindowState);
+        }
     }
 
     private void WindowBase_OnPositionChanged(object? sender, PixelPointEventArgs e)

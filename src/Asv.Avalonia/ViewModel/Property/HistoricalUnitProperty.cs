@@ -2,7 +2,7 @@ using R3;
 
 namespace Asv.Avalonia;
 
-public class HistoricalUnitProperty : RoutableViewModel, IHistoricalProperty<double>
+public sealed class HistoricalUnitProperty : HistoricalPropertyBase<double, string?>
 {
     private readonly ReactiveProperty<double> _modelValue;
     private readonly IUnit _unit;
@@ -10,9 +10,9 @@ public class HistoricalUnitProperty : RoutableViewModel, IHistoricalProperty<dou
 
     private bool _internalChange;
 
-    public ReactiveProperty<double> ModelValue => _modelValue;
-    public BindableReactiveProperty<string?> ViewValue { get; } = new();
-    public BindableReactiveProperty<bool> IsSelected { get; } = new();
+    public override ReactiveProperty<double> ModelValue => _modelValue;
+    public override BindableReactiveProperty<string?> ViewValue { get; } = new();
+    public override BindableReactiveProperty<bool> IsSelected { get; } = new();
     public IUnit Unit => _unit;
 
     public HistoricalUnitProperty(
@@ -46,12 +46,12 @@ public class HistoricalUnitProperty : RoutableViewModel, IHistoricalProperty<dou
         _internalChange = false;
 
         _sub3 = _modelValue.Subscribe(OnChangeByModel);
-        _sub4 = unit.Current.Subscribe(_ => OnChangeByModel(modelValue.CurrentValue));
+        _sub4 = unit.CurrentUnitItem.Subscribe(_ => OnChangeByModel(modelValue.CurrentValue));
     }
 
-    private Exception? ValidateValue(string? userValue)
+    protected override Exception? ValidateValue(string? userValue)
     {
-        var result = _unit.Current.CurrentValue.ValidateValue(userValue);
+        var result = _unit.CurrentUnitItem.CurrentValue.ValidateValue(userValue);
         if (result.IsSuccess)
         {
             return null;
@@ -60,22 +60,22 @@ public class HistoricalUnitProperty : RoutableViewModel, IHistoricalProperty<dou
         return result.ValidationException;
     }
 
-    private async ValueTask OnChangedByUser(string? userValue, CancellationToken cancel)
+    protected override async ValueTask OnChangedByUser(string? userValue, CancellationToken cancel)
     {
         if (_internalChange)
         {
             return;
         }
 
-        var value = _unit.Current.CurrentValue.ParseToSi(userValue);
+        var value = _unit.CurrentUnitItem.CurrentValue.ParseToSi(userValue);
         var newValue = new DoubleCommandArg(value);
         await this.ExecuteCommand(ChangeDoublePropertyCommand.Id, newValue);
     }
 
-    private void OnChangeByModel(double modelValue)
+    protected override void OnChangeByModel(double modelValue)
     {
         _internalChange = true;
-        ViewValue.OnNext(_unit.Current.CurrentValue.PrintFromSi(modelValue, _format));
+        ViewValue.OnNext(_unit.CurrentUnitItem.CurrentValue.PrintFromSi(modelValue, _format));
         _internalChange = false;
     }
 

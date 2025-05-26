@@ -30,10 +30,11 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
         Collapse = new ReactiveCommand((_, c) => CollapseAsync(c));
         Title = new BindableReactiveProperty<string>();
 
-        SelectedPage = new BindableReactiveProperty<IPage>();
+        SelectedPage = new BindableReactiveProperty<IPage?>();
         MainMenu = new ObservableList<IMenuItem>();
         MainMenuView = new MenuTree(MainMenu).DisposeItWith(Disposable);
         MainMenu.SetRoutableParent(this, true).DisposeItWith(Disposable);
+        SelectedPage.Subscribe(page => Navigation.ForceFocus(page)).DisposeItWith(Disposable);
     }
 
     #region MainMenu
@@ -93,7 +94,7 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
 
     protected ObservableList<IPage> InternalPages => _pages;
     public IReadOnlyObservableList<IPage> Pages => _pages;
-    public BindableReactiveProperty<IPage> SelectedPage { get; }
+    public BindableReactiveProperty<IPage?> SelectedPage { get; }
     public NotifyCollectionChangedSynchronizedViewList<IPage> PagesView { get; }
 
     #endregion
@@ -113,6 +114,11 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
                 SelectedPage.Value = page;
             }
 
+            return ValueTask.FromResult<IRoutable>(page);
+        }
+
+        if (page.Id == SelectedPage.Value?.Id)
+        {
             return ValueTask.FromResult<IRoutable>(page);
         }
 
@@ -138,6 +144,11 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
                 _logger.ZLogInformation($"Close page [{close.Page.Id}]");
 
                 // TODO: save page layout
+                if (_pages is [HomePageViewModel])
+                {
+                    return;
+                }
+
                 _pages.Remove(close.Page);
                 close.Page.Parent = null;
                 close.Page.Dispose();
@@ -176,12 +187,7 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
             WindowSateIconKind.Dispose();
             WindowStateHeader.Dispose();
             PagesView.Dispose();
-            foreach (var page in _pages)
-            {
-                page.Dispose();
-            }
-
-            _pages.Clear();
+            _pages.ClearWithItemsDispose();
         }
 
         base.Dispose(disposing);

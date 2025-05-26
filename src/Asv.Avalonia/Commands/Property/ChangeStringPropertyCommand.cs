@@ -17,7 +17,7 @@ public class ChangeStringPropertyCommand : ContextCommand<IHistoricalProperty<st
         Name = RS.ChangeStringPropertyCommand_CommandInfo_Name,
         Description = RS.ChangeStringPropertyCommand_CommandInfo_Description,
         Icon = MaterialIconKind.PropertyTag,
-        DefaultHotKey = null,
+        HotKeyInfo = new HotKeyInfo { DefaultHotKey = null },
         Source = SystemModule.Instance,
     };
 
@@ -33,7 +33,7 @@ public class ChangeStringPropertyCommand : ContextCommand<IHistoricalProperty<st
     {
         if (newValue is not StringCommandArg value)
         {
-            throw new InvalidCastException("Invalid value type. Persistable must be a string");
+            throw new CommandArgMismatchException(typeof(StringCommandArg));
         }
 
         var oldValue = new StringCommandArg(context.ModelValue.Value ?? string.Empty);

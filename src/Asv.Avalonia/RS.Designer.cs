@@ -165,21 +165,21 @@ namespace Asv.Avalonia {
             }
         }
         
-        public static string SettingsKeyMapView_Header_Name {
+        public static string SettingsCommandListMapView_Header_Name {
             get {
-                return ResourceManager.GetString("SettingsKeyMapView_Header_Name", resourceCulture);
+                return ResourceManager.GetString("SettingsCommandListMapView_Header_Name", resourceCulture);
             }
         }
         
-        public static string SettingsKeyMapView_Header_Description {
+        public static string SettingsCommandListMapView_Header_Description {
             get {
-                return ResourceManager.GetString("SettingsKeyMapView_Header_Description", resourceCulture);
+                return ResourceManager.GetString("SettingsCommandListMapView_Header_Description", resourceCulture);
             }
         }
         
-        public static string SettingsKeyMapView_Header_DefaultHotKey {
+        public static string SettingsCommandListMapView_Header_DefaultHotKey {
             get {
-                return ResourceManager.GetString("SettingsKeyMapView_Header_DefaultHotKey", resourceCulture);
+                return ResourceManager.GetString("SettingsCommandListMapView_Header_DefaultHotKey", resourceCulture);
             }
         }
         
@@ -207,9 +207,9 @@ namespace Asv.Avalonia {
             }
         }
         
-        public static string SettingsKeymapViewModel_Name {
+        public static string SettingsCommandListViewModel_Name {
             get {
-                return ResourceManager.GetString("SettingsKeymapViewModel_Name", resourceCulture);
+                return ResourceManager.GetString("SettingsCommandListViewModel_Name", resourceCulture);
             }
         }
         
@@ -273,15 +273,15 @@ namespace Asv.Avalonia {
             }
         }
         
-        public static string SettingsKeyMapView_Header_CustomHotKey {
+        public static string SettingsCommandListMapView_Header_CustomHotKey {
             get {
-                return ResourceManager.GetString("SettingsKeyMapView_Header_CustomHotKey", resourceCulture);
+                return ResourceManager.GetString("SettingsCommandListMapView_Header_CustomHotKey", resourceCulture);
             }
         }
         
-        public static string SettingsKeyMapView_Action_ResetCustomHotKeys {
+        public static string SettingsCommandListView_Action_ResetCustomHotKeys {
             get {
-                return ResourceManager.GetString("SettingsKeyMapView_Action_ResetCustomHotKeys", resourceCulture);
+                return ResourceManager.GetString("SettingsCommandListView_Action_ResetCustomHotKeys", resourceCulture);
             }
         }
         
@@ -1023,6 +1023,132 @@ namespace Asv.Avalonia {
             }
         }
         
+        public static string Unit_Byte_Abbreviation {
+            get {
+                return ResourceManager.GetString("Unit_Byte_Abbreviation", resourceCulture);
+            }
+        }
+        
+        public static string Unit_Kilobyte_Abbreviation {
+            get {
+                return ResourceManager.GetString("Unit_Kilobyte_Abbreviation", resourceCulture);
+            }
+        }
+        
+        public static string Unit_Megabyte_Abbreviation {
+            get {
+                return ResourceManager.GetString("Unit_Megabyte_Abbreviation", resourceCulture);
+            }
+        }
+        
+        public static string Unit_Gigabyte_Abbreviation {
+            get {
+                return ResourceManager.GetString("Unit_Gigabyte_Abbreviation", resourceCulture);
+            }
+        }
+        
+        public static string Unit_Terabyte_Abbreviation {
+            get {
+                return ResourceManager.GetString("Unit_Terabyte_Abbreviation", resourceCulture);
+            }
+        }
+        
+        public static string FileBrowserView_NewFolder_Button_Tooltip {
+            get {
+                return ResourceManager.GetString("FileBrowserView_NewFolder_Button_Tooltip", resourceCulture);
+            }
+        }
+        
+        public static string FileBrowserView_Rename_Button_Tooltip {
+            get {
+                return ResourceManager.GetString("FileBrowserView_Rename_Button_Tooltip", resourceCulture);
+            }
+        }
+        
+        public static string FileBrowserView_CRC32_Button_Tooltip {
+            get {
+                return ResourceManager.GetString("FileBrowserView_CRC32_Button_Tooltip", resourceCulture);
+            }
+        }
+        
+        public static string FileBrowserView_Delete_Button_Tooltip {
+            get {
+                return ResourceManager.GetString("FileBrowserView_Delete_Button_Tooltip", resourceCulture);
+            }
+        }
+        
+        public static string FileBrowserView_Search_Watermark {
+            get {
+                return ResourceManager.GetString("FileBrowserView_Search_Watermark", resourceCulture);
+            }
+        }
+        
+        public static string FileBrowserView_Refresh_Button_Tooltip {
+            get {
+                return ResourceManager.GetString("FileBrowserView_Refresh_Button_Tooltip", resourceCulture);
+            }
+        }
+        
+        public static string FileBrowserView_CommitRename_Button_Tooltip {
+            get {
+                return ResourceManager.GetString("FileBrowserView_CommitRename_Button_Tooltip", resourceCulture);
+            }
+        }
+        
+        public static string FileBrowserView_Upload_button_Tooltip {
+            get {
+                return ResourceManager.GetString("FileBrowserView_Upload_button_Tooltip", resourceCulture);
+            }
+        }
+        
+        public static string FileBrowserView_Download_button_Tooltip {
+            get {
+                return ResourceManager.GetString("FileBrowserView_Download_button_Tooltip", resourceCulture);
+            }
+        }
+        
+        public static string FileBrowserView_CompareSelectedItems_Button_Tooltip {
+            get {
+                return ResourceManager.GetString("FileBrowserView_CompareSelectedItems_Button_Tooltip", resourceCulture);
+            }
+        }
+        
+        public static string FileBrowserView_FindFile_Button_Tooltip {
+            get {
+                return ResourceManager.GetString("FileBrowserView_FindFile_Button_Tooltip", resourceCulture);
+            }
+        }
+        
+        public static string FileBrowserViewModel_UploadDialog_Title {
+            get {
+                return ResourceManager.GetString("FileBrowserViewModel_UploadDialog_Title", resourceCulture);
+            }
+        }
+        
+        public static string FileBrowserViewModel_UploadDialog_PrimaryButtonText {
+            get {
+                return ResourceManager.GetString("FileBrowserViewModel_UploadDialog_PrimaryButtonText", resourceCulture);
+            }
+        }
+        
+        public static string FileBrowserViewModel_DownloadDialog_Title {
+            get {
+                return ResourceManager.GetString("FileBrowserViewModel_DownloadDialog_Title", resourceCulture);
+            }
+        }
+        
+        public static string FileBrowserViewModel_DownloadDialog_SecondaryButtonText {
+            get {
+                return ResourceManager.GetString("FileBrowserViewModel_DownloadDialog_SecondaryButtonText", resourceCulture);
+            }
+        }
+        
+        public static string FileBrowserViewModel_DownloadDialog_PrimaryButtonText {
+            get {
+                return ResourceManager.GetString("FileBrowserViewModel_DownloadDialog_PrimaryButtonText", resourceCulture);
+            }
+        }
+        
         public static string ChangeStringPropertyCommand_CommandInfo_Name {
             get {
                 return ResourceManager.GetString("ChangeStringPropertyCommand_CommandInfo_Name", resourceCulture);
@@ -1056,6 +1182,228 @@ namespace Asv.Avalonia {
         public static string ChangeThemeCommand_CommandInfo_Name {
             get {
                 return ResourceManager.GetString("ChangeThemeCommand_CommandInfo_Name", resourceCulture);
+            }
+        }
+        
+        public static string Not_Available {
+            get {
+                return ResourceManager.GetString("Not_Available", resourceCulture);
+            }
+        }
+        
+        public static string DialogPageViewModel_Title {
+            get {
+                return ResourceManager.GetString("DialogPageViewModel_Title", resourceCulture);
+            }
+        }
+        
+        public static string Mah_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("Mah_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string Capacity_UnitItem_Description {
+            get {
+                return ResourceManager.GetString("Capacity_UnitItem_Description", resourceCulture);
+            }
+        }
+        
+        public static string Mah_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("Mah_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string ChangeBoolPropertyCommand_CommandInfo_Name {
+            get {
+                return ResourceManager.GetString("ChangeBoolPropertyCommand_CommandInfo_Name", resourceCulture);
+            }
+        }
+        
+        public static string ChangeBoolPropertyCommand_CommandInfo_Description {
+            get {
+                return ResourceManager.GetString("ChangeBoolPropertyCommand_CommandInfo_Description", resourceCulture);
+            }
+        }
+        
+        public static string MilliAmpere_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("MilliAmpere_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string MilliAmpere_Amperage_Description {
+            get {
+                return ResourceManager.GetString("MilliAmpere_Amperage_Description", resourceCulture);
+            }
+        }
+        
+        public static string MilliAmpere_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("MilliAmpere_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string Ampere_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("Ampere_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string Amperage_AmpereUnit_Description {
+            get {
+                return ResourceManager.GetString("Amperage_AmpereUnit_Description", resourceCulture);
+            }
+        }
+        
+        public static string Ampere_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("Ampere_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string Volt_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("Volt_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string Volt_Voltage_Description {
+            get {
+                return ResourceManager.GetString("Volt_Voltage_Description", resourceCulture);
+            }
+        }
+        
+        public static string Volt_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("Volt_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string MilliVolt_UnitItem_Name {
+            get {
+                return ResourceManager.GetString("MilliVolt_UnitItem_Name", resourceCulture);
+            }
+        }
+        
+        public static string MilliVolt_Voltage_Description {
+            get {
+                return ResourceManager.GetString("MilliVolt_Voltage_Description", resourceCulture);
+            }
+        }
+        
+        public static string MilliVolt_UnitItem_Symbol {
+            get {
+                return ResourceManager.GetString("MilliVolt_UnitItem_Symbol", resourceCulture);
+            }
+        }
+        
+        public static string Voltage_Name {
+            get {
+                return ResourceManager.GetString("Voltage_Name", resourceCulture);
+            }
+        }
+        
+        public static string Voltage_Description {
+            get {
+                return ResourceManager.GetString("Voltage_Description", resourceCulture);
+            }
+        }
+        
+        public static string Amperage_Name {
+            get {
+                return ResourceManager.GetString("Amperage_Name", resourceCulture);
+            }
+        }
+        
+        public static string Amperage_Description {
+            get {
+                return ResourceManager.GetString("Amperage_Description", resourceCulture);
+            }
+        }
+        
+        public static string Progress_Name {
+            get {
+                return ResourceManager.GetString("Progress_Name", resourceCulture);
+            }
+        }
+        
+        public static string Progress_Description {
+            get {
+                return ResourceManager.GetString("Progress_Description", resourceCulture);
+            }
+        }
+        
+        public static string ProgressPercentUnit_Name {
+            get {
+                return ResourceManager.GetString("ProgressPercentUnit_Name", resourceCulture);
+            }
+        }
+        
+        public static string Percent_Progress_Description {
+            get {
+                return ResourceManager.GetString("Percent_Progress_Description", resourceCulture);
+            }
+        }
+        
+        public static string Mah_Capacity_Description {
+            get {
+                return ResourceManager.GetString("Mah_Capacity_Description", resourceCulture);
+            }
+        }
+        
+        public static string InParts_Progress_Description {
+            get {
+                return ResourceManager.GetString("InParts_Progress_Description", resourceCulture);
+            }
+        }
+        
+        public static string ChangeKeyGesturePropertyCommand_CommandInfo_Name {
+            get {
+                return ResourceManager.GetString("ChangeKeyGesturePropertyCommand_CommandInfo_Name", resourceCulture);
+            }
+        }
+        
+        public static string ChangeKeyGesturePropertyCommand_CommandInfo_Description {
+            get {
+                return ResourceManager.GetString("ChangeKeyGesturePropertyCommand_CommandInfo_Description", resourceCulture);
+            }
+        }
+        
+        public static string ConfirmChangeHotKeyCommand_CommandInfo_Name {
+            get {
+                return ResourceManager.GetString("ConfirmChangeHotKeyCommand_CommandInfo_Name", resourceCulture);
+            }
+        }
+        
+        public static string ConfirmChangeHotKeyCommand_CommandInfo_Description {
+            get {
+                return ResourceManager.GetString("ConfirmChangeHotKeyCommand_CommandInfo_Description", resourceCulture);
+            }
+        }
+        
+        public static string OpenSettingsCommand_CommandInfo_Name {
+            get {
+                return ResourceManager.GetString("OpenSettingsCommand_CommandInfo_Name", resourceCulture);
+            }
+        }
+        
+        public static string OpenSettingsCommand_CommandInfo_Description {
+            get {
+                return ResourceManager.GetString("OpenSettingsCommand_CommandInfo_Description", resourceCulture);
+            }
+        }
+        
+        public static string ResetHotKeysCommand_CommandInfo_Name {
+            get {
+                return ResourceManager.GetString("ResetHotKeysCommand_CommandInfo_Name", resourceCulture);
+            }
+        }
+        
+        public static string ResetHotKeysCommand_CommandInfo_Description {
+            get {
+                return ResourceManager.GetString("ResetHotKeysCommand_CommandInfo_Description", resourceCulture);
             }
         }
     }

@@ -39,7 +39,8 @@ public class SettingsConnectionViewModel
         _containerHost = containerHost;
         ObservableList<IProtocolPort> source = [];
         var sourceSyncView = source.CreateView(CreatePort).DisposeItWith(Disposable);
-        sourceSyncView.SetRoutableParentForView(this, true).DisposeItWith(Disposable);
+        sourceSyncView.DisposeMany().DisposeItWith(Disposable);
+        sourceSyncView.SetRoutableParentForView(this).DisposeItWith(Disposable);
 
         View = sourceSyncView.ToNotifyCollectionChanged().DisposeItWith(Disposable);
         View.CollectionChanged += (sender, args) =>
@@ -74,6 +75,7 @@ public class SettingsConnectionViewModel
                 {
                     SelectedItem = View.FirstOrDefault();
                 }
+
                 break;
             case NotifyCollectionChangedAction.Replace:
                 break;

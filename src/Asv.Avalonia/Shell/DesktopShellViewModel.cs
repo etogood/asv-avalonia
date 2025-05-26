@@ -1,4 +1,5 @@
 using System.Composition;
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -41,15 +42,7 @@ public class DesktopShellViewModel : ShellViewModel
         DragDrop.SetAllowDrop(wnd, true);
         wnd.AddHandler(DragDrop.DropEvent, OnFileDrop);
 
-        WindowSateIconKind.Value =
-            wnd.WindowState == WindowState.FullScreen
-                ? MaterialIconKind.CollapseAll
-                : MaterialIconKind.Maximize;
-
-        WindowStateHeader.Value =
-            wnd.WindowState == WindowState.FullScreen
-                ? RS.ShellView_WindowControlButton_Minimize
-                : RS.ShellView_WindowControlButton_Maximize;
+        UpdateWindowStateUI(wnd.WindowState);
 
         lifetime.MainWindow = wnd;
         lifetime.MainWindow.Show();
@@ -111,18 +104,22 @@ public class DesktopShellViewModel : ShellViewModel
             return ValueTask.CompletedTask;
         }
 
-        window.WindowState =
-            window.WindowState == WindowState.FullScreen
-                ? WindowState.Normal
-                : WindowState.FullScreen;
-        WindowSateIconKind.Value =
-            window.WindowState == WindowState.FullScreen
-                ? MaterialIconKind.CollapseAll
-                : MaterialIconKind.Maximize;
-        WindowStateHeader.Value =
-            window.WindowState == WindowState.FullScreen
-                ? RS.ShellView_WindowControlButton_Minimize
-                : RS.ShellView_WindowControlButton_Maximize;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            window.WindowState =
+                window.WindowState == WindowState.FullScreen
+                    ? WindowState.Normal
+                    : WindowState.FullScreen;
+        }
+        else
+        {
+            window.WindowState =
+                window.WindowState == WindowState.Maximized
+                    ? WindowState.Normal
+                    : WindowState.Maximized;
+
+            UpdateWindowStateUI(window.WindowState);
+        }
 
         return ValueTask.CompletedTask;
     }
@@ -140,6 +137,34 @@ public class DesktopShellViewModel : ShellViewModel
         }
 
         return ValueTask.CompletedTask;
+    }
+
+    public void UpdateWindowStateUI(WindowState state)
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            WindowSateIconKind.Value =
+                state == WindowState.FullScreen
+                    ? MaterialIconKind.CollapseAll
+                    : MaterialIconKind.Maximize;
+
+            WindowStateHeader.Value =
+                state == WindowState.FullScreen
+                    ? RS.ShellView_WindowControlButton_Minimize
+                    : RS.ShellView_WindowControlButton_Maximize;
+        }
+        else
+        {
+            WindowSateIconKind.Value =
+                state == WindowState.Maximized
+                    ? MaterialIconKind.CollapseAll
+                    : MaterialIconKind.Maximize;
+
+            WindowStateHeader.Value =
+                state == WindowState.Maximized
+                    ? RS.ShellView_WindowControlButton_Minimize
+                    : RS.ShellView_WindowControlButton_Maximize;
+        }
     }
 
     private void OpenFile(string filePath)

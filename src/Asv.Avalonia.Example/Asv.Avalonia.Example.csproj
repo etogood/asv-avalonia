@@ -29,13 +29,15 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Asv.Mavlink" Version="4.0.0-dev.10" />
         <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)"/>
+        <PackageReference Include="Asv.IO" Version="$(AsvCommonVersion)" />
         <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)"/>
         <PackageReference Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)"/>
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)"/>
 
-        <PackageReference Include="Roslynator.Analyzers" Version="4.12.10">
+        <PackageReference Include="Roslynator.Analyzers" Version="4.13.1">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -47,6 +49,14 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Asv.Avalonia.Example.Api\Asv.Avalonia.Example.Api.csproj" />
+      <ProjectReference Include="..\Asv.Avalonia\Asv.Avalonia.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Pages\FileBrowser\BurstDownloadDialogView.axaml.cs">
+        <DependentUpon>BurstDownloadDialogView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
 
@@ -65,6 +75,33 @@
       </Compile>
       <Compile Update="Pages\MavParams\ParamItem\ParamItemView.axaml.cs">
         <DependentUpon>ParamItemView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Pages\Flight\Widgets\Attitude\Style\AttitudeIndicator.cs">
+        <DependentUpon>AttitudeIndicator.axaml</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\Flight\Widgets\UavWidget\UavWidgetView.axaml.cs">
+        <DependentUpon>UavWidgetView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Pages\Flight\Widgets\UavWidget\Dialogs\SetAltitudeDialog.axaml" />
+
+      <ProjectReference Include="..\Asv.Avalonia.Example.Api\Asv.Avalonia.Example.Api.csproj" />
+      <UpToDateCheckInput Remove="Pages\Settings\Connection\Ports\SerialPortView.axaml" />
+      <UpToDateCheckInput Remove="Pages\Settings\Connection\Ports\TcpPortView.axaml" />
+      <UpToDateCheckInput Remove="Pages\Settings\Connection\Ports\UdpPortView.axaml" />
+      <UpToDateCheckInput Remove="Pages\Settings\Connection\SettingsConnectionView.axaml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Pages\Flight\Widgets\UavWidget\UavWidgetView.axaml.cs">
+        <DependentUpon>UavWidgetView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>

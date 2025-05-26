@@ -32,7 +32,7 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
         TagsView = TagsSource.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
         _hasValidationError = new BindableReactiveProperty<bool>().DisposeItWith(Disposable);
         _hasChanges = new BindableReactiveProperty<bool>().DisposeItWith(Disposable);
-        SaveChangesCommand = new ReactiveCommand(x =>
+        SaveChangesCommand = new ReactiveCommand(_ =>
             Task.Factory.StartNew(SaveChanges, null, TaskCreationOptions.LongRunning)
         ).DisposeItWith(Disposable);
         _hasValidationError

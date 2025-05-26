@@ -43,15 +43,29 @@ public class DockControl : SelectingItemsControl
     {
         base.OnPropertyChanged(change);
 
-        if (change.Property == ItemCountProperty)
-        {
-            CreateTabs();
-        }
-
         if (change.Property == SelectedItemProperty)
         {
-            _shellItems.First(_ => _.TabControl.Content == change.NewValue).TabControl.IsSelected =
-                true;
+            var selected = _shellItems.FirstOrDefault(_ => _.TabControl.Content == change.NewValue);
+            if (selected is null)
+            {
+                if (_shellItems.Count == 0)
+                {
+                    return;
+                }
+
+                var lastTabControl = _shellItems[^1].TabControl;
+
+                SelectedItem = lastTabControl.Content;
+                lastTabControl.IsSelected = true;
+                return;
+            }
+
+            SelectedItem = selected.TabControl.Content;
+            selected.TabControl.IsSelected = true;
+        }
+        else if (change.Property == ItemCountProperty)
+        {
+            CreateTabs();
         }
     }
 
@@ -93,6 +107,7 @@ public class DockControl : SelectingItemsControl
         if (tab != null)
         {
             _selectedTab = tab;
+            SelectedItem = tab.Content;
         }
 
         e.Pointer.Capture(this);

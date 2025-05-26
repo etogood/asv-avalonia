@@ -5,7 +5,7 @@ namespace Asv.Avalonia;
 [ExportUnitItem(AmplitudeModulationBase.Id)]
 [Shared]
 [method: ImportingConstructor]
-public sealed class PercentAmplitudeModulationUnit() : UnitItemBase(0.01)
+public sealed class PercentAmplitudeModulationUnit() : UnitItemBase(100)
 {
     public const string Id = $"{AmplitudeModulationBase.Id}.percent";
 

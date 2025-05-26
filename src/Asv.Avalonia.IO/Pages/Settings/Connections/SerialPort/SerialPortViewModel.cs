@@ -48,10 +48,12 @@ public class SerialPortViewModel : PortViewModel
         {
             return new Exception("Baud rate is required");
         }
+
         if (int.TryParse(arg, out int baudRate) == false)
         {
             return new Exception("Invalid baud rate: must be a number");
         }
+
         if (baudRate < 0)
         {
             return new Exception("Invalid baud rate: must be a positive number");
@@ -105,7 +107,11 @@ public class SerialPortViewModel : PortViewModel
     {
         TagsSource.Clear();
         TagsSource.Add(
-            new TagViewModel(nameof(config.Scheme)) { Value = "SERIAL", TagType = TagType.Info }
+            new TagViewModel(nameof(config.Scheme))
+            {
+                Value = RS.SerialPortViewModel_TagViewModel_Value,
+                TagType = TagType.Info,
+            }
         );
         TagsSource.Add(
             new TagViewModel(nameof(config.PortName))

@@ -106,8 +106,8 @@
         <value>Единицы измерения</value>
     </data>
     
-    <data name="SettingsKeymapViewModel_Name" xml:space="preserve">
-        <value>Горячие клавиши</value>
+    <data name="SettingsCommandListViewModel_Name" xml:space="preserve">
+        <value>Список команд</value>
     </data>
     <data name="ShellView_WindowControlButton_Close" xml:space="preserve">
         <value>Закрыть</value>
@@ -134,10 +134,10 @@
     <data name="ShellView_Toolbar_View" xml:space="preserve">
         <value>Вид</value>
     </data>
-    <data name="SettingsKeyMapView_Header_CustomHotKey" xml:space="preserve">
+    <data name="SettingsCommandListMapView_Header_CustomHotKey" xml:space="preserve">
         <value>Пользовательская горячая клавиша</value>
     </data>
-    <data name="SettingsKeyMapView_Action_ResetCustomHotKeys" xml:space="preserve">
+    <data name="SettingsCommandListView_Action_ResetCustomHotKeys" xml:space="preserve">
         <value>Сбросить всё по умолчанию</value>
     </data>
     <data name="NauticalMile_UnitItem_Name" xml:space="preserve">
@@ -498,6 +498,9 @@
     <data name="DialogButton_Yes" xml:space="preserve">
         <value>Да</value>
     </data>
+    <data name="DialogPageViewModel_Title" xml:space="preserve">
+        <value>Диалоги</value>
+    </data>
     <data name="RestartApplicationCommand_Info_Name" xml:space="preserve">
         <value>Перезапустить приложение</value>
     </data>
@@ -516,6 +519,69 @@
     <data name="AddSerialPortCommand_CommandInfo_Description" xml:space="preserve">
         <value>Команда, которая добавляет последовательный порт</value>
     </data>
+    <data name="Unit_Terabyte_Abbreviation" xml:space="preserve">
+        <value>ТБ</value>
+    </data>
+    <data name="Unit_Megabyte_Abbreviation" xml:space="preserve">
+        <value>МБ</value>
+    </data>
+    <data name="Unit_Kilobyte_Abbreviation" xml:space="preserve">
+        <value>КБ</value>
+    </data>
+    <data name="Unit_Gigabyte_Abbreviation" xml:space="preserve">
+        <value>ГБ</value>
+    </data>
+    <data name="Unit_Byte_Abbreviation" xml:space="preserve">
+        <value>байт</value>
+    </data>
+    <data name="FileBrowserViewModel_DownloadDialog_PrimaryButtonText" xml:space="preserve">
+        <value>Отменить</value>
+    </data>
+    <data name="FileBrowserViewModel_DownloadDialog_SecondaryButtonText" xml:space="preserve">
+        <value>Скачать</value>
+    </data>
+    <data name="FileBrowserViewModel_DownloadDialog_Title" xml:space="preserve">
+        <value>Загрузка</value>
+    </data>
+    <data name="FileBrowserViewModel_UploadDialog_PrimaryButtonText" xml:space="preserve">
+        <value>Отменить</value>
+    </data>
+    <data name="FileBrowserViewModel_UploadDialog_Title" xml:space="preserve">
+        <value>Выгрузка</value>
+    </data>
+    <data name="FileBrowserView_CommitRename_Button_Tooltip" xml:space="preserve">
+        <value>Сохранить</value>
+    </data>
+    <data name="FileBrowserView_CompareSelectedItems_Button_Tooltip" xml:space="preserve">
+        <value>Сравнить выделенные элементы</value>
+    </data>
+    <data name="FileBrowserView_CRC32_Button_Tooltip" xml:space="preserve">
+        <value>Вычислить CRC32</value>
+    </data>
+    <data name="FileBrowserView_Delete_Button_Tooltip" xml:space="preserve">
+        <value>Удалить</value>
+    </data>
+    <data name="FileBrowserView_Download_button_Tooltip" xml:space="preserve">
+        <value>Скачать файл</value>
+    </data>
+    <data name="FileBrowserView_FindFile_Button_Tooltip" xml:space="preserve">
+        <value>Поиск файла</value>
+    </data>
+    <data name="FileBrowserView_NewFolder_Button_Tooltip" xml:space="preserve">
+        <value>Новая папка</value>
+    </data>
+    <data name="FileBrowserView_Refresh_Button_Tooltip" xml:space="preserve">
+        <value>Обновить</value>
+    </data>
+    <data name="FileBrowserView_Rename_Button_Tooltip" xml:space="preserve">
+        <value>Переименовать</value>
+    </data>
+    <data name="FileBrowserView_Search_Watermark" xml:space="preserve">
+        <value>Найти</value>
+    </data>
+    <data name="FileBrowserView_Upload_button_Tooltip" xml:space="preserve">
+        <value>Поместить файл</value>
+    </data>
     <data name="ChangeStringPropertyCommand_CommandInfo_Name" xml:space="preserve">
         <value>Изменить свойство типа стринг</value>
     </data>
@@ -533,6 +599,114 @@
     </data>
     <data name="ChangeThemeCommand_CommandInfo_Name" xml:space="preserve">
         <value>Сменить тему</value>
+    </data>
+    <data name="Not_Available" xml:space="preserve">
+        <value>Н/А</value>
+    </data>
+    <data name="Mah_UnitItem_Symbol" xml:space="preserve">
+        <value>мА*ч</value>
+    </data>
+    <data name="Mah_UnitItem_Name" xml:space="preserve">
+        <value>Миллиампер в час</value>
+    </data>
+    <data name="Capacity_UnitItem_Description" xml:space="preserve">
+        <value>Ёмкость батареи</value>
+    </data>
+    <data name="ChangeBoolPropertyCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Измнить свойство типа бул</value>
+    </data>
+    <data name="ChangeBoolPropertyCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда меняет значение свойства с типом бул</value>
+    </data>
+    <data name="MilliAmpere_UnitItem_Name" xml:space="preserve">
+        <value>Миллиамперы</value>
+    </data>
+    <data name="MilliAmpere_UnitItem_Symbol" xml:space="preserve">
+        <value>мА</value>
+    </data>
+    <data name="MilliAmpere_Amperage_Description" xml:space="preserve">
+        <value>Сила тока в миллиамперах</value>
+    </data>
+    <data name="Ampere_UnitItem_Symbol" xml:space="preserve">
+        <value>А</value>
+    </data>
+    <data name="Ampere_UnitItem_Name" xml:space="preserve">
+        <value>Амперы</value>
+    </data>
+    <data name="Amperage_AmpereUnit_Description" xml:space="preserve">
+        <value>Сила тока в амперах</value>
+    </data>
+    <data name="Volt_Voltage_Description" xml:space="preserve">
+        <value>Напряжение в вольтах</value>
+    </data>
+    <data name="Volt_UnitItem_Name" xml:space="preserve">
+        <value>Вольты</value>
+    </data>
+    <data name="Volt_UnitItem_Symbol" xml:space="preserve">
+        <value>В</value>
+    </data>
+    <data name="MilliVolt_Voltage_Description" xml:space="preserve">
+        <value>Напряжение в милливольтах</value>
+    </data>
+    <data name="MilliVolt_UnitItem_Name" xml:space="preserve">
+        <value>Милливольты</value>
+    </data>
+    <data name="MilliVolt_UnitItem_Symbol" xml:space="preserve">
+        <value>мВ</value>
+    </data>
+    <data name="Voltage_Name" xml:space="preserve">
+        <value>Напряжение</value>
+    </data>
+    <data name="Voltage_Description" xml:space="preserve">
+        <value>Единица измерения напряжения</value>
+    </data>
+    <data name="Amperage_Name" xml:space="preserve">
+        <value>Сила тока</value>
+    </data>
+    <data name="Amperage_Description" xml:space="preserve">
+        <value>Единица измеренеия силы тока</value>
+    </data>
+    <data name="Progress_Description" xml:space="preserve">
+        <value>Единица измерения прогресса</value>
+    </data>
+    <data name="Progress_Name" xml:space="preserve">
+        <value>Прогресс</value>
+    </data>
+    <data name="Percent_Progress_Description" xml:space="preserve">
+        <value>Значение прогресса в процентах</value>
+    </data>
+    <data name="ProgressPercentUnit_Name" xml:space="preserve">
+        <value>Проценты</value>
+    </data>
+    <data name="Mah_Capacity_Description" xml:space="preserve">
+        <value>Емкость в миллиамперах в час</value>
+    </data>
+    <data name="InParts_Progress_Description" xml:space="preserve">
+        <value>Прогресс в частях</value>
+    </data>
+    <data name="ChangeKeyGesturePropertyCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Изменить свойство типа KeyGesture</value>
+    </data>
+    <data name="ChangeKeyGesturePropertyCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда меняет значение свойства с типом KeyGesture</value>
+    </data>
+    <data name="ConfirmChangeHotKeyCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Подтвердить изменение горячей клавиши</value>
+    </data>
+    <data name="ConfirmChangeHotKeyCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда подтверждает изменение горячих клавиш</value>
+    </data>
+    <data name="OpenSettingsCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда, которая открывает настройки</value>
+    </data>
+    <data name="OpenSettingsCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Открыть настройки</value>
+    </data>
+    <data name="ResetHotKeysCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Сбросить горячие клавиши</value>
+    </data>
+    <data name="ResetHotKeysCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда, которая сбрасывает горячие клавиши к значениям по умолчанию</value>
     </data>
     <data name="LogViewer_Title" xml:space="preserve">
         <value>Просмотр лога</value>

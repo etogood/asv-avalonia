@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:example="clr-namespace:Asv.Avalonia.Example"
-             mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="300"
              x:Class="Asv.Avalonia.Example.ParamItemView"
              x:CompileBindings="True"
              Width="400"
@@ -27,8 +27,8 @@
                         BorderThickness="0"
                         DockPanel.Dock="Right">
                     <Panel>
-                        <avalonia:MaterialIcon IsVisible="{CompiledBinding IsPinned.Value}" Width="25" Height="25" Kind="Pin" />
-                        <avalonia:MaterialIcon IsVisible="{CompiledBinding !IsPinned.Value}" Width="25" Height="25"
+                        <avalonia:MaterialIcon IsVisible="{CompiledBinding IsPinned.ViewValue.Value}" Width="25" Height="25" Kind="Pin" />
+                        <avalonia:MaterialIcon IsVisible="{CompiledBinding !IsPinned.ViewValue.Value}" Width="25" Height="25"
                                                Kind="PinOutline" />
                     </Panel>
                 </Button>
@@ -40,10 +40,10 @@
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center" />
             </DockPanel>
-            <TextBlock Text="{CompiledBinding DisplayName}" TextWrapping="Wrap" Margin="10 5" />
-            <TextBox Margin="10 5" Text="{CompiledBinding Value.Value, UpdateSourceTrigger=LostFocus}">
+            <TextBlock Text="{CompiledBinding DisplayName, Mode=OneTime}" TextWrapping="Wrap" Margin="10 5" />
+            <TextBox Margin="10 5" Text="{CompiledBinding Value.ViewValue.Value, UpdateSourceTrigger=LostFocus}">
                 <TextBox.InnerRightContent>
-                    <TextBlock Text="{CompiledBinding Units}" Margin="10 0" VerticalAlignment="Center" />
+                    <TextBlock Text="{CompiledBinding Units, Mode=OneTime}" Margin="10 0" VerticalAlignment="Center" />
                 </TextBox.InnerRightContent>
             </TextBox>
             <Grid Margin="10 5" ColumnDefinitions="*, 5, *">
@@ -58,9 +58,9 @@
                         Grid.Column="2"
                         Content="{x:Static example:RS.ParametersEditorParameterView_WriteButton}" />
             </Grid>
-            <TextBlock Text="{CompiledBinding ValueDescription}" TextWrapping="Wrap" Margin="10 5" />
-            <TextBlock Text="{CompiledBinding Description}" TextWrapping="Wrap" Margin="10 5" />
-            <Border IsVisible="{CompiledBinding IsRebootRequired}"
+            <TextBlock Text="{CompiledBinding ValueDescription, Mode=OneTime}" TextWrapping="Wrap" Margin="10 5" />
+            <TextBlock Text="{CompiledBinding Description, Mode=OneTime}" TextWrapping="Wrap" Margin="10 5" />
+            <Border IsVisible="{CompiledBinding IsRebootRequired, Mode=OneTime}"
                     Margin="10 5"
                     HorizontalAlignment="Left"
                     Padding="5"

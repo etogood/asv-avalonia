@@ -5,7 +5,7 @@ namespace Asv.Avalonia;
 [ExportUnitItem(FrequencyBase.Id)]
 [Shared]
 [method: ImportingConstructor]
-public sealed class MegahertzFrequencyUnit() : UnitItemBase(1000000)
+public sealed class MegahertzFrequencyUnit() : UnitItemBase(1_000_000)
 {
     public const string Id = $"{FrequencyBase.Id}.megahertz";
 

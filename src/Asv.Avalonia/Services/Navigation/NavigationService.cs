@@ -130,6 +130,11 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
             return;
         }
 
+        if (_selectedControl.Value?.Id == routable.Id && _selectedControlPath.Value == path)
+        {
+            return;
+        }
+
         _selectedControl.Value = routable;
         _selectedControlPath.Value = path;
     }
@@ -270,7 +275,9 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
 
     public async ValueTask GoHomeAsync()
     {
-        await GoTo(new NavigationPath(HomePageViewModel.PageId));
+        var home = await GoTo(new NavigationPath(HomePageViewModel.PageId));
+
+        FocusControlChanged(home);
     }
 
     public ReactiveCommand GoHome { get; }

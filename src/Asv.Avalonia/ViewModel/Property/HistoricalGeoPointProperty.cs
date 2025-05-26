@@ -3,7 +3,7 @@ using R3;
 
 namespace Asv.Avalonia;
 
-public class HistoricalGeoPointProperty : RoutableViewModel, IHistoricalProperty<GeoPoint>
+public sealed class HistoricalGeoPointProperty : CompositeHistoricalPropertyBase<GeoPoint>
 {
     private readonly ReactiveProperty<GeoPoint> _modelValue;
 
@@ -87,5 +87,5 @@ public class HistoricalGeoPointProperty : RoutableViewModel, IHistoricalProperty
     public HistoricalUnitProperty Longitude { get; }
     public HistoricalUnitProperty Altitude { get; }
 
-    public ReactiveProperty<GeoPoint> ModelValue => _modelValue;
+    public override ReactiveProperty<GeoPoint> ModelValue => _modelValue;
 }

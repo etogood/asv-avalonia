@@ -41,7 +41,6 @@ public static class PointExtensions
     /// </remarks>
     /// <param name="point">The point representing the vector.</param>
     /// <returns>..</returns>
-    // Optionally: calculate the squared length (faster than Length if the square root is not needed)
     public static double LengthSquared(this Point point)
     {
         return (point.X * point.X) + (point.Y * point.Y);

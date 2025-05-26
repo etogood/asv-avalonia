@@ -104,7 +104,8 @@ public class HomePageViewModel : PageViewModel<IHomePage>, IHomePage
             .CreateView(x => new HomePageItemDecorator(x, container))
             .DisposeItWith(Disposable);
 
-        ItemsList.SetRoutableParentForView(this, true).DisposeItWith(Disposable);
+        ItemsList.DisposeMany().DisposeItWith(Disposable);
+        ItemsList.SetRoutableParentForView(this).DisposeItWith(Disposable);
 
         ItemsView = ItemsList.ToNotifyCollectionChanged().DisposeItWith(Disposable);
     }
