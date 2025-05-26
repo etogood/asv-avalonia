@@ -7,10 +7,10 @@ using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Reflection;
 using Asv.Avalonia.IO;
+using Asv.Avalonia.Log;
 using Asv.Avalonia.Plugins;
 using Asv.Cfg;
 using Asv.Common;
-using Asv.Mavlink;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -27,7 +27,7 @@ public partial class App : Application, IContainerHost, IShellHost
 {
     private readonly CompositionHost _container;
     private IShell _shell;
-    private readonly Subject<IShell> _onShellLoaded = new Subject<IShell>();
+    private readonly Subject<IShell> _onShellLoaded = new();
 
     public App()
     {
@@ -78,11 +78,12 @@ public partial class App : Application, IContainerHost, IShellHost
     {
         get
         {
-            yield return GetType().Assembly;
-            yield return typeof(AppHost).Assembly;
-            yield return typeof(DeviceManager).Assembly;
-            yield return typeof(Class1).Assembly;
-            yield return typeof(IPluginManager).Assembly;
+            yield return GetType().Assembly;                            // Asv.Avalonia.Example
+            yield return typeof(AppHost).Assembly;                      // Asv.Avalonia
+            yield return typeof(DeviceManager).Assembly;                // Asv.Avalonia.IO
+            yield return typeof(Class1).Assembly;                       // Asv.Avalonia.Example.Api
+            yield return typeof(IPluginManager).Assembly;               // Asv.Avalonia.Plugins
+            yield return typeof(OpenLogViewerPageCommand).Assembly;     // Asv.Avalonia.Log
         }
     }
 

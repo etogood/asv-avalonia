@@ -1,6 +1,5 @@
 ﻿using System;
 using Asv.Avalonia.Example.Api;
-using Asv.Avalonia.LogViewer;
 using Asv.Avalonia.Map;
 using Avalonia;
 using Avalonia.Controls;

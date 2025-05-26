@@ -29,12 +29,12 @@
 
         <PackageReference Include="Asv.Mavlink" Version="$(AsvMavlinkVersion)" />
         <ProjectReference Include="..\Asv.Avalonia.IO\Asv.Avalonia.IO.csproj" />
+        <ProjectReference Include="..\Asv.Avalonia.Log\Asv.Avalonia.Log.csproj" />
         <ProjectReference Include="..\Asv.Avalonia.Map\Asv.Avalonia.Map.csproj" />
         <ProjectReference Include="..\Asv.Avalonia.Plugins\Asv.Avalonia.Plugins.csproj" />
-        <ProjectReference Include="..\Asv.Avalonia.LogViewer\Asv.Avalonia.LogViewer.csproj" />
         <ProjectReference Include="..\Asv.Avalonia\Asv.Avalonia.csproj" />
 
-      <PackageReference Include="Asv.Mavlink" Version="$(AsvMavlinkVersion)" />
+      
       <PackageReference Include="Roslynator.Analyzers" Version="4.13.1">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
