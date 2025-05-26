@@ -1,6 +1,6 @@
 ﻿using System;
 using Asv.Avalonia.Example.Api;
-using Asv.Avalonia.Map;
+using Asv.Avalonia.GeoMap;
 using Avalonia;
 using Avalonia.Controls;
 using PluginManagerMixin = Asv.Avalonia.Plugins.PluginManagerMixin;

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Composition;
 using System.Threading.Tasks;
-using Asv.Avalonia.Map;
+using Asv.Avalonia.GeoMap;
 using Asv.Common;
 using Material.Icons;
 

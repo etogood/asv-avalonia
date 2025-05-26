@@ -1,24 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Composition;
-using System.Linq;
-using System.Threading.Tasks;
-using Asv.Avalonia.GeoMap;
+﻿using System.Collections;
 using Asv.Common;
 using Material.Icons;
 using ObservableCollections;
 using R3;
 
-namespace Asv.Avalonia.Example;
+namespace Asv.Avalonia.GeoMap;
 
-[ExportPage(PageId)]
-public class FlightPageViewModel : PageViewModel<IFlightMode>, IFlightMode
+public interface IMap : IRoutable
 {
-    public const string PageId = "flight";
-    public const MaterialIconKind PageIcon = MaterialIconKind.MapSearch;
+    ObservableList<IMapWidget> Widgets { get; }
+    ObservableList<IMapAnchor> Anchors { get; }
+    BindableReactiveProperty<IMapAnchor?> SelectedAnchor { get; }
+}
 
-    public FlightPageViewModel()
-        : this(DesignTime.CommandService)
+public interface IMapWidget : IHeadlinedViewModel
+{
+    public WorkspaceDock Position { get; }
+}
+
+public class MapViewModel : RoutableViewModel, IMap
+{
+    public MapViewModel()
+        : this("id")
     {
         DesignTime.ThrowIfNotDesignMode();
         var drone = new MapAnchor<IMapAnchor>("1")
@@ -37,22 +40,16 @@ public class FlightPageViewModel : PageViewModel<IFlightMode>, IFlightMode
             TimeSpan.FromSeconds(1),
             TimeSpan.FromSeconds(1)
         );
-        Widgets.Add(new UavWidgetViewModel { Header = "Device11" });
     }
 
-    [ImportingConstructor]
-    public FlightPageViewModel(ICommandService cmd)
-        : base(PageId, cmd)
+    public MapViewModel(string id)
+        : base(id)
     {
-        Title.Value = RS.FlightPageViewModel_Title;
-        Icon.Value = PageIcon;
-        Anchors = [];
-        Anchors.SetRoutableParent(this, true).DisposeItWith(Disposable);
-        AnchorsView = Anchors.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
-        Widgets = [];
-        Widgets.SetRoutableParent(this, true).DisposeItWith(Disposable);
-        WidgetsView = Widgets.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
-        SelectedAnchor = new BindableReactiveProperty<IMapAnchor?>().DisposeItWith(Disposable);
+        Anchors = new ObservableList<IMapAnchor>();
+        AnchorsView = Anchors.ToNotifyCollectionChangedSlim();
+        Widgets = new ObservableList<IMapWidget>();
+        WidgetsView = Widgets.ToNotifyCollectionChangedSlim();
+        SelectedAnchor = new BindableReactiveProperty<IMapAnchor?>();
     }
 
     public NotifyCollectionChangedSynchronizedViewList<IMapWidget> WidgetsView { get; }
@@ -83,17 +80,16 @@ public class FlightPageViewModel : PageViewModel<IFlightMode>, IFlightMode
         {
             yield return item;
         }
-
-        foreach (var widget in WidgetsView)
-        {
-            yield return widget;
-        }
     }
 
-    protected override void AfterLoadExtensions()
+    protected override void Dispose(bool disposing)
     {
-        // nothing to do
-    }
+        if (disposing)
+        {
+            WidgetsView.Dispose();
+            AnchorsView.Dispose();
+        }
 
-    public override IExportInfo Source => SystemModule.Instance;
+        base.Dispose(disposing);
+    }
 }

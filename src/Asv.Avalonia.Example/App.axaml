@@ -14,6 +14,6 @@
     <Application.Styles>
         <StyleInclude Source="avares://Asv.Avalonia.Example/Pages/Flight/Widgets/UavWidget/Controls/Attitude/AttitudeIndicatorStyles.axaml" />
         <StyleInclude Source="avares://Asv.Avalonia/Theme.axaml"/>
-        <StyleInclude Source="avares://Asv.Avalonia.Mapping/Theme.axaml"/>
+        <StyleInclude Source="avares://Asv.Avalonia.GeoMap/Theme.axaml"/>
     </Application.Styles>
 </Application>

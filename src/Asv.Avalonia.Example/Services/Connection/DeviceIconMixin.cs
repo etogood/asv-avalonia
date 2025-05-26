@@ -1,5 +1,5 @@
 using System;
-using Asv.Avalonia.Map;
+using Asv.Avalonia.GeoMap;
 using Asv.IO;
 using Asv.Mavlink;
 using Avalonia.Media;
