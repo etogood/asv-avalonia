@@ -9,12 +9,15 @@ namespace Asv.Avalonia;
 public abstract class PageViewModel<TContext> : ExtendableViewModel<TContext>, IPage
     where TContext : class, IPage
 {
+    private string _title;
+    private MaterialIconKind _icon;
+
     protected PageViewModel(NavigationId id, ICommandService cmd)
         : base(id)
     {
         History = cmd.CreateHistory(this);
-        Icon = new BindableReactiveProperty<MaterialIconKind>(MaterialIconKind.Window);
-        Title = new BindableReactiveProperty<string>(id.ToString());
+        Icon = MaterialIconKind.Window;
+        Title = id.ToString();
         HasChanges = new BindableReactiveProperty<bool>(false);
         TryClose = new BindableAsyncCommand(ClosePageCommand.Id, this);
     }
@@ -36,12 +39,22 @@ public abstract class PageViewModel<TContext> : ExtendableViewModel<TContext>, I
         {
             LoggerFactory
                 ?.CreateLogger<PageViewModel<TContext>>()
-                .ZLogError(e, $"Error on close page {Title.Value}[{Id}]: {e.Message}");
+                .ZLogError(e, $"Error on close page {Title}[{Id}]: {e.Message}");
         }
     }
 
-    public BindableReactiveProperty<MaterialIconKind> Icon { get; }
-    public BindableReactiveProperty<string> Title { get; }
+    public MaterialIconKind Icon
+    {
+        get => _icon;
+        set => SetField(ref _icon, value);
+    }
+
+    public string Title
+    {
+        get => _title;
+        set => SetField(ref _title, value);
+    }
+
     public ICommandHistory History { get; }
     public BindableReactiveProperty<bool> HasChanges { get; }
     public ICommand TryClose { get; }
@@ -50,8 +63,6 @@ public abstract class PageViewModel<TContext> : ExtendableViewModel<TContext>, I
     {
         if (disposing)
         {
-            Icon.Dispose();
-            Title.Dispose();
             History.Dispose();
             HasChanges.Dispose();
         }

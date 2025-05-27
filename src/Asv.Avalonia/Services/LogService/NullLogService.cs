@@ -44,6 +44,13 @@ public class NullLogService : ILogService
         // nothing to do
     }
 
+    public async IAsyncEnumerable<LogMessage> LoadItemsFromLogFile(
+        CancellationToken cancel = default
+    )
+    {
+        yield break;
+    }
+
     public IEnumerable<LogMessage> LoadItemsFromLogFile()
     {
         return ArraySegment<LogMessage>.Empty;

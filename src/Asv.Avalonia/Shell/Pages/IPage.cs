@@ -6,8 +6,8 @@ namespace Asv.Avalonia;
 
 public interface IPage : IRoutable, IExportable
 {
-    BindableReactiveProperty<MaterialIconKind> Icon { get; }
-    BindableReactiveProperty<string> Title { get; }
+    MaterialIconKind Icon { get; }
+    string Title { get; }
     ICommandHistory History { get; }
     BindableReactiveProperty<bool> HasChanges { get; }
     ICommand TryClose { get; }

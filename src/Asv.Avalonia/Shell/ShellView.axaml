@@ -125,8 +125,8 @@
                  <avalonia:DockControl.TabControlStripItemTemplate> 
                      <DataTemplate> 
                          <StackPanel Orientation="Horizontal" Spacing="4"> 
-                             <avalonia1:MaterialIcon Width="16" Height="16" Kind="{Binding Icon.Value}"/> 
-                             <TextBlock VerticalAlignment="Center" Text="{Binding Title.Value}"/> 
+                             <avalonia1:MaterialIcon Width="16" Height="16" Kind="{Binding Icon}"/> 
+                             <TextBlock VerticalAlignment="Center" Text="{Binding Title}"/> 
                              <Button Theme="{StaticResource TransparentButton}" Command="{Binding TryClose}"  Padding="0"> 
                                  <avalonia1:MaterialIcon Kind="Close"/> 
                              </Button> 

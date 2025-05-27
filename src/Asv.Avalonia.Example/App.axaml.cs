@@ -7,7 +7,6 @@ using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Reflection;
 using Asv.Avalonia.IO;
-using Asv.Avalonia.Log;
 using Asv.Avalonia.Plugins;
 using Asv.Cfg;
 using Asv.Common;
@@ -42,6 +41,7 @@ public partial class App : Application, IContainerHost, IShellHost
                 .WithExport(NullLoggerFactory.Instance)
                 .WithExport(NullAppPath.Instance)
                 .WithExport(NullPluginManager.Instance)
+                .WithExport(NullLogService.Instance)
                 .WithExport(NullAppInfo.Instance)
                 .WithExport<IMeterFactory>(new DefaultMeterFactory())
                 .WithExport(TimeProvider.System)
@@ -56,6 +56,7 @@ public partial class App : Application, IContainerHost, IShellHost
                 .WithExport<IContainerHost>(this)
                 .WithExport(AppHost.Instance.GetService<IConfiguration>())
                 .WithExport(AppHost.Instance.GetService<ILoggerFactory>())
+                .WithExport(AppHost.Instance.GetService<ILogService>())
                 .WithExport(AppHost.Instance.GetService<IAppPath>())
                 .WithExport(AppHost.Instance.GetService<IAppInfo>())
                 .WithExport(AppHost.Instance.GetService<IMeterFactory>())
@@ -78,12 +79,11 @@ public partial class App : Application, IContainerHost, IShellHost
     {
         get
         {
-            yield return GetType().Assembly;                            // Asv.Avalonia.Example
-            yield return typeof(AppHost).Assembly;                      // Asv.Avalonia
-            yield return typeof(DeviceManager).Assembly;                // Asv.Avalonia.IO
-            yield return typeof(Class1).Assembly;                       // Asv.Avalonia.Example.Api
-            yield return typeof(IPluginManager).Assembly;               // Asv.Avalonia.Plugins
-            yield return typeof(OpenLogViewerPageCommand).Assembly;     // Asv.Avalonia.Log
+            yield return GetType().Assembly; // Asv.Avalonia.Example
+            yield return typeof(AppHost).Assembly; // Asv.Avalonia
+            yield return typeof(DeviceManager).Assembly; // Asv.Avalonia.IO
+            yield return typeof(Class1).Assembly; // Asv.Avalonia.Example.Api
+            yield return typeof(IPluginManager).Assembly; // Asv.Avalonia.Plugins
         }
     }
 

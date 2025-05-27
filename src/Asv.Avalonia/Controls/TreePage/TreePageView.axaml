@@ -23,8 +23,8 @@
         
         <Button Margin="4,0,0,0" IsVisible="{Binding IsMenuVisible}" Command="{Binding HideMenuCommand}" HorizontalAlignment="Stretch" Grid.Column="0" Grid.Row="0" Background="Transparent" Padding="0">
             <StackPanel Spacing="4"  Orientation="Horizontal" Margin="4">
-                <avalonia1:MaterialIcon Kind="{Binding Icon.Value}"/>
-                <TextBlock VerticalAlignment="Center" Text="{Binding Title.Value}"/>    
+                <avalonia1:MaterialIcon Kind="{Binding Icon}"/>
+                <TextBlock VerticalAlignment="Center" Text="{Binding Title}"/>    
             </StackPanel>    
         </Button>
         
@@ -176,7 +176,7 @@
                 <StackPanel Orientation="Horizontal">
                     <avalonia1:MaterialIcon Margin="0,0,8,0" DockPanel.Dock="Left"
                                            IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                           VerticalAlignment="Center" Width="22" Height="22" Kind="{Binding Icon.Value}" />
+                                           VerticalAlignment="Center" Width="22" Height="22" Kind="{Binding Icon }" />
                     <TextBlock VerticalAlignment="Center" FontSize="18" Text="{Binding Title}" />
                 </StackPanel>
             </ToggleButton>
@@ -199,7 +199,7 @@
                         <avalonia1:MaterialIcon
                             Margin="0,0,12,0"
                             DockPanel.Dock="Left"
-                            Kind="{Binding Base.Icon.Value}"
+                            Kind="{Binding Base.Icon }"
                             Classes.expanded="{Binding IsExpanded}"
                             Classes.selected="{Binding IsFocused}"
                             Width="15" Height="15" />

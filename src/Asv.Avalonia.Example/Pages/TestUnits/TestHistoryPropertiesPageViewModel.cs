@@ -28,7 +28,7 @@ public class TestHistoryPropertiesPageViewModel : PageViewModel<TestHistoryPrope
     public TestHistoryPropertiesPageViewModel(IUnitService unit, ICommandService commandService)
         : base(PageId, commandService)
     {
-        Title.OnNext("Test History Properties");
+        Title = "Test History Properties";
         var un = unit.Units[VelocityBase.Id];
         _speed = new ReactiveProperty<double>(double.NaN);
         _isTurnedOn = new ReactiveProperty<bool>();

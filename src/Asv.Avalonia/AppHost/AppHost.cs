@@ -21,7 +21,17 @@ public class AppHost : AsyncDisposableWithCancel, IHost
             );
         }
 
-        var builder = Host.CreateApplicationBuilder(args);
+        var builder = Host.CreateApplicationBuilder(
+            new HostApplicationBuilderSettings
+            {
+#if DEBUG
+                EnvironmentName = Environments.Development,
+#else
+                EnvironmentName = Environments.Production,
+#endif
+                Args = args,
+            }
+        );
         builder.Logging.ClearProviders();
         return new AppHostBuilder(builder);
     }

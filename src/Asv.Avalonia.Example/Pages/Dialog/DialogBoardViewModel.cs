@@ -31,7 +31,7 @@ public class DialogBoardViewModel : PageViewModel<DialogBoardViewModel>
         : this(DesignTime.CommandService, NullLoggerFactory.Instance, NullDialogService.Instance)
     {
         DesignTime.ThrowIfNotDesignMode();
-        Title.OnNext(RS.DialogPageViewModel_Title);
+        Title = RS.DialogPageViewModel_Title;
     }
 
     [ImportingConstructor]
@@ -42,7 +42,7 @@ public class DialogBoardViewModel : PageViewModel<DialogBoardViewModel>
     )
         : base(PageId, cmd)
     {
-        Title.OnNext(RS.DialogPageViewModel_Title);
+        Title = RS.DialogPageViewModel_Title;
         _logger = logFactory.CreateLogger<DialogBoardViewModel>();
 
         _selectFolderDialog = dialogService.GetDialogPrefab<SelectFolderDialogDesktopPrefab>();

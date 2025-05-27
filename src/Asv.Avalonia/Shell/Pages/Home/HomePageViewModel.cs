@@ -91,8 +91,8 @@ public class HomePageViewModel : PageViewModel<IHomePage>, IHomePage
         : base(PageId, cmd)
     {
         AppInfo = appInfo;
-        Icon.Value = MaterialIconKind.Home;
-        Title.Value = "Home";
+        Icon = MaterialIconKind.Home;
+        Title = "Home";
 
         Tools = [];
         Tools.SetRoutableParent(this, true).DisposeItWith(Disposable);

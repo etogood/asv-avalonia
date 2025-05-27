@@ -21,7 +21,7 @@ public partial class InfoBarPanel : Panel
         int nItems = 0;
 
         var parent = Parent as Control;
-        var minHeight = parent == null ? 0d : (parent.MinHeight - Margin.Vertical());
+        var minHeight = parent == null ? 0d : parent.MinHeight - Margin.Vertical();
 
         var children = Children;
         var childCount = children.Count;

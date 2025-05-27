@@ -15,15 +15,15 @@ public class SettingsPageViewModel
         : base(PageId, DesignTime.CommandService, NullContainerHost.Instance)
     {
         DesignTime.ThrowIfNotDesignMode();
-        Title.OnNext(RS.SettingsPageViewModel_Title);
-        Icon.Value = PageIcon;
+        Title = RS.SettingsPageViewModel_Title;
+        Icon = PageIcon;
     }
 
     [ImportingConstructor]
     public SettingsPageViewModel(ICommandService svc, IContainerHost host)
         : base(PageId, svc, host)
     {
-        Title.OnNext(RS.SettingsPageViewModel_Title);
+        Title = RS.SettingsPageViewModel_Title;
     }
 
     public override IExportInfo Source => SystemModule.Instance;

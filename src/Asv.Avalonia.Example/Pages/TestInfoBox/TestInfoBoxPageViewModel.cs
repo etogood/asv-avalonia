@@ -22,14 +22,14 @@ public class TestInfoBoxPageViewModel : PageViewModel<DialogBoardViewModel>
     {
         DesignTime.ThrowIfNotDesignMode();
         IsVisible.Value = true;
-        Title.OnNext("Test infobox");
+        Title = "Test infobox";
     }
 
     [ImportingConstructor]
     public TestInfoBoxPageViewModel(ICommandService cmd, ILoggerFactory logFactory)
         : base(PageId, cmd)
     {
-        Title.OnNext("Test infobox");
+        Title = "Test infobox";
         _logger = logFactory.CreateLogger<TestInfoBoxPageViewModel>();
 
         IsVisible = new BindableReactiveProperty<bool>(false);

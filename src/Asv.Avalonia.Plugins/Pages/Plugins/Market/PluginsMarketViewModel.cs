@@ -66,7 +66,7 @@ public class PluginsMarketViewModel : PageViewModel<PluginsMarketViewModel>
     )
         : base(PageId, cmd)
     {
-        Title.OnNext("Plugin Manager");
+        Title = "Plugin Manager";
         _manager = manager ?? throw new ArgumentNullException(nameof(manager));
         _cfg = cfg;
 

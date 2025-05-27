@@ -820,7 +820,7 @@ public class FileBrowserViewModel : DevicePageViewModel<FileBrowserViewModel>
 
     protected override void AfterDeviceInitialized(IClientDevice device)
     {
-        Title.Value = $"Browser[{device.Id}]";
+        Title = $"Browser[{device.Id}]";
         Client = device.GetMicroservice<IFtpClient>();
         ArgumentNullException.ThrowIfNull(Client);
         ClientEx = device.GetMicroservice<IFtpClientEx>() ?? new FtpClientEx(Client);

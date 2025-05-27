@@ -210,7 +210,6 @@
     
     <!--MaterialIcon-->
     <Style Selector="avalonia|MaterialIcon">
-        
         <Style Selector="^.accent">
             <Setter Property="Foreground" Value="{DynamicResource  SystemAccentColorLight1}"/>
         </Style>
@@ -230,6 +229,8 @@
         <Setter Property="Height" Value="{DynamicResource  IconElementThemeHeight}"/>
         <Setter Property="Foreground" Value="{DynamicResource  TextControlForeground}"/>
     </Style>
+    
+    
    
    
     <!--Header-->

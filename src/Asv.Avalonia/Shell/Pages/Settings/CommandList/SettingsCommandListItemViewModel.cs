@@ -147,14 +147,10 @@ public class SettingsCommandListItemViewModel : RoutableViewModel
 
     public bool Filter(string text)
     {
-        return (
-                Info.HotKeyInfo.CustomHotKey.Value?.ToString()
-                    .Contains(text, StringComparison.OrdinalIgnoreCase) == true
-            )
-            || (
-                Info.HotKeyInfo.DefaultHotKey?.ToString()
-                    .Contains(text, StringComparison.OrdinalIgnoreCase) == true
-            )
+        return Info.HotKeyInfo.CustomHotKey.Value?.ToString()
+                .Contains(text, StringComparison.OrdinalIgnoreCase) == true
+            || Info.HotKeyInfo.DefaultHotKey?.ToString()
+                .Contains(text, StringComparison.OrdinalIgnoreCase) == true
             || Info.Name.Contains(text, StringComparison.OrdinalIgnoreCase)
             || Info.Source.ModuleName.Contains(text, StringComparison.OrdinalIgnoreCase)
             || Info.Description.Contains(text, StringComparison.OrdinalIgnoreCase);

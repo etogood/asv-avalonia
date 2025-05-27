@@ -14,14 +14,14 @@ public class DocumentPageViewModel : PageViewModel<DocumentPageViewModel>
     {
         DesignTime.ThrowIfNotDesignMode();
 
-        Title.OnNext(RS.DocumentPageViewModel_Title);
+        Title = RS.DocumentPageViewModel_Title;
     }
 
     [ImportingConstructor]
     public DocumentPageViewModel(ICommandService cmd)
         : base(PageId, cmd)
     {
-        Title.OnNext(RS.DocumentPageViewModel_Title);
+        Title = RS.DocumentPageViewModel_Title;
     }
 
     protected override DocumentPageViewModel GetContext()

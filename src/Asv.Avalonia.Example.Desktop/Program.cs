@@ -1,8 +1,10 @@
 ﻿using System;
 using Asv.Avalonia.Example.Api;
 using Asv.Avalonia.GeoMap;
+using Asv.Avalonia.Plugins;
 using Avalonia;
 using Avalonia.Controls;
+using Microsoft.Extensions.Logging;
 using PluginManagerMixin = Asv.Avalonia.Plugins.PluginManagerMixin;
 
 namespace Asv.Avalonia.Example.Desktop;
@@ -17,24 +19,23 @@ sealed class Program
     {
         var builder = AppHost.CreateBuilder(args);
 
-        PluginManagerMixin.UsePluginManager(
-            builder
-                .UseAvalonia(BuildAvaloniaApp)
-                .UseLogToConsoleOnDebug()
-                .UseAppPath(opt => opt.WithRelativeFolder("data"))
-                .UseJsonUserConfig(opt =>
-                    opt.WithFileName("user_settings.json").WithAutoSave(TimeSpan.FromSeconds(1))
-                )
-                .UseAppInfo(opt => opt.FillFromAssembly(typeof(App).Assembly))
-                .UseSoloRun(opt => opt.WithArgumentForwarding())
-                .UseLogService(opt => opt.WithRelativeFolder("logs"))
-                .UseAsvMap(),
-            options =>
+        builder
+            .UseAvalonia(BuildAvaloniaApp)
+            .UseLogToConsoleOnDebug()
+            .SetLogLevel(LogLevel.Trace)
+            .UseAppPath(opt => opt.WithRelativeFolder("data"))
+            .UseJsonUserConfig(opt =>
+                opt.WithFileName("user_settings.json").WithAutoSave(TimeSpan.FromSeconds(1))
+            )
+            .UseAppInfo(opt => opt.FillFromAssembly(typeof(App).Assembly))
+            .UseSoloRun(opt => opt.WithArgumentForwarding())
+            .UseLogService()
+            .UseAsvMap()
+            .UsePluginManager(options =>
             {
                 options.WithApiPackage(typeof(Class1).Assembly);
                 options.WithPluginPrefix("Asv.Avalonia.Example.Plugin.");
-            }
-        );
+            });
 
         using var host = builder.Build();
         host.StartWithClassicDesktopLifetime(args, ShutdownMode.OnMainWindowClose);

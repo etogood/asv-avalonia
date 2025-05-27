@@ -163,8 +163,4 @@
       <AdditionalFiles Include="Controls\Workspace\Workspace.axaml" />
       <AdditionalFiles Include="Controls\Workspace\WorkspaceItem.axaml" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Controls\Behaviour\" />
-    </ItemGroup>
 </Project>

@@ -1,5 +1,6 @@
 using System.Composition;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using R3;
 using ZLogger;
@@ -8,11 +9,12 @@ namespace Asv.Avalonia;
 
 public class LogServiceConfig
 {
-    public string LogFolder { get; set; } = "logs";
+    public const string Section = "Logs";
+    public string Folder { get; set; } = "logs";
+    public LogLevel Level { get; set; } = LogLevel.Information;
+    public int RollingSizeKb { get; set; } = 50;
 }
 
-[Export(typeof(ILogService))]
-[Shared]
 public class LogService : ILogService, IExportable
 {
     private readonly ILoggerFactory _factory;
@@ -20,10 +22,10 @@ public class LogService : ILogService, IExportable
     private readonly ILogger<LogService> _logger;
     private readonly string _logsFolder;
 
-    [ImportingConstructor]
-    public LogService()
+    public LogService(IOptions<LogServiceConfig> option)
     {
-        _logsFolder = Path.Combine(AppContext.BaseDirectory, "logs");
+        _logsFolder = option.Value.Folder;
+        ArgumentNullException.ThrowIfNull(_logsFolder);
         if (!Directory.Exists(_logsFolder))
         {
             Directory.CreateDirectory(_logsFolder);
@@ -32,74 +34,14 @@ public class LogService : ILogService, IExportable
         _factory = LoggerFactory.Create(builder =>
         {
             builder.ClearProviders();
-            builder.SetMinimumLevel(LogLevel.Information);
+            builder.SetMinimumLevel(option.Value.Level);
             builder.AddZLoggerRollingFile(options =>
             {
                 options.FilePathSelector = (dt, index) =>
                     $"{_logsFolder}/{dt:yyyy-MM-dd}_{index}.logs";
                 options.UseJsonFormatter();
-                options.RollingSizeKB = 1_000_000;
+                options.RollingSizeKB = option.Value.RollingSizeKb;
             });
-            if (true)
-            {
-                builder.AddZLoggerConsole(options =>
-                {
-                    options.IncludeScopes = true;
-                    options.OutputEncodingToUtf8 = false;
-                    options.UsePlainTextFormatter(formatter =>
-                    {
-                        formatter.SetPrefixFormatter(
-                            $"{0:HH:mm:ss.fff} | ={1:short}= | {2, -40} ",
-                            (in MessageTemplate template, in LogInfo info) =>
-                                template.Format(info.Timestamp, info.LogLevel, info.Category)
-                        );
-
-                        // formatter.SetExceptionFormatter((writer, ex) => Utf8StringInterpolation.Utf8String.Format(writer, $"{ex.Message}"));
-                    });
-                });
-            }
-        });
-        _logger = _factory.CreateLogger<LogService>();
-    }
-
-    public LogService(string logFolder, int rollingSizeKb, LogLevel minLevel, bool logToConsole)
-    {
-        _logsFolder = logFolder;
-        ArgumentNullException.ThrowIfNull(logFolder);
-        if (!Directory.Exists(logFolder))
-        {
-            Directory.CreateDirectory(logFolder);
-        }
-
-        _factory = LoggerFactory.Create(builder =>
-        {
-            builder.ClearProviders();
-            builder.SetMinimumLevel(minLevel);
-            builder.AddZLoggerRollingFile(options =>
-            {
-                options.FilePathSelector = (dt, index) =>
-                    $"{logFolder}/{dt:yyyy-MM-dd}_{index}.logs";
-                options.UseJsonFormatter();
-                options.RollingSizeKB = rollingSizeKb;
-            });
-            if (logToConsole)
-            {
-                builder.AddZLoggerConsole(options =>
-                {
-                    options.IncludeScopes = true;
-                    options.OutputEncodingToUtf8 = false;
-                    options.UsePlainTextFormatter(formatter =>
-                    {
-                        formatter.SetPrefixFormatter(
-                            $"{0:HH:mm:ss.fff} | ={1:short}= | {2, -40} ",
-                            (in MessageTemplate template, in LogInfo info) =>
-                                template.Format(info.Timestamp, info.LogLevel, info.Category)
-                        );
-
-                        // formatter.SetExceptionFormatter((writer, ex) => Utf8StringInterpolation.Utf8String.Format(writer, $"{ex.Message}"));
-                    });
-                });
-            }
         });
         _logger = _factory.CreateLogger<LogService>();
     }
@@ -141,7 +83,9 @@ public class LogService : ILogService, IExportable
         }
     }
 
-    public IEnumerable<LogMessage> LoadItemsFromLogFile()
+    public async IAsyncEnumerable<LogMessage> LoadItemsFromLogFile(
+        CancellationToken cancel = default
+    )
     {
         foreach (var logFilePath in Directory.EnumerateFiles(_logsFolder, "*.logs"))
         {
@@ -151,10 +95,11 @@ public class LogService : ILogService, IExportable
                 FileAccess.Read,
                 FileShare.ReadWrite
             );
+
             var rdr = new JsonTextReader(new StreamReader(fs)) { SupportMultipleContent = true };
             var serializer = new JsonSerializer();
 
-            while (rdr.Read())
+            while (await rdr.ReadAsync(cancel))
             {
                 if (rdr.TokenType == JsonToken.StartObject)
                 {

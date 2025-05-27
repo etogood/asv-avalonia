@@ -8,7 +8,7 @@ public interface ILogService
     ReadOnlyReactiveProperty<LogMessage?> OnMessage { get; }
     void SaveMessage(LogMessage logMessage);
     void DeleteLogFile();
-    IEnumerable<LogMessage> LoadItemsFromLogFile();
+    IAsyncEnumerable<LogMessage> LoadItemsFromLogFile(CancellationToken cancel = default);
 
     public void Fatal(string sender, string message, Exception? ex = null)
     {

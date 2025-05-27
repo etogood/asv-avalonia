@@ -1,8 +1,10 @@
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using Asv.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using R3;
+using ZLogger;
 
 namespace Asv.Avalonia;
 
@@ -14,135 +16,126 @@ public static class CoreDesignTime
 
 public delegate Task CommandExecuteDelegate(IProgress<double> progress, CancellationToken cancel);
 
-public class CancellableCommandWithProgress : IProgress<double>, IDisposable
+public class CancellableCommandWithProgress : AsyncDisposableOnce, IProgress<double>
 {
     private readonly CommandExecuteDelegate _execute;
     private readonly ReactiveCommand _cancelCommand;
     private readonly ReactiveCommand _command;
     private readonly ILogger<CancellableCommandWithProgress> _logger;
+    private CancellationTokenSource? _cancellationTokenSource;
 
     public CancellableCommandWithProgress(
         CommandExecuteDelegate execute,
-        string name,
+        string title,
         ILoggerFactory logFactory
     )
     {
         _logger = logFactory.CreateLogger<CancellableCommandWithProgress>();
 
-        if (string.IsNullOrWhiteSpace(name))
+        if (string.IsNullOrWhiteSpace(title))
         {
-            throw new ArgumentException("Value cannot be null or whitespace.", nameof(name));
+            throw new ArgumentException("Value cannot be null or whitespace.", nameof(title));
         }
 
         _execute = execute ?? throw new ArgumentNullException(nameof(execute));
 
-        Title = new BindableReactiveProperty<string>(name);
+        Title = new BindableReactiveProperty<string>(title);
         IsExecuting = new BindableReactiveProperty<bool>();
         CanExecute = new BindableReactiveProperty<bool>(true);
         Progress = new BindableReactiveProperty<double>();
 
-        _command = new ReactiveCommand(_ => Task.Run(() => InternalExecute(default)));
-        _cancelCommand = new ReactiveCommand(_ => Task.Run(InternalCancel));
+        _command = new ReactiveCommand(_ => InternalExecute().SafeFireAndForget());
+        _cancelCommand = new ReactiveCommand(InternalCancel);
     }
 
-    public BindableReactiveProperty<string> Title { get; set; }
-    public BindableReactiveProperty<bool> IsExecuting { get; set; }
-    public BindableReactiveProperty<bool> CanExecute { get; set; }
-    public BindableReactiveProperty<double> Progress { get; set; }
+    private void InternalCancel(Unit obj)
+    {
+        _cancellationTokenSource?.Cancel(false);
+        _logger.LogWarning($"Command '{Title}' was cancelled");
+        IsExecuting.Value = false;
+        CanExecute.Value = true;
+        Progress.Value = 1.0;
+    }
+
+    private async Task InternalExecute()
+    {
+        try
+        {
+            _cancellationTokenSource?.Cancel(false);
+            _cancellationTokenSource = new CancellationTokenSource();
+            IsExecuting.Value = true;
+            CanExecute.Value = false;
+            Progress.Value = 0;
+            _logger.ZLogTrace($"Start command '{Title}'");
+            await _execute(this, _cancellationTokenSource.Token);
+            _logger.ZLogTrace($"Command '{Title}' completed successfully");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error to execute command {Title}:{ex.Message}");
+        }
+        finally
+        {
+            IsExecuting.Value = false;
+            CanExecute.Value = true;
+            Progress.Value = 1;
+        }
+    }
+
+    public BindableReactiveProperty<string> Title { get; }
+    public BindableReactiveProperty<bool> IsExecuting { get; }
+    public BindableReactiveProperty<bool> CanExecute { get; }
+    public BindableReactiveProperty<double> Progress { get; }
 
     public ICommand Cancel => _cancelCommand;
     public ICommand Command => _command;
 
-    private void InternalError(Exception exception)
-    {
-        _logger.LogError(exception, $"Error to execute command {Title}:{exception.Message}");
-    }
+    public void Report(double value) => Progress.Value = value;
 
-    private void InternalCancel()
+    protected override void Dispose(bool disposing)
     {
-        _logger.LogWarning($"Command '{Title}' was cancelled");
-    }
-
-    private async ValueTask InternalExecute(CancellationToken ct)
-    {
-        if (!CanExecute.Value)
+        if (disposing)
         {
-            return;
+            _cancelCommand.Dispose();
+            _command.Dispose();
+            _cancellationTokenSource?.Dispose();
+            Title.Dispose();
+            IsExecuting.Dispose();
+            CanExecute.Dispose();
+            Progress.Dispose();
         }
 
-        IsExecuting.OnNext(true);
-        CanExecute.OnNext(false);
-        Progress.OnNext(0);
-
-        try
-        {
-            _logger.LogInformation($"Start command '{Title}'");
-            await _execute(this, ct);
-            _logger.LogInformation($"Command '{Title}' is completed");
-        }
-        catch (Exception e)
-        {
-            InternalError(e);
-        }
-        finally
-        {
-            Progress.OnNext(0);
-            CanExecute.OnNext(true);
-            IsExecuting.OnNext(false);
-        }
+        base.Dispose(disposing);
     }
 
-    public void Report(double value)
+    protected override async ValueTask DisposeAsyncCore()
     {
-        Progress.OnNext(value);
-    }
-
-    public async ValueTask ExecuteAsync(CancellationToken cancel)
-    {
-        await using var sub = cancel.Register(() => _cancelCommand.WaitAsync(cancel));
-        await _command.WaitAsync(cancel);
-    }
-
-    #region Dispose
-
-    private volatile int _isDisposed;
-    public bool IsDisposed => _isDisposed != 0;
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void ThrowIfDisposed()
-    {
-        if (_isDisposed == 0)
+        await CastAndDispose(_cancelCommand);
+        await CastAndDispose(_command);
+        if (_cancellationTokenSource != null)
         {
-            return;
+            await CastAndDispose(_cancellationTokenSource);
         }
 
-        throw new ObjectDisposedException(GetType().FullName);
-    }
+        await CastAndDispose(Title);
+        await CastAndDispose(IsExecuting);
+        await CastAndDispose(CanExecute);
+        await CastAndDispose(Progress);
 
-    public void Dispose()
-    {
-        // Make sure we're the first call to Dispose
-        if (Interlocked.CompareExchange(ref _isDisposed, 1, 0) == 1)
+        await base.DisposeAsyncCore();
+
+        return;
+
+        static async ValueTask CastAndDispose(IDisposable resource)
         {
-            return;
+            if (resource is IAsyncDisposable resourceAsyncDisposable)
+            {
+                await resourceAsyncDisposable.DisposeAsync();
+            }
+            else
+            {
+                resource.Dispose();
+            }
         }
-
-        Dispose(true);
-        GC.SuppressFinalize(this);
     }
-
-    public void Dispose(bool disposing)
-    {
-        if (!disposing)
-        {
-            return;
-        }
-
-        _cancelCommand.Dispose();
-        _command.Dispose();
-        IsExecuting.Dispose();
-        Title.Dispose();
-    }
-
-    #endregion
 }
