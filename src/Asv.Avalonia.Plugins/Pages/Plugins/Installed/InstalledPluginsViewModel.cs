@@ -107,5 +107,5 @@ public class InstalledPluginsViewModel : PageViewModel<InstalledPluginsViewModel
 
     protected override void AfterLoadExtensions() { }
 
-    public override IExportInfo Source => SystemModule.Instance;
+    public override IExportInfo Source => PluginsModule.Instance;
 }

@@ -10,7 +10,10 @@ public sealed class PluginManagerBuilder
     private SemVersion _apiVersion = "0.0.0";
     private string _nugetPluginPrefix = string.Empty;
     private readonly HashSet<PluginServer> _servers = new(
-        EqualityComparer<PluginServer>.Create((a, b) => a?.SourceUri == b?.SourceUri)
+        EqualityComparer<PluginServer>.Create(
+            (a, b) => a?.SourceUri == b?.SourceUri,
+            server => server.GetHashCode()
+        )
     );
     private string _relativePluginFolder = "plugins";
     private string _relativeNugetFolder = "nuget";

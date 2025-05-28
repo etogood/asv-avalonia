@@ -124,5 +124,5 @@ public class PluginsMarketViewModel : PageViewModel<PluginsMarketViewModel>
 
     protected override void AfterLoadExtensions() { }
 
-    public override IExportInfo Source => SystemModule.Instance;
+    public override IExportInfo Source => PluginsModule.Instance;
 }

@@ -171,7 +171,7 @@ public class PluginsSourcesViewModel : PageViewModel<PluginsSourcesViewModel>
 
     protected override void AfterLoadExtensions() { }
 
-    public override IExportInfo Source => SystemModule.Instance;
+    public override IExportInfo Source => PluginsModule.Instance;
 
     protected override void Dispose(bool disposing)
     {
