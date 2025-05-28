@@ -64,7 +64,7 @@ public class InstalledPluginsViewModel : PageViewModel<InstalledPluginsViewModel
         );
         PluginsView = Plugins
             .CreateView(info => new InstalledPluginInfoViewModel(
-                $"{PageId}[{info.Id}]",
+                $"{PageId}-{info.Id}",
                 manager,
                 info,
                 loggerFactory

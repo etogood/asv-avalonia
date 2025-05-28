@@ -4,21 +4,23 @@ using Microsoft.Extensions.Options;
 
 namespace Asv.Avalonia.Plugins;
 
-public class PluginManagerBuilder
+public sealed class PluginManagerBuilder
 {
     private string _apiPackageName = string.Empty;
     private SemVersion _apiVersion = "0.0.0";
     private string _nugetPluginPrefix = string.Empty;
-    private readonly List<PluginServer> _servers =
-    [
-        new("NuGet", "https://api.nuget.org/v3/index.json"),
-    ];
+    private readonly HashSet<PluginServer> _servers = new(
+        EqualityComparer<PluginServer>.Create((a, b) => a?.SourceUri == b?.SourceUri)
+    );
     private string _relativePluginFolder = "plugins";
     private string _relativeNugetFolder = "nuget";
     private string _relativeNugetCacheFolder = "nuget_cache";
     private string _salt = "Asv.Avalonia.Plugins";
 
-    internal PluginManagerBuilder() { }
+    internal PluginManagerBuilder()
+    {
+        _servers.Add(new PluginServer("NuGet", "https://api.nuget.org/v3/index.json"));
+    }
 
     /// <summary>
     /// Sets the API package name for the Plugin Manager that an application uses as a shared package, linking plugins.
@@ -76,10 +78,7 @@ public class PluginManagerBuilder
     public PluginManagerBuilder WithServer(PluginServer server)
     {
         ArgumentNullException.ThrowIfNull(server);
-        if (_servers.Find(l => l.SourceUri == server.SourceUri) == null)
-        {
-            _servers.Add(server);
-        }
+        _servers.Add(server);
 
         return this;
     }
@@ -116,21 +115,37 @@ public class PluginManagerBuilder
         OptionsBuilder<PluginManagerOptions> options
     )
     {
+        Validate();
+
         return options.Configure(
-            (PluginManagerOptions config, IAppPath path) =>
+            (PluginManagerOptions cfg, IAppPath path) =>
             {
-                config.PluginDirectory = Path.Combine(path.UserDataFolder, _relativePluginFolder);
-                config.NugetDirectory = Path.Combine(path.UserDataFolder, _relativeNugetFolder);
-                config.NugetCacheDirectory = Path.Combine(
-                    path.UserDataFolder,
-                    _relativeNugetCacheFolder
-                );
-                config.ApiVersion = _apiVersion.ToString();
-                config.ApiPackageId = _apiPackageName;
-                config.NugetPluginPrefix = _nugetPluginPrefix;
-                config.Salt = _salt;
-                config.DefaultServers = _servers;
+                cfg.PluginDirectory = Path.Join(path.UserDataFolder, _relativePluginFolder);
+                cfg.NugetDirectory = Path.Join(path.UserDataFolder, _relativeNugetFolder);
+                cfg.NugetCacheDirectory = Path.Join(path.UserDataFolder, _relativeNugetCacheFolder);
+                cfg.ApiVersion = _apiVersion.ToString();
+                cfg.ApiPackageId = _apiPackageName;
+                cfg.NugetPluginPrefix = _nugetPluginPrefix;
+                cfg.Salt = _salt;
+                cfg.DefaultServers = _servers.ToList();
             }
         );
+    }
+
+    private void Validate()
+    {
+        if (string.IsNullOrWhiteSpace(_apiPackageName))
+        {
+            throw new InvalidOperationException(
+                "API package name is not configured — call WithApiPackage first."
+            );
+        }
+
+        if (_apiVersion == "0.0.0")
+        {
+            throw new InvalidOperationException(
+                "API version is not configured — call WithApiPackage first."
+            );
+        }
     }
 }
