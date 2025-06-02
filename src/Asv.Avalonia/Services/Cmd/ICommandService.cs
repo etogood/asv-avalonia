@@ -15,14 +15,7 @@ public interface ICommandService : IExportable
     );
     void SetHotKey(string commandId, HotKeyInfo hotKey);
     HotKeyInfo GetHotKey(string commandId);
-    Observable<CommandEventArgs> OnCommand { get; }
+    Observable<CommandSnapshot> OnCommand { get; }
     ValueTask Undo(CommandSnapshot command, CancellationToken cancel = default);
     ValueTask Redo(CommandSnapshot command, CancellationToken cancel = default);
-}
-
-public class CommandEventArgs(IRoutable context, IAsyncCommand command, CommandSnapshot snapshot)
-{
-    public IRoutable Context { get; } = context;
-    public IAsyncCommand Command { get; } = command;
-    public CommandSnapshot Snapshot { get; } = snapshot;
 }

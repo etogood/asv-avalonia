@@ -54,6 +54,6 @@ public class NullCommandService : ICommandService
         return ValueTask.CompletedTask;
     }
 
-    public Observable<CommandEventArgs> OnCommand { get; } = new Subject<CommandEventArgs>();
+    public Observable<CommandSnapshot> OnCommand { get; } = new Subject<CommandSnapshot>();
     public IExportInfo Source => SystemModule.Instance;
 }

@@ -30,14 +30,14 @@ public class CommandHistory : ICommandHistory
         CheckUndoRedoCanExecute();
     }
 
-    private void TryAddToHistory(CommandEventArgs cmd)
+    private void TryAddToHistory(CommandSnapshot snapshot)
     {
         if (
-            cmd.Snapshot.OldValue != null
-            && cmd.Context.GetAncestorsToRoot().Contains(HistoryOwner)
+            snapshot.OldValue != null
+            && snapshot.ContextPath.StartWith(HistoryOwner.GetPathToRoot())
         )
         {
-            _undoStack.Push(cmd.Snapshot);
+            _undoStack.Push(snapshot);
             _redoStack.Clear();
             CheckUndoRedoCanExecute();
         }

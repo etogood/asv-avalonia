@@ -29,7 +29,7 @@ public class CommandService : AsyncDisposableOnce, ICommandService
     private ImmutableDictionary<HotKeyInfo, ImmutableArray<IAsyncCommand>> _gestureVsCommand;
     private readonly ILogger<CommandService> _logger;
     private readonly IDisposable _disposeId;
-    private readonly Subject<CommandEventArgs> _onCommand;
+    private readonly Subject<CommandSnapshot> _onCommand;
     private KeyGesture? _prevKeyGesture;
 
     [ImportingConstructor]
@@ -54,7 +54,7 @@ public class CommandService : AsyncDisposableOnce, ICommandService
             .KeyDownEvent.AddClassHandler<TopLevel>(OnKeyDownHandler, handledEventsToo: true)
             .AddTo(ref dispose);
 
-        _onCommand = new Subject<CommandEventArgs>().AddTo(ref dispose);
+        _onCommand = new Subject<CommandSnapshot>().AddTo(ref dispose);
 
         _disposeId = dispose.Build();
     }
@@ -155,7 +155,7 @@ public class CommandService : AsyncDisposableOnce, ICommandService
 
             var backup = await factory.Execute(target, param, cancel);
             var snapShot = new CommandSnapshot(factory.Info.Id, navPath, param, backup);
-            _onCommand.OnNext(new CommandEventArgs(context, factory, snapShot));
+            _onCommand.OnNext(snapShot);
             _logger.ZLogTrace($"Execute command '{backup}'(context: {context}, param: {param})");
             return;
         }
@@ -342,7 +342,7 @@ public class CommandService : AsyncDisposableOnce, ICommandService
         throw new CommandNotFoundException(commandId);
     }
 
-    public Observable<CommandEventArgs> OnCommand => _onCommand;
+    public Observable<CommandSnapshot> OnCommand => _onCommand;
 
     public async ValueTask Undo(CommandSnapshot command, CancellationToken cancel)
     {

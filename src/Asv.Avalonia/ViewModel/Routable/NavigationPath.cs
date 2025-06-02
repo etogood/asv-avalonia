@@ -398,4 +398,25 @@ public struct NavigationPath : IEquatable<NavigationPath>, ISizedSpanSerializabl
 
         return size;
     }
+
+    public bool StartWith(NavigationPath other)
+    {
+        if (other.Count > Count)
+        {
+            return false;
+        }
+
+        var thisSpan = AsSpan();
+        var otherSpan = other.AsSpan();
+
+        for (int i = 0; i < other.Count; i++)
+        {
+            if (!thisSpan[i].Equals(otherSpan[i]))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
