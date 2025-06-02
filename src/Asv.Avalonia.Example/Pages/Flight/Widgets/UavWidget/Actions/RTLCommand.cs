@@ -21,16 +21,16 @@ public class RTLCommand : ContextCommand<UavWidgetViewModel>
         Name = RS.UavAction_Rtl_Name,
         Description = RS.UavAction_Rtl_Description,
         Icon = MaterialIconKind.Home,
-        HotKeyInfo = new HotKeyInfo { DefaultHotKey = null },
+        DefaultHotKey = null,
         Source = SystemModule.Instance,
     };
 
     #endregion
     public override ICommandInfo Info => StaticInfo;
 
-    protected override ValueTask<ICommandArg?> InternalExecute(
+    protected override ValueTask<CommandArg?> InternalExecute(
         UavWidgetViewModel context,
-        ICommandArg newValue,
+        CommandArg newValue,
         CancellationToken cancel
     )
     {

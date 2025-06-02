@@ -17,7 +17,7 @@ public class OpenInstalledPluginsCommand(INavigationService nav)
         Name = "Installed Plugins",
         Description = "Open installed plugins page",
         Icon = InstalledPluginsViewModel.PageIcon,
-        HotKeyInfo = new HotKeyInfo { DefaultHotKey = null },
+        DefaultHotKey = null,
         Source = SystemModule.Instance,
     };
 

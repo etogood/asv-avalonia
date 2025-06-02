@@ -6,6 +6,7 @@ using System.Composition.Hosting;
 using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Reflection;
+using Asv.Avalonia.Example.Api;
 using Asv.Avalonia.IO;
 using Asv.Avalonia.Plugins;
 using Asv.Cfg;
@@ -18,7 +19,6 @@ using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using R3;
-using Class1 = Asv.Avalonia.Example.Api.Class1;
 
 namespace Asv.Avalonia.Example;
 
@@ -82,7 +82,7 @@ public partial class App : Application, IContainerHost, IShellHost
             yield return GetType().Assembly; // Asv.Avalonia.Example
             yield return typeof(AppHost).Assembly; // Asv.Avalonia
             yield return typeof(DeviceManager).Assembly; // Asv.Avalonia.IO
-            yield return typeof(Class1).Assembly; // Asv.Avalonia.Example.Api
+            yield return typeof(ApiModule).Assembly; // Asv.Avalonia.Example.Api
             yield return typeof(IPluginManager).Assembly; // Asv.Avalonia.Plugins
         }
     }

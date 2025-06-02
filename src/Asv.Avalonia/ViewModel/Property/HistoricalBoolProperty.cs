@@ -42,7 +42,7 @@ public sealed class HistoricalBoolProperty : HistoricalPropertyBase<bool, bool>
             return;
         }
 
-        var newValue = new BoolCommandArg(userValue);
+        var newValue = new BoolArg(userValue);
         await this.ExecuteCommand(ChangeBoolPropertyCommand.Id, newValue);
     }
 

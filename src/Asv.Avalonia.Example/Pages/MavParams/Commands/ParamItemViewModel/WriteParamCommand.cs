@@ -16,18 +16,15 @@ public class WriteParamCommand : ContextCommand<ParamItemViewModel>
         Name = RS.WritePatamCommand_CommandInfo_Name,
         Description = RS.WriteParamCommand_CommandInfo_Description,
         Icon = MaterialIconKind.Upload,
-        HotKeyInfo = new HotKeyInfo
-        {
-            DefaultHotKey = null, // TODO: make a key bind when new key listener system appears
-        },
+        DefaultHotKey = null,
         Source = SystemModule.Instance,
     };
 
     public override ICommandInfo Info => StaticInfo;
 
-    protected override async ValueTask<ICommandArg?> InternalExecute(
+    protected override async ValueTask<CommandArg?> InternalExecute(
         ParamItemViewModel context,
-        ICommandArg newValue,
+        CommandArg newValue,
         CancellationToken cancel
     )
     {

@@ -17,7 +17,7 @@ public class ChangeStringPropertyCommand : ContextCommand<IHistoricalProperty<st
         Name = RS.ChangeStringPropertyCommand_CommandInfo_Name,
         Description = RS.ChangeStringPropertyCommand_CommandInfo_Description,
         Icon = MaterialIconKind.PropertyTag,
-        HotKeyInfo = new HotKeyInfo { DefaultHotKey = null },
+        DefaultHotKey = null,
         Source = SystemModule.Instance,
     };
 
@@ -25,19 +25,19 @@ public class ChangeStringPropertyCommand : ContextCommand<IHistoricalProperty<st
 
     #endregion
 
-    protected override ValueTask<ICommandArg?> InternalExecute(
+    protected override ValueTask<CommandArg?> InternalExecute(
         IHistoricalProperty<string?> context,
-        ICommandArg newValue,
+        CommandArg newValue,
         CancellationToken cancel
     )
     {
-        if (newValue is not StringCommandArg value)
+        if (newValue is not StringArg value)
         {
-            throw new CommandArgMismatchException(typeof(StringCommandArg));
+            throw new CommandArgMismatchException(typeof(StringArg));
         }
 
-        var oldValue = new StringCommandArg(context.ModelValue.Value ?? string.Empty);
+        var oldValue = new StringArg(context.ModelValue.Value ?? string.Empty);
         context.ModelValue.OnNext(value.Value);
-        return ValueTask.FromResult<ICommandArg?>(oldValue);
+        return ValueTask.FromResult<CommandArg?>(oldValue);
     }
 }

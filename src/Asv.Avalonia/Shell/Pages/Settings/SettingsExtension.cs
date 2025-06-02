@@ -31,7 +31,7 @@ public class SettingsExtension() : IExtensionFor<ISettingsPage>
             ).DisposeItWith(contextDispose)
         );
 
-        context.Nodes.Add(
+        /*context.Nodes.Add(
             new TreePage(
                 SettingsCommandListViewModel.SubPageId,
                 RS.SettingsCommandListViewModel_Name,
@@ -39,6 +39,6 @@ public class SettingsExtension() : IExtensionFor<ISettingsPage>
                 SettingsCommandListViewModel.SubPageId,
                 NavigationId.Empty
             ).DisposeItWith(contextDispose)
-        );
+        );*/
     }
 }

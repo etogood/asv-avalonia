@@ -42,8 +42,8 @@ public class LanguageProperty : RoutableViewModel
         }
 
         _internalChange = true;
-        var newValue = new StringCommandArg(userValue.Id);
-        await this.ExecuteCommand(ChangeLanguageCommand.Id, newValue);
+        var newValue = new StringArg(userValue.Id);
+        await this.ExecuteCommand(ChangeLanguageFreeCommand.Id, newValue);
         _internalChange = false;
 
         var dialogPayload = new YesOrNoDialogPayload

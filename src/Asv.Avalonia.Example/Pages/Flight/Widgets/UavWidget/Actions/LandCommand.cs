@@ -21,7 +21,7 @@ public class LandCommand : ContextCommand<UavWidgetViewModel>
         Name = RS.UavAction_Land,
         Description = RS.UavAction_Land_Description,
         Icon = MaterialIconKind.AeroplaneLanding,
-        HotKeyInfo = new HotKeyInfo { DefaultHotKey = null },
+        DefaultHotKey = null,
         Source = SystemModule.Instance,
     };
 
@@ -29,9 +29,9 @@ public class LandCommand : ContextCommand<UavWidgetViewModel>
 
     public override ICommandInfo Info => StaticInfo;
 
-    protected override ValueTask<ICommandArg?> InternalExecute(
+    protected override ValueTask<CommandArg?> InternalExecute(
         UavWidgetViewModel context,
-        ICommandArg newValue,
+        CommandArg newValue,
         CancellationToken cancel
     )
     {

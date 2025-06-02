@@ -68,7 +68,7 @@ public sealed class HistoricalUnitProperty : HistoricalPropertyBase<double, stri
         }
 
         var value = _unit.CurrentUnitItem.CurrentValue.ParseToSi(userValue);
-        var newValue = new DoubleCommandArg(value);
+        var newValue = new DoubleArg(value);
         await this.ExecuteCommand(ChangeDoublePropertyCommand.Id, newValue);
     }
 

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Asv.IO;
 
 namespace Asv.Avalonia;
 
@@ -8,7 +9,7 @@ namespace Asv.Avalonia;
 /// Represents a list of <see cref="NavigationId"/> instances optimized for performance and memory usage.
 /// Uses an inline array for small collections and switches to a dynamic array for larger ones.
 /// </summary>
-public struct NavigationPath : IEquatable<NavigationPath>
+public struct NavigationPath : IEquatable<NavigationPath>, ISizedSpanSerializable
 {
     public const char Separator = '|';
 
@@ -41,6 +42,11 @@ public struct NavigationPath : IEquatable<NavigationPath>
             _overflowIds = new NavigationId[_count + InlineCapacity]; // Additional capacity for growth
             ids.CopyTo(_overflowIds);
         }
+    }
+
+    public NavigationPath(ref ReadOnlySpan<byte> buffer)
+    {
+        Deserialize(ref buffer);
     }
 
     /// <summary>
@@ -362,5 +368,34 @@ public struct NavigationPath : IEquatable<NavigationPath>
         }
 
         return sb.ToString();
+    }
+
+    public void Deserialize(ref ReadOnlySpan<byte> buffer)
+    {
+        var size = BinSerialize.ReadPackedUnsignedInteger(ref buffer);
+        for (var i = 0; i < size; i++)
+        {
+            Add(new NavigationId(ref buffer));
+        }
+    }
+
+    public void Serialize(ref Span<byte> buffer)
+    {
+        BinSerialize.WritePackedUnsignedInteger(ref buffer, (uint)Count);
+        for (var i = 0; i < Count; i++)
+        {
+            this[i].Serialize(ref buffer);
+        }
+    }
+
+    public int GetByteSize()
+    {
+        var size = BinSerialize.GetSizeForPackedUnsignedInteger((uint)Count);
+        for (var i = 0; i < Count; i++)
+        {
+            size += this[i].GetByteSize();
+        }
+
+        return size;
     }
 }

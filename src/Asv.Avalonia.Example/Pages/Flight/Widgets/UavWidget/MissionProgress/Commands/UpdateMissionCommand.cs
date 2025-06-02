@@ -19,7 +19,7 @@ public class UpdateMissionCommand : ContextCommand<MissionProgressViewModel>
         Name = RS.UavAction_Land,
         Description = RS.UavAction_Land_Description,
         Icon = MaterialIconKind.Reload,
-        HotKeyInfo = new HotKeyInfo { DefaultHotKey = null },
+        DefaultHotKey = null,
         Source = SystemModule.Instance,
     };
 
@@ -27,9 +27,9 @@ public class UpdateMissionCommand : ContextCommand<MissionProgressViewModel>
 
     public override ICommandInfo Info => StaticInfo;
 
-    protected override async ValueTask<ICommandArg?> InternalExecute(
+    protected override async ValueTask<CommandArg?> InternalExecute(
         MissionProgressViewModel context,
-        ICommandArg newValue,
+        CommandArg newValue,
         CancellationToken cancel
     )
     {

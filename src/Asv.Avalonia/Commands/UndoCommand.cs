@@ -17,15 +17,15 @@ public class UndoCommand : ContextCommand<IShell>
             Name = RS.UndoCommand_CommandInfo_Name,
             Description = RS.UndoCommand_CommandInfo_Description,
             Icon = MaterialIconKind.UndoVariant,
-            HotKeyInfo = new HotKeyInfo { DefaultHotKey = KeyGesture.Parse("Ctrl+Z") },
+            DefaultHotKey = "Ctrl+Z",
             Source = SystemModule.Instance,
         };
 
     public override ICommandInfo Info => StaticInfo;
 
-    protected override async ValueTask<ICommandArg?> InternalExecute(
+    protected override async ValueTask<CommandArg?> InternalExecute(
         IShell context,
-        ICommandArg newValue,
+        CommandArg newValue,
         CancellationToken cancel
     )
     {

@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics;
 using Asv.Common;
 using Asv.IO;
 using Material.Icons;
@@ -95,20 +96,10 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
     {
         try
         {
-            if (Port == null)
-            {
-                return;
-            }
-
-            InternalSaveChanges(Port.Config);
-            await this.ExecuteCommand(
-                ProtocolPortCommand.StaticInfo.Id,
-                new ActionCommandArg(
-                    Port.Id,
-                    Port.Config.AsUri().ToString(),
-                    CommandParameterActionType.Change
-                )
-            );
+            Debug.Assert(Port != null, "Port should not be null when saving changes");
+            var cfg = (ProtocolPortConfig)Port.Config.Clone();
+            InternalSaveChanges(cfg);
+            await PortCrudCommand.ExecuteChange(this, Port.Id, cfg);
         }
         catch (Exception e)
         {
@@ -120,15 +111,8 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
 
     private ValueTask RemovePort(Unit arg1, CancellationToken arg2)
     {
-        if (Port == null)
-        {
-            return ValueTask.CompletedTask;
-        }
-
-        return this.ExecuteCommand(
-            ProtocolPortCommand.StaticInfo.Id,
-            new ActionCommandArg(Port.Id, null, CommandParameterActionType.Remove)
-        );
+        Debug.Assert(Port != null, "Port should not be null when removing port");
+        return PortCrudCommand.ExecuteRemove(this, Port.Id);
     }
 
     public IProtocolPort? Port { get; private set; }

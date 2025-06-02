@@ -17,7 +17,7 @@ public class ChangeDoublePropertyCommand : ContextCommand<IHistoricalProperty<do
         Name = RS.ChangeDoublePropertyCommand_CommandInfo_Name,
         Description = RS.ChangeDoublePropertyCommand_CommandInfo_Description,
         Icon = MaterialIconKind.PropertyTag,
-        HotKeyInfo = new HotKeyInfo { DefaultHotKey = null },
+        DefaultHotKey = null,
         Source = SystemModule.Instance,
     };
 
@@ -25,19 +25,19 @@ public class ChangeDoublePropertyCommand : ContextCommand<IHistoricalProperty<do
 
     #endregion
 
-    protected override ValueTask<ICommandArg?> InternalExecute(
+    protected override ValueTask<CommandArg?> InternalExecute(
         IHistoricalProperty<double> context,
-        ICommandArg newValue,
+        CommandArg newValue,
         CancellationToken cancel
     )
     {
-        if (newValue is not DoubleCommandArg value)
+        if (newValue is not DoubleArg value)
         {
-            throw new CommandArgMismatchException(typeof(DoubleCommandArg));
+            throw new CommandArgMismatchException(typeof(DoubleArg));
         }
 
-        var oldValue = new DoubleCommandArg(context.ModelValue.Value);
+        var oldValue = new DoubleArg(context.ModelValue.Value);
         context.ModelValue.OnNext(value.Value);
-        return ValueTask.FromResult<ICommandArg?>(oldValue);
+        return ValueTask.FromResult<CommandArg?>(oldValue);
     }
 }

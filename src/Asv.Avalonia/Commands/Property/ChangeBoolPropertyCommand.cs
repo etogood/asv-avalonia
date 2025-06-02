@@ -17,7 +17,7 @@ public class ChangeBoolPropertyCommand : ContextCommand<IHistoricalProperty<bool
         Name = RS.ChangeBoolPropertyCommand_CommandInfo_Name,
         Description = RS.ChangeBoolPropertyCommand_CommandInfo_Description,
         Icon = MaterialIconKind.PropertyTag,
-        HotKeyInfo = new HotKeyInfo { DefaultHotKey = null },
+        DefaultHotKey = null,
         Source = SystemModule.Instance,
     };
 
@@ -25,19 +25,19 @@ public class ChangeBoolPropertyCommand : ContextCommand<IHistoricalProperty<bool
 
     #endregion
 
-    protected override ValueTask<ICommandArg?> InternalExecute(
+    protected override ValueTask<CommandArg?> InternalExecute(
         IHistoricalProperty<bool> context,
-        ICommandArg newValue,
+        CommandArg newValue,
         CancellationToken cancel
     )
     {
-        if (newValue is not BoolCommandArg value)
+        if (newValue is not BoolArg value)
         {
-            throw new CommandArgMismatchException(typeof(BoolCommandArg));
+            throw new CommandArgMismatchException(typeof(BoolArg));
         }
 
-        var oldValue = new BoolCommandArg(context.ModelValue.Value);
+        var oldValue = new BoolArg(context.ModelValue.Value);
         context.ModelValue.OnNext(value.Value);
-        return ValueTask.FromResult<ICommandArg?>(oldValue);
+        return ValueTask.FromResult<CommandArg?>(oldValue);
     }
 }

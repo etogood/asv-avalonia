@@ -70,7 +70,7 @@ public sealed class HistoricalStringProperty : HistoricalPropertyBase<string?, s
             return;
         }
 
-        var newValue = new StringCommandArg(userValue ?? string.Empty);
+        var newValue = new StringArg(userValue ?? string.Empty);
         await this.ExecuteCommand(ChangeStringPropertyCommand.Id, newValue);
     }
 

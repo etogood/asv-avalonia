@@ -42,7 +42,9 @@ public class SettingsConnectionViewModel
         sourceSyncView.DisposeMany().DisposeItWith(Disposable);
         sourceSyncView.SetRoutableParentForView(this).DisposeItWith(Disposable);
 
-        View = sourceSyncView.ToNotifyCollectionChanged().DisposeItWith(Disposable);
+        View = sourceSyncView
+            .ToNotifyCollectionChanged(SynchronizationContextCollectionEventDispatcher.Current)
+            .DisposeItWith(Disposable);
         View.CollectionChanged += (sender, args) =>
         {
             OnChanged(args);
@@ -97,7 +99,7 @@ public class SettingsConnectionViewModel
             )
         )
         {
-            viewModel = new PortViewModel();
+            viewModel = new PortViewModel { Parent = this };
         }
 
         viewModel.Init(protocolPort);

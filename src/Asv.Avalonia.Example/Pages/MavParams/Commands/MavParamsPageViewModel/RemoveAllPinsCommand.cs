@@ -18,22 +18,20 @@ public class RemoveAllPinsCommand : ContextCommand<MavParamsPageViewModel>
         Name = RS.UnpinAllParamsCommand_CommandInfo_Name,
         Description = RS.UnpinAllParamsCommand_CommandInfo_Description,
         Icon = MaterialIconKind.PinOff,
-        HotKeyInfo = new HotKeyInfo
-        {
-            DefaultHotKey = null, // TODO: make a key bind when new key listener system appears
-        },
+        DefaultHotKey = null,
         Source = SystemModule.Instance,
     };
 
     public override ICommandInfo Info => StaticInfo;
 
-    protected override ValueTask<ICommandArg?> InternalExecute(
+    protected override ValueTask<CommandArg?> InternalExecute(
         MavParamsPageViewModel context,
-        ICommandArg newValue,
+        CommandArg newValue,
         CancellationToken cancel
     )
     {
-        var value = newValue as ListCommandArg<ParamItemViewModel>;
+        return ValueTask.FromResult<CommandArg?>(null);
+        /*var value = newValue as ListArg;
 
         context.SelectedItem.Value = null;
 
@@ -51,9 +49,9 @@ public class RemoveAllPinsCommand : ContextCommand<MavParamsPageViewModel>
                 context.ViewedParams.Remove(item);
             }
 
-            var oldValue = new ListCommandArg<ParamItemViewModel>(pinned);
+            var oldValue = new ListArg(pinned);
 
-            return ValueTask.FromResult<ICommandArg?>(oldValue);
+            return ValueTask.FromResult<CommandArg?>(oldValue);
         }
 
         foreach (var item in context.AllParams)
@@ -73,8 +71,8 @@ public class RemoveAllPinsCommand : ContextCommand<MavParamsPageViewModel>
             }
         }
 
-        var oldValue1 = new ListCommandArg<ParamItemViewModel>(value.Items);
+        var oldValue1 = new ListArg(value.Items);
 
-        return ValueTask.FromResult<ICommandArg?>(oldValue1);
+        return ValueTask.FromResult<CommandArg?>(oldValue1);*/
     }
 }

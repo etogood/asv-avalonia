@@ -7,7 +7,7 @@ namespace Asv.Avalonia;
 [ExportCommand]
 [Shared]
 [method: ImportingConstructor]
-public class OpenDebugWindowCommand(ExportFactory<IDebugWindow> factory) : NoContextCommand
+public class OpenDebugWindowFreeCommand(ExportFactory<IDebugWindow> factory) : StatelessCommand
 {
     #region Static
 
@@ -19,7 +19,7 @@ public class OpenDebugWindowCommand(ExportFactory<IDebugWindow> factory) : NoCon
         Name = RS.OpenDebugCommand_CommandInfo_Name,
         Description = RS.OpenDebugCommand_CommandInfo_Description,
         Icon = MaterialIconKind.WindowOpenVariant,
-        HotKeyInfo = new HotKeyInfo { DefaultHotKey = KeyGesture.Parse("Ctrl+D") },
+        DefaultHotKey = "Ctrl+D",
         Source = SystemModule.Instance,
     };
 
@@ -27,13 +27,13 @@ public class OpenDebugWindowCommand(ExportFactory<IDebugWindow> factory) : NoCon
 
     public override ICommandInfo Info => StaticInfo;
 
-    protected override ValueTask<ICommandArg?> InternalExecute(
-        ICommandArg newValue,
+    protected override ValueTask<CommandArg?> InternalExecute(
+        CommandArg newValue,
         CancellationToken cancel
     )
     {
         var wnd = new DebugWindow { DataContext = factory.CreateExport().Value, Topmost = true };
         wnd.Show();
-        return ValueTask.FromResult<ICommandArg?>(null);
+        return ValueTask.FromResult<CommandArg?>(null);
     }
 }

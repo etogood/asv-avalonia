@@ -5,7 +5,7 @@ namespace Asv.Avalonia;
 
 [ExportCommand]
 [Shared]
-public class ChangeLanguageCommand : NoContextCommand
+public class ChangeLanguageFreeCommand : StatelessCommand
 {
     #region Static
 
@@ -17,7 +17,7 @@ public class ChangeLanguageCommand : NoContextCommand
         Name = RS.ChangeLanguageCommand_CommandInfo_Name,
         Description = RS.ChangeLanguageCommand_CommandInfo_Description,
         Icon = MaterialIconKind.Translate,
-        HotKeyInfo = new HotKeyInfo { DefaultHotKey = null },
+        DefaultHotKey = null,
         Source = SystemModule.Instance,
     };
 
@@ -26,7 +26,7 @@ public class ChangeLanguageCommand : NoContextCommand
     private readonly ILocalizationService _svc;
 
     [ImportingConstructor]
-    public ChangeLanguageCommand(ILocalizationService svc)
+    public ChangeLanguageFreeCommand(ILocalizationService svc)
     {
         ArgumentNullException.ThrowIfNull(svc);
         _svc = svc;
@@ -34,12 +34,12 @@ public class ChangeLanguageCommand : NoContextCommand
 
     public override ICommandInfo Info => StaticInfo;
 
-    protected override ValueTask<ICommandArg?> InternalExecute(
-        ICommandArg newValue,
+    protected override ValueTask<CommandArg?> InternalExecute(
+        CommandArg newValue,
         CancellationToken cancel
     )
     {
-        if (newValue is StringCommandArg themeName)
+        if (newValue is StringArg themeName)
         {
             var oldValue = _svc.CurrentLanguage.Value.Id;
             var language = _svc.AvailableLanguages.FirstOrDefault(x => x.Id == themeName.Value);
@@ -48,7 +48,7 @@ public class ChangeLanguageCommand : NoContextCommand
                 _svc.CurrentLanguage.Value = language;
             }
 
-            return ValueTask.FromResult<ICommandArg?>(new StringCommandArg(oldValue));
+            return ValueTask.FromResult<CommandArg?>(new StringArg(oldValue));
         }
         else
         {
@@ -62,7 +62,7 @@ public class ChangeLanguageCommand : NoContextCommand
             }
 
             _svc.CurrentLanguage.Value = temp[index];
-            return ValueTask.FromResult<ICommandArg?>(new StringCommandArg(oldValue));
+            return ValueTask.FromResult<CommandArg?>(new StringArg(oldValue));
         }
     }
 }

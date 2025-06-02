@@ -1,16 +1,16 @@
 using System.Composition;
 using Material.Icons;
-using InvalidOperationException = System.InvalidOperationException;
 
 namespace Asv.Avalonia;
 
 [ExportCommand]
 [Shared]
-public sealed class ChangeCurrentUnitItemCommand : NoContextCommand
+[method: ImportingConstructor]
+public sealed class ChangeMeasureUnitCommand(IUnitService svc) : StatelessCrudCommand<StringArg>
 {
     #region Static
 
-    public const string Id = $"{BaseId}.settings.current.unit.change";
+    public const string Id = $"{BaseId}.settings.unit.change";
 
     private static readonly ICommandInfo StaticInfo = new CommandInfo
     {
@@ -18,91 +18,59 @@ public sealed class ChangeCurrentUnitItemCommand : NoContextCommand
         Name = RS.ChangeCurrentUnitItemCommand_CommandInfo_Name,
         Description = RS.ChangeCurrentUnitItemCommand_CommandInfo_Description,
         Icon = MaterialIconKind.Settings,
-        HotKeyInfo = new HotKeyInfo { DefaultHotKey = null },
+        DefaultHotKey = null,
         Source = SystemModule.Instance,
     };
 
-    #endregion
-
-    private readonly IUnitService _svc;
-
-    [ImportingConstructor]
-    public ChangeCurrentUnitItemCommand(IUnitService svc)
+    public static ValueTask ExecuteCommand(IRoutable context, IUnit command, IUnitItem userValue)
     {
-        ArgumentNullException.ThrowIfNull(svc);
-        _svc = svc;
+        return context.ExecuteCommand(
+            Id,
+            CommandArg.ChangeAction(command.UnitId, new StringArg(userValue.UnitItemId))
+        );
     }
+
+    #endregion
 
     public override ICommandInfo Info => StaticInfo;
 
-    protected override ValueTask<ICommandArg?> InternalExecute(
-        ICommandArg newValue,
-        CancellationToken cancel
-    )
+    protected override ValueTask<string> Update(string subjectId, StringArg options)
     {
-        if (newValue is not ActionCommandArg memento)
+        if (!svc.Units.TryGetValue(subjectId, out var unit))
         {
-            return ValueTask.FromException<ICommandArg?>(
-                new CommandArgMismatchException(typeof(ActionCommandArg))
-            );
+            throw new Exception($"Measure unit with {subjectId} not found");
         }
 
-        if (memento.Id == null || memento.Value == null)
+        if (!unit.AvailableUnits.TryGetValue(options.Value, out var unitItem))
         {
-            return ValueTask.FromException<ICommandArg?>(
-                new InvalidOperationException("Unable to perform action. Pass a valid parameter.")
-            );
+            throw new Exception($"Unit item with {options.Value} not found in unit {subjectId}");
         }
 
-        _svc.Units.TryGetValue(memento.Id, out var unit);
-        ArgumentNullException.ThrowIfNull(unit);
-        var oldValue = unit;
-        unit.AvailableUnits.TryGetValue(memento.Value, out var unitItem);
-        if (unitItem is not null)
-        {
-            unit.CurrentUnitItem.Value = unitItem;
-        }
+        unit.CurrentUnitItem.Value = unitItem;
+        return ValueTask.FromResult(subjectId);
+    }
 
-        return ValueTask.FromResult<ICommandArg?>(
-            new ActionCommandArg(
-                oldValue.UnitId,
-                oldValue.CurrentUnitItem.Value.UnitItemId,
-                CommandParameterActionType.Change
-            )
+    protected override ValueTask Delete(string? subjectId)
+    {
+        throw new NotImplementedException(
+            $"Delete operation is not supported for {nameof(ChangeMeasureUnitCommand)} command."
         );
     }
 
-    public override ValueTask<ICommandArg?> Execute(
-        IRoutable context,
-        ICommandArg newValue,
-        CancellationToken cancel = default
-    )
+    protected override ValueTask<string> Create(StringArg options)
     {
-        if (newValue is not ActionCommandArg memento)
-        {
-            return ValueTask.FromException<ICommandArg?>(
-                new InvalidOperationException("Unable to perform action. Pass a valid parameter.")
-            );
-        }
-
-        if (memento.Id == null || memento.Value == null)
-        {
-            return ValueTask.FromException<ICommandArg?>(
-                new InvalidOperationException("Unable to perform action. Pass a valid parameter.")
-            );
-        }
-
-        _svc.Units.TryGetValue(memento.Id, out var unit);
-        ArgumentNullException.ThrowIfNull(unit);
-        var oldValue = unit.CurrentUnitItem.Value.UnitItemId;
-        unit.AvailableUnits.TryGetValue(memento.Value, out var unitItem);
-        if (unitItem is not null)
-        {
-            unit.CurrentUnitItem.Value = unitItem;
-        }
-
-        return ValueTask.FromResult<ICommandArg?>(
-            new ActionCommandArg(unit.UnitId, oldValue, CommandParameterActionType.Change)
+        throw new NotImplementedException(
+            $"Create operation is not supported for {nameof(ChangeMeasureUnitCommand)} command."
         );
+    }
+
+    protected override ValueTask<StringArg> Read(string subjectId)
+    {
+        if (!svc.Units.TryGetValue(subjectId, out var unit))
+        {
+            throw new Exception($"Measure unit with {subjectId} not found");
+        }
+
+        return ValueTask.FromResult(new StringArg(unit.CurrentUnitItem.Value.UnitItemId));
     }
 }

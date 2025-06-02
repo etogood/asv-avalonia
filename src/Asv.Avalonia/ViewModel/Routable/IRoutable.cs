@@ -2,6 +2,8 @@ using R3;
 
 namespace Asv.Avalonia;
 
+public delegate ValueTask RoutedEventHandler(IRoutable owner, AsyncRoutedEvent e);
+
 /// <summary>
 /// Represents a routable view model that supports navigation, hierarchical structure, and event propagation.
 /// This interface extends <see cref="IViewModel"/> to include routing-related functionalities.
@@ -20,6 +22,19 @@ public interface IRoutable : IViewModel
     /// <param name="e">The routed event to be raised.</param>
     /// <returns>A <see cref="ValueTask"/> representing the asynchronous operation.</returns>
     ValueTask Rise(AsyncRoutedEvent e);
+
+    /// <summary>
+    /// Allows adding an event handler for routed events.
+    /// </summary>
+    /// <param name="handler">Callback to be invoked when the event is raised.</param>
+    /// <returns> An <see cref="IDisposable"/> that can be used to remove the event handler.</returns>
+    IDisposable AddEventHandler(RoutedEventHandler handler);
+
+    /// <summary>
+    /// Removes an event handler for routed events.
+    /// </summary>
+    /// <param name="handler">Callback to be removed from the event invocation list.</param>
+    void RemoveEventHandler(RoutedEventHandler handler);
 
     /// <summary>
     /// Navigates to a child routable element based on its identifier.

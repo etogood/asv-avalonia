@@ -8,7 +8,12 @@ public class NullCommandService : ICommandService
     private NullCommandService()
     {
         DesignTime.ThrowIfNotDesignMode();
-        Commands = [ChangeThemeCommand.StaticInfo, UndoCommand.StaticInfo, RedoCommand.StaticInfo];
+        Commands =
+        [
+            ChangeThemeFreeCommand.StaticInfo,
+            UndoCommand.StaticInfo,
+            RedoCommand.StaticInfo,
+        ];
     }
 
     public static ICommandService Instance { get; } = new NullCommandService();
@@ -22,21 +27,21 @@ public class NullCommandService : ICommandService
     public ValueTask Execute(
         string commandId,
         IRoutable context,
-        ICommandArg param,
+        CommandArg param,
         CancellationToken cancel = default
     )
     {
         return ValueTask.CompletedTask;
     }
 
-    public void SetHotKey(string commandId, KeyGesture hotKey)
+    public void SetHotKey(string commandId, HotKeyInfo hotKey)
     {
         // Do nothing
     }
 
-    public KeyGesture? GetHotKey(string commandId)
+    public HotKeyInfo GetHotKey(string commandId)
     {
-        return KeyGesture.Parse("Ctrl + X");
+        return HotKeyInfo.Parse("Ctrl + X ; K");
     }
 
     public ValueTask Undo(CommandSnapshot command, CancellationToken cancel = default)

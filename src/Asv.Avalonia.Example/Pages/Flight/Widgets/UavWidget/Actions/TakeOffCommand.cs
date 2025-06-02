@@ -22,7 +22,7 @@ public class TakeOffCommand : ContextCommand<UavWidgetViewModel>
         Name = RS.UavAction_TakeOff,
         Description = RS.UavAction_TakeOff_Description,
         Icon = MaterialIconKind.AeroplaneTakeoff,
-        HotKeyInfo = new HotKeyInfo { DefaultHotKey = null },
+        DefaultHotKey = null,
         Source = SystemModule.Instance,
     };
 
@@ -30,13 +30,13 @@ public class TakeOffCommand : ContextCommand<UavWidgetViewModel>
 
     public override ICommandInfo Info => StaticInfo;
 
-    protected override ValueTask<ICommandArg?> InternalExecute(
+    protected override ValueTask<CommandArg?> InternalExecute(
         UavWidgetViewModel context,
-        ICommandArg newValue,
+        CommandArg newValue,
         CancellationToken cancel
     )
     {
-        if (newValue is not DoubleCommandArg value)
+        if (newValue is not DoubleArg value)
         {
             throw new InvalidCastException("Invalid value type. CommandArg must be a double");
         }

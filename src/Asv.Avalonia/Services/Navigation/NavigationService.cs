@@ -130,10 +130,10 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
             return;
         }
 
-        if (_selectedControl.Value?.Id == routable.Id && _selectedControlPath.Value == path)
+        /*if (_selectedControl.Value?.Id == routable.Id && _selectedControlPath.Value == path)
         {
             return;
-        }
+        }*/
 
         _selectedControl.Value = routable;
         _selectedControlPath.Value = path;
@@ -187,6 +187,7 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
         {
             if (control.DataContext is IRoutable routable)
             {
+                Debug.WriteLine($"GotFocusHandler: {routable.GetPathToRoot()}");
                 FocusControlChanged(routable);
                 break;
             }

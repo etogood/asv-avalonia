@@ -13,10 +13,10 @@ public class SettingsConnectionSerialPortExtension : IExtensionFor<ISettingsConn
             $"{RS.SettingsConnectionSerialExtension_MenuItem_Header}"
         );
         menu.Icon = SerialPortViewModel.DefaultIcon;
-        menu.Command = new BindableAsyncCommand(ProtocolPortCommand.Id, menu);
+        menu.Command = new BindableAsyncCommand(PortCrudCommand.Id, menu);
         var defaultConfig = SerialProtocolPortConfig.CreateDefault();
         defaultConfig.IsEnabled = false;
-        menu.CommandParameter = ProtocolPortCommand.CreateAddArg(defaultConfig);
+        menu.CommandParameter = PortCrudCommand.CreateAddArg(defaultConfig);
         context.Menu.Add(menu);
     }
 }

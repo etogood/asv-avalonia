@@ -5,12 +5,10 @@ using Avalonia.Input;
 namespace Asv.Avalonia.LogViewer;
 
 [ExportCommand]
-public class OpenLogViewerCommand : OpenPageCommandBase
+[method: ImportingConstructor]
+public class OpenLogViewerCommand(INavigationService nav)
+    : OpenPageCommandBase(LogViewerViewModel.PageId, nav)
 {
-    [method: ImportingConstructor]
-    public OpenLogViewerCommand(INavigationService nav)
-        : base(LogViewerViewModel.PageId, nav) { }
-
     #region Static
 
     public const string Id = $"{BaseId}.open.{LogViewerViewModel.PageId}";
@@ -22,7 +20,7 @@ public class OpenLogViewerCommand : OpenPageCommandBase
         Description = "Open log viewer",
         Icon = LogViewerViewModel.PageIcon,
         Source = SystemModule.Instance,
-        HotKeyInfo = new HotKeyInfo { DefaultHotKey = KeyGesture.Parse("Ctrl+Shift+L") },
+        DefaultHotKey = "Ctrl+Shift+L",
     };
 
     #endregion

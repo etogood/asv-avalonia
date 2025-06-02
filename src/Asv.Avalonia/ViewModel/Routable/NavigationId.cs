@@ -1,12 +1,16 @@
 using System.Text;
 using System.Text.RegularExpressions;
+using Asv.IO;
 
 namespace Asv.Avalonia;
 
 /// <summary>
 /// Represents a unique identifier for navigation, consisting of a type identifier and optional arguments.
 /// </summary>
-public readonly partial struct NavigationId : IEquatable<NavigationId>, IComparable<NavigationId>
+public readonly partial struct NavigationId
+    : IEquatable<NavigationId>,
+        IComparable<NavigationId>,
+        ISizedSpanSerializable
 {
     private const string TypeIdRegexString = "^[a-zA-Z0-9\\._\\-]+$";
 
@@ -49,6 +53,20 @@ public readonly partial struct NavigationId : IEquatable<NavigationId>, ICompara
 
         Id = typeId;
         Args = args;
+    }
+
+    public NavigationId(ref ReadOnlySpan<byte> buffer)
+    {
+        Id = BinSerialize.ReadString(ref buffer);
+        Args = BinSerialize.ReadBool(ref buffer) ? BinSerialize.ReadString(ref buffer) : null;
+
+        if (!TypeIdRegex.IsMatch(Id))
+        {
+            throw new ArgumentException(
+                $"{nameof(Id)} must contain only Latin letters, dots, and hyphens.",
+                nameof(Id)
+            );
+        }
     }
 
     /// <summary>
@@ -218,5 +236,33 @@ public readonly partial struct NavigationId : IEquatable<NavigationId>, ICompara
         }
 
         return $"{Id}{Separator}{Args}";
+    }
+
+    public void Deserialize(ref ReadOnlySpan<byte> buffer)
+    {
+        throw new NotImplementedException(
+            "This is readonly struct. Use constructor with ReadOnlySpan<byte> parameter instead"
+        );
+    }
+
+    public void Serialize(ref Span<byte> buffer)
+    {
+        BinSerialize.WriteString(ref buffer, Id);
+        if (Args != null)
+        {
+            BinSerialize.WriteBool(ref buffer, true);
+            BinSerialize.WriteString(ref buffer, Args);
+        }
+        else
+        {
+            BinSerialize.WriteBool(ref buffer, false);
+        }
+    }
+
+    public int GetByteSize()
+    {
+        return BinSerialize.GetSizeForString(Id)
+            + sizeof(bool) // for the bool indicating Args presence
+            + (Args != null ? BinSerialize.GetSizeForString(Args) : 0);
     }
 }

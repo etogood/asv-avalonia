@@ -18,7 +18,7 @@ public class ClosePageCommand : ContextCommand<IPage>
         Name = RS.ClosePageCommand_CommandInfo_Name,
         Description = RS.ClosePageCommand_CommandInfo_Description,
         Icon = MaterialIconKind.CloseBold,
-        HotKeyInfo = new HotKeyInfo { DefaultHotKey = KeyGesture.Parse("Ctrl+Q") },
+        DefaultHotKey = "Ctrl+Q",
         Source = SystemModule.Instance,
     };
 
@@ -26,9 +26,9 @@ public class ClosePageCommand : ContextCommand<IPage>
 
     public override ICommandInfo Info => StaticInfo;
 
-    protected override async ValueTask<ICommandArg?> InternalExecute(
+    protected override async ValueTask<CommandArg?> InternalExecute(
         IPage context,
-        ICommandArg newValue,
+        CommandArg newValue,
         CancellationToken cancel
     )
     {

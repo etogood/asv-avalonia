@@ -1,6 +1,4 @@
 ﻿using System.Composition;
-using Avalonia.Input;
-using Material.Icons;
 
 namespace Asv.Avalonia;
 
@@ -19,10 +17,12 @@ public class OpenSettingsCommand(INavigationService nav)
         Name = RS.OpenSettingsCommand_CommandInfo_Name,
         Description = RS.OpenSettingsCommand_CommandInfo_Description,
         Icon = SettingsPageViewModel.PageIcon,
-        HotKeyInfo = new HotKeyInfo { DefaultHotKey = KeyGesture.Parse("Ctrl+S") },
+        DefaultHotKey = "Ctrl+S",
         Source = SystemModule.Instance,
     };
 
     #endregion
     public override ICommandInfo Info => StaticInfo;
+
+    protected override bool InternalCanExecute(StringArg arg) => true;
 }

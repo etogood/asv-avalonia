@@ -33,7 +33,7 @@ sealed class Program
             .UseAsvMap()
             .UsePluginManager(options =>
             {
-                options.WithApiPackage(typeof(Class1).Assembly);
+                options.WithApiPackage(typeof(ApiModule).Assembly);
                 options.WithPluginPrefix("Asv.Avalonia.Example.Plugin.");
             });
 

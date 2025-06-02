@@ -17,7 +17,7 @@ public class RestartApplicationCommand : ContextCommand<IRoutable>
         Name = RS.RestartApplicationCommand_Info_Name,
         Description = RS.RestartApplicationCommand_Info_Description,
         Icon = MaterialIconKind.Restart,
-        HotKeyInfo = new HotKeyInfo { DefaultHotKey = null },
+        DefaultHotKey = null,
         Source = SystemModule.Instance,
     };
 
@@ -25,14 +25,14 @@ public class RestartApplicationCommand : ContextCommand<IRoutable>
 
     public override ICommandInfo Info => StaticInfo;
 
-    protected override async ValueTask<ICommandArg?> InternalExecute(
+    protected override async ValueTask<CommandArg?> InternalExecute(
         IRoutable context,
-        ICommandArg newValue,
+        CommandArg newValue,
         CancellationToken cancel
     )
     {
         var isForce = false;
-        if (newValue is BoolCommandArg b)
+        if (newValue is BoolArg b)
         {
             isForce = b.Value;
         }

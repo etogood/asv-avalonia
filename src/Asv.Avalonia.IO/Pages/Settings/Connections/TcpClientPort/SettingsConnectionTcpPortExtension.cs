@@ -13,10 +13,10 @@ public class SettingsConnectionTcpPortExtension : IExtensionFor<ISettingsConnect
             $"{RS.SettingsConnectionTcpExtension_MenuItem_Header}"
         );
         menu.Icon = TcpPortViewModel.DefaultIcon;
-        menu.Command = new BindableAsyncCommand(ProtocolPortCommand.Id, menu);
+        menu.Command = new BindableAsyncCommand(PortCrudCommand.Id, menu);
         var defaultConfig = TcpClientProtocolPortConfig.CreateDefault();
         defaultConfig.IsEnabled = false;
-        menu.CommandParameter = ProtocolPortCommand.CreateAddArg(defaultConfig);
+        menu.CommandParameter = PortCrudCommand.CreateAddArg(defaultConfig);
         context.Menu.Add(menu);
     }
 }

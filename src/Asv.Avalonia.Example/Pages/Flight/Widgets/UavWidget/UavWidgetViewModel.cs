@@ -141,7 +141,7 @@ public class UavWidgetViewModel : ExtendableHeadlinedViewModel<IUavFlightWidget>
                 {
                     await this.ExecuteCommand(
                         TakeOffCommand.Id,
-                        new DoubleCommandArg(
+                        new DoubleArg(
                             AltitudeUnit.CurrentUnitItem.CurrentValue.ParseToSi(vm.Altitude.Value)
                         )
                     );

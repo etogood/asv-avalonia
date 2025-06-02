@@ -6,7 +6,7 @@ namespace Asv.Avalonia;
 
 [ExportCommand]
 [Shared]
-public class ChangeThemeCommand : NoContextCommand
+public class ChangeThemeFreeCommand : StatelessCommand
 {
     #region Static
 
@@ -17,7 +17,7 @@ public class ChangeThemeCommand : NoContextCommand
         Name = RS.ChangeThemeCommand_CommandInfo_Name,
         Description = RS.ChangeThemeCommand_CommandInfo_Description,
         Icon = MaterialIconKind.ThemeLightDark,
-        HotKeyInfo = new HotKeyInfo { DefaultHotKey = KeyGesture.Parse("Ctrl+T") },
+        DefaultHotKey = "Ctrl+T",
         Source = SystemModule.Instance,
     };
 
@@ -25,7 +25,7 @@ public class ChangeThemeCommand : NoContextCommand
     private readonly IThemeService _svc;
 
     [ImportingConstructor]
-    public ChangeThemeCommand(IThemeService svc)
+    public ChangeThemeFreeCommand(IThemeService svc)
     {
         ArgumentNullException.ThrowIfNull(svc);
         _svc = svc;
@@ -33,13 +33,13 @@ public class ChangeThemeCommand : NoContextCommand
 
     public override ICommandInfo Info => StaticInfo;
 
-    protected override ValueTask<ICommandArg?> InternalExecute(
-        ICommandArg newValue,
+    protected override ValueTask<CommandArg?> InternalExecute(
+        CommandArg newValue,
         CancellationToken cancel
     )
     {
         var oldValue = _svc.CurrentTheme.Value.Id;
-        if (newValue is StringCommandArg memento)
+        if (newValue is StringArg memento)
         {
             // execute with parameter
             var theme = _svc.Themes.FirstOrDefault(x => x.Id == memento.Value);
@@ -62,6 +62,6 @@ public class ChangeThemeCommand : NoContextCommand
             _svc.CurrentTheme.Value = temp[index];
         }
 
-        return ValueTask.FromResult<ICommandArg?>(new StringCommandArg(oldValue));
+        return ValueTask.FromResult<CommandArg?>(new StringArg(oldValue));
     }
 }
