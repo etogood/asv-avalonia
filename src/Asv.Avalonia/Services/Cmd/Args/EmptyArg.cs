@@ -28,5 +28,18 @@ public class EmptyArg : CommandArg
 
     protected override int InternalGetByteSize() => 0;
 
+    protected override void InternalDeserialize(JsonReader reader)
+    {
+        if (reader.Read() == false || reader.TokenType != JsonToken.Null)
+        {
+            throw new JsonSerializationException("Expected null token for EmptyArg");
+        }
+    }
+
+    protected override void InternalSerialize(JsonWriter writer)
+    {
+        writer.WriteNull();
+    }
+
     public override string ToString() => "[EMPTY]";
 }

@@ -31,11 +31,13 @@ public class CommandService : AsyncDisposableOnce, ICommandService
     private readonly IDisposable _disposeId;
     private readonly Subject<CommandSnapshot> _onCommand;
     private KeyGesture? _prevKeyGesture;
+    private IAppPath _path;
 
     [ImportingConstructor]
     public CommandService(
         INavigationService nav,
         IConfiguration cfg,
+        IAppPath path,
         [ImportMany] IEnumerable<IAsyncCommand> factories,
         ILoggerFactory loggerFactory
     )
@@ -44,6 +46,7 @@ public class CommandService : AsyncDisposableOnce, ICommandService
 
         _nav = nav;
         _cfg = cfg;
+        _path = path;
         _loggerFactory = loggerFactory;
         _logger = loggerFactory.CreateLogger<CommandService>();
         _commands = factories.ToImmutableDictionary(x => x.Info.Id);
@@ -302,7 +305,7 @@ public class CommandService : AsyncDisposableOnce, ICommandService
 
     public ICommandHistory CreateHistory(IRoutable? owner)
     {
-        var history = new CommandHistory(owner, this, _loggerFactory);
+        var history = new CommandHistory(owner, this, _path, _loggerFactory);
         return history;
     }
 

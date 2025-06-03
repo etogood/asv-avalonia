@@ -1,18 +1,62 @@
 using Asv.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Asv.Avalonia;
 
-public sealed class CommandSnapshot(
-    string commandId,
-    NavigationPath contextPath,
-    CommandArg newValue,
-    CommandArg? oldValue
-) : ISizedSpanSerializable
+public interface IJsonSerializable
 {
-    private CommandArg _newValue = newValue;
-    private CommandArg? _oldValue = oldValue;
-    public string CommandId { get; private set; } = commandId;
-    public NavigationPath ContextPath { get; private set; } = contextPath;
+    void Serialize(JsonWriter writer);
+    void Deserialize(JsonReader reader);
+}
+
+public sealed class CommandSnapshot : ISizedSpanSerializable, IJsonSerializable
+{
+    private CommandArg _newValue;
+    private CommandArg? _oldValue;
+
+    public CommandSnapshot(
+        string commandId,
+        NavigationPath contextPath,
+        CommandArg newValue,
+        CommandArg? oldValue
+    )
+    {
+        _newValue = newValue;
+        _oldValue = oldValue;
+        CommandId = commandId;
+        ContextPath = contextPath;
+    }
+
+    public CommandSnapshot(JsonReader reader)
+    {
+        if (reader.Read() == false)
+        {
+            throw new JsonSerializationException("Unexpected end of JSON stream.");
+        }
+
+        if (reader.TokenType != JsonToken.StartArray)
+        {
+            throw new JsonSerializationException($"Expected {nameof(JsonToken.StartArray)} token.");
+        }
+
+        CommandId =
+            reader.ReadAsString()
+            ?? throw new JsonSerializationException($"{nameof(CommandId)} cannot be null.");
+        ContextPath = new NavigationPath(reader);
+        _newValue =
+            CommandArg.Create(reader)
+            ?? throw new JsonSerializationException($"{nameof(_newValue)} cannot be null.");
+        _oldValue = CommandArg.Create(reader);
+
+        if (reader.Read() == false || reader.TokenType != JsonToken.EndArray)
+        {
+            throw new JsonSerializationException($"Expected {nameof(JsonToken.EndArray)} token.");
+        }
+    }
+
+    public string CommandId { get; private set; }
+    public NavigationPath ContextPath { get; private set; }
 
     public CommandArg NewValue => _newValue;
 
@@ -56,5 +100,30 @@ public sealed class CommandSnapshot(
             + ContextPath.GetByteSize()
             + NewValue.GetByteSize()
             + (OldValue is null ? sizeof(bool) : sizeof(bool) + OldValue.GetByteSize());
+    }
+
+    public void Serialize(JsonWriter writer)
+    {
+        writer.WriteStartArray();
+        writer.WriteValue(CommandId);
+        ContextPath.Serialize(writer);
+        _newValue.Serialize(writer);
+        if (_oldValue is not null)
+        {
+            _oldValue.Serialize(writer);
+        }
+        else
+        {
+            writer.WriteNull();
+        }
+
+        writer.WriteEndArray();
+    }
+
+    public void Deserialize(JsonReader reader)
+    {
+        throw new NotImplementedException(
+            $"Not implemented for {nameof(CommandSnapshot)}. Use constructor with JsonReader parameter instead."
+        );
     }
 }

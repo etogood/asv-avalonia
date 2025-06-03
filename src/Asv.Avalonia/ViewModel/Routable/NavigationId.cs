@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using Asv.IO;
+using Newtonsoft.Json;
 
 namespace Asv.Avalonia;
 
@@ -10,7 +11,8 @@ namespace Asv.Avalonia;
 public readonly partial struct NavigationId
     : IEquatable<NavigationId>,
         IComparable<NavigationId>,
-        ISizedSpanSerializable
+        ISizedSpanSerializable,
+        IJsonSerializable
 {
     private const string TypeIdRegexString = "^[a-zA-Z0-9\\._\\-]+$";
 
@@ -69,6 +71,13 @@ public readonly partial struct NavigationId
         }
     }
 
+    public NavigationId(JsonReader reader)
+    {
+        Parse(reader.ReadAsString(), out var typeId, out var args);
+        Id = typeId;
+        Args = args;
+    }
+
     /// <summary>
     /// Implicitly converts a string to a <see cref="NavigationId"/> instance by parsing it into a type identifier and optional arguments.
     /// The string should be in the format "typeId?args", where "typeId" must contain only Latin letters, dots, and hyphens.
@@ -79,22 +88,30 @@ public readonly partial struct NavigationId
     /// <exception cref="ArgumentException">Thrown when the type identifier part of <paramref name="value"/> contains invalid characters.</exception>
     public static implicit operator NavigationId(string? value)
     {
+        Parse(value, out var typeId, out var args);
+        return new NavigationId(typeId, args);
+    }
+
+    public static void Parse(string? value, out string id, out string? args)
+    {
         if (value == null)
         {
-            return Empty;
+            id = string.Empty;
+            args = null;
+            return;
         }
 
-        int separatorIndex = value.IndexOf(Separator);
+        var separatorIndex = value.IndexOf(Separator);
         if (separatorIndex == -1)
         {
             // Если нет 'Separator', вся строка — это typeId
-            return new NavigationId(value);
+            id = value;
+            args = null;
+            return;
         }
 
-        var typeId = value.Substring(0, separatorIndex);
-        var args = separatorIndex < value.Length - 1 ? value[(separatorIndex + 1)..] : null;
-
-        return new NavigationId(typeId, args);
+        id = value[..separatorIndex];
+        args = separatorIndex < value.Length - 1 ? value[(separatorIndex + 1)..] : null;
     }
 
     /// <summary>
@@ -264,5 +281,17 @@ public readonly partial struct NavigationId
         return BinSerialize.GetSizeForString(Id)
             + sizeof(bool) // for the bool indicating Args presence
             + (Args != null ? BinSerialize.GetSizeForString(Args) : 0);
+    }
+
+    public void Serialize(JsonWriter writer)
+    {
+        writer.WriteValue(ToString());
+    }
+
+    public void Deserialize(JsonReader reader)
+    {
+        throw new NotImplementedException(
+            "This is readonly struct. Use constructor with ReadOnlySpan<byte> parameter instead"
+        );
     }
 }

@@ -1,7 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Buffers;
+using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Asv.IO;
+using Newtonsoft.Json;
 
 namespace Asv.Avalonia;
 
@@ -9,9 +12,9 @@ namespace Asv.Avalonia;
 /// Represents a list of <see cref="NavigationId"/> instances optimized for performance and memory usage.
 /// Uses an inline array for small collections and switches to a dynamic array for larger ones.
 /// </summary>
-public struct NavigationPath : IEquatable<NavigationPath>, ISizedSpanSerializable
+public struct NavigationPath : IEquatable<NavigationPath>, ISizedSpanSerializable, IJsonSerializable
 {
-    public const char Separator = '|';
+    public const char Separator = '/';
 
     private const int InlineCapacity = 6;
 
@@ -47,6 +50,11 @@ public struct NavigationPath : IEquatable<NavigationPath>, ISizedSpanSerializabl
     public NavigationPath(ref ReadOnlySpan<byte> buffer)
     {
         Deserialize(ref buffer);
+    }
+
+    public NavigationPath(JsonReader reader)
+    {
+        Deserialize(reader);
     }
 
     /// <summary>
@@ -315,6 +323,11 @@ public struct NavigationPath : IEquatable<NavigationPath>, ISizedSpanSerializabl
     /// <exception cref="FormatException">Thrown when the path format is invalid or contains invalid <see cref="NavigationId"/> segments.</exception>
     public static NavigationPath Parse(string path)
     {
+        return new NavigationPath(ParseItems(path));
+    }
+
+    public static IEnumerable<NavigationId> ParseItems(string path)
+    {
         if (path == null)
         {
             throw new ArgumentNullException(nameof(path), "The navigation path cannot be null.");
@@ -322,28 +335,14 @@ public struct NavigationPath : IEquatable<NavigationPath>, ISizedSpanSerializabl
 
         if (string.IsNullOrEmpty(path))
         {
-            return default;
+            yield break;
         }
 
-        var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
-        var ids = new NavigationId[segments.Length];
-
-        for (int i = 0; i < segments.Length; i++)
+        var segments = path.Split(Separator, StringSplitOptions.RemoveEmptyEntries);
+        foreach (var t in segments)
         {
-            try
-            {
-                ids[i] = segments[i]; // Use implicit conversion from string -> NavigationId
-            }
-            catch (ArgumentException ex)
-            {
-                throw new FormatException(
-                    $"Invalid NavigationId segment '{segments[i]}' at position {i}.",
-                    ex
-                );
-            }
+            yield return t;
         }
-
-        return new NavigationPath(ids.AsSpan());
     }
 
     /// <summary>
@@ -418,5 +417,18 @@ public struct NavigationPath : IEquatable<NavigationPath>, ISizedSpanSerializabl
         }
 
         return true;
+    }
+
+    public void Serialize(JsonWriter writer)
+    {
+        writer.WriteValue(ToString());
+    }
+
+    public void Deserialize(JsonReader reader)
+    {
+        foreach (var item in ParseItems(reader.ReadAsString() ?? string.Empty))
+        {
+            Add(item);
+        }
     }
 }

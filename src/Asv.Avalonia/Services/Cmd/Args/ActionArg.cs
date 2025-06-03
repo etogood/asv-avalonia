@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Asv.IO;
+using Newtonsoft.Json;
 
 namespace Asv.Avalonia;
 
@@ -97,6 +98,49 @@ public class ActionArg(string? subjectId, CommandArg? value, ActionArg.Kind acti
         }
 
         return size;
+    }
+
+    protected override void InternalDeserialize(JsonReader reader)
+    {
+        if (reader.Read() == false || reader.TokenType != JsonToken.StartArray)
+        {
+            throw new JsonSerializationException("Expected start of array");
+        }
+
+        var actionValue =
+            reader.ReadAsString()
+            ?? throw new JsonSerializationException("Expected action type as string");
+        if (!Enum.TryParse<Kind>(actionValue, true, out var action))
+        {
+            throw new JsonSerializationException($"Unknown action type: {actionValue}");
+        }
+
+        Action = action;
+
+        SubjectId = reader.ReadAsString();
+        Value = CommandArg.Create(reader);
+
+        if (reader.Read() == false || reader.TokenType != JsonToken.EndArray)
+        {
+            throw new JsonSerializationException("Expected end of array");
+        }
+    }
+
+    protected override void InternalSerialize(JsonWriter writer)
+    {
+        writer.WriteStartArray();
+        writer.WriteValue(Action.ToString());
+        writer.WriteValue(SubjectId);
+        if (Value == null)
+        {
+            writer.WriteNull();
+        }
+        else
+        {
+            Value.Serialize(writer);
+        }
+
+        writer.WriteEndArray();
     }
 
     public override string ToString() => $"[{Action:G}] {TypeId} {Value}]";

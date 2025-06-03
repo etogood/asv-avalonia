@@ -1,4 +1,5 @@
 using Asv.IO;
+using Newtonsoft.Json;
 
 namespace Asv.Avalonia;
 
@@ -41,6 +42,41 @@ public class DoubleArg(double value) : CommandArg
         BinSerialize.WriteDouble(ref buffer, in _value);
 
     protected override int InternalGetByteSize() => sizeof(double);
+
+    protected override void InternalDeserialize(JsonReader reader)
+    {
+        if (reader.Read() == false)
+        {
+            throw new JsonSerializationException(
+                "Unexpected end of JSON while reading a double value."
+            );
+        }
+
+        if (reader.TokenType != JsonToken.Float && reader.TokenType != JsonToken.Integer)
+        {
+            throw new JsonSerializationException(
+                $"Expected a number token, but got {reader.TokenType}"
+            );
+        }
+
+        if (reader.Value is double value)
+        {
+            _value = value;
+        }
+        else if (reader.Value is long longValue)
+        {
+            _value = longValue;
+        }
+        else
+        {
+            throw new JsonSerializationException($"Unexpected value type: {reader.ValueType}");
+        }
+    }
+
+    protected override void InternalSerialize(JsonWriter writer)
+    {
+        writer.WriteValue(_value);
+    }
 
     public override string ToString() => $"{Value:G}";
 }

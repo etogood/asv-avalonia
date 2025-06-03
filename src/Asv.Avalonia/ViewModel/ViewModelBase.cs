@@ -11,12 +11,17 @@ namespace Asv.Avalonia;
 public abstract class ViewModelBase(NavigationId id) : IViewModel
 {
     private volatile int _isDisposed;
+    private NavigationId _id = id;
 
-    public NavigationId Id { get; private set; } = id;
+    public NavigationId Id
+    {
+        get => _id;
+        private set => SetField(ref _id, value);
+    }
 
     public override string ToString()
     {
-        return $"{this.GetType().Name}[{Id}]";
+        return $"{GetType().Name}[{Id}]";
     }
 
     public void InitArgs(string? args)

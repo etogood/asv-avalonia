@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using Asv.IO;
+using Newtonsoft.Json;
 
 namespace Asv.Avalonia;
 
@@ -42,6 +43,48 @@ public class DictArg : CommandArg, IDictionary<string, CommandArg>
     protected override int InternalGetByteSize() =>
         BinSerialize.GetSizeForPackedUnsignedInteger((uint)_dictionary.Count)
         + _dictionary.Sum(kvp => BinSerialize.GetSizeForString(kvp.Key) + kvp.Value.GetByteSize());
+
+    protected override void InternalDeserialize(JsonReader reader)
+    {
+        if (reader.Read() == false || reader.TokenType != JsonToken.StartObject)
+        {
+            throw new JsonSerializationException("Expected start of object.");
+        }
+
+        Clear();
+        while (reader.Read() && reader.TokenType != JsonToken.EndObject)
+        {
+            if (reader.TokenType != JsonToken.PropertyName)
+            {
+                throw new JsonSerializationException("Expected property name.");
+            }
+
+            var key =
+                reader.Value?.ToString()
+                ?? throw new JsonSerializationException("Key cannot be null.");
+            reader.Read();
+            var element = Create();
+            element.Deserialize(reader);
+            Add(key, element);
+        }
+
+        if (reader.TokenType != JsonToken.EndObject)
+        {
+            throw new JsonSerializationException("Expected end of object.");
+        }
+    }
+
+    protected override void InternalSerialize(JsonWriter writer)
+    {
+        writer.WriteStartObject();
+        foreach (var kvp in _dictionary)
+        {
+            writer.WritePropertyName(kvp.Key);
+            kvp.Value.Serialize(writer);
+        }
+
+        writer.WriteEndObject();
+    }
 
     public IEnumerator<KeyValuePair<string, CommandArg>> GetEnumerator() =>
         _dictionary.GetEnumerator();

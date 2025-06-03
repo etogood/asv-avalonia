@@ -1,4 +1,5 @@
 using Asv.IO;
+using Newtonsoft.Json;
 
 namespace Asv.Avalonia;
 
@@ -22,6 +23,18 @@ public class StringArg(string value) : CommandArg
         BinSerialize.WriteString(ref buffer, Value);
 
     protected override int InternalGetByteSize() => BinSerialize.GetSizeForString(Value);
+
+    protected override void InternalDeserialize(JsonReader reader)
+    {
+        Value =
+            reader.ReadAsString()
+            ?? throw new JsonSerializationException("Expected a string value.");
+    }
+
+    protected override void InternalSerialize(JsonWriter writer)
+    {
+        writer.WriteValue(Value);
+    }
 
     public override string ToString() => Value;
 }

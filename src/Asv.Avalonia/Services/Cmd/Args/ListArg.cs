@@ -1,5 +1,6 @@
 using System.Collections;
 using Asv.IO;
+using Newtonsoft.Json;
 
 namespace Asv.Avalonia;
 
@@ -40,6 +41,39 @@ public class ListArg : CommandArg, IList<CommandArg>
     protected override int InternalGetByteSize() =>
         BinSerialize.GetSizeForPackedUnsignedInteger((uint)Count)
         + this.Sum(item => item.GetByteSize());
+
+    protected override void InternalDeserialize(JsonReader reader)
+    {
+        if (reader.Read() == false || reader.TokenType != JsonToken.StartArray)
+        {
+            throw new JsonSerializationException("Expected start of array.");
+        }
+
+        Clear();
+        while (reader.Read() && reader.TokenType != JsonToken.EndArray)
+        {
+            var item =
+                CommandArg.Create(reader)
+                ?? throw new JsonSerializationException("Failed to create CommandArg from JSON.");
+            Add(item);
+        }
+
+        if (reader.TokenType != JsonToken.EndArray)
+        {
+            throw new JsonSerializationException("Expected end of array.");
+        }
+    }
+
+    protected override void InternalSerialize(JsonWriter writer)
+    {
+        writer.WriteStartArray();
+        foreach (var item in this)
+        {
+            item.Serialize(writer);
+        }
+
+        writer.WriteEndArray();
+    }
 
     public IEnumerator<CommandArg> GetEnumerator() => _items.GetEnumerator();
 

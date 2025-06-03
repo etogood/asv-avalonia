@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Asv.IO;
+using Newtonsoft.Json;
 
 namespace Asv.Avalonia;
 
@@ -47,4 +48,16 @@ public class BoolArg(bool value) : CommandArg
         BinSerialize.WriteBool(ref buffer, _value);
 
     protected override int InternalGetByteSize() => sizeof(bool);
+
+    protected override void InternalDeserialize(JsonReader reader)
+    {
+        _value =
+            reader.ReadAsBoolean()
+            ?? throw new JsonSerializationException("Expected a boolean value.");
+    }
+
+    protected override void InternalSerialize(JsonWriter writer)
+    {
+        writer.WriteValue(_value);
+    }
 }
