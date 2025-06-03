@@ -2,12 +2,13 @@ using System.Buffers;
 using System.Diagnostics;
 using Asv.Common;
 using Asv.IO;
+using Newtonsoft.Json.Linq;
 
 namespace Asv.Avalonia;
 
 /// <summary>
 ///
-/// [MAGIC] [FORMAT] [HEADER] [METADATA] [DATAxN]
+/// [MAGIC] [FORMAT] [METADATA] [ADDRESS] [DATAxN]
 /// </summary>
 /// <typeparam name="TData"></typeparam>
 /// <typeparam name="TMetadata"></typeparam>
@@ -17,7 +18,7 @@ public class RingFile<TData, TMetadata> : IRingFile<TData, TMetadata>
 {
     #region Static
 
-    public bool TryGetFormat(Stream stream, out RingFileFormat? format)
+    public static bool TryReadFormat(Stream stream, out RingFileFormat? format)
     {
         var buff = ArrayPool<byte>.Shared.Rent(RingFileFormat.MaxSize);
         try
@@ -45,26 +46,26 @@ public class RingFile<TData, TMetadata> : IRingFile<TData, TMetadata>
         }
     }
 
-    public bool TryGetFormat(string path, out RingFileFormat? format)
+    public static bool TryReadFormat(string path, out RingFileFormat? format)
     {
-        using var fs = new FileStream(path, FileMode.CreateNew, FileAccess.Write);
-        return TryGetFormat(fs, out format);
+        using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
+        return TryReadFormat(fs, out format);
     }
 
     #endregion
 
+    private readonly object _sync = new();
     private readonly int _capacity;
     private readonly RingFileFormat _format;
     private readonly FileStream _fs;
-    private readonly object _sync = new();
-    private readonly int _metadataStartPosition;
-    private readonly int _addressTableStartPosition;
-    private readonly int _dataStartPosition;
-    private readonly int _totalHeaderSize;
+    private readonly long _metadataStartPosition;
+    private readonly long _addressTableStartPosition;
+    private readonly long _dataStartPosition;
+    private readonly long _totalHeaderSize;
 
-    /*private long head;
+    private long head;
     private long tail;
-    private bool full;*/
+    private bool full;
 
     public RingFile(string path, int capacity, RingFileFormat format, TMetadata defaultMetadata)
     {
@@ -79,14 +80,16 @@ public class RingFile<TData, TMetadata> : IRingFile<TData, TMetadata>
         {
             _fs = new FileStream(path, FileMode.CreateNew, FileAccess.Write);
             _format.Serialize(_fs);
-            _fs.Position = _metadataStartPosition;
-            defaultMetadata.Serialize(_fs);
-            Metadata = defaultMetadata;
+            WriteMetadata(defaultMetadata);
+            head = 0;
+            tail = 0;
+            full = false;
+            WriteAddressTable(head, tail, full);
         }
         else
         {
             _fs = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-            if (!TryGetFormat(_fs, out var formatFromFile))
+            if (!TryReadFormat(_fs, out var formatFromFile))
             {
                 throw new InvalidOperationException($"Cannot read format from file {path}");
             }
@@ -99,112 +102,138 @@ public class RingFile<TData, TMetadata> : IRingFile<TData, TMetadata>
                     $"File format {path} is not compatible with expected format {_format}"
                 );
             }
-        }
 
-        _fs.Position = _metadataStartPosition;
-        Metadata = new TMetadata();
-        Metadata.Deserialize(_fs);
+            ReadAddressTable(ref head, ref tail, ref full);
+        }
     }
 
     public RingFileFormat Format => _format;
-    public IRingFileInfo Info { get; }
-    public TMetadata Metadata { get; }
+
+    public TMetadata ReadMetadata()
+    {
+        _fs.Position = _metadataStartPosition;
+        var metadata = new TMetadata();
+        metadata.Deserialize(_fs);
+        return metadata;
+    }
+
+    public void WriteMetadata(TMetadata metadata)
+    {
+        ArgumentNullException.ThrowIfNull(metadata);
+        _fs.Seek(_metadataStartPosition, SeekOrigin.Begin);
+        metadata.Serialize(_fs);
+        _fs.Flush();
+    }
 
     public void EditMetadata(Action<TMetadata> editAction)
     {
         ArgumentNullException.ThrowIfNull(editAction);
+        var metadata = ReadMetadata();
+        editAction(metadata);
+        WriteMetadata(metadata);
+    }
 
-        lock (_sync)
+    private long FreeSpace
+    {
+        get
         {
-            editAction(Metadata);
-            _fs.Seek(_metadataStartPosition, SeekOrigin.Begin);
-            Metadata.Serialize(_fs);
-            _fs.Flush();
+            if (tail >= head)
+            {
+                return _capacity - (tail - head);
+            }
+
+            return head - tail;
         }
     }
 
-    public void Enqueue(TData data)
+    private void RemoveOldestElement()
     {
-        /*var size = data.GetByteSize();
-        if (size + NodeInfoSize > _capacity)
+        if (head == tail && !full)
+        {
+            throw new InvalidOperationException("Cannot remove element from an empty ring file.");
+        }
+
+        Span<byte> span = stackalloc byte[4];
+        _fs.Seek(_dataStartPosition + head, SeekOrigin.Begin);
+        _fs.ReadExactly(span);
+        var elemLen = 0U;
+        BinSerialize.ReadUInt(span, ref elemLen);
+        head = (head + NodeMetadataSize + elemLen) % _capacity;
+
+        if (head == tail)
+        {
+            full = false; // Ring is now empty
+        }
+
+        WriteAddressTable(head, tail, full);
+    }
+
+    public void Push(TData data)
+    {
+        var dataSize = data.GetByteSize();
+        var needSize = dataSize + NodeMetadataSize;
+        if (needSize > _capacity)
         {
             throw new InvalidOperationException(
-                $"Data size {size} + header size {_totalHeaderSize} exceeds ring file capacity {_capacity}"
+                $"Data size {needSize} + header size {_totalHeaderSize} exceeds ring file capacity {_capacity}"
             );
         }
 
-        lock (_fs)
+        while (FreeSpace < needSize)
         {
-            ReadAddressTable(ref head, ref tail, ref full);
-            long nextTail = tail;
-            long free;
-            if (tail >= head)
-            {
-                free = _capacity - (tail - head) - (full ? 0 : 1);
-            }
-            else
-            {
-                free = head - tail - (full ? 0 : 1);
-            }
+            RemoveOldestElement();
+        }
 
-            if (free < size + NodeInfoSize)
+        var dataArray = ArrayPool<byte>.Shared.Rent(needSize);
+        try
+        {
+            var dataArraySpan = new Span<byte>(dataArray, 0, needSize);
+            BinSerialize.WriteUInt(ref dataArraySpan, (uint)dataSize);
+            data.Serialize(ref dataArraySpan);
+            BinSerialize.WriteUInt(ref dataArraySpan, (uint)dataSize);
+            Debug.Assert(dataArraySpan.Length == 0, "dataArraySpan should be fully written");
+            if (
+                tail + needSize
+                <= _capacity - 4 /* space for size */
+            )
             {
-                // Буфер полон, нужно продвинуть head
-                Span<byte> span = stackalloc byte[4];
-                do
-                {
-                    // Читаем длину первого элемента
-                    _fs.Seek(head, SeekOrigin.Begin);
-                    _fs.ReadExactly(span);
-                    var elemLen = 0;
-                    BinSerialize.ReadInt(span, ref elemLen);
-                    head = (head + NodeInfoSize + elemLen) % _capacity;
-                } while (free < size + NodeInfoSize && head != tail);
-            }
-
-            // Запись длины и данных (обработка wrap)
-            if (tail + NodeInfoSize + size <= _capacity)
-            {
-                // Без wrap
+                // enough space in the tail, write directly
                 _fs.Seek(_dataStartPosition + tail, SeekOrigin.Begin);
-                _fs.Write(BitConverter.GetBytes(size), 0, 4);
-                _fs.Write(data, 0, size);
+                _fs.Write(dataArray, 0, needSize);
             }
             else
             {
-                // Сначала пишем часть, что влезает до конца, потом остальное с начала
-                long firstPart = _capacity - tail;
-                if (firstPart >= 4)
-                {
-                    _fs.Seek(_dataStartPosition + tail, SeekOrigin.Begin);
-                    _fs.Write(BitConverter.GetBytes(size), 0, 4);
-                    if (firstPart > 4)
-                    {
-                        int dataFirst = (int)(firstPart - 4);
-                        _fs.Write(data, 0, dataFirst);
-                        _fs.Seek(_dataStartPosition, SeekOrigin.Begin);
-                        _fs.Write(data, dataFirst, size - dataFirst);
-                    }
-                    else
-                    {
-                        _fs.Seek(_dataStartPosition, SeekOrigin.Begin);
-                        _fs.Write(data, 0, size);
-                    }
-                }
-                else
-                {
-                    // Длина не влезает в конец, пишем в начало
-                    _fs.Seek(_dataStartPosition, SeekOrigin.Begin);
-                    _fs.Write(BitConverter.GetBytes(size), 0, 4);
-                    _fs.Write(data, 0, size);
-                }
+                // not enough space in the tail, need to wrap
+                var firstSpan = new ReadOnlySpan<byte>(dataArray, 0, (int)(_capacity - tail));
+                var secondSpan = new ReadOnlySpan<byte>(
+                    dataArray,
+                    (int)(_capacity - tail),
+                    needSize - (int)(_capacity - tail)
+                );
+                _fs.Seek(_dataStartPosition + tail, SeekOrigin.Begin);
+                _fs.Write(firstSpan);
+                _fs.Seek(_dataStartPosition, SeekOrigin.Begin);
+                _fs.Write(secondSpan);
             }
-        }*/
+        }
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(dataArray);
+        }
+
+        tail = (tail + needSize) % _capacity;
+        full = tail == head;
+        WriteAddressTable(head, tail, full);
+    }
+
+    public TData Pop()
+    {
+        throw new NotImplementedException();
     }
 
     #region AddressTable
 
-    private const int NodeInfoSize = sizeof(uint) + sizeof(uint);
+    private const int NodeMetadataSize = sizeof(uint) + sizeof(uint);
 
     private const int AddressTableSize = sizeof(long) + sizeof(long) + sizeof(bool);
 
@@ -233,23 +262,20 @@ public class RingFile<TData, TMetadata> : IRingFile<TData, TMetadata>
 
     private void WriteAddressTable(in long head, in long tail, in bool full)
     {
-        lock (_sync)
+        _fs.Seek(_addressTableStartPosition, SeekOrigin.Begin);
+        var buff = ArrayPool<byte>.Shared.Rent(AddressTableSize);
+        try
         {
-            _fs.Seek(_addressTableStartPosition, SeekOrigin.Begin);
-            var buff = ArrayPool<byte>.Shared.Rent(AddressTableSize);
-            try
-            {
-                var span = new Span<byte>(buff, 0, AddressTableSize);
-                BinSerialize.WriteLong(ref span, in head);
-                BinSerialize.WriteLong(ref span, in tail);
-                BinSerialize.WriteBool(ref span, full);
-                _fs.Write(buff, 0, AddressTableSize);
-                _fs.Flush();
-            }
-            finally
-            {
-                ArrayPool<byte>.Shared.Return(buff);
-            }
+            var span = new Span<byte>(buff, 0, AddressTableSize);
+            BinSerialize.WriteLong(ref span, in head);
+            BinSerialize.WriteLong(ref span, in tail);
+            BinSerialize.WriteBool(ref span, full);
+            _fs.Write(buff, 0, AddressTableSize);
+            _fs.Flush();
+        }
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(buff);
         }
     }
 

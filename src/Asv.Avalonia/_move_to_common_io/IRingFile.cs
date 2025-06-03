@@ -3,18 +3,15 @@ using Asv.IO;
 
 namespace Asv.Avalonia;
 
-public interface IRingFile<TData, out TMetadata> : IDisposable
+public interface IRingFile<TData, TMetadata> : IDisposable
     where TData : ISizedSpanSerializable
     where TMetadata : ISizedSpanSerializable
 {
     RingFileFormat Format { get; }
-    IRingFileInfo Info { get; }
-    TMetadata Metadata { get; }
+    TMetadata ReadMetadata();
+    void WriteMetadata(TMetadata metadata);
     void EditMetadata(Action<TMetadata> editAction);
-}
 
-public interface IRingFileInfo
-{
-    uint ItemsCount { get; }
-    uint Size { get; }
+    void Push(TData data);
+    TData Pop();
 }

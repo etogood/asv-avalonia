@@ -7,9 +7,7 @@ namespace Asv.Avalonia;
 
 public sealed class RingFileFormat : ISizedSpanSerializable, IEquatable<RingFileFormat>
 {
-    public const int MaxSize =
-        256 /*0x0100*/
-    ;
+    public const int MaxSize = 256; /*0x0100*/
     private const string Magic = "ASV_RING_FILE";
     private readonly int _maxMetadataSize;
 
