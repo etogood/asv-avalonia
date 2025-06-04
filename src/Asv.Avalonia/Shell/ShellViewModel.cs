@@ -1,3 +1,4 @@
+using Asv.Cfg;
 using Asv.Common;
 using Material.Icons;
 using Microsoft.Extensions.Logging;
@@ -11,25 +12,31 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
 {
     private readonly ObservableList<IPage> _pages;
     private readonly IContainerHost _container;
+    private readonly IConfiguration _cfg;
     private readonly ICommandService _cmd;
     private readonly ILogger<ShellViewModel> _logger;
+    private ShellErrorState _errorState;
+    private string _title;
 
-    protected ShellViewModel(IContainerHost ioc, ILoggerFactory loggerFactory, string id)
+    protected ShellViewModel(
+        IContainerHost ioc,
+        ILoggerFactory loggerFactory,
+        IConfiguration cfg,
+        string id
+    )
         : base(id)
     {
         ArgumentNullException.ThrowIfNull(ioc);
         _container = ioc;
+        _cfg = cfg;
         _cmd = ioc.GetExport<ICommandService>();
         Navigation = ioc.GetExport<INavigationService>();
         _pages = new ObservableList<IPage>();
         _logger = loggerFactory.CreateLogger<ShellViewModel>();
         PagesView = _pages.ToNotifyCollectionChangedSlim();
-        ErrorState = new BindableReactiveProperty<ShellErrorState>(ShellErrorState.Normal);
         Close = new ReactiveCommand((_, c) => CloseAsync(c));
         ChangeWindowState = new ReactiveCommand((_, c) => ChangeWindowModeAsync(c));
         Collapse = new ReactiveCommand((_, c) => CollapseAsync(c));
-        Title = new BindableReactiveProperty<string>();
-
         SelectedPage = new BindableReactiveProperty<IPage?>();
         MainMenu = new ObservableList<IMenuItem>();
         MainMenuView = new MenuTree(MainMenu).DisposeItWith(Disposable);
@@ -75,15 +82,6 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
     public ReactiveCommand Collapse { get; }
 
     protected virtual ValueTask CollapseAsync(CancellationToken cancellationToken)
-    {
-        return ValueTask.CompletedTask;
-    }
-
-    #endregion
-
-    #region SaveLayout
-
-    public virtual ValueTask SaveLayout()
     {
         return ValueTask.CompletedTask;
     }
@@ -164,10 +162,19 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
 
     #endregion
 
-    public INavigationService Navigation { get; }
+    public virtual INavigationService Navigation { get; }
 
-    public BindableReactiveProperty<ShellErrorState> ErrorState { get; }
-    public BindableReactiveProperty<string> Title { get; }
+    public ShellErrorState ErrorState
+    {
+        get => _errorState;
+        set => SetField(ref _errorState, value);
+    }
+
+    public string Title
+    {
+        get => _title;
+        set => SetField(ref _title, value);
+    }
 
     #region Dispose
 
@@ -180,8 +187,6 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
     {
         if (disposing)
         {
-            Title.Dispose();
-            ErrorState.Dispose();
             Close.Dispose();
             SelectedPage.Dispose();
             WindowSateIconKind.Dispose();

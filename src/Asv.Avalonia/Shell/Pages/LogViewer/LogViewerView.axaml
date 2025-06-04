@@ -77,7 +77,7 @@
             <Button IsVisible="{Binding Update.IsExecuting.Value}" Command="{Binding Update.Cancel}" DockPanel.Dock="Right" Theme="{StaticResource TransparentButton}">
                 <avalonia:MaterialIcon Kind="Cancel"/>
             </Button>
-            <TextBox MinWidth="200" DockPanel.Dock="Right" IsEnabled="{Binding !Update.IsExecuting.Value}" Text="{Binding SearchText.ViewValue.Value, UpdateSourceTrigger=LostFocus}">
+            <TextBox MinWidth="200" Padding="0" VerticalContentAlignment="Center" MinHeight="0" Height="25" DockPanel.Dock="Right" IsEnabled="{Binding !Update.IsExecuting.Value}" Text="{Binding SearchText.ViewValue.Value, UpdateSourceTrigger=LostFocus}">
                 <TextBox.InnerLeftContent>
                     <avalonia:MaterialIcon Kind="Magnify" Width="20" Height="20" Margin="4,0"/>
                 </TextBox.InnerLeftContent>
@@ -93,7 +93,7 @@
                          Value="{Binding Update.Progress.Value}" />
             <TextBlock Foreground="{DynamicResource AsvForegroundInfoBrush}" Text="{Binding TextMessage}"/>
         </DockPanel>
-        <DataGrid ItemsSource="{Binding Items}" IsReadOnly="True" BorderThickness="0">
+        <DataGrid Focusable="False" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" IsReadOnly="True" BorderThickness="0">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Time"  >
                     <DataGridTemplateColumn.CellTemplate>

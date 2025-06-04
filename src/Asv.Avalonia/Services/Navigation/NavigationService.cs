@@ -5,6 +5,7 @@ using Asv.Common;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.LogicalTree;
+using DotNext.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;
@@ -14,7 +15,7 @@ namespace Asv.Avalonia;
 
 public class NavigationServiceConfig
 {
-    public HashSet<NavigationId> Pages { get; set; } = [];
+    public HashSet<string> Pages { get; } = [];
 }
 
 [Export(typeof(INavigationService))]
@@ -29,10 +30,10 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
     private readonly ReactiveProperty<NavigationPath> _selectedControlPath;
     private readonly ObservableStack<NavigationPath> _backwardStack = new();
     private readonly ObservableStack<NavigationPath> _forwardStack = new();
-    private readonly NavigationServiceConfig _cfg;
     private readonly ILogger<NavigationService> _logger;
     private IDisposable? _sub2;
     private IDisposable? _sub1;
+    private int _saveLayoutInProgress;
 
     [ImportingConstructor]
     public NavigationService(
@@ -51,7 +52,7 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
         _host = host;
         _cfgSvc = cfgSvc;
         var dispose = Disposable.CreateBuilder();
-        _cfg = _cfgSvc.Get<NavigationServiceConfig>();
+
         _selectedControl = new ReactiveProperty<IRoutable?>().AddTo(ref dispose);
         _selectedControlPath = new ReactiveProperty<NavigationPath>().AddTo(ref dispose);
         _selectedControlPath.Subscribe(PushNavigation).AddTo(ref dispose);
@@ -79,20 +80,12 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
     {
         try
         {
-            _logger.ZLogInformation($"Try to load layout: {string.Join(",", _cfg.Pages)}");
-            foreach (var page in _cfg.Pages)
+            var cfg = _cfgSvc.Get<NavigationServiceConfig>();
+            _logger.ZLogInformation($"Try to load layout: {string.Join(",", cfg.Pages)}");
+            foreach (var page in cfg.Pages)
             {
-                if (page == default)
-                {
-                    continue;
-                }
-
                 await GoTo(new NavigationPath(page));
             }
-
-            // load page before subscribe to changes
-            _sub1 = shell.Pages.ObserveAdd().Subscribe(_ => SaveLayout());
-            _sub2 = shell.Pages.ObserveRemove().Subscribe(_ => SaveLayout());
         }
         catch (Exception e)
         {
@@ -100,6 +93,8 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
         }
         finally
         {
+            _sub1 = shell.Pages.ObserveAdd().Subscribe(_ => SaveLayout());
+            _sub2 = shell.Pages.ObserveRemove().Subscribe(_ => SaveLayout());
             if (_host.Shell.Pages.Count == 0)
             {
                 await GoHomeAsync();
@@ -141,10 +136,29 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
 
     private void SaveLayout()
     {
-        var pages = _host.Shell.Pages.Select(x => x.Id).ToHashSet();
-        _logger.ZLogTrace($"Save layout: {string.Join(",", pages)}");
-        _cfg.Pages = pages;
-        _cfgSvc.Set(_cfg);
+        if (Interlocked.CompareExchange(ref _saveLayoutInProgress, 1, 0) != 0)
+        {
+            _logger.LogWarning("Save layout is already in progress");
+            return;
+        }
+
+        try
+        {
+            var cfg = new NavigationServiceConfig();
+            cfg.Pages.Clear();
+            cfg.Pages.AddAll(_host.Shell.Pages.Select(x => x.Id.ToString()));
+            _logger.ZLogTrace($"Save layout: {string.Join(",", cfg.Pages)}");
+            _cfgSvc.Set(cfg);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, $"Error saving layout: {e.Message}");
+            Debug.Assert(false, $"Error saving layout: {e.Message}");
+        }
+        finally
+        {
+            Interlocked.Exchange(ref _saveLayoutInProgress, 0);
+        }
     }
 
     public async ValueTask<IRoutable> GoTo(NavigationPath path)

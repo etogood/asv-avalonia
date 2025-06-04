@@ -1,5 +1,6 @@
 using System.Composition;
 using System.Runtime.InteropServices;
+using Asv.Cfg;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -20,8 +21,12 @@ public class DesktopShellViewModel : ShellViewModel
     private readonly IContainerHost _ioc;
 
     [ImportingConstructor]
-    public DesktopShellViewModel(IContainerHost ioc, ILoggerFactory loggerFactory)
-        : base(ioc, loggerFactory, ShellId)
+    public DesktopShellViewModel(
+        IConfiguration cfg,
+        IContainerHost ioc,
+        ILoggerFactory loggerFactory
+    )
+        : base(ioc, loggerFactory, cfg, ShellId)
     {
         _ioc = ioc;
         var wnd = ioc.GetExport<ShellWindow>();
@@ -42,7 +47,7 @@ public class DesktopShellViewModel : ShellViewModel
         DragDrop.SetAllowDrop(wnd, true);
         wnd.AddHandler(DragDrop.DropEvent, OnFileDrop);
 
-        UpdateWindowStateUI(wnd.WindowState);
+        UpdateWindowStateUi(wnd.WindowState);
 
         lifetime.MainWindow = wnd;
         lifetime.MainWindow.Show();
@@ -118,7 +123,7 @@ public class DesktopShellViewModel : ShellViewModel
                     ? WindowState.Normal
                     : WindowState.Maximized;
 
-            UpdateWindowStateUI(window.WindowState);
+            UpdateWindowStateUi(window.WindowState);
         }
 
         return ValueTask.CompletedTask;
@@ -139,7 +144,7 @@ public class DesktopShellViewModel : ShellViewModel
         return ValueTask.CompletedTask;
     }
 
-    public void UpdateWindowStateUI(WindowState state)
+    public void UpdateWindowStateUi(WindowState state)
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {

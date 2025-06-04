@@ -154,7 +154,7 @@ public class MavParamsPageViewModel
             _config
         ));
         _sub7 = _view.DisposeMany();
-        _sub8 = _view.SetRoutableParentForView(this);
+        _sub8 = _view.SetRoutableParent(this);
 
         _sub9 = SearchText
             .ViewValue.ThrottleLast(TimeSpan.FromMilliseconds(500))

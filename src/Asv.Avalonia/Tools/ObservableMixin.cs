@@ -1,4 +1,5 @@
-﻿using ObservableCollections;
+﻿using Asv.Common;
+using ObservableCollections;
 using R3;
 
 namespace Asv.Avalonia;
@@ -107,6 +108,18 @@ public static class ObservableMixin
         where TView : IDisposable
     {
         return src.ObserveRemove().Subscribe(x => x.Value.View.Dispose());
+    }
+
+    public static ISynchronizedView<TModel, TView> DisposeMany<TModel, TView>(
+        this ISynchronizedView<TModel, TView> src,
+        CompositeDisposable subscriptionDispose
+    )
+        where TView : IDisposable
+    {
+        src.ObserveRemove()
+            .Subscribe(x => x.Value.View.Dispose())
+            .DisposeItWith(subscriptionDispose);
+        return src;
     }
 
     public static IDisposable DisposeRemovedItems<T>(this IObservableCollection<T> src)

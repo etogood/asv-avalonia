@@ -7,7 +7,7 @@ namespace Asv.Avalonia;
 [ExportCommand]
 [Shared]
 [method: ImportingConstructor]
-public class OpenDebugWindowFreeCommand(ExportFactory<IDebugWindow> factory) : StatelessCommand
+public class OpenDebugWindowCommand(ExportFactory<IDebugWindow> factory) : StatelessCommand
 {
     #region Static
 

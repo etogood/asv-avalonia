@@ -105,7 +105,7 @@ public class HomePageViewModel : PageViewModel<IHomePage>, IHomePage
             .DisposeItWith(Disposable);
 
         ItemsList.DisposeMany().DisposeItWith(Disposable);
-        ItemsList.SetRoutableParentForView(this).DisposeItWith(Disposable);
+        ItemsList.SetRoutableParent(this).DisposeItWith(Disposable);
 
         ItemsView = ItemsList.ToNotifyCollectionChanged().DisposeItWith(Disposable);
     }

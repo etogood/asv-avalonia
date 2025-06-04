@@ -40,7 +40,7 @@ public class SettingsConnectionViewModel
         ObservableList<IProtocolPort> source = [];
         var sourceSyncView = source.CreateView(CreatePort).DisposeItWith(Disposable);
         sourceSyncView.DisposeMany().DisposeItWith(Disposable);
-        sourceSyncView.SetRoutableParentForView(this).DisposeItWith(Disposable);
+        sourceSyncView.SetRoutableParent(this).DisposeItWith(Disposable);
 
         View = sourceSyncView
             .ToNotifyCollectionChanged(SynchronizationContextCollectionEventDispatcher.Current)

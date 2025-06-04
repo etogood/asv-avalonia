@@ -159,7 +159,7 @@ public partial class ShellWindow : Window, IExportable
     {
         if (DataContext is DesktopShellViewModel vm)
         {
-            vm.UpdateWindowStateUI(WindowState);
+            vm.UpdateWindowStateUi(WindowState);
         }
     }
 

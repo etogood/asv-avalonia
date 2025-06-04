@@ -6,7 +6,11 @@ namespace Asv.Avalonia.LogViewer;
 public class LogMessageViewModel : RoutableViewModel
 {
     public LogMessageViewModel(LogMessage @base, IRoutable parent)
-        : base(NavigationId.Empty)
+        : base(
+            HashCode
+                .Combine(@base.Message, @base.Category, @base.Message, @base.Description)
+                .ToString()
+        )
     {
         Base = @base;
         Parent = parent;

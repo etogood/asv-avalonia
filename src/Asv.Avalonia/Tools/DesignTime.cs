@@ -1,3 +1,4 @@
+using Asv.Cfg;
 using Avalonia.Controls;
 
 namespace Asv.Avalonia;
@@ -14,6 +15,7 @@ public static class DesignTime
         }
     }
 
+    public static IConfiguration Configuration { get; } = new InMemoryConfiguration();
     public static ILogService Log => NullLogService.Instance;
     public static IShellHost ShellHost => NullShellHost.Instance;
     public static INavigationService Navigation => NullNavigationService.Instance;

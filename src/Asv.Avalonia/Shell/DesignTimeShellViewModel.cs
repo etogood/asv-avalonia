@@ -9,17 +9,29 @@ public class DesignTimeShellViewModel : ShellViewModel
     public static DesignTimeShellViewModel Instance { get; } = new();
 
     public DesignTimeShellViewModel()
-        : base(NullContainerHost.Instance, NullLoggerFactory.Instance, ShellId)
+        : base(
+            NullContainerHost.Instance,
+            NullLoggerFactory.Instance,
+            DesignTime.Configuration,
+            ShellId
+        )
     {
         int cnt = 0;
+        ErrorState = ShellErrorState.Error;
         var all = Enum.GetValues<ShellErrorState>().Length;
-        Observable
-            .Timer(TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(3))
-            .Subscribe(_ =>
+        TimeProvider.System.CreateTimer(
+            _ =>
             {
                 cnt++;
-                ErrorState.Value = Enum.GetValues<ShellErrorState>()[cnt % all];
-            });
+                ErrorState = Enum.GetValues<ShellErrorState>()[cnt % all];
+#pragma warning disable SA1117
+            },
+            null,
+            TimeSpan.FromSeconds(3),
+            TimeSpan.FromSeconds(3)
+        );
+#pragma warning restore SA1117
+
         InternalPages.Add(new SettingsPageViewModel());
 
         var file = new FileMenu();
@@ -27,4 +39,6 @@ public class DesignTimeShellViewModel : ShellViewModel
         MainMenu.Add(new MenuItem("open", "Open", file.Id.Id));
         MainMenu.Add(new EditMenu());
     }
+
+    public override INavigationService Navigation => DesignTime.Navigation;
 }

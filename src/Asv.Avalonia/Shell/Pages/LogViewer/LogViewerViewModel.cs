@@ -19,7 +19,8 @@ public class LogViewerViewModel : PageViewModel<ILogViewerViewModel>, ILogViewer
     private string _fromToText;
     private readonly ILogger<LogViewerViewModel> _logger;
     private string _textMessage;
-    public const string PageId = "log.viewer";
+    private LogMessageViewModel _selectedItem;
+    public const string PageId = "log";
     public const MaterialIconKind PageIcon = MaterialIconKind.Journal;
 
     public LogViewerViewModel()
@@ -30,8 +31,9 @@ public class LogViewerViewModel : PageViewModel<ILogViewerViewModel>, ILogViewer
         Icon = PageIcon;
 
         _filter = new ReactiveProperty<string?>().DisposeItWith(Disposable);
-        SearchText = new HistoricalStringProperty("search", _filter).DisposeItWith(Disposable);
-        SearchText.Parent = this;
+        SearchText = new HistoricalStringProperty("search", _filter)
+            .SetRoutableParent(this)
+            .DisposeItWith(Disposable);
 
         Items = _itemsSource
             .ToNotifyCollectionChangedSlim(SynchronizationContextCollectionEventDispatcher.Current)
@@ -137,6 +139,7 @@ public class LogViewerViewModel : PageViewModel<ILogViewerViewModel>, ILogViewer
         _logger = loggerFactory.CreateLogger<LogViewerViewModel>();
         Items = _itemsSource
             .ToNotifyCollectionChangedSlim(SynchronizationContextCollectionEventDispatcher.Current)
+            .SetRoutableParent(this, Disposable)
             .DisposeItWith(Disposable);
 
         Start = new BindableReactiveProperty<int>(0).DisposeItWith(Disposable);
@@ -242,12 +245,28 @@ public class LogViewerViewModel : PageViewModel<ILogViewerViewModel>, ILogViewer
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
         yield return SearchText;
+        foreach (var item in Items)
+        {
+            yield return item;
+        }
+    }
+
+    public override ValueTask<IRoutable> Navigate(NavigationId id)
+    {
+        var item = Items.FirstOrDefault(x => x.Id == id);
+        if (item == null)
+        {
+            return ValueTask.FromResult<IRoutable>(this);
+        }
+
+        SelectedItem = item;
+        return ValueTask.FromResult<IRoutable>(item);
     }
 
     protected override void AfterLoadExtensions() { }
 
     public override IExportInfo Source => SystemModule.Instance;
-    public NotifyCollectionChangedSynchronizedViewList<LogMessageViewModel> Items { get; }
+    public INotifyCollectionChangedSynchronizedViewList<LogMessageViewModel> Items { get; }
 
     public string FromToText
     {
@@ -263,4 +282,10 @@ public class LogViewerViewModel : PageViewModel<ILogViewerViewModel>, ILogViewer
 
     public ReactiveCommand Next { get; }
     public ReactiveCommand Previous { get; }
+
+    public LogMessageViewModel SelectedItem
+    {
+        get => _selectedItem;
+        set => SetField(ref _selectedItem, value);
+    }
 }

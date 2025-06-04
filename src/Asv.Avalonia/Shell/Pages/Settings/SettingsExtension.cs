@@ -1,4 +1,5 @@
 using System.Composition;
+using Asv.Avalonia.Commands;
 using Asv.Common;
 using Material.Icons;
 using R3;
@@ -31,14 +32,14 @@ public class SettingsExtension() : IExtensionFor<ISettingsPage>
             ).DisposeItWith(contextDispose)
         );
 
-        /*context.Nodes.Add(
+        context.Nodes.Add(
             new TreePage(
-                SettingsCommandListViewModel.SubPageId,
+                SettingsCommandsViewModel.SubPageId,
                 RS.SettingsCommandListViewModel_Name,
                 MaterialIconKind.KeyboardSettings,
-                SettingsCommandListViewModel.SubPageId,
+                SettingsCommandsViewModel.SubPageId,
                 NavigationId.Empty
             ).DisposeItWith(contextDispose)
-        );*/
+        );
     }
 }

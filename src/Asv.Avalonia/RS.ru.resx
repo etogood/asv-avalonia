@@ -135,7 +135,7 @@
         <value>Вид</value>
     </data>
     <data name="SettingsCommandListMapView_Header_CustomHotKey" xml:space="preserve">
-        <value>Пользовательская горячая клавиша</value>
+        <value>Сочетание клавиш</value>
     </data>
     <data name="SettingsCommandListView_Action_ResetCustomHotKeys" xml:space="preserve">
         <value>Сбросить всё по умолчанию</value>
@@ -758,5 +758,14 @@
     </data>
     <data name="LogViewerView_Button_Filters" xml:space="preserve">
         <value>Фильтры</value>
+    </data>
+    <data name="SettingsCommandListMapView_Header_DefaultHotKey" xml:space="preserve">
+        <value>По умолчанию</value>
+    </data>
+    <data name="SettingsCommandListMapView_Header_Description" xml:space="preserve">
+        <value>Описание</value>
+    </data>
+    <data name="SettingsCommandListMapView_Header_Name" xml:space="preserve">
+        <value>Команда</value>
     </data>
 </root>

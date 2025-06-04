@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Composition;
 using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 using Asv.Cfg;
 using Asv.Common;
 using Avalonia.Controls;
@@ -253,7 +254,7 @@ public class CommandService : AsyncDisposableOnce, ICommandService
             HotKeyInfo,
             ImmutableArray<IAsyncCommand>
         >.Builder keyVsCommandBuilder,
-        ref ImmutableDictionary<string, HotKeyInfo>.Builder builder,
+        ref ImmutableDictionary<string, HotKeyInfo?>.Builder builder,
         IAsyncCommand command,
         HotKeyInfo? key
     )
@@ -261,7 +262,13 @@ public class CommandService : AsyncDisposableOnce, ICommandService
         if (key == null)
         {
             // remove key gesture for the command
-            if (!builder.Remove(command.Info.Id, out var existKey))
+            if (builder.TryGetValue(command.Info.Id, out var existKey) == false)
+            {
+                builder[command.Info.Id] = null;
+                return;
+            }
+
+            if (existKey == null)
             {
                 return;
             }
