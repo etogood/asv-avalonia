@@ -23,7 +23,8 @@ public class ActionArg(string? subjectId, CommandArg? value, ActionArg.Kind acti
         Change = 2,
     }
 
-    protected internal static CommandArg CreateDefault() => new ActionArg(subjectId: null, null, Kind.Add);
+    protected internal static CommandArg CreateDefault() =>
+        new ActionArg(subjectId: null, null, Kind.Add);
 
     public string? SubjectId { get; private set; } = subjectId;
     public CommandArg? Value { get; private set; } = value;

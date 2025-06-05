@@ -17,30 +17,40 @@ public class SearchBoxViewModel : RoutableViewModel
         DesignTime.ThrowIfNotDesignMode();
     }
 
-    public SearchBoxViewModel(string id, ILoggerFactory loggerFactory, CommandExecuteDelegate<string> searchCallback, TimeSpan? throttleTime = null)
+    public SearchBoxViewModel(
+        string id,
+        ILoggerFactory loggerFactory,
+        CommandExecuteDelegate<string> searchCallback,
+        TimeSpan? throttleTime = null
+    )
         : base(id)
     {
         _searchCallback = searchCallback;
-        Search = new CancellableCommandWithProgress<string>(InternalSearchCallback, "Search", loggerFactory)
-            .DisposeItWith(Disposable);
+        Search = new CancellableCommandWithProgress<string>(
+            InternalSearchCallback,
+            "Search",
+            loggerFactory
+        ).DisposeItWith(Disposable);
 
-        UpdateCommand = new ReactiveCommand(_ => Update())
-            .DisposeItWith(Disposable);
-        
+        UpdateCommand = new ReactiveCommand(_ => Update()).DisposeItWith(Disposable);
+
         if (throttleTime != null)
         {
             this.ObservePropertyChanged(x => x.Text)
                 .Skip(1)
                 .ThrottleLast(throttleTime.Value)
                 .Subscribe(x => TextSearchCommand.ExecuteCommand(this, x))
-                .DisposeItWith(Disposable);    
+                .DisposeItWith(Disposable);
         }
 
-        Clear = new ReactiveCommand(_ => Text = string.Empty)
-            .DisposeItWith(Disposable);
+        Clear = new ReactiveCommand(_ => Text = string.Empty).DisposeItWith(Disposable);
     }
 
-    private Task InternalSearchCallback(string arg, IProgress<double> progress, CancellationToken cancel)
+    private Task InternalSearchCallback(
+        string arg,
+        IProgress<double> progress,
+        CancellationToken cancel
+    )
     {
         _previousTextSearch = arg;
         Text = arg;

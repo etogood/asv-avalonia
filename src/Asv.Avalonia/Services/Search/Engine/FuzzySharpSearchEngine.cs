@@ -13,6 +13,7 @@ public class FuzzySharpSearchEngine : ISearchEngine
     public string Id => StaticId;
     public string Name => "FuzzySharp";
     public string Description => "A search engine that uses FuzzySharp for fuzzy matching of text.";
+
     public void Dispose()
     {
         // nothing to dispose for a simple search engine

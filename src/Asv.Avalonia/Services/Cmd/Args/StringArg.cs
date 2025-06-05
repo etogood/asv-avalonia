@@ -35,6 +35,6 @@ public class StringArg(string value) : CommandArg
     {
         writer.WriteValue(Value);
     }
-    
+
     public override string ToString() => $"'{Value}'";
 }

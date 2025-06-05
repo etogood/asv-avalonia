@@ -20,10 +20,17 @@ public class DoubleTrueIfNanConverter : ISingleton<DoubleTrueIfNanConverter>, IV
             return false;
         }
 
-        throw new InvalidOperationException($"Cannot convert value of type {value.GetType()} to boolean.");
+        throw new InvalidOperationException(
+            $"Cannot convert value of type {value.GetType()} to boolean."
+        );
     }
 
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object? ConvertBack(
+        object? value,
+        Type targetType,
+        object? parameter,
+        CultureInfo culture
+    )
     {
         throw new NotImplementedException();
     }

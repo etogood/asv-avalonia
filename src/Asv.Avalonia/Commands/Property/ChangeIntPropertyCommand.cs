@@ -25,7 +25,11 @@ public class ChangeIntPropertyCommand : ContextCommand<IHistoricalProperty<int>,
 
     #endregion
 
-    public override ValueTask<IntArg?> InternalExecute(IHistoricalProperty<int> context, IntArg arg, CancellationToken cancel)
+    public override ValueTask<IntArg?> InternalExecute(
+        IHistoricalProperty<int> context,
+        IntArg arg,
+        CancellationToken cancel
+    )
     {
         var oldValue = new IntArg(context.ModelValue.Value);
         context.ModelValue.OnNext((int)arg.Value);

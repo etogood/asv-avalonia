@@ -14,7 +14,11 @@ public static class CoreDesignTime
         new((_, _, _) => Task.CompletedTask, "Default", NullLoggerFactory.Instance);
 }
 
-public delegate Task CommandExecuteDelegate<in TArg>(TArg arg, IProgress<double> progress, CancellationToken cancel);
+public delegate Task CommandExecuteDelegate<in TArg>(
+    TArg arg,
+    IProgress<double> progress,
+    CancellationToken cancel
+);
 
 public class CancellableCommandWithProgress<TArg> : AsyncDisposableOnce, IProgress<double>
 {
@@ -24,7 +28,6 @@ public class CancellableCommandWithProgress<TArg> : AsyncDisposableOnce, IProgre
     private readonly ILogger<CancellableCommandWithProgress<TArg>> _logger;
     private static readonly AsyncLock _lock = AsyncLock.Exclusive();
     private CancellationTokenSource? _cancellationTokenSource;
-    
 
     public CancellableCommandWithProgress(
         CommandExecuteDelegate<TArg> execute,
@@ -55,7 +58,8 @@ public class CancellableCommandWithProgress<TArg> : AsyncDisposableOnce, IProgre
 
             Task.Factory.StartNew(
                 () => InternalExecute(arg).SafeFireAndForget(ErrorHandler),
-                TaskCreationOptions.LongRunning);
+                TaskCreationOptions.LongRunning
+            );
         });
         _cancelCommand = new ReactiveCommand(InternalCancel);
     }
@@ -81,13 +85,9 @@ public class CancellableCommandWithProgress<TArg> : AsyncDisposableOnce, IProgre
 
     private async Task InternalExecute(TArg arg)
     {
-        
         try
         {
-            if (Dispatcher.UIThread.CheckAccess() == false)
-            {
-                
-            }
+            if (Dispatcher.UIThread.CheckAccess() == false) { }
 
             _cancellationTokenSource = new CancellationTokenSource();
             Dispatcher.UIThread.Invoke(() =>

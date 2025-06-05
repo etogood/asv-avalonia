@@ -9,7 +9,7 @@ public partial class CommandArg
     {
         return new IntArg(value);
     }
-    
+
     public static CommandArg Integer(long value)
     {
         return new IntArg(value);

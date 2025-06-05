@@ -9,8 +9,9 @@ public class SimpleSearchEngine : ISearchEngine
     public const string StaticId = "Simple";
     public string Id => StaticId;
     public string Name => "Simple";
-    public string Description => "A simple search engine that matches text directly without any advanced algorithms.";
-    
+    public string Description =>
+        "A simple search engine that matches text directly without any advanced algorithms.";
+
     public void Enable()
     {
         // nothing to do here for a simple search engine

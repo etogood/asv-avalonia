@@ -97,7 +97,7 @@ public abstract partial class CommandArg : ISizedSpanSerializable, IJsonSerializ
 
         return InternalCreateWithReadedToken(reader);
     }
-    
+
     internal static CommandArg? InternalCreateWithReadedToken(JsonReader reader)
     {
         // already read the first token

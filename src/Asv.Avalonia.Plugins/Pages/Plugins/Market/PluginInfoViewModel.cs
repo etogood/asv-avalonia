@@ -32,7 +32,11 @@ public class PluginInfoViewModel : DisposableViewModel
         _manager = manager;
         Id = pluginInfo.Id;
         Install = new CancellableCommandWithProgress<Unit>(InstallImpl, "Install", logFactory);
-        Uninstall = new CancellableCommandWithProgress<Unit>(UninstallImpl, "Uninstall", logFactory);
+        Uninstall = new CancellableCommandWithProgress<Unit>(
+            UninstallImpl,
+            "Uninstall",
+            logFactory
+        );
         CancelUninstall = new CancellableCommandWithProgress<Unit>(
             CancelUninstallImpl,
             "CancelUninstall",

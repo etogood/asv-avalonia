@@ -13,7 +13,10 @@ namespace Asv.Avalonia.LogViewer;
 public interface ILogViewerViewModel : IPage { }
 
 [ExportPage(PageId)]
-public class LogViewerViewModel : PageViewModel<ILogViewerViewModel>, ILogViewerViewModel, ISupportPagination
+public class LogViewerViewModel
+    : PageViewModel<ILogViewerViewModel>,
+        ILogViewerViewModel,
+        ISupportPagination
 {
     private readonly ILogService _logService;
     private readonly ISearchService _search;
@@ -144,11 +147,11 @@ public class LogViewerViewModel : PageViewModel<ILogViewerViewModel>, ILogViewer
         Take = new BindableReactiveProperty<int>(50).DisposeItWith(Disposable);
         FromToText = new BindableReactiveProperty<string>(string.Empty).DisposeItWith(Disposable);
         TextMessage = new BindableReactiveProperty<string>(string.Empty).DisposeItWith(Disposable);
-        
+
         Filter = new SearchBoxViewModel("search", loggerFactory, UpdateImpl)
             .SetRoutableParent(this)
             .DisposeItWith(Disposable);
-        
+
         Skip.Skip(1).Subscribe(_ => Filter.ForceUpdateWithoutHistory());
 
         Next = new ReactiveCommand(_ =>
@@ -160,25 +163,29 @@ public class LogViewerViewModel : PageViewModel<ILogViewerViewModel>, ILogViewer
             var temp = Skip.Value - Take.Value;
             PaginationCommand.Execute(this, temp < 0 ? 0 : temp, Take.Value);
         }).DisposeItWith(Disposable);
-        
+
         Filter.ForceUpdateWithoutHistory();
     }
 
     public SearchBoxViewModel Filter { get; }
-    
-    public async Task UpdateImpl(string? query, IProgress<double> progress, CancellationToken cancel)
+
+    public async Task UpdateImpl(
+        string? query,
+        IProgress<double> progress,
+        CancellationToken cancel
+    )
     {
         try
         {
             var text = query?.ToLower();
             Dispatcher.UIThread.Invoke(_itemsSource.Clear);
-            
+
             var filtered = 0;
             var total = 0;
             var skip = 0;
             _logger.ZLogTrace($"Start filtering log messages with filter: '{text}'");
             progress.Report(double.NaN);
-            
+
             await foreach (var logMessage in _logService.LoadItemsFromLogFile(cancel))
             {
                 if (cancel.IsCancellationRequested)
@@ -194,13 +201,17 @@ public class LogViewerViewModel : PageViewModel<ILogViewerViewModel>, ILogViewer
                     if (filtered < Skip.Value)
                     {
                         ++skip;
-                        TextMessage.Value = $"Skipped {skip}, filtered {filtered} messages from {total}";
+                        TextMessage.Value =
+                            $"Skipped {skip}, filtered {filtered} messages from {total}";
                     }
                     else
                     {
-                        Dispatcher.UIThread.Invoke(() => _itemsSource.Add(new LogMessageViewModel(logMessage, this)));
+                        Dispatcher.UIThread.Invoke(
+                            () => _itemsSource.Add(new LogMessageViewModel(logMessage, this))
+                        );
                         progress.Report((double)_itemsSource.Count / Take.Value);
-                        TextMessage.Value = $"Skipped {skip}, filtered {filtered} messages from {total}";
+                        TextMessage.Value =
+                            $"Skipped {skip}, filtered {filtered} messages from {total}";
                     }
 
                     if (_itemsSource.Count >= Take.Value)
@@ -210,7 +221,8 @@ public class LogViewerViewModel : PageViewModel<ILogViewerViewModel>, ILogViewer
                 }
                 else
                 {
-                    TextMessage.Value = $"Skipped {skip}, filtered {filtered} messages from {total}";
+                    TextMessage.Value =
+                        $"Skipped {skip}, filtered {filtered} messages from {total}";
                 }
             }
         }
@@ -241,7 +253,7 @@ public class LogViewerViewModel : PageViewModel<ILogViewerViewModel>, ILogViewer
             Filter.Navigate(NavigationId.Empty);
             return new ValueTask<IRoutable>(Filter);
         }
-        
+
         var item = Items.FirstOrDefault(x => x.Id == id);
         if (item == null)
         {
@@ -259,7 +271,7 @@ public class LogViewerViewModel : PageViewModel<ILogViewerViewModel>, ILogViewer
 
     public BindableReactiveProperty<string> FromToText { get; }
     public BindableReactiveProperty<string> TextMessage { get; }
-    
+
     public ReactiveCommand Next { get; }
     public ReactiveCommand Previous { get; }
 

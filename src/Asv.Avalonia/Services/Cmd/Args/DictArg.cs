@@ -63,13 +63,13 @@ public class DictArg : CommandArg, IDictionary<string, CommandArg>
             var key =
                 reader.Value?.ToString()
                 ?? throw new JsonSerializationException("Key cannot be null.");
-            
+
             var element = Create(reader);
             if (element == null)
             {
                 throw new JsonSerializationException("Element cannot be null.");
             }
-            
+
             Add(key, element);
         }
 
@@ -146,4 +146,3 @@ public class DictArg : CommandArg, IDictionary<string, CommandArg>
         return sb.ToString();
     }
 }
-

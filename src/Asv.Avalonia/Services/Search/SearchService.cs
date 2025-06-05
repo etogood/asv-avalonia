@@ -21,10 +21,13 @@ public class SearchService : AsyncDisposableOnce, ISearchService
     private ISearchEngine _currentEngine;
 
     [ImportingConstructor]
-    public SearchService(IConfiguration config, [ImportMany]IEnumerable<ISearchEngine> searchEngines)
+    public SearchService(
+        IConfiguration config,
+        [ImportMany] IEnumerable<ISearchEngine> searchEngines
+    )
     {
         _config = config;
-        _engines = [..searchEngines];
+        _engines = [.. searchEngines];
         var searchEngineId = config.Get<SearchServiceConfig>().SearchEngine;
         _currentEngine = _engines.FirstOrDefault(e => e.Id == searchEngineId) ?? _engines[0];
     }
@@ -32,6 +35,7 @@ public class SearchService : AsyncDisposableOnce, ISearchService
     public IEnumerable<ISearchEngineInfo> Engines => _engines;
     ReadOnlyReactiveProperty<ISearchEngineInfo> ISearchService.Engine => Engine;
     public ReactiveProperty<ISearchEngineInfo> Engine { get; } = new();
+
     public void ChangeEngine(string searchEngineId)
     {
         var newEngine = _engines.FirstOrDefault(e => e.Id == searchEngineId) ?? _engines[0];
@@ -47,10 +51,7 @@ public class SearchService : AsyncDisposableOnce, ISearchService
             _currentEngine = newEngine;
             _currentEngine.Enable();
             Engine.Value = _currentEngine;
-            _config.Set(new SearchServiceConfig
-            {
-                SearchEngine = _currentEngine.Id,
-            });
+            _config.Set(new SearchServiceConfig { SearchEngine = _currentEngine.Id });
         }
         finally
         {
@@ -67,7 +68,7 @@ public class SearchService : AsyncDisposableOnce, ISearchService
             {
                 return true;
             }
-            
+
             if (string.IsNullOrWhiteSpace(text))
             {
                 return false;

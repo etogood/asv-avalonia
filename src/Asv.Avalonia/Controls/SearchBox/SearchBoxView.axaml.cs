@@ -10,6 +10,4 @@ public partial class SearchBoxView : UserControl
     {
         InitializeComponent();
     }
-
-    
 }

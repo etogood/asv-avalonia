@@ -2,7 +2,6 @@ using R3;
 
 namespace Asv.Avalonia;
 
-
 public sealed class HistoricalStringProperty : HistoricalPropertyBase<string?, string?>
 {
     private readonly ReactiveProperty<string?> _modelValue;

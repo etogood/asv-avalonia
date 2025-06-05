@@ -71,7 +71,8 @@ public abstract class ContextCommand<TContext, TArg1, TArg2> : ContextCommand<TC
             TArg1 arg => await InternalExecute(context, arg, cancel),
             TArg2 arg2 => await InternalExecute(context, arg2, cancel),
             _ => throw new CommandException(
-                $"Command {Info.Id} does not support argument type {newValue.GetType().Name} in context {context.GetType().Name}")
+                $"Command {Info.Id} does not support argument type {newValue.GetType().Name} in context {context.GetType().Name}"
+            ),
         };
     }
 
@@ -80,7 +81,7 @@ public abstract class ContextCommand<TContext, TArg1, TArg2> : ContextCommand<TC
         TArg1 arg,
         CancellationToken cancel
     );
-    
+
     public abstract ValueTask<CommandArg?> InternalExecute(
         TContext context,
         TArg2 arg,

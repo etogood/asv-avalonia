@@ -16,8 +16,8 @@ public interface ISearchService
     ReadOnlyReactiveProperty<ISearchEngineInfo> Engine { get; }
     void ChangeEngine(string searchEngineId);
     bool Match(string? text, string? query);
-    bool Match(ISupportSearch subject, string? query) 
-        => subject.GetSearchableText().Any(text => Match(text, query));
+    bool Match(ISupportSearch subject, string? query) =>
+        subject.GetSearchableText().Any(text => Match(text, query));
 }
 
 public interface ISupportSearch

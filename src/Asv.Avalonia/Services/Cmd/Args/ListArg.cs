@@ -103,6 +103,6 @@ public class ListArg : CommandArg, IList<CommandArg>
         get => _items[index];
         set => _items[index] = value;
     }
-    
+
     public override string ToString() => $"[{string.Join(", ", _items.Select(x => x.ToString()))}]";
 }
