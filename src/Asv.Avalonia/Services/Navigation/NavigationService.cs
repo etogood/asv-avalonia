@@ -125,7 +125,7 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
             return;
         }
 
-        /*if (_selectedControl.Value?.Id == routable.Id && _selectedControlPath.Value == path)
+        /*if (_selectedControl.Value?.StaticId == routable.StaticId && _selectedControlPath.Value == path)
         {
             return;
         }*/

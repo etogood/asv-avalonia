@@ -46,7 +46,7 @@ public class HomePageViewModel : PageViewModel<IHomePage>, IHomePage
                 new HeadlinedViewModel("prop1")
                 {
                     Icon = MaterialIconKind.IdCard,
-                    Header = "Id",
+                    Header = "StaticId",
                     Description = "Mavlink(1.1)",
                 }
             );

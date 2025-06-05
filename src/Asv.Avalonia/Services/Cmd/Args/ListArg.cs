@@ -6,7 +6,7 @@ namespace Asv.Avalonia;
 
 public class ListArg : CommandArg, IList<CommandArg>
 {
-    public static CommandArg Create() => new ListArg();
+    protected internal static CommandArg CreateDefault() => new ListArg();
 
     private readonly List<CommandArg> _items;
 
@@ -14,7 +14,7 @@ public class ListArg : CommandArg, IList<CommandArg>
 
     public ListArg(int capacity) => _items = new List<CommandArg>(capacity);
 
-    public override Id TypeId => Id.Array;
+    public override Id TypeId => Id.List;
 
     protected override void InternalDeserialize(ref ReadOnlySpan<byte> buffer)
     {
@@ -53,7 +53,7 @@ public class ListArg : CommandArg, IList<CommandArg>
         while (reader.Read() && reader.TokenType != JsonToken.EndArray)
         {
             var item =
-                CommandArg.Create(reader)
+                InternalCreateWithReadedToken(reader)
                 ?? throw new JsonSerializationException("Failed to create CommandArg from JSON.");
             Add(item);
         }
@@ -103,4 +103,6 @@ public class ListArg : CommandArg, IList<CommandArg>
         get => _items[index];
         set => _items[index] = value;
     }
+    
+    public override string ToString() => $"[{string.Join(", ", _items.Select(x => x.ToString()))}]";
 }

@@ -18,7 +18,7 @@ public class HomePageDeviceItem : HomePageItem
             new HeadlinedViewModel("id")
             {
                 Icon = MaterialIconKind.IdCard,
-                Header = "Id",
+                Header = "StaticId",
                 Description = device.Id.AsString(),
             }
         );

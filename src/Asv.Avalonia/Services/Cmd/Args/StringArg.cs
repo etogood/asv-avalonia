@@ -10,7 +10,7 @@ public partial class CommandArg
 
 public class StringArg(string value) : CommandArg
 {
-    public static CommandArg Create() => new StringArg(string.Empty);
+    protected internal static CommandArg CreateDefault() => new StringArg(string.Empty);
 
     public string Value { get; private set; } = value;
 
@@ -35,6 +35,6 @@ public class StringArg(string value) : CommandArg
     {
         writer.WriteValue(Value);
     }
-
-    public override string ToString() => Value;
+    
+    public override string ToString() => $"'{Value}'";
 }

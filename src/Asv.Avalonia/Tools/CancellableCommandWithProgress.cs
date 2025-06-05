@@ -1,36 +1,38 @@
-using System.Runtime.CompilerServices;
-using System.Windows.Input;
 using Asv.Common;
+using Avalonia.Threading;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using R3;
 using ZLogger;
+using AsyncLock = DotNext.Threading.AsyncLock;
 
 namespace Asv.Avalonia;
 
 public static class CoreDesignTime
 {
-    public static CancellableCommandWithProgress CancellableCommand() =>
-        new((_, _) => Task.CompletedTask, "Default", NullLoggerFactory.Instance);
+    public static CancellableCommandWithProgress<TArg> CancellableCommand<TArg>() =>
+        new((_, _, _) => Task.CompletedTask, "Default", NullLoggerFactory.Instance);
 }
 
-public delegate Task CommandExecuteDelegate(IProgress<double> progress, CancellationToken cancel);
+public delegate Task CommandExecuteDelegate<in TArg>(TArg arg, IProgress<double> progress, CancellationToken cancel);
 
-public class CancellableCommandWithProgress : AsyncDisposableOnce, IProgress<double>
+public class CancellableCommandWithProgress<TArg> : AsyncDisposableOnce, IProgress<double>
 {
-    private readonly CommandExecuteDelegate _execute;
+    private readonly CommandExecuteDelegate<TArg> _execute;
     private readonly ReactiveCommand _cancelCommand;
-    private readonly ReactiveCommand _command;
-    private readonly ILogger<CancellableCommandWithProgress> _logger;
+    private readonly ReactiveCommand<TArg> _command;
+    private readonly ILogger<CancellableCommandWithProgress<TArg>> _logger;
+    private static readonly AsyncLock _lock = AsyncLock.Exclusive();
     private CancellationTokenSource? _cancellationTokenSource;
+    
 
     public CancellableCommandWithProgress(
-        CommandExecuteDelegate execute,
+        CommandExecuteDelegate<TArg> execute,
         string title,
         ILoggerFactory logFactory
     )
     {
-        _logger = logFactory.CreateLogger<CancellableCommandWithProgress>();
+        _logger = logFactory.CreateLogger<CancellableCommandWithProgress<TArg>>();
 
         if (string.IsNullOrWhiteSpace(title))
         {
@@ -44,41 +46,74 @@ public class CancellableCommandWithProgress : AsyncDisposableOnce, IProgress<dou
         CanExecute = new BindableReactiveProperty<bool>(true);
         Progress = new BindableReactiveProperty<double>();
 
-        _command = new ReactiveCommand(_ => InternalExecute().SafeFireAndForget());
+        _command = new ReactiveCommand<TArg>(arg =>
+        {
+            if (IsExecuting.Value)
+            {
+                InternalCancel(Unit.Default);
+            }
+
+            Task.Factory.StartNew(
+                () => InternalExecute(arg).SafeFireAndForget(ErrorHandler),
+                TaskCreationOptions.LongRunning);
+        });
         _cancelCommand = new ReactiveCommand(InternalCancel);
+    }
+
+    private void ErrorHandler(Exception obj)
+    {
+        _logger.LogError(obj, $"Error in command '{Title}': {obj.Message}");
     }
 
     private void InternalCancel(Unit obj)
     {
         _cancellationTokenSource?.Cancel(false);
-        _logger.LogWarning($"Command '{Title}' was cancelled");
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            _cancelCommand.ChangeCanExecute(false);
+            _command.ChangeCanExecute(true);
+        });
         IsExecuting.Value = false;
         CanExecute.Value = true;
-        Progress.Value = 1.0;
+        Progress.Value = 1;
+        _logger.LogWarning($"Command '{Title}' was cancelled");
     }
 
-    private async Task InternalExecute()
+    private async Task InternalExecute(TArg arg)
     {
+        
         try
         {
-            _cancellationTokenSource?.Cancel(false);
+            if (Dispatcher.UIThread.CheckAccess() == false)
+            {
+                
+            }
+
             _cancellationTokenSource = new CancellationTokenSource();
+            Dispatcher.UIThread.Invoke(() =>
+            {
+                _cancelCommand.ChangeCanExecute(true);
+                _command.ChangeCanExecute(false);
+            });
+
             IsExecuting.Value = true;
             CanExecute.Value = false;
             Progress.Value = 0;
             _logger.ZLogTrace($"Start command '{Title}'");
-            await _execute(this, _cancellationTokenSource.Token);
+            await _execute(arg, this, _cancellationTokenSource.Token).ConfigureAwait(false);
             _logger.ZLogTrace($"Command '{Title}' completed successfully");
+            Dispatcher.UIThread.Invoke(() =>
+            {
+                _cancelCommand.ChangeCanExecute(false);
+                _command.ChangeCanExecute(true);
+            });
+            IsExecuting.Value = false;
+            CanExecute.Value = true;
+            Progress.Value = 1;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error to execute command {Title}:{ex.Message}");
-        }
-        finally
-        {
-            IsExecuting.Value = false;
-            CanExecute.Value = true;
-            Progress.Value = 1;
         }
     }
 
@@ -87,8 +122,8 @@ public class CancellableCommandWithProgress : AsyncDisposableOnce, IProgress<dou
     public BindableReactiveProperty<bool> CanExecute { get; }
     public BindableReactiveProperty<double> Progress { get; }
 
-    public ICommand Cancel => _cancelCommand;
-    public ICommand Command => _command;
+    public ReactiveCommand Cancel => _cancelCommand;
+    public ReactiveCommand<TArg> Command => _command;
 
     public void Report(double value) => Progress.Value = value;
 
@@ -138,4 +173,6 @@ public class CancellableCommandWithProgress : AsyncDisposableOnce, IProgress<dou
             }
         }
     }
+
+    public void Execute(TArg arg) => Command.Execute(arg);
 }

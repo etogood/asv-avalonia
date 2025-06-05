@@ -12,7 +12,7 @@ public class EmptyArg : CommandArg
 {
     public static CommandArg Instance { get; } = new EmptyArg();
 
-    public static CommandArg Create() => Instance;
+    protected internal static CommandArg CreateDefault() => Instance;
 
     public override Id TypeId => Id.Empty;
 

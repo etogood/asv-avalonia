@@ -95,11 +95,13 @@ public class CommandHistory : ICommandHistory
                 {
                     _undoStack.Push(snapshot);
                 }
+                
+                _logger.ZLogDebug($"Loaded undo history from file {undoPath} {_undoStack.Count} items");
             }
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Failed to load undo history from file {UndoPath}", undoPath);
+            _logger.ZLogError(e, $"Failed to load undo history from file {undoPath}");
         }
 
         try
@@ -111,11 +113,13 @@ public class CommandHistory : ICommandHistory
                 {
                     _redoStack.Push(snapshot);
                 }
+                
+                _logger.ZLogDebug($"Loaded redo history from file {redoPath} {_redoStack.Count} items");
             }
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Failed to load redo history from file {RedoPath}", redoPath);
+            _logger.ZLogError(e, $"Failed to load redo history from file {redoPath}");
         }
     }
 

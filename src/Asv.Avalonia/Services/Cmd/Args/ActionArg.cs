@@ -23,7 +23,7 @@ public class ActionArg(string? subjectId, CommandArg? value, ActionArg.Kind acti
         Change = 2,
     }
 
-    public static CommandArg Create() => new ActionArg(subjectId: null, null, Kind.Add);
+    protected internal static CommandArg CreateDefault() => new ActionArg(subjectId: null, null, Kind.Add);
 
     public string? SubjectId { get; private set; } = subjectId;
     public CommandArg? Value { get; private set; } = value;
@@ -143,5 +143,5 @@ public class ActionArg(string? subjectId, CommandArg? value, ActionArg.Kind acti
         writer.WriteEndArray();
     }
 
-    public override string ToString() => $"[{Action:G}] {TypeId} {Value}]";
+    public override string ToString() => $"[{Action:G}] id:{SubjectId}, value:{Value}]";
 }

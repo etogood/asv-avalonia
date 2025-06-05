@@ -2,6 +2,7 @@ using R3;
 
 namespace Asv.Avalonia;
 
+
 public sealed class HistoricalStringProperty : HistoricalPropertyBase<string?, string?>
 {
     private readonly ReactiveProperty<string?> _modelValue;
@@ -83,7 +84,7 @@ public sealed class HistoricalStringProperty : HistoricalPropertyBase<string?, s
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
-        return [];
+        yield break;
     }
 
     protected override ValueTask InternalCatchEvent(AsyncRoutedEvent e)

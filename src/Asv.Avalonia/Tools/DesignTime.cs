@@ -1,5 +1,7 @@
 using Asv.Cfg;
 using Avalonia.Controls;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Asv.Avalonia;
 
@@ -16,7 +18,7 @@ public static class DesignTime
     }
 
     public static IConfiguration Configuration { get; } = new InMemoryConfiguration();
-    public static ILogService Log => NullLogService.Instance;
+    public static ILoggerFactory LoggerFactory => NullLoggerFactory.Instance;
     public static IShellHost ShellHost => NullShellHost.Instance;
     public static INavigationService Navigation => NullNavigationService.Instance;
     public static IUnitService UnitService => NullUnitService.Instance;

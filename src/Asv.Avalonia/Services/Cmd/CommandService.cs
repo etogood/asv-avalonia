@@ -160,7 +160,7 @@ public class CommandService : AsyncDisposableOnce, ICommandService
             var backup = await factory.Execute(target, param, cancel);
             var snapShot = new CommandSnapshot(factory.Info.Id, navPath, param, backup);
             _onCommand.OnNext(snapShot);
-            _logger.ZLogTrace($"Execute command '{backup}'(context: {context}, param: {param})");
+            _logger.ZLogTrace($"Execute command {factory.Info.Id}(context: {target.Id}, arg: {param.ToString()}, rollback: {backup?.ToString()})");
             return;
         }
 
@@ -327,7 +327,8 @@ public class CommandService : AsyncDisposableOnce, ICommandService
         {
             return InternalExecute(factory, context, param, cancel);
         }
-
+        
+        _logger.ZLogError($"Command with id '{commandId}' not found.");
         return ValueTask.FromException(new CommandNotFoundException(commandId));
     }
 

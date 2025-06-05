@@ -13,22 +13,24 @@ public abstract partial class CommandArg : ISizedSpanSerializable, IJsonSerializ
         Bool = 1,
         String = 2,
         Double = 3,
-        Action = 4,
-        Array = 5,
+        Integer = 4,
+        List = 5,
         Dict = 6,
+        Action = 7,
     }
 
     public static CommandArg Create(Id id)
     {
         return id switch
         {
-            Id.Empty => EmptyArg.Create(),
-            Id.Bool => BoolArg.Create(),
-            Id.String => StringArg.Create(),
-            Id.Double => DoubleArg.Create(),
-            Id.Action => ActionArg.Create(),
-            Id.Array => ListArg.Create(),
-            Id.Dict => DictArg.Create(),
+            Id.Empty => EmptyArg.CreateDefault(),
+            Id.Bool => BoolArg.CreateDefault(),
+            Id.String => StringArg.CreateDefault(),
+            Id.Double => DoubleArg.CreateDefault(),
+            Id.Action => ActionArg.CreateDefault(),
+            Id.List => ListArg.CreateDefault(),
+            Id.Dict => DictArg.CreateDefault(),
+            Id.Integer => IntArg.CreateDefault(),
             _ => throw new ArgumentOutOfRangeException(nameof(id), id, null),
         };
     }
@@ -93,6 +95,12 @@ public abstract partial class CommandArg : ISizedSpanSerializable, IJsonSerializ
             throw new JsonSerializationException($"{nameof(Create)} cannot be null.");
         }
 
+        return InternalCreateWithReadedToken(reader);
+    }
+    
+    internal static CommandArg? InternalCreateWithReadedToken(JsonReader reader)
+    {
+        // already read the first token
         if (reader.TokenType == JsonToken.Null)
         {
             return null;
@@ -180,4 +188,9 @@ public abstract partial class CommandArg : ISizedSpanSerializable, IJsonSerializ
     }
 
     #endregion
+
+    public static StringArg FromString(string value)
+    {
+        return new StringArg(value);
+    }
 }

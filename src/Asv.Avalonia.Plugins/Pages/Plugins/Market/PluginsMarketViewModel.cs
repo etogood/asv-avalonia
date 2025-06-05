@@ -78,16 +78,16 @@ public class PluginsMarketViewModel : PageViewModel<PluginsMarketViewModel>
         SelectedPlugin = new BindableReactiveProperty<PluginInfoViewModel?>();
 
         PluginsView = _plugins.CreateView(x => x).ToNotifyCollectionChanged();
-        Search = new CancellableCommandWithProgress(SearchImpl, "Search", loggerFactory);
+        Search = new CancellableCommandWithProgress<Unit>(SearchImpl, "Search", loggerFactory);
     }
 
-    public CancellableCommandWithProgress Search { get; }
+    public CancellableCommandWithProgress<Unit> Search { get; }
     public NotifyCollectionChangedSynchronizedViewList<PluginInfoViewModel> PluginsView { get; set; }
     public BindableReactiveProperty<bool> OnlyVerified { get; set; }
     public BindableReactiveProperty<string> SearchString { get; set; }
     public BindableReactiveProperty<PluginInfoViewModel?> SelectedPlugin { get; set; }
 
-    private async Task SearchImpl(IProgress<double> progress, CancellationToken cancel)
+    private async Task SearchImpl(Unit arg, IProgress<double> progress, CancellationToken cancel)
     {
         var items = await _manager.Search(SearchQuery.Empty, cancel);
 

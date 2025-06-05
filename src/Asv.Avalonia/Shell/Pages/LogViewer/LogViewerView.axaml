@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:logViewer="clr-namespace:Asv.Avalonia.LogViewer"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:avalonia1="clr-namespace:Asv.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Asv.Avalonia.LogViewer.LogViewerView"
              x:DataType="logViewer:LogViewerViewModel">
@@ -65,33 +66,21 @@
             <Button Command="{Binding Next}" DockPanel.Dock="Right" Theme="{StaticResource TransparentButton}">
                 <avalonia:MaterialIcon Kind="ChevronRight"/>
             </Button>
-            <TextBlock Margin="8,0" VerticalAlignment="Center" DockPanel.Dock="Right" Text="{Binding FromToText}"/>
+            <TextBlock Margin="8,0" VerticalAlignment="Center" DockPanel.Dock="Right" Text="{Binding FromToText.Value}"/>
             <Button Command="{Binding Previous}" DockPanel.Dock="Right" Theme="{StaticResource TransparentButton}">
                 <avalonia:MaterialIcon Kind="ChevronLeft"/>
             </Button>
-            
-            <Button IsVisible="{Binding !Update.IsExecuting.Value}" 
-                    Command="{Binding Update.Command}" DockPanel.Dock="Right" Theme="{StaticResource TransparentButton}">
-                <avalonia:MaterialIcon Kind="Refresh"/>
-            </Button>
-            <Button IsVisible="{Binding Update.IsExecuting.Value}" Command="{Binding Update.Cancel}" DockPanel.Dock="Right" Theme="{StaticResource TransparentButton}">
-                <avalonia:MaterialIcon Kind="Cancel"/>
-            </Button>
-            <TextBox MinWidth="200" Padding="0" VerticalContentAlignment="Center" MinHeight="0" Height="25" DockPanel.Dock="Right" IsEnabled="{Binding !Update.IsExecuting.Value}" Text="{Binding SearchText.ViewValue.Value, UpdateSourceTrigger=LostFocus}">
-                <TextBox.InnerLeftContent>
-                    <avalonia:MaterialIcon Kind="Magnify" Width="20" Height="20" Margin="4,0"/>
-                </TextBox.InnerLeftContent>
-            </TextBox>
-            
+           
+            <avalonia1:SearchBoxView DockPanel.Dock="Right" Margin="0,0,8,0" DataContext="{Binding Filter}"/>
             
             <TextBlock Classes="h1" Text="Log messages"></TextBlock>
             
         </DockPanel>
         <DockPanel DockPanel.Dock="Bottom" Height="20">
-            <ProgressBar Width="50" DockPanel.Dock="Right" IsVisible="{Binding Update.IsExecuting.Value}" 
+            <ProgressBar Width="50" DockPanel.Dock="Right" IsVisible="{Binding Filter.Search.IsExecuting.Value}" 
                          Minimum="0" Maximum="1" 
-                         Value="{Binding Update.Progress.Value}" />
-            <TextBlock Foreground="{DynamicResource AsvForegroundInfoBrush}" Text="{Binding TextMessage}"/>
+                         Value="{Binding Filter.Search.Progress.Value}" />
+            <TextBlock Foreground="{DynamicResource AsvForegroundInfoBrush}" Text="{Binding TextMessage.Value}"/>
         </DockPanel>
         <DataGrid Focusable="False" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" IsReadOnly="True" BorderThickness="0">
             <DataGrid.Columns>

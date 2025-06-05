@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using Asv.IO;
 using Newtonsoft.Json;
 
@@ -12,7 +13,7 @@ public class DictArg : CommandArg, IDictionary<string, CommandArg>
         StringComparer.InvariantCultureIgnoreCase
     );
 
-    public static CommandArg Create() => new DictArg();
+    protected internal static CommandArg CreateDefault() => new DictArg();
 
     public override Id TypeId => Id.Dict;
 
@@ -62,9 +63,13 @@ public class DictArg : CommandArg, IDictionary<string, CommandArg>
             var key =
                 reader.Value?.ToString()
                 ?? throw new JsonSerializationException("Key cannot be null.");
-            reader.Read();
-            var element = Create();
-            element.Deserialize(reader);
+            
+            var element = Create(reader);
+            if (element == null)
+            {
+                throw new JsonSerializationException("Element cannot be null.");
+            }
+            
             Add(key, element);
         }
 
@@ -122,4 +127,23 @@ public class DictArg : CommandArg, IDictionary<string, CommandArg>
 
     public ICollection<string> Keys => _dictionary.Keys;
     public ICollection<CommandArg> Values => _dictionary.Values;
+
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+        sb.Append("{ ");
+        foreach (var kvp in _dictionary)
+        {
+            sb.AppendFormat("{0}: {1}, ", kvp.Key, kvp.Value);
+        }
+
+        if (sb.Length > 2)
+        {
+            sb.Length -= 2; // Remove the last comma and space
+        }
+
+        sb.Append(" }");
+        return sb.ToString();
+    }
 }
+

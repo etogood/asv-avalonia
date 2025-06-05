@@ -30,7 +30,7 @@ public class BoolArg(bool value) : CommandArg
     #region Static
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static CommandArg Create() => new BoolArg(false);
+    protected internal static CommandArg CreateDefault() => new BoolArg(false);
 
     #endregion
 

@@ -193,7 +193,7 @@ public readonly partial struct NavigationId
     /// </returns>
     public int CompareTo(NavigationId other)
     {
-        // First, compare the Id
+        // First, compare the StaticId
         int idComparison = StringComparer.InvariantCultureIgnoreCase.Compare(Id, other.Id);
         if (idComparison != 0)
         {

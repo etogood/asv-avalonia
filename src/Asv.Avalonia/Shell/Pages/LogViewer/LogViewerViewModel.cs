@@ -1,5 +1,7 @@
 ﻿using System.Composition;
 using Asv.Common;
+using Avalonia.Input;
+using Avalonia.Threading;
 using Material.Icons;
 using Microsoft.Extensions.Logging;
 using ObservableCollections;
@@ -11,14 +13,12 @@ namespace Asv.Avalonia.LogViewer;
 public interface ILogViewerViewModel : IPage { }
 
 [ExportPage(PageId)]
-public class LogViewerViewModel : PageViewModel<ILogViewerViewModel>, ILogViewerViewModel
+public class LogViewerViewModel : PageViewModel<ILogViewerViewModel>, ILogViewerViewModel, ISupportPagination
 {
     private readonly ILogService _logService;
+    private readonly ISearchService _search;
     private readonly ObservableList<LogMessageViewModel> _itemsSource = new();
-    private readonly ReactiveProperty<string?> _filter;
-    private string _fromToText;
     private readonly ILogger<LogViewerViewModel> _logger;
-    private string _textMessage;
     private LogMessageViewModel _selectedItem;
     public const string PageId = "log";
     public const MaterialIconKind PageIcon = MaterialIconKind.Journal;
@@ -29,12 +29,7 @@ public class LogViewerViewModel : PageViewModel<ILogViewerViewModel>, ILogViewer
         DesignTime.ThrowIfNotDesignMode();
         Title = "Log Viewer";
         Icon = PageIcon;
-
-        _filter = new ReactiveProperty<string?>().DisposeItWith(Disposable);
-        SearchText = new HistoricalStringProperty("search", _filter)
-            .SetRoutableParent(this)
-            .DisposeItWith(Disposable);
-
+        Filter = new SearchBoxViewModel();
         Items = _itemsSource
             .ToNotifyCollectionChangedSlim(SynchronizationContextCollectionEventDispatcher.Current)
             .DisposeItWith(Disposable);
@@ -129,59 +124,61 @@ public class LogViewerViewModel : PageViewModel<ILogViewerViewModel>, ILogViewer
     public LogViewerViewModel(
         ICommandService cmd,
         ILogService logService,
+        ISearchService search,
         ILoggerFactory loggerFactory
     )
         : base(PageId, cmd)
     {
         _logService = logService;
+        _search = search;
         Title = "Log Viewer";
         Icon = PageIcon;
         _logger = loggerFactory.CreateLogger<LogViewerViewModel>();
         Items = _itemsSource
-            .ToNotifyCollectionChangedSlim(SynchronizationContextCollectionEventDispatcher.Current)
+            .ToNotifyCollectionChangedSlim()
             .SetRoutableParent(this, Disposable)
             .DisposeItWith(Disposable);
 
-        Start = new BindableReactiveProperty<int>(0).DisposeItWith(Disposable);
+        Skip = new BindableReactiveProperty<int>(0).DisposeItWith(Disposable);
         Stop = new BindableReactiveProperty<int>(0).DisposeItWith(Disposable);
-        Count = new BindableReactiveProperty<int>(50).DisposeItWith(Disposable);
-
-        Update = new CancellableCommandWithProgress(
-            UpdateImpl,
-            $"{PageId}.refresh",
-            loggerFactory
-        ).DisposeItWith(Disposable);
-        _filter = new ReactiveProperty<string?>().DisposeItWith(Disposable);
-        SearchText = new HistoricalStringProperty("search", _filter).DisposeItWith(Disposable);
-        SearchText.Parent = this;
-        _filter.Skip(1).Subscribe(_ => Update.Command.Execute(null));
-        Start.Subscribe(_ => Update.Command.Execute(null));
+        Take = new BindableReactiveProperty<int>(50).DisposeItWith(Disposable);
+        FromToText = new BindableReactiveProperty<string>(string.Empty).DisposeItWith(Disposable);
+        TextMessage = new BindableReactiveProperty<string>(string.Empty).DisposeItWith(Disposable);
+        
+        Filter = new SearchBoxViewModel("search", loggerFactory, UpdateImpl)
+            .SetRoutableParent(this)
+            .DisposeItWith(Disposable);
+        
+        Skip.Skip(1).Subscribe(_ => Filter.ForceUpdateWithoutHistory());
 
         Next = new ReactiveCommand(_ =>
         {
-            Start.Value += Count.Value;
-            Update.Command.Execute(null);
+            PaginationCommand.Execute(this, Skip.Value + Take.Value, Take.Value);
         }).DisposeItWith(Disposable);
         Previous = new ReactiveCommand(_ =>
         {
-            var temp = Start.Value - Count.Value;
-            Start.Value = temp < 0 ? 0 : temp;
-            Update.Command.Execute(null);
+            var temp = Skip.Value - Take.Value;
+            PaginationCommand.Execute(this, temp < 0 ? 0 : temp, Take.Value);
         }).DisposeItWith(Disposable);
+        
+        Filter.ForceUpdateWithoutHistory();
     }
 
-    public CancellableCommandWithProgress Update { get; }
-
-    public async Task UpdateImpl(IProgress<double> progress, CancellationToken cancel)
+    public SearchBoxViewModel Filter { get; }
+    
+    public async Task UpdateImpl(string? query, IProgress<double> progress, CancellationToken cancel)
     {
         try
         {
-            var text = _filter.Value?.ToLower();
-            _itemsSource.Clear();
+            var text = query?.ToLower();
+            Dispatcher.UIThread.Invoke(_itemsSource.Clear);
+            
             var filtered = 0;
             var total = 0;
             var skip = 0;
             _logger.ZLogTrace($"Start filtering log messages with filter: '{text}'");
+            progress.Report(double.NaN);
+            
             await foreach (var logMessage in _logService.LoadItemsFromLogFile(cancel))
             {
                 if (cancel.IsCancellationRequested)
@@ -191,60 +188,46 @@ public class LogViewerViewModel : PageViewModel<ILogViewerViewModel>, ILogViewer
 
                 ++total;
 
-                if (ApplyFilter(logMessage, text))
+                if (_search.Match(logMessage, text))
                 {
                     ++filtered;
-                    if (filtered < Start.Value)
+                    if (filtered < Skip.Value)
                     {
                         ++skip;
-                        TextMessage = $"Skipped {skip}, filtered {filtered} messages from {total}";
+                        TextMessage.Value = $"Skipped {skip}, filtered {filtered} messages from {total}";
                     }
                     else
                     {
-                        _itemsSource.Add(new LogMessageViewModel(logMessage, this));
-                        progress.Report((double)_itemsSource.Count / Count.Value);
-                        TextMessage = $"Skipped {skip}, filtered {filtered} messages from {total}";
+                        Dispatcher.UIThread.Invoke(() => _itemsSource.Add(new LogMessageViewModel(logMessage, this)));
+                        progress.Report((double)_itemsSource.Count / Take.Value);
+                        TextMessage.Value = $"Skipped {skip}, filtered {filtered} messages from {total}";
                     }
 
-                    if (_itemsSource.Count >= Count.Value)
+                    if (_itemsSource.Count >= Take.Value)
                     {
                         break;
                     }
                 }
                 else
                 {
-                    TextMessage = $"Skipped {skip}, filtered {filtered} messages from {total}";
+                    TextMessage.Value = $"Skipped {skip}, filtered {filtered} messages from {total}";
                 }
             }
         }
         finally
         {
-            FromToText = $"{Start.Value + 1} - {Start.Value + _itemsSource.Count}";
+            FromToText.Value = $"{Skip.Value + 1} - {Skip.Value + _itemsSource.Count}";
             progress.Report(1);
         }
     }
 
-    private static bool ApplyFilter(LogMessage logMessage, string? filter)
-    {
-        if (string.IsNullOrWhiteSpace(filter))
-        {
-            return true;
-        }
-
-        return logMessage.Message.ToLowerInvariant().Contains(filter)
-            || logMessage.Category.Contains(filter)
-            || logMessage.LogLevel.ToString().ToLowerInvariant().Contains(filter);
-    }
-
-    public BindableReactiveProperty<int> Start { get; }
+    public BindableReactiveProperty<int> Skip { get; }
     public IReadOnlyBindableReactiveProperty<int> Stop { get; }
-    public BindableReactiveProperty<int> Count { get; }
-
-    public HistoricalStringProperty SearchText { get; }
+    public BindableReactiveProperty<int> Take { get; }
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
-        yield return SearchText;
+        yield return Filter;
         foreach (var item in Items)
         {
             yield return item;
@@ -253,6 +236,12 @@ public class LogViewerViewModel : PageViewModel<ILogViewerViewModel>, ILogViewer
 
     public override ValueTask<IRoutable> Navigate(NavigationId id)
     {
+        if (id == Filter.Id)
+        {
+            Filter.Navigate(NavigationId.Empty);
+            return new ValueTask<IRoutable>(Filter);
+        }
+        
         var item = Items.FirstOrDefault(x => x.Id == id);
         if (item == null)
         {
@@ -268,18 +257,9 @@ public class LogViewerViewModel : PageViewModel<ILogViewerViewModel>, ILogViewer
     public override IExportInfo Source => SystemModule.Instance;
     public INotifyCollectionChangedSynchronizedViewList<LogMessageViewModel> Items { get; }
 
-    public string FromToText
-    {
-        get => _fromToText;
-        set => SetField(ref _fromToText, value);
-    }
-
-    public string TextMessage
-    {
-        get => _textMessage;
-        set => SetField(ref _textMessage, value);
-    }
-
+    public BindableReactiveProperty<string> FromToText { get; }
+    public BindableReactiveProperty<string> TextMessage { get; }
+    
     public ReactiveCommand Next { get; }
     public ReactiveCommand Previous { get; }
 

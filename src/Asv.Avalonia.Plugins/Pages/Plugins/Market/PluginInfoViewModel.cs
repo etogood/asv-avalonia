@@ -15,9 +15,9 @@ public class PluginInfoViewModel : DisposableViewModel
         : base(string.Empty)
     {
         DesignTime.ThrowIfNotDesignMode();
-        Install = CoreDesignTime.CancellableCommand();
-        Uninstall = CoreDesignTime.CancellableCommand();
-        CancelUninstall = CoreDesignTime.CancellableCommand();
+        Install = CoreDesignTime.CancellableCommand<Unit>();
+        Uninstall = CoreDesignTime.CancellableCommand<Unit>();
+        CancelUninstall = CoreDesignTime.CancellableCommand<Unit>();
     }
 
     public PluginInfoViewModel(
@@ -31,9 +31,9 @@ public class PluginInfoViewModel : DisposableViewModel
         _pluginInfo = pluginInfo;
         _manager = manager;
         Id = pluginInfo.Id;
-        Install = new CancellableCommandWithProgress(InstallImpl, "Install", logFactory);
-        Uninstall = new CancellableCommandWithProgress(UninstallImpl, "Uninstall", logFactory);
-        CancelUninstall = new CancellableCommandWithProgress(
+        Install = new CancellableCommandWithProgress<Unit>(InstallImpl, "Install", logFactory);
+        Uninstall = new CancellableCommandWithProgress<Unit>(UninstallImpl, "Uninstall", logFactory);
+        CancelUninstall = new CancellableCommandWithProgress<Unit>(
             CancelUninstallImpl,
             "CancelUninstall",
             logFactory
@@ -103,11 +103,11 @@ public class PluginInfoViewModel : DisposableViewModel
     public BindableReactiveProperty<bool> IsInstalled { get; set; }
     public BindableReactiveProperty<bool> IsUninstalled { get; set; }
     public BindableReactiveProperty<bool> IsVerified { get; set; }
-    public CancellableCommandWithProgress Uninstall { get; }
-    public CancellableCommandWithProgress CancelUninstall { get; }
-    public CancellableCommandWithProgress Install { get; }
+    public CancellableCommandWithProgress<Unit> Uninstall { get; }
+    public CancellableCommandWithProgress<Unit> CancelUninstall { get; }
+    public CancellableCommandWithProgress<Unit> Install { get; }
 
-    private Task UninstallImpl(IProgress<double> progress, CancellationToken cancel)
+    private Task UninstallImpl(Unit arg, IProgress<double> progress, CancellationToken cancel)
     {
         if (_localInfo == null)
         {
@@ -122,7 +122,7 @@ public class PluginInfoViewModel : DisposableViewModel
         return Task.CompletedTask;
     }
 
-    private Task CancelUninstallImpl(IProgress<double> progress, CancellationToken cancel)
+    private Task CancelUninstallImpl(Unit arg, IProgress<double> progress, CancellationToken cancel)
     {
         if (_localInfo == null)
         {
@@ -134,7 +134,7 @@ public class PluginInfoViewModel : DisposableViewModel
         return Task.CompletedTask;
     }
 
-    private async Task InstallImpl(IProgress<double> progress, CancellationToken cancel)
+    private async Task InstallImpl(Unit arg, IProgress<double> progress, CancellationToken cancel)
     {
         await _manager.Install(
             _pluginInfo.Source,

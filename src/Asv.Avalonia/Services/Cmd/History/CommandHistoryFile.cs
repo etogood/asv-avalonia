@@ -30,7 +30,7 @@ public class JsonHistoryMetadata : IJsonSerializable
         Version = SemVersion.Parse(
             reader.ReadAsString() ?? throw new JsonSerializationException("Version is null.")
         );
-        Id = reader.ReadAsString() ?? throw new JsonSerializationException("Id is null.");
+        Id = reader.ReadAsString() ?? throw new JsonSerializationException("StaticId is null.");
         Updated =
             reader.ReadAsDateTimeOffset()
             ?? throw new JsonSerializationException("Created is null.");
