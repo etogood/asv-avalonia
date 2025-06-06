@@ -12,38 +12,39 @@
     </Design.DataContext>
     <Panel>
         <TextBox MinWidth="200" Padding="0" VerticalContentAlignment="Center" 
-                 avalonia1:NavigationHelper.IsSelected ="{Binding IsSelected}"
-                 Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                 Watermark="{Binding Search.Title}"
+                 avalonia1:NavigationHelper.IsSelected ="{Binding IsSelected, Mode=OneTime}"
+                 Text="{Binding Text.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 Watermark="Search"
                  MinHeight="0" Height="25" >
             <TextBox.KeyBindings>
-                <KeyBinding Gesture="Enter" Command="{Binding UpdateCommand}"/>
-                <KeyBinding Gesture="Escape" Command="{Binding Search.Cancel}"/>
+                <KeyBinding Gesture="Enter" Command="{Binding Query}" CommandParameter="{Binding Text.Value}"/>
+                <KeyBinding Gesture="Escape" Command="{Binding Cancel}"/>
             </TextBox.KeyBindings>
             <TextBox.InnerLeftContent>
                 <avalonia:MaterialIcon Kind="Magnify" Width="20" Height="20" Margin="4,0"/>
             </TextBox.InnerLeftContent>
             <TextBox.InnerRightContent>
                 <Panel>
-                    <Button IsVisible="{Binding Search.IsExecuting.Value}"
-                            Command="{Binding Search.Cancel}"
+                    <Button IsVisible="{Binding IsExecuting.Value}"
+                            Command="{Binding Cancel}"
+                            CommandParameter="{Binding Text.Value}"
                             Padding="0" Theme="{StaticResource TransparentButton}">
                         <avalonia:MaterialIcon Kind="Cancel" Width="20" Height="20" Margin="4,0"/>
                     </Button>    
-                    <Button IsVisible="{Binding !Search.IsExecuting.Value}" 
-                            Command="{Binding Search.Command}" Padding="0" Theme="{StaticResource TransparentButton}">
+                    <Button IsVisible="{Binding !IsExecuting.Value}" 
+                            Command="{Binding Query}" CommandParameter="{Binding Text.Value}" Padding="0" Theme="{StaticResource TransparentButton}">
                         <avalonia:MaterialIcon Kind="CircleArrows" Width="20" Height="20" Margin="4,0"/>
                     </Button>
                 </Panel>
             </TextBox.InnerRightContent>
         </TextBox>
         <ProgressBar MinWidth="0"
-                     IsVisible="{Binding Search.IsExecuting.Value}" 
+                     IsVisible="{Binding IsExecuting.Value}" 
                      Background="Transparent" Margin="0,0,30,0" 
                      Height="20" Opacity="0.5" VerticalAlignment="Center" HorizontalAlignment="Stretch" 
                      Minimum="0" Maximum="1"
-                     IsIndeterminate="{Binding Search.Progress.Value, Converter={x:Static avalonia1:DoubleTrueIfNanConverter.Instance}}"
-                     Value="{Binding Search.Progress.Value}"/>
+                     IsIndeterminate="{Binding Progress.Value, Converter={x:Static avalonia1:DoubleTrueIfNanConverter.Instance}}"
+                     Value="{Binding Progress.Value}"/>
     </Panel>
     
 </UserControl>

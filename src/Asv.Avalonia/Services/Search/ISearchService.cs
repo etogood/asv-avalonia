@@ -3,24 +3,16 @@ using R3;
 
 namespace Asv.Avalonia;
 
-public interface ISearchEngineInfo : IExportable
-{
-    string Id { get; }
-    string Name { get; }
-    string Description { get; }
-}
-
 public interface ISearchService
 {
-    IEnumerable<ISearchEngineInfo> Engines { get; }
-    ReadOnlyReactiveProperty<ISearchEngineInfo> Engine { get; }
-    void ChangeEngine(string searchEngineId);
-    bool Match(string? text, string? query);
-    bool Match(ISupportSearch subject, string? query) =>
-        subject.GetSearchableText().Any(text => Match(text, query));
+    bool Match(string? text, string? query, out Selection selection);
 }
 
-public interface ISupportSearch
+public readonly struct Selection(int start, int length)
 {
-    IEnumerable<string?> GetSearchableText();
+    public static Selection Empty => new(0, 0);
+    public int Start => start;
+    public int Length => length;
+
+    public int Stop => start + length;
 }

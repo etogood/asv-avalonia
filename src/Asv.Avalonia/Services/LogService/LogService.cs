@@ -1,4 +1,6 @@
 using System.Composition;
+using System.Runtime.CompilerServices;
+using Avalonia.Threading;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -21,6 +23,7 @@ public class LogService : ILogService, IExportable
     private readonly ReactiveProperty<LogMessage?> _onMessage = new();
     private readonly ILogger<LogService> _logger;
     private readonly string _logsFolder;
+    private static readonly JsonSerializer Serializer = new();
 
     public LogService(IOptions<LogServiceConfig> option)
     {
@@ -84,26 +87,36 @@ public class LogService : ILogService, IExportable
     }
 
     public async IAsyncEnumerable<LogMessage> LoadItemsFromLogFile(
-        CancellationToken cancel = default
+        [EnumeratorCancellation] CancellationToken cancel = default
     )
     {
-        foreach (var logFilePath in Directory.EnumerateFiles(_logsFolder, "*.logs"))
+        foreach (var logFilePath in Directory.EnumerateFiles(_logsFolder, "*.logs").Order())
         {
-            using var fs = new FileStream(
+            await using var fs = new FileStream(
                 logFilePath,
                 FileMode.Open,
                 FileAccess.Read,
-                FileShare.ReadWrite
+                FileShare.ReadWrite,
+                bufferSize: 64 * 1024, // 64 Kb
+                options: FileOptions.Asynchronous | FileOptions.SequentialScan
+            );
+            using var sr = new StreamReader(
+                fs,
+                encoding: System.Text.Encoding.UTF8,
+                detectEncodingFromByteOrderMarks: true,
+                bufferSize: 64 * 1024,
+                leaveOpen: true
             );
 
             var rdr = new JsonTextReader(new StreamReader(fs)) { SupportMultipleContent = true };
-            var serializer = new JsonSerializer();
 
-            while (await rdr.ReadAsync(cancel))
+            while (
+                !cancel.IsCancellationRequested && await rdr.ReadAsync(cancel).ConfigureAwait(false)
+            )
             {
                 if (rdr.TokenType == JsonToken.StartObject)
                 {
-                    var item = serializer.Deserialize<LogMessage>(rdr);
+                    var item = Serializer.Deserialize<LogMessage>(rdr);
                     if (item != null)
                     {
                         yield return item;

@@ -26,7 +26,6 @@ public class CancellableCommandWithProgress<TArg> : AsyncDisposableOnce, IProgre
     private readonly ReactiveCommand _cancelCommand;
     private readonly ReactiveCommand<TArg> _command;
     private readonly ILogger<CancellableCommandWithProgress<TArg>> _logger;
-    private static readonly AsyncLock _lock = AsyncLock.Exclusive();
     private CancellationTokenSource? _cancellationTokenSource;
 
     public CancellableCommandWithProgress(
@@ -48,7 +47,6 @@ public class CancellableCommandWithProgress<TArg> : AsyncDisposableOnce, IProgre
         IsExecuting = new BindableReactiveProperty<bool>();
         CanExecute = new BindableReactiveProperty<bool>(true);
         Progress = new BindableReactiveProperty<double>();
-
         _command = new ReactiveCommand<TArg>(arg =>
         {
             if (IsExecuting.Value)
@@ -56,10 +54,8 @@ public class CancellableCommandWithProgress<TArg> : AsyncDisposableOnce, IProgre
                 InternalCancel(Unit.Default);
             }
 
-            Task.Factory.StartNew(
-                () => InternalExecute(arg).SafeFireAndForget(ErrorHandler),
-                TaskCreationOptions.LongRunning
-            );
+            Task.Factory.StartNew(() => InternalExecute(arg), TaskCreationOptions.LongRunning)
+                .SafeFireAndForget(ErrorHandler);
         });
         _cancelCommand = new ReactiveCommand(InternalCancel);
     }
@@ -72,7 +68,7 @@ public class CancellableCommandWithProgress<TArg> : AsyncDisposableOnce, IProgre
     private void InternalCancel(Unit obj)
     {
         _cancellationTokenSource?.Cancel(false);
-        Dispatcher.UIThread.Invoke(() =>
+        Dispatcher.UIThread.InvokeAsync(() =>
         {
             _cancelCommand.ChangeCanExecute(false);
             _command.ChangeCanExecute(true);
@@ -83,14 +79,14 @@ public class CancellableCommandWithProgress<TArg> : AsyncDisposableOnce, IProgre
         _logger.LogWarning($"Command '{Title}' was cancelled");
     }
 
-    private async Task InternalExecute(TArg arg)
+    private async void InternalExecute(TArg arg)
     {
         try
         {
             if (Dispatcher.UIThread.CheckAccess() == false) { }
 
             _cancellationTokenSource = new CancellationTokenSource();
-            Dispatcher.UIThread.Invoke(() =>
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 _cancelCommand.ChangeCanExecute(true);
                 _command.ChangeCanExecute(false);
@@ -99,10 +95,10 @@ public class CancellableCommandWithProgress<TArg> : AsyncDisposableOnce, IProgre
             IsExecuting.Value = true;
             CanExecute.Value = false;
             Progress.Value = 0;
-            _logger.ZLogTrace($"Start command '{Title}'");
+            _logger.ZLogTrace($"Start command '{Title}' ");
             await _execute(arg, this, _cancellationTokenSource.Token).ConfigureAwait(false);
             _logger.ZLogTrace($"Command '{Title}' completed successfully");
-            Dispatcher.UIThread.Invoke(() =>
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 _cancelCommand.ChangeCanExecute(false);
                 _command.ChangeCanExecute(true);

@@ -1,5 +1,6 @@
 ﻿using Material.Icons;
 using Microsoft.Extensions.Logging;
+using R3;
 
 namespace Asv.Avalonia.LogViewer;
 
@@ -17,6 +18,9 @@ public class LogMessageViewModel : RoutableViewModel
     }
 
     public LogMessage Base { get; }
+
+    public Selection MessageSelection { get; init; }
+    public Selection CategorySelection { get; init; }
 
     public MaterialIconKind Icon =>
         Base.LogLevel switch
@@ -45,5 +49,34 @@ public class LogMessageViewModel : RoutableViewModel
     protected override void Dispose(bool disposing)
     {
         // No resources to dispose
+    }
+
+    public static bool TryCreate(
+        LogMessage logMessage,
+        IRoutable parent,
+        ISearchService search,
+        string? query,
+        out LogMessageViewModel? msg
+    )
+    {
+        msg = null;
+        var msgSelection = Selection.Empty;
+        var catSelection = Selection.Empty;
+
+        var result =
+            search.Match(logMessage.Message, query, out msgSelection)
+            || search.Match(logMessage.Category, query, out catSelection);
+        if (!result)
+        {
+            return false;
+        }
+
+        msg = new LogMessageViewModel(logMessage, parent)
+        {
+            MessageSelection = msgSelection,
+            CategorySelection = catSelection,
+        };
+
+        return true;
     }
 }

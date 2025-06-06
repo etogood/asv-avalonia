@@ -8,7 +8,7 @@ public class LogMessage(
     string category,
     string message,
     string? description
-) : ISupportSearch
+)
 {
     public DateTime Timestamp { get; } = timestamp;
     public LogLevel LogLevel { get; } = logLevel;
@@ -19,13 +19,5 @@ public class LogMessage(
     public override string ToString()
     {
         return $"{Category} {Message}";
-    }
-
-    public IEnumerable<string?> GetSearchableText()
-    {
-        yield return Category;
-        yield return Message;
-        yield return Description;
-        yield return LogLevel.ToString();
     }
 }

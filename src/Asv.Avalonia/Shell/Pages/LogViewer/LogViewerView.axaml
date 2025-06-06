@@ -32,7 +32,7 @@
                 <Setter Property="Foreground" Value="{DynamicResource  AsvForegroundErrorBrush}"/>
             </Style>
         </Style>
-        <Style Selector="TextBlock.DataGridCell">
+        <Style Selector="SelectableTextBlock.DataGridCell">
             <Setter Property="FontFamily" Value="Consolas"/>
             <Setter Property="FontSize" Value="14"/>
             <Style Selector="^.debug">
@@ -71,15 +71,15 @@
                 <avalonia:MaterialIcon Kind="ChevronLeft"/>
             </Button>
            
-            <avalonia1:SearchBoxView DockPanel.Dock="Right" Margin="0,0,8,0" DataContext="{Binding Filter}"/>
+            <avalonia1:SearchBoxView DockPanel.Dock="Right" Margin="0,0,8,0" DataContext="{Binding Search}"/>
             
             <TextBlock Classes="h1" Text="Log messages"></TextBlock>
             
         </DockPanel>
         <DockPanel DockPanel.Dock="Bottom" Height="20">
-            <ProgressBar Width="50" DockPanel.Dock="Right" IsVisible="{Binding Filter.Search.IsExecuting.Value}" 
+            <ProgressBar Width="50" DockPanel.Dock="Right" IsVisible="{Binding Search.IsExecuting.Value}" 
                          Minimum="0" Maximum="1" 
-                         Value="{Binding Filter.Search.Progress.Value}" />
+                         Value="{Binding Search.Progress.Value}" />
             <TextBlock Foreground="{DynamicResource AsvForegroundInfoBrush}" Text="{Binding TextMessage.Value}"/>
         </DockPanel>
         <DataGrid Focusable="False" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" IsReadOnly="True" BorderThickness="0">
@@ -96,7 +96,7 @@
                                     Classes.error="{Binding IsError}"
                                     Width="15" Height="15"
                                     Kind="{Binding Icon}" VerticalAlignment="Center" />
-                                <TextBlock FontFamily="Consolas" 
+                                <SelectableTextBlock 
                                            Classes = "DataGridCell"
                                            Classes.debug="{Binding IsDebug}" 
                                            Classes.info="{Binding IsInformation}"
@@ -112,7 +112,9 @@
                 <DataGridTemplateColumn Header="Category"  >
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock
+                            <SelectableTextBlock
+                                SelectionStart="{Binding CategorySelection.Start}"
+                                SelectionEnd="{Binding CategorySelection.Stop}"
                                 Margin="4,0"
                                 Classes = "DataGridCell"
                                 Classes.debug="{Binding IsDebug}" 
@@ -127,7 +129,9 @@
                 <DataGridTemplateColumn  Header="Message">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock 
+                            <SelectableTextBlock 
+                                SelectionStart="{Binding MessageSelection.Start}"
+                                SelectionEnd="{Binding MessageSelection.Stop}"
                                 Margin="4,0"
                                        Classes = "DataGridCell"
                                        Classes.debug="{Binding IsDebug}" 

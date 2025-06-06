@@ -1,4 +1,5 @@
 ﻿using System.Composition;
+using System.Diagnostics;
 using Asv.Common;
 using Avalonia.Input;
 using Avalonia.Threading;
@@ -32,7 +33,7 @@ public class LogViewerViewModel
         DesignTime.ThrowIfNotDesignMode();
         Title = "Log Viewer";
         Icon = PageIcon;
-        Filter = new SearchBoxViewModel();
+        Search = new SearchBoxViewModel();
         Items = _itemsSource
             .ToNotifyCollectionChangedSlim(SynchronizationContextCollectionEventDispatcher.Current)
             .DisposeItWith(Disposable);
@@ -143,31 +144,34 @@ public class LogViewerViewModel
             .DisposeItWith(Disposable);
 
         Skip = new BindableReactiveProperty<int>(0).DisposeItWith(Disposable);
-        Stop = new BindableReactiveProperty<int>(0).DisposeItWith(Disposable);
         Take = new BindableReactiveProperty<int>(50).DisposeItWith(Disposable);
         FromToText = new BindableReactiveProperty<string>(string.Empty).DisposeItWith(Disposable);
         TextMessage = new BindableReactiveProperty<string>(string.Empty).DisposeItWith(Disposable);
 
-        Filter = new SearchBoxViewModel("search", loggerFactory, UpdateImpl)
+        Search = new SearchBoxViewModel(
+            "search",
+            loggerFactory,
+            UpdateImpl,
+            TimeSpan.FromSeconds(1)
+        )
             .SetRoutableParent(this)
             .DisposeItWith(Disposable);
 
-        Skip.Skip(1).Subscribe(_ => Filter.ForceUpdateWithoutHistory());
+        Skip.Skip(1).Subscribe(_ => Search.Refresh());
 
         Next = new ReactiveCommand(_ =>
-        {
-            PaginationCommand.Execute(this, Skip.Value + Take.Value, Take.Value);
-        }).DisposeItWith(Disposable);
+            PaginationCommand.Execute(this, Skip.Value + Take.Value, Take.Value)
+        ).DisposeItWith(Disposable);
         Previous = new ReactiveCommand(_ =>
         {
             var temp = Skip.Value - Take.Value;
             PaginationCommand.Execute(this, temp < 0 ? 0 : temp, Take.Value);
         }).DisposeItWith(Disposable);
 
-        Filter.ForceUpdateWithoutHistory();
+        Search.Refresh();
     }
 
-    public SearchBoxViewModel Filter { get; }
+    public SearchBoxViewModel Search { get; }
 
     public async Task UpdateImpl(
         string? query,
@@ -175,18 +179,27 @@ public class LogViewerViewModel
         CancellationToken cancel
     )
     {
+        var sw = new Stopwatch();
+        sw.Start();
         try
         {
-            var text = query?.ToLower();
-            Dispatcher.UIThread.Invoke(_itemsSource.Clear);
+            using var veryFastMessageProperty = new ReactiveProperty<string>();
 
+            // we use it here to avoid UI thread blocking
+            using var subscription = veryFastMessageProperty
+                .ThrottleFirstFrame(1)
+                .Subscribe(TextMessage.AsObserver());
+            var text = query?.ToLower();
+            await Dispatcher.UIThread.InvokeAsync(_itemsSource.Clear);
             var filtered = 0;
             var total = 0;
             var skip = 0;
             _logger.ZLogTrace($"Start filtering log messages with filter: '{text}'");
             progress.Report(double.NaN);
 
-            await foreach (var logMessage in _logService.LoadItemsFromLogFile(cancel))
+            await foreach (
+                var logMessage in _logService.LoadItemsFromLogFile(cancel).ConfigureAwait(false)
+            )
             {
                 if (cancel.IsCancellationRequested)
                 {
@@ -195,23 +208,26 @@ public class LogViewerViewModel
 
                 ++total;
 
-                if (_search.Match(logMessage, text))
+                if (
+                    LogMessageViewModel.TryCreate(logMessage, this, _search, text, out var vm)
+                    && vm != null
+                )
                 {
                     ++filtered;
                     if (filtered < Skip.Value)
                     {
                         ++skip;
-                        TextMessage.Value =
-                            $"Skipped {skip}, filtered {filtered} messages from {total}";
+                        veryFastMessageProperty.OnNext(
+                            $"Skipped {skip}, filtered {filtered} messages from {total}"
+                        );
                     }
                     else
                     {
-                        Dispatcher.UIThread.Invoke(
-                            () => _itemsSource.Add(new LogMessageViewModel(logMessage, this))
-                        );
+                        await Dispatcher.UIThread.InvokeAsync(() => _itemsSource.Add(vm));
                         progress.Report((double)_itemsSource.Count / Take.Value);
-                        TextMessage.Value =
-                            $"Skipped {skip}, filtered {filtered} messages from {total}";
+                        veryFastMessageProperty.OnNext(
+                            $"Skipped {skip}, filtered {filtered} messages from {total}"
+                        );
                     }
 
                     if (_itemsSource.Count >= Take.Value)
@@ -221,25 +237,32 @@ public class LogViewerViewModel
                 }
                 else
                 {
-                    TextMessage.Value =
-                        $"Skipped {skip}, filtered {filtered} messages from {total}";
+                    // this is for performance reasons, we skip the messages that do not match the filter
+                    if (total % 100 == 0)
+                    {
+                        veryFastMessageProperty.OnNext(
+                            $"Skipped {skip}, filtered {filtered} messages from {total}"
+                        );
+                    }
                 }
             }
+
+            TextMessage.Value =
+                $"Skipped {skip}, filtered {filtered} messages from {total} by {sw.Elapsed.TotalMilliseconds:F0} ms";
         }
         finally
         {
-            FromToText.Value = $"{Skip.Value + 1} - {Skip.Value + _itemsSource.Count}";
+            FromToText.Value = $"{Skip.Value + 1} - {Skip.Value + _itemsSource.Count} ";
             progress.Report(1);
         }
     }
 
     public BindableReactiveProperty<int> Skip { get; }
-    public IReadOnlyBindableReactiveProperty<int> Stop { get; }
     public BindableReactiveProperty<int> Take { get; }
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
-        yield return Filter;
+        yield return Search;
         foreach (var item in Items)
         {
             yield return item;
@@ -248,10 +271,10 @@ public class LogViewerViewModel
 
     public override ValueTask<IRoutable> Navigate(NavigationId id)
     {
-        if (id == Filter.Id)
+        if (id == Search.Id)
         {
-            Filter.Navigate(NavigationId.Empty);
-            return new ValueTask<IRoutable>(Filter);
+            Search.Navigate(NavigationId.Empty);
+            return new ValueTask<IRoutable>(Search);
         }
 
         var item = Items.FirstOrDefault(x => x.Id == id);

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Avalonia.Threading;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ZLogger;
 
@@ -24,9 +25,14 @@ public static class LoggingMixin
             options.UsePlainTextFormatter(formatter =>
             {
                 formatter.SetPrefixFormatter(
-                    $"{0:HH:mm:ss.fff} | ={1:short}= | {2, -40} ",
+                    $"{0:HH:mm:ss.fff} | {3:00} | ={1:short}= | {2, -40} ",
                     (in MessageTemplate template, in LogInfo info) =>
-                        template.Format(info.Timestamp, info.LogLevel, info.Category)
+                        template.Format(
+                            info.Timestamp,
+                            info.LogLevel,
+                            info.Category,
+                            Thread.CurrentThread.ManagedThreadId
+                        )
                 );
             });
         });

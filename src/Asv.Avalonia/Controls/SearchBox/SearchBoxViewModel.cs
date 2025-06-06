@@ -1,15 +1,27 @@
 ﻿using Asv.Common;
 using Microsoft.Extensions.Logging;
 using R3;
+using ZLogger;
 
 namespace Asv.Avalonia;
 
-public class SearchBoxViewModel : RoutableViewModel
+public delegate Task SearchDelegate(
+    string? text,
+    IProgress<double> progress,
+    CancellationToken cancel
+);
+
+public class SearchBoxViewModel : RoutableViewModel, ISearchBox, IProgress<double>
 {
-    private readonly CommandExecuteDelegate<string> _searchCallback;
-    private bool _isSelected;
-    private string _text = string.Empty;
-    private string _previousTextSearch = string.Empty;
+    private readonly SearchDelegate _searchCallback;
+
+    private readonly BindableReactiveProperty<bool> _isExecuting;
+    private readonly BindableReactiveProperty<bool> _canExecute;
+    private readonly BindableReactiveProperty<double> _progress;
+
+    private string _searchText = string.Empty;
+    private readonly ILogger<SearchBoxViewModel> _logger;
+    private CancellationTokenSource? _cancellationTokenSource;
 
     public SearchBoxViewModel()
         : this(DesignTime.Id, DesignTime.LoggerFactory, (_, _, _) => Task.CompletedTask)
@@ -20,59 +32,110 @@ public class SearchBoxViewModel : RoutableViewModel
     public SearchBoxViewModel(
         string id,
         ILoggerFactory loggerFactory,
-        CommandExecuteDelegate<string> searchCallback,
+        SearchDelegate searchCallback,
         TimeSpan? throttleTime = null
     )
         : base(id)
     {
         _searchCallback = searchCallback;
-        Search = new CancellableCommandWithProgress<string>(
-            InternalSearchCallback,
-            "Search",
-            loggerFactory
-        ).DisposeItWith(Disposable);
+        _logger = loggerFactory.CreateLogger<SearchBoxViewModel>();
 
-        UpdateCommand = new ReactiveCommand(_ => Update()).DisposeItWith(Disposable);
+        Text = new BindableReactiveProperty<string>().DisposeItWith(Disposable);
+
+        _isExecuting = new BindableReactiveProperty<bool>().DisposeItWith(Disposable);
+        _canExecute = new BindableReactiveProperty<bool>(true).DisposeItWith(Disposable);
+        _progress = new BindableReactiveProperty<double>().DisposeItWith(Disposable);
 
         if (throttleTime != null)
         {
-            this.ObservePropertyChanged(x => x.Text)
-                .Skip(1)
-                .ThrottleLast(throttleTime.Value)
-                .Subscribe(x => TextSearchCommand.ExecuteCommand(this, x))
+            Text.Skip(1)
+                .Debounce(throttleTime.Value)
+                .SubscribeAwait(
+                    (x, _) => TextSearchCommand.ExecuteCommand(this, x),
+                    AwaitOperation.Parallel
+                )
                 .DisposeItWith(Disposable);
         }
 
-        Clear = new ReactiveCommand(_ => Text = string.Empty).DisposeItWith(Disposable);
+        Disposable.AddAction(() => _cancellationTokenSource?.Cancel(false));
     }
 
-    private Task InternalSearchCallback(
-        string arg,
-        IProgress<double> progress,
-        CancellationToken cancel
-    )
-    {
-        _previousTextSearch = arg;
-        Text = arg;
-        return _searchCallback(arg, progress, cancel);
-    }
-
-    public string Text
-    {
-        get => _text;
-        set => SetField(ref _text, value);
-    }
-
-    public CancellableCommandWithProgress<string> Search { get; }
-    public ReactiveCommand Clear { get; }
+    public BindableReactiveProperty<string> Text { get; }
 
     public bool IsSelected
     {
-        get => _isSelected;
-        set => SetField(ref _isSelected, value);
+        get;
+        set => SetField(ref field, value);
     }
 
-    public string PreviousTextSearch => _previousTextSearch;
+    public string SearchText => _searchText;
+
+    public void Query(string? text)
+    {
+        _logger.ZLogDebug($"Begin search '{Id}' with text '{text}'");
+        if (_isExecuting.Value)
+        {
+            Cancel();
+        }
+
+        InternalExecuteAsync(text ?? string.Empty).SafeFireAndForget(ErrorHandler);
+    }
+
+    private void ErrorHandler(Exception err)
+    {
+        _logger.LogError(err, $"Error in search '{Id}': {err.Message}");
+        _isExecuting.Value = false;
+        _canExecute.Value = true;
+        _progress.Value = 1;
+    }
+
+    private async Task InternalExecuteAsync(string text)
+    {
+        Text.Value = text;
+        _searchText = text;
+        _isExecuting.Value = true;
+        _canExecute.Value = false;
+        _progress.Value = double.NaN;
+        _cancellationTokenSource = new CancellationTokenSource();
+        try
+        {
+            await _searchCallback(text, this, _cancellationTokenSource.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler(ex);
+            return;
+        }
+        finally
+        {
+            _isExecuting.Value = false;
+            _canExecute.Value = true;
+            _progress.Value = 1;
+        }
+    }
+
+    public BindableReactiveProperty<bool> CanExecute => _canExecute;
+    public BindableReactiveProperty<bool> IsExecuting => _isExecuting;
+    public BindableReactiveProperty<double> Progress => _progress;
+
+    private void Cancel()
+    {
+        _cancellationTokenSource?.Cancel(false);
+        _cancellationTokenSource = null;
+        _isExecuting.Value = false;
+        _canExecute.Value = true;
+        _progress.Value = 1;
+        _logger.LogWarning($"Search '{Id}' was cancelled");
+    }
+
+    public void Refresh()
+    {
+        Query(Text.Value);
+    }
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
@@ -86,18 +149,5 @@ public class SearchBoxViewModel : RoutableViewModel
         return base.Navigate(id);
     }
 
-    public ReactiveCommand UpdateCommand { get; }
-
-    public void ForceUpdateWithoutHistory()
-    {
-        // This method is used to force an update without adding to the history.
-        // It can be useful when you want to refresh the search results without
-        // changing the current state of the application.
-        Search.Command.Execute(Text);
-    }
-
-    public void Update()
-    {
-        TextSearchCommand.ExecuteCommand(this, Text);
-    }
+    public void Report(double value) => _progress.Value = value;
 }

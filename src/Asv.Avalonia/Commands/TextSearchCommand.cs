@@ -5,7 +5,7 @@ namespace Asv.Avalonia;
 
 [ExportCommand]
 [Shared]
-public class TextSearchCommand : ContextCommand<SearchBoxViewModel, StringArg>
+public class TextSearchCommand : ContextCommand<ISearchBox, StringArg>
 {
     public const string Id = $"{BaseId}.search";
 
@@ -21,13 +21,13 @@ public class TextSearchCommand : ContextCommand<SearchBoxViewModel, StringArg>
         };
 
     public override ValueTask<StringArg?> InternalExecute(
-        SearchBoxViewModel context,
+        ISearchBox context,
         StringArg arg,
         CancellationToken cancel
     )
     {
-        var oldValue = context.PreviousTextSearch;
-        context.Search.Execute(arg.Value);
+        var oldValue = context.SearchText;
+        context.Query(arg.Value);
         return ValueTask.FromResult<StringArg?>(CommandArg.FromString(oldValue));
     }
 
