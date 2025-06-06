@@ -1,5 +1,4 @@
-﻿
-using System.Composition;
+﻿using System.Composition;
 using Asv.Avalonia;
 using Material.Icons;
 
@@ -20,7 +19,11 @@ public class RefreshCommand : ContextCommand<ISupportRefresh>
             Source = SystemModule.Instance,
         };
 
-    protected override ValueTask<CommandArg?> InternalExecute(ISupportRefresh context, CommandArg newValue, CancellationToken cancel)
+    protected override ValueTask<CommandArg?> InternalExecute(
+        ISupportRefresh context,
+        CommandArg newValue,
+        CancellationToken cancel
+    )
     {
         context.Refresh();
         return ValueTask.FromResult<CommandArg?>(null);

@@ -2,11 +2,11 @@
 
 namespace Asv.Avalonia;
 
-public abstract class TreeVisitorEvent(IRoutable source) 
+public abstract class TreeVisitorEvent(IRoutable source)
     : AsyncRoutedEvent(source, RoutingStrategy.Tunnel)
 {
     public abstract void Visit(IRoutable source);
-    
+
     public static async ValueTask<IReadOnlyList<TViewModel>> VisitAll<TViewModel>(IRoutable context)
         where TViewModel : IRoutable
     {
@@ -29,6 +29,4 @@ public class TreeVisitorEvent<TViewModel>(IRoutable source, Action<TViewModel> v
             visitor(target);
         }
     }
-
-    
 }

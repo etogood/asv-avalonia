@@ -1,6 +1,3 @@
 ﻿namespace Asv.Avalonia;
 
-public partial class Commands
-{
-    
-}
+public partial class Commands { }

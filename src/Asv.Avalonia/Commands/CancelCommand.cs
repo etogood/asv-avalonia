@@ -20,7 +20,11 @@ public class CancelCommand : ContextCommand<ISupportCancel>
             Source = SystemModule.Instance,
         };
 
-    protected override ValueTask<CommandArg?> InternalExecute(ISupportCancel context, CommandArg newValue, CancellationToken cancel)
+    protected override ValueTask<CommandArg?> InternalExecute(
+        ISupportCancel context,
+        CommandArg newValue,
+        CancellationToken cancel
+    )
     {
         context.Cancel();
         return CommandArg.Null;

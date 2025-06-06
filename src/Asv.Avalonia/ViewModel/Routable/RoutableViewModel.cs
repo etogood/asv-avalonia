@@ -89,7 +89,7 @@ public abstract class RoutableViewModel(NavigationId id) : DisposableViewModel(i
         {
             visitorEvent.Visit(this);
         }
-        
+
         return ValueTask.CompletedTask;
     }
 

@@ -22,8 +22,20 @@ public class GroupTreePageItemViewModel : TreeSubpage
         var flatList = new ObservableList<ITreePage>
         {
             root,
-            new TreePage("item2", "Item 2", MaterialIconKind.Abacus, Routable.NavigationId.Empty, root.Id),
-            new TreePage("item3", "Item 3", MaterialIconKind.Abacus, Routable.NavigationId.Empty, root.Id),
+            new TreePage(
+                "item2",
+                "Item 2",
+                MaterialIconKind.Abacus,
+                Routable.NavigationId.Empty,
+                root.Id
+            ),
+            new TreePage(
+                "item3",
+                "Item 3",
+                MaterialIconKind.Abacus,
+                Routable.NavigationId.Empty,
+                root.Id
+            ),
         };
         var tree = new ObservableTree<ITreePage, Routable.NavigationId>(
             flatList,
@@ -34,7 +46,9 @@ public class GroupTreePageItemViewModel : TreeSubpage
         );
 
         Node = tree.Items[0];
-        NavigateCommand = new ReactiveCommand<Routable.NavigationId>(x => { }).DisposeItWith(Disposable);
+        NavigateCommand = new ReactiveCommand<Routable.NavigationId>(x => { }).DisposeItWith(
+            Disposable
+        );
     }
 
     public GroupTreePageItemViewModel(
@@ -44,9 +58,9 @@ public class GroupTreePageItemViewModel : TreeSubpage
         : base(Routable.NavigationId.Empty)
     {
         Node = node;
-        NavigateCommand = new ReactiveCommand<Routable.NavigationId>(x => navigateCallback(x)).DisposeItWith(
-            Disposable
-        );
+        NavigateCommand = new ReactiveCommand<Routable.NavigationId>(x =>
+            navigateCallback(x)
+        ).DisposeItWith(Disposable);
     }
 
     public ObservableTreeNode<ITreePage, Routable.NavigationId> Node { get; }

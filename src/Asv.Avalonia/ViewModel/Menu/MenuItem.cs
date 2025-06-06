@@ -12,7 +12,10 @@ namespace Asv.Avalonia
         public MenuItem(string id, string header, string? parentId = null)
             : base(id)
         {
-            ParentId = parentId == null ? Routable.NavigationId.Empty : new Routable.NavigationId(parentId);
+            ParentId =
+                parentId == null
+                    ? Routable.NavigationId.Empty
+                    : new Routable.NavigationId(parentId);
             Order = 0;
             Header = header;
         }

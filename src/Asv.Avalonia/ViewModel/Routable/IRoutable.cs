@@ -56,10 +56,7 @@ public interface IRoutable : IViewModel
 /// Represents an asynchronous routed event that propagates through a hierarchical structure of <see cref="IRoutable"/> components.
 /// This event supports different routing strategies such as bubbling, tunneling, and direct invocation.
 /// </summary>
-public abstract class AsyncRoutedEvent(
-    IRoutable source,
-    RoutingStrategy routingStrategy
-)
+public abstract class AsyncRoutedEvent(IRoutable source, RoutingStrategy routingStrategy)
 {
     /// <summary>
     /// Gets the routing strategy used for this event.

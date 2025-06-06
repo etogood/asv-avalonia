@@ -19,7 +19,7 @@ public class LogViewerViewModel
     : PageViewModel<ILogViewerViewModel>,
         ILogViewerViewModel,
         ISupportPagination,
-        ISupportCancel, 
+        ISupportCancel,
         ISupportRefresh
 {
     private readonly ILogService _logService;
@@ -161,10 +161,8 @@ public class LogViewerViewModel
 
         Skip.Skip(1).Subscribe(_ => Search.Refresh());
 
-        Next = new ReactiveCommand(_ => Commands.NextPage(this))
-            .DisposeItWith(Disposable);
-        Previous = new ReactiveCommand(_ => Commands.PreviousPage(this))
-            .DisposeItWith(Disposable);
+        Next = new ReactiveCommand(_ => Commands.NextPage(this)).DisposeItWith(Disposable);
+        Previous = new ReactiveCommand(_ => Commands.PreviousPage(this)).DisposeItWith(Disposable);
 
         Search.Refresh();
     }

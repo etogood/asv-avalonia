@@ -18,7 +18,11 @@ public abstract class TreePageViewModel<TContext, TSubPage>
     private bool _internalNavigate;
     private bool _isMenuVisible = true;
 
-    public TreePageViewModel(Routable.NavigationId id, ICommandService cmd, IContainerHost container)
+    public TreePageViewModel(
+        Routable.NavigationId id,
+        ICommandService cmd,
+        IContainerHost container
+    )
         : base(id, cmd)
     {
         _container = container;

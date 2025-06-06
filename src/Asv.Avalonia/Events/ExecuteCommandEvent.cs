@@ -19,7 +19,10 @@ public static class ExecuteCommandEventMixin
     )
     {
         // this is only a safety check at debug to ensure that the command is executed from a valid context
-        Debug.Assert(src.GetRoot() is IShell, "ExecuteCommand should be called from IShell or its children");
+        Debug.Assert(
+            src.GetRoot() is IShell,
+            "ExecuteCommand should be called from IShell or its children"
+        );
         return src.Rise(new ExecuteCommandEvent(src, commandId, commandArg));
     }
 

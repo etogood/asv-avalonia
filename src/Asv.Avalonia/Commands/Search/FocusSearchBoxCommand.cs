@@ -21,14 +21,19 @@ public class FocusSearchBoxCommand : ContextCommand<IRoutable>
             DefaultHotKey = "Ctrl+F",
             Source = SystemModule.Instance,
         };
-    protected override async ValueTask<CommandArg?> InternalExecute(IRoutable context, CommandArg newValue, CancellationToken cancel)
+
+    protected override async ValueTask<CommandArg?> InternalExecute(
+        IRoutable context,
+        CommandArg newValue,
+        CancellationToken cancel
+    )
     {
         var found = await TreeVisitorEvent.VisitAll<ISupportTextSearch>(context);
         if (found.Count == 0)
         {
             return null;
         }
-        
+
         // we assume that the ISearchBox with the longest path to root is the main search box
         found.MaxItem(x => x.GetPathToRoot().Count).Focus();
         return null;

@@ -205,4 +205,3 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
 
     #endregion
 }
-

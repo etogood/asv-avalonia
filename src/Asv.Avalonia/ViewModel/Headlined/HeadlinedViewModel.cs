@@ -8,7 +8,9 @@ namespace Asv.Avalonia;
 /// Represents a base view model with a title (header) and an optional icon.
 /// This can be used as a foundation for view models that require a title and icon representation.
 /// </summary>
-public class HeadlinedViewModel(Routable.NavigationId id) : RoutableViewModel(id), IHeadlinedViewModel
+public class HeadlinedViewModel(Routable.NavigationId id)
+    : RoutableViewModel(id),
+        IHeadlinedViewModel
 {
     private string? _title;
     private MaterialIconKind? _icon;

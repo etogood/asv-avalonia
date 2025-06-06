@@ -20,7 +20,11 @@ public class PreviousPageCommand : ContextCommand<ISupportPagination>
             Source = SystemModule.Instance,
         };
 
-    protected override async ValueTask<CommandArg?> InternalExecute(ISupportPagination context, CommandArg newValue, CancellationToken cancel)
+    protected override async ValueTask<CommandArg?> InternalExecute(
+        ISupportPagination context,
+        CommandArg newValue,
+        CancellationToken cancel
+    )
     {
         // we just re-execute the pagination command with incremented skip value
         // it will save the old pagination values and refresh the page

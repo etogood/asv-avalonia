@@ -53,7 +53,11 @@ public class CommandHistory : ICommandHistory
         CheckUndoRedoCanExecute();
     }
 
-    private void GetFilePath(Routable.NavigationId navigationId, out string undoPath, out string redoPath)
+    private void GetFilePath(
+        Routable.NavigationId navigationId,
+        out string undoPath,
+        out string redoPath
+    )
     {
         var baseName = Routable.NavigationId.NormalizeTypeId(navigationId.ToString().ToLower());
         undoPath = Path.Combine(_historyFolder, $"{baseName}{UndoPostfix}");
