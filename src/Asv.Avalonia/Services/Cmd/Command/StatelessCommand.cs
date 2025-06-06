@@ -1,3 +1,5 @@
+using Asv.Avalonia.Routable;
+
 namespace Asv.Avalonia;
 
 public abstract class StatelessCommand : AsyncCommand

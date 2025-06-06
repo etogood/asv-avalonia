@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Composition;
 using System.Diagnostics;
 using System.Reflection.Metadata.Ecma335;
+using Asv.Avalonia.Routable;
 using Asv.Cfg;
 using Asv.Common;
 using Avalonia.Controls;
@@ -115,7 +116,7 @@ public class CommandService : AsyncDisposableOnce, ICommandService
                 // only one command for this gesture, so we can execute it immediately
                 await _nav.SelectedControl.CurrentValue.ExecuteCommand(
                     command[0].Info.Id,
-                    CommandArg.Null
+                    CommandArg.Empty
                 );
             }
             else
@@ -125,11 +126,11 @@ public class CommandService : AsyncDisposableOnce, ICommandService
                 {
                     // we execute first command that can be executed in the current context
                     // TODO: ask user which command to execute if multiple commands can be executed
-                    if (item.CanExecute(_nav.SelectedControl.CurrentValue, CommandArg.Null, out _))
+                    if (item.CanExecute(_nav.SelectedControl.CurrentValue, CommandArg.Empty, out _))
                     {
                         await _nav.SelectedControl.CurrentValue.ExecuteCommand(
                             command[0].Info.Id,
-                            CommandArg.Null
+                            CommandArg.Empty
                         );
                         break;
                     }

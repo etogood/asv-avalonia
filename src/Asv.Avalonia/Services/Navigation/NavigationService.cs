@@ -1,5 +1,6 @@
 ﻿using System.Composition;
 using System.Diagnostics;
+using Asv.Avalonia.Routable;
 using Asv.Cfg;
 using Asv.Common;
 using Avalonia.Controls;

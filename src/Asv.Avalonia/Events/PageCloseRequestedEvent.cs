@@ -1,10 +1,12 @@
-﻿namespace Asv.Avalonia;
+﻿using Asv.Avalonia.Routable;
+
+namespace Asv.Avalonia;
 
 /// <summary>
 /// Represents an event triggered by a page to notify its parent (IShell) that it requests closure.
 /// The shell must handle this event and determine whether the page should be closed.
 /// </summary>
-public class PageCloseRequestedEvent(IPage source) : AsyncRoutedEvent(source)
+public class PageCloseRequestedEvent(IPage source) : AsyncRoutedEvent(source, RoutingStrategy.Bubble)
 {
     public IPage Page => source;
 }

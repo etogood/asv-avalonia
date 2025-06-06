@@ -1,12 +1,10 @@
 ﻿using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Diagnostics;
 using Asv.Common;
-using Avalonia.Collections;
 using ObservableCollections;
 using R3;
 
-namespace Asv.Avalonia;
+namespace Asv.Avalonia.Routable;
 
 /// <summary>
 /// Provides extension methods for working with <see cref="IRoutable"/> components,

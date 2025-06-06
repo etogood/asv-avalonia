@@ -1,6 +1,4 @@
-using R3;
-
-namespace Asv.Avalonia;
+namespace Asv.Avalonia.Routable;
 
 public delegate ValueTask RoutedEventHandler(IRoutable owner, AsyncRoutedEvent e);
 
@@ -60,14 +58,14 @@ public interface IRoutable : IViewModel
 /// </summary>
 public abstract class AsyncRoutedEvent(
     IRoutable source,
-    RoutingStrategy routingStrategy = RoutingStrategy.Bubble
+    RoutingStrategy routingStrategy
 )
 {
     /// <summary>
-    /// Gets or sets the routing strategy used for this event.
+    /// Gets the routing strategy used for this event.
     /// The strategy determines how the event propagates through the hierarchy.
     /// </summary>
-    public RoutingStrategy RoutingStrategy { get; set; } = routingStrategy;
+    public RoutingStrategy RoutingStrategy => routingStrategy;
 
     /// <summary>
     /// Gets the source <see cref="IRoutable"/> that initially raised the event.

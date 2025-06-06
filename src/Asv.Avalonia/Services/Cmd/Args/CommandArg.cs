@@ -189,8 +189,5 @@ public abstract partial class CommandArg : ISizedSpanSerializable, IJsonSerializ
 
     #endregion
 
-    public static StringArg FromString(string value)
-    {
-        return new StringArg(value);
-    }
+    public static ValueTask<CommandArg?> Null { get; } = new();
 }

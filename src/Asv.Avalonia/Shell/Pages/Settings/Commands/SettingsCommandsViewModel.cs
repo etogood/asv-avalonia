@@ -1,10 +1,10 @@
 ﻿using System.Composition;
+using Asv.Avalonia.Routable;
 using Asv.Common;
-using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;
 
-namespace Asv.Avalonia.Commands;
+namespace Asv.Avalonia;
 
 [ExportSettings(SubPageId)]
 public class SettingsCommandsViewModel : SettingsSubPage

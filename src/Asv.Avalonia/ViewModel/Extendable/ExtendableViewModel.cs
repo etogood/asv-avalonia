@@ -1,4 +1,5 @@
 using System.Composition;
+using Asv.Avalonia.Routable;
 using Asv.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -20,7 +21,7 @@ public abstract class ExtendableViewModel<TSelfInterface> : RoutableViewModel
     /// Initializes a new instance of the <see cref="ExtendableViewModel{TSelfInterface}"/> class.
     /// </summary>
     /// <param name="id">A unique identifier for the view model.</param>
-    protected ExtendableViewModel(NavigationId id)
+    protected ExtendableViewModel(Routable.NavigationId id)
         : base(id) { }
 
     /// <summary>

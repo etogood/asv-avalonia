@@ -1,4 +1,5 @@
-﻿using Asv.Common;
+﻿using Asv.Avalonia.Routable;
+using Asv.Common;
 using Microsoft.Extensions.Logging;
 using R3;
 using ZLogger;
@@ -11,7 +12,7 @@ public delegate Task SearchDelegate(
     CancellationToken cancel
 );
 
-public class SearchBoxViewModel : RoutableViewModel, ISearchBox, IProgress<double>
+public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgress<double>
 {
     private readonly SearchDelegate _searchCallback;
 
@@ -40,7 +41,7 @@ public class SearchBoxViewModel : RoutableViewModel, ISearchBox, IProgress<doubl
         _searchCallback = searchCallback;
         _logger = loggerFactory.CreateLogger<SearchBoxViewModel>();
 
-        Text = new BindableReactiveProperty<string>().DisposeItWith(Disposable);
+        Text = new BindableReactiveProperty<string>(string.Empty).DisposeItWith(Disposable);
 
         _isExecuting = new BindableReactiveProperty<bool>().DisposeItWith(Disposable);
         _canExecute = new BindableReactiveProperty<bool>(true).DisposeItWith(Disposable);
@@ -122,7 +123,7 @@ public class SearchBoxViewModel : RoutableViewModel, ISearchBox, IProgress<doubl
     public BindableReactiveProperty<bool> IsExecuting => _isExecuting;
     public BindableReactiveProperty<double> Progress => _progress;
 
-    private void Cancel()
+    public void Cancel()
     {
         _cancellationTokenSource?.Cancel(false);
         _cancellationTokenSource = null;
@@ -137,15 +138,20 @@ public class SearchBoxViewModel : RoutableViewModel, ISearchBox, IProgress<doubl
         Query(Text.Value);
     }
 
+    public void Focus()
+    {
+        IsSelected = false;
+        IsSelected = true;
+    }
+
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
         yield break;
     }
 
-    public override ValueTask<IRoutable> Navigate(NavigationId id)
+    public override ValueTask<IRoutable> Navigate(Routable.NavigationId id)
     {
-        IsSelected = false;
-        IsSelected = true;
+        Focus();
         return base.Navigate(id);
     }
 

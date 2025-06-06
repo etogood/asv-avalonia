@@ -1,13 +1,14 @@
+using Asv.Avalonia.Tree;
 using ObservableCollections;
 
 namespace Asv.Avalonia;
 
-public class MenuTree : ObservableTree<IMenuItem, NavigationId>
+public class MenuTree : ObservableTree<IMenuItem, Routable.NavigationId>
 {
     public MenuTree(IReadOnlyObservableList<IMenuItem> flatList)
         : base(
             flatList,
-            NavigationId.Empty,
+            Routable.NavigationId.Empty,
             x => x.Id,
             x => x.ParentId,
             MenuComparer.Instance,

@@ -1,19 +1,20 @@
 ﻿using System.Composition;
+using Avalonia.Controls;
 using Material.Icons;
 
 namespace Asv.Avalonia;
 
 [ExportCommand]
 [Shared]
-public class TextSearchCommand : ContextCommand<ISearchBox, StringArg>
+public class TextSearchCommand : ContextCommand<ISupportTextSearch, StringArg>
 {
-    public const string Id = $"{BaseId}.search";
+    public const string Id = $"{BaseId}.search.text";
 
     public override ICommandInfo Info =>
         new CommandInfo
         {
             Id = Id,
-            Name = "Search",
+            Name = "Search text",
             Description = "Search for text in the current context",
             Icon = MaterialIconKind.Search,
             DefaultHotKey = null,
@@ -21,7 +22,7 @@ public class TextSearchCommand : ContextCommand<ISearchBox, StringArg>
         };
 
     public override ValueTask<StringArg?> InternalExecute(
-        ISearchBox context,
+        ISupportTextSearch context,
         StringArg arg,
         CancellationToken cancel
     )

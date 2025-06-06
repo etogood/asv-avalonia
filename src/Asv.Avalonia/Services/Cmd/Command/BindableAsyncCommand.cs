@@ -1,4 +1,5 @@
 using System.Windows.Input;
+using Asv.Avalonia.Routable;
 
 namespace Asv.Avalonia;
 
@@ -11,7 +12,7 @@ public class BindableAsyncCommand(string commandId, IRoutable owner) : ICommand
 
     public void Execute(object? parameter)
     {
-        owner.ExecuteCommand(commandId, parameter as CommandArg ?? CommandArg.Null);
+        owner.ExecuteCommand(commandId, parameter as CommandArg ?? CommandArg.Empty);
     }
 
     public event EventHandler? CanExecuteChanged;

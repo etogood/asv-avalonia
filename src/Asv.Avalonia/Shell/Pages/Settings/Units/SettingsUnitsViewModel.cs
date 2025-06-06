@@ -1,4 +1,5 @@
 using System.Composition;
+using Asv.Avalonia.Routable;
 using Asv.Common;
 using ObservableCollections;
 using R3;
@@ -53,7 +54,7 @@ public class SettingsUnitsViewModel : SettingsSubPage
     public BindableReactiveProperty<MeasureUnitViewModel> SelectedItem { get; }
     public BindableReactiveProperty<string> SearchText { get; }
 
-    public override ValueTask<IRoutable> Navigate(NavigationId id)
+    public override ValueTask<IRoutable> Navigate(Routable.NavigationId id)
     {
         var item = _view.FirstOrDefault(x => x.Id == id);
         if (item != null)

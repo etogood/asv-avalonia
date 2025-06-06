@@ -1,4 +1,6 @@
-﻿namespace Asv.Avalonia.Plugins;
+﻿using Asv.Avalonia.Progress;
+
+namespace Asv.Avalonia.Plugins;
 
 public interface IPluginManuallyInstallable
 {

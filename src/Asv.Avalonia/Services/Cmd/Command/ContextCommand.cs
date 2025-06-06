@@ -1,4 +1,6 @@
-﻿namespace Asv.Avalonia;
+﻿using Asv.Avalonia.Routable;
+
+namespace Asv.Avalonia;
 
 public abstract class ContextCommand<TContext, TArg> : ContextCommand<TContext>
     where TContext : IRoutable

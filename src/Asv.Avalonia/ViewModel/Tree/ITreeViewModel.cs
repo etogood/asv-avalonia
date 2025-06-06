@@ -1,10 +1,8 @@
-﻿using ObservableCollections;
-
-namespace Asv.Avalonia;
+﻿namespace Asv.Avalonia.Tree;
 
 public interface ITreeViewModel : IViewModel
 {
-    NavigationId ParentId { get; }
+    Routable.NavigationId ParentId { get; }
     int Order { get; }
 }
 

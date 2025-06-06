@@ -1,0 +1,31 @@
+using System.Composition;
+using Material.Icons;
+
+namespace Asv.Avalonia;
+
+[ExportCommand]
+[Shared]
+public class PreviousPageCommand : ContextCommand<ISupportPagination>
+{
+    public const string Id = $"{BaseId}.page.back";
+
+    public override ICommandInfo Info =>
+        new CommandInfo
+        {
+            Id = Id,
+            Name = "Previous Page",
+            Description = "Go to previous page",
+            Icon = MaterialIconKind.ArrowLeftBold,
+            DefaultHotKey = "Ctrl+Left",
+            Source = SystemModule.Instance,
+        };
+
+    protected override async ValueTask<CommandArg?> InternalExecute(ISupportPagination context, CommandArg newValue, CancellationToken cancel)
+    {
+        // we just re-execute the pagination command with incremented skip value
+        // it will save the old pagination values and refresh the page
+        var temp = context.Skip.Value - context.Take.Value;
+        await Commands.SetPagination(context, temp < 0 ? 0 : temp, context.Take.Value);
+        return null;
+    }
+}

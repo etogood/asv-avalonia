@@ -1,3 +1,4 @@
+using Asv.Avalonia.Routable;
 using Asv.Common;
 using ObservableCollections;
 
@@ -17,7 +18,7 @@ public interface ITreeSubpage<in TContext> : ITreeSubpage
 
 public abstract class TreeSubpage : RoutableViewModel, ITreeSubpage
 {
-    protected TreeSubpage(NavigationId id)
+    protected TreeSubpage(Routable.NavigationId id)
         : base(id)
     {
         Menu.SetRoutableParent(this, true).DisposeItWith(Disposable);
@@ -41,7 +42,7 @@ public abstract class TreeSubpage : RoutableViewModel, ITreeSubpage
     }
 }
 
-public abstract class TreeSubpage<TContext>(NavigationId id)
+public abstract class TreeSubpage<TContext>(Routable.NavigationId id)
     : TreeSubpage(id),
         ITreeSubpage<TContext>
     where TContext : class, IPage

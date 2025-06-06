@@ -1,4 +1,5 @@
-﻿using ObservableCollections;
+﻿using Asv.Avalonia.Routable;
+using ObservableCollections;
 using R3;
 
 namespace Asv.Avalonia;

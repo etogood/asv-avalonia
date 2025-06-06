@@ -1,4 +1,6 @@
-﻿namespace Asv.Avalonia.Commands;
+﻿using Asv.Avalonia.Routable;
+
+namespace Asv.Avalonia;
 
 public class SettingsCommandsItemViewModel : RoutableViewModel
 {

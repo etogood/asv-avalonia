@@ -1,4 +1,5 @@
 using System.Buffers;
+using Asv.Avalonia.Routable;
 using Asv.Common;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -52,9 +53,9 @@ public class CommandHistory : ICommandHistory
         CheckUndoRedoCanExecute();
     }
 
-    private void GetFilePath(NavigationId navigationId, out string undoPath, out string redoPath)
+    private void GetFilePath(Routable.NavigationId navigationId, out string undoPath, out string redoPath)
     {
-        var baseName = NavigationId.NormalizeTypeId(navigationId.ToString().ToLower());
+        var baseName = Routable.NavigationId.NormalizeTypeId(navigationId.ToString().ToLower());
         undoPath = Path.Combine(_historyFolder, $"{baseName}{UndoPostfix}");
         redoPath = Path.Combine(_historyFolder, $"{baseName}{RedoPostfix}");
     }
@@ -82,7 +83,7 @@ public class CommandHistory : ICommandHistory
         }
     }
 
-    private void TryLoadHistoryFromFile(NavigationId navigationId)
+    private void TryLoadHistoryFromFile(Routable.NavigationId navigationId)
     {
         // history id can be changed after full load of the history owner
         GetFilePath(navigationId, out var undoPath, out var redoPath);

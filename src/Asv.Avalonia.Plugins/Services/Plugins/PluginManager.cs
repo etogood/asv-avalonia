@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO.Compression;
 using System.Reflection;
 using System.Runtime.Loader;
+using Asv.Avalonia.Progress;
 using Asv.Cfg;
 using Asv.Common;
 using Microsoft.Extensions.Logging;

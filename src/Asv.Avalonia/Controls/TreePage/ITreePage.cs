@@ -1,3 +1,4 @@
+using Asv.Avalonia.Routable;
 using Material.Icons;
 using R3;
 
@@ -5,9 +6,9 @@ namespace Asv.Avalonia;
 
 public interface ITreePage : IHeadlinedViewModel
 {
-    NavigationId ParentId { get; }
+    Routable.NavigationId ParentId { get; }
     string? Status { get; }
-    NavigationId NavigateTo { get; }
+    Routable.NavigationId NavigateTo { get; }
     ReactiveCommand NavigateCommand { get; }
 }
 
@@ -16,11 +17,11 @@ public class TreePage : HeadlinedViewModel, ITreePage
     private string? _status;
 
     public TreePage(
-        NavigationId id,
+        Routable.NavigationId id,
         string title,
         MaterialIconKind? icon,
-        NavigationId navigateTo,
-        NavigationId parentId
+        Routable.NavigationId navigateTo,
+        Routable.NavigationId parentId
     )
         : base(id)
     {
@@ -30,9 +31,9 @@ public class TreePage : HeadlinedViewModel, ITreePage
         Icon = icon;
     }
 
-    public NavigationId NavigateTo { get; }
+    public Routable.NavigationId NavigateTo { get; }
     public ReactiveCommand NavigateCommand { get; }
-    public NavigationId ParentId { get; }
+    public Routable.NavigationId ParentId { get; }
 
     public string? Status
     {

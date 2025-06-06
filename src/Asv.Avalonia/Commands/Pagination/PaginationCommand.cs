@@ -1,5 +1,7 @@
 using System.Composition;
-using R3;
+using Asv.Common;
+using Avalonia.Input;
+using Material.Icons;
 
 namespace Asv.Avalonia;
 
@@ -7,14 +9,14 @@ namespace Asv.Avalonia;
 [Shared]
 public class PaginationCommand : ContextCommand<ISupportPagination, ListArg>
 {
-    public const string Id = $"{BaseId}.pagination";
+    public const string Id = $"{BaseId}.page.pagination";
 
     public static readonly ICommandInfo StaticInfo = new CommandInfo
     {
         Id = Id,
-        Name = "Pagination",
+        Name = "Change pagination",
         Description = "Change pagination parameters",
-        Icon = Material.Icons.MaterialIconKind.ViewList,
+        Icon = MaterialIconKind.ViewList,
         DefaultHotKey = null,
         Source = SystemModule.Instance,
     };
@@ -34,15 +36,4 @@ public class PaginationCommand : ContextCommand<ISupportPagination, ListArg>
         context.Take.Value = (int)take;
         return ValueTask.FromResult<ListArg?>(old);
     }
-
-    public static ValueTask Execute(IRoutable context, int skip, int take)
-    {
-        return context.ExecuteCommand(Id, new ListArg(2) { new IntArg(skip), new IntArg(take) });
-    }
-}
-
-public interface ISupportPagination : IRoutable
-{
-    BindableReactiveProperty<int> Skip { get; }
-    BindableReactiveProperty<int> Take { get; }
 }

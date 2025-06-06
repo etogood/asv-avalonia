@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Asv.Avalonia.Routable;
 using Asv.Common;
 using Asv.IO;
 using Asv.Mavlink;

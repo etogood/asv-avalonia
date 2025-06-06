@@ -1,10 +1,12 @@
+using Asv.Avalonia.Routable;
+
 namespace Asv.Avalonia;
 
 /// <summary>
 /// Represents an event triggered by a page to notify its parent (IShell) that it requests restart.
 /// The shell must handle this event and determine whether the application should be restarted.
 /// </summary>
-public sealed class RestartApplicationEvent(IRoutable source) : AsyncRoutedEvent(source) { }
+public sealed class RestartApplicationEvent(IRoutable source) : AsyncRoutedEvent(source, RoutingStrategy.Bubble) { }
 
 /// <summary>
 /// Provides an extension method for requesting an application's restart by raising a <see cref="RestartApplicationEvent"/>.

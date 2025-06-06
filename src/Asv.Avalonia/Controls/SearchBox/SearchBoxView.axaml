@@ -12,7 +12,7 @@
     </Design.DataContext>
     <Panel>
         <TextBox MinWidth="200" Padding="0" VerticalContentAlignment="Center" 
-                 avalonia1:NavigationHelper.IsSelected ="{Binding IsSelected, Mode=OneTime}"
+                 avalonia1:NavigationHelper.IsSelected ="{Binding IsSelected, Mode=OneWay}"
                  Text="{Binding Text.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  Watermark="Search"
                  MinHeight="0" Height="25" >

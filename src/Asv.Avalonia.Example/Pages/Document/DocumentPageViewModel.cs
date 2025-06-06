@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Composition;
 using System.Threading.Tasks;
+using Asv.Avalonia.Routable;
 
 namespace Asv.Avalonia.Example;
 

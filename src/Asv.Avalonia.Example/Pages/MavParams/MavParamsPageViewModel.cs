@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Asv.Avalonia.IO;
+using Asv.Avalonia.Routable;
 using Asv.Cfg;
 using Asv.Common;
 using Asv.IO;

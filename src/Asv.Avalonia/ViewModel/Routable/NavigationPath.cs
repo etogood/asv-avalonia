@@ -1,12 +1,10 @@
-﻿using System.Buffers;
-using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Asv.IO;
 using Newtonsoft.Json;
 
-namespace Asv.Avalonia;
+namespace Asv.Avalonia.Routable;
 
 /// <summary>
 /// Represents a list of <see cref="NavigationId"/> instances optimized for performance and memory usage.

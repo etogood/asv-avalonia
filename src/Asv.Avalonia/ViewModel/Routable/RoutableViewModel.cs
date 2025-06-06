@@ -1,8 +1,9 @@
-namespace Asv.Avalonia;
+namespace Asv.Avalonia.Routable;
 
 public abstract class RoutableViewModel(NavigationId id) : DisposableViewModel(id), IRoutable
 {
     private RoutedEventHandler? _routedEventHandler;
+
     public IRoutable? Parent { get; set; }
 
     public async ValueTask Rise(AsyncRoutedEvent e)
@@ -84,6 +85,11 @@ public abstract class RoutableViewModel(NavigationId id) : DisposableViewModel(i
 
     protected virtual ValueTask InternalCatchEvent(AsyncRoutedEvent e)
     {
+        if (e is TreeVisitorEvent visitorEvent)
+        {
+            visitorEvent.Visit(this);
+        }
+        
         return ValueTask.CompletedTask;
     }
 

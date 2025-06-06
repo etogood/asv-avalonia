@@ -1,3 +1,4 @@
+using Asv.Avalonia.Routable;
 using Asv.Cfg;
 using Asv.Common;
 using Material.Icons;
@@ -98,7 +99,7 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
     #endregion
 
     #region Routable
-    public override ValueTask<IRoutable> Navigate(NavigationId id)
+    public override ValueTask<IRoutable> Navigate(Routable.NavigationId id)
     {
         var page = _pages.FirstOrDefault(x => x.Id == id);
         if (page == null)
@@ -157,6 +158,10 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
 
                 break;
             }
+
+            default:
+                await base.InternalCatchEvent(e);
+                break;
         }
     }
 
@@ -200,3 +205,4 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
 
     #endregion
 }
+

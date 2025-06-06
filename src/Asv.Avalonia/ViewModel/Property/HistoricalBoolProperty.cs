@@ -1,3 +1,4 @@
+using Asv.Avalonia.Routable;
 using R3;
 
 namespace Asv.Avalonia;
@@ -7,7 +8,7 @@ public sealed class HistoricalBoolProperty : HistoricalPropertyBase<bool, bool>
     private readonly ReactiveProperty<bool> _modelValue;
     private bool _internalChange;
 
-    public HistoricalBoolProperty(NavigationId id, ReactiveProperty<bool> modelValue)
+    public HistoricalBoolProperty(Routable.NavigationId id, ReactiveProperty<bool> modelValue)
         : base(id)
     {
         _modelValue = modelValue;

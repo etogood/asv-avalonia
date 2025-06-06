@@ -3,7 +3,7 @@ using Material.Icons;
 
 namespace Asv.Avalonia;
 
-public abstract class ExtendableHeadlinedViewModel<TSelfInterface>(NavigationId id)
+public abstract class ExtendableHeadlinedViewModel<TSelfInterface>(Routable.NavigationId id)
     : ExtendableViewModel<TSelfInterface>(id),
         IHeadlinedViewModel
     where TSelfInterface : class

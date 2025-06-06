@@ -2,14 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:commands="clr-namespace:Asv.Avalonia.Commands"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:avalonia1="clr-namespace:Asv.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Asv.Avalonia.Commands.SettingsCommandsView"
-             x:DataType="commands:SettingsCommandsViewModel">
+             x:Class="Asv.Avalonia.SettingsCommandsView"
+             x:DataType="avalonia1:SettingsCommandsViewModel">
     <Design.DataContext>
-        <commands:SettingsCommandsViewModel/>
+        <avalonia1:SettingsCommandsViewModel/>
     </Design.DataContext>
     <DataGrid Focusable="False" ItemsSource="{Binding Items}" BorderThickness="0">
         <DataGrid.Styles>

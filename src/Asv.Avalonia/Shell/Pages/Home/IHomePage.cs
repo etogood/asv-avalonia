@@ -1,3 +1,4 @@
+using Asv.Avalonia.Routable;
 using Asv.Common;
 using ObservableCollections;
 using R3;
@@ -19,7 +20,7 @@ public interface IHomePageItem : IHeadlinedViewModel
 
 public class HomePageItem : HeadlinedViewModel, IHomePageItem
 {
-    public HomePageItem(NavigationId id)
+    public HomePageItem(Routable.NavigationId id)
         : base(id)
     {
         Disposable.AddAction(() => Actions.Clear());

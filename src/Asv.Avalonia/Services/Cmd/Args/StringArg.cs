@@ -6,6 +6,11 @@ namespace Asv.Avalonia;
 public partial class CommandArg
 {
     public static CommandArg EmptyString => new StringArg(string.Empty);
+    
+    public static StringArg FromString(string value)
+    {
+        return new StringArg(value);
+    }
 }
 
 public class StringArg(string value) : CommandArg

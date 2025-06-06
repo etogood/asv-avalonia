@@ -1,4 +1,6 @@
-﻿using Asv.Common;
+﻿using Asv.Avalonia.Routable;
+using Asv.Avalonia.Tree;
+using Asv.Common;
 using ObservableCollections;
 using R3;
 
@@ -16,7 +18,7 @@ public abstract class TreePageViewModel<TContext, TSubPage>
     private bool _internalNavigate;
     private bool _isMenuVisible = true;
 
-    public TreePageViewModel(NavigationId id, ICommandService cmd, IContainerHost container)
+    public TreePageViewModel(Routable.NavigationId id, ICommandService cmd, IContainerHost container)
         : base(id, cmd)
     {
         _container = container;
@@ -25,7 +27,7 @@ public abstract class TreePageViewModel<TContext, TSubPage>
         TreeView = new TreePageMenu(Nodes).DisposeItWith(Disposable);
         SelectedNode = new BindableReactiveProperty<ObservableTreeNode<
             ITreePage,
-            NavigationId
+            Routable.NavigationId
         >?>().DisposeItWith(Disposable);
         _selectedPage = new ReactiveProperty<ITreeSubpage?>().DisposeItWith(Disposable);
         SelectedPage = _selectedPage.ToBindableReactiveProperty().DisposeItWith(Disposable);
@@ -55,7 +57,7 @@ public abstract class TreePageViewModel<TContext, TSubPage>
     #endregion
 
     private async ValueTask SelectedNodeChanged(
-        ObservableTreeNode<ITreePage, NavigationId>? node,
+        ObservableTreeNode<ITreePage, Routable.NavigationId>? node,
         CancellationToken cancel
     )
     {
@@ -84,7 +86,7 @@ public abstract class TreePageViewModel<TContext, TSubPage>
             : null;
     }
 
-    public override async ValueTask<IRoutable> Navigate(NavigationId id)
+    public override async ValueTask<IRoutable> Navigate(Routable.NavigationId id)
     {
         if (SelectedPage.Value != null && SelectedPage.Value.Id == id)
         {
@@ -126,7 +128,7 @@ public abstract class TreePageViewModel<TContext, TSubPage>
         }
     }
 
-    protected virtual async ValueTask<ITreeSubpage?> CreateSubPage(NavigationId id)
+    protected virtual async ValueTask<ITreeSubpage?> CreateSubPage(Routable.NavigationId id)
     {
         if (_container.TryGetExport<TSubPage>(id.Id, out var page))
         {
@@ -138,13 +140,13 @@ public abstract class TreePageViewModel<TContext, TSubPage>
         return null;
     }
 
-    public ObservableTree<ITreePage, NavigationId> TreeView { get; }
+    public ObservableTree<ITreePage, Routable.NavigationId> TreeView { get; }
     public BindableReactiveProperty<ITreeSubpage?> SelectedPage { get; }
     public ISynchronizedViewList<BreadCrumbItem> BreadCrumb { get; }
 
     public BindableReactiveProperty<ObservableTreeNode<
         ITreePage,
-        NavigationId
+        Routable.NavigationId
     >?> SelectedNode { get; }
     public ObservableList<ITreePage> Nodes { get; }
 

@@ -1,4 +1,5 @@
 using System.Windows.Input;
+using Asv.Avalonia.Tree;
 using Material.Icons;
 using ObservableCollections;
 using R3;
@@ -7,8 +8,8 @@ namespace Asv.Avalonia;
 
 public interface IDesignTimeTreePage : IPage
 {
-    ObservableTree<ITreePage, NavigationId> TreeView { get; }
-    BindableReactiveProperty<ObservableTreeNode<ITreePage, NavigationId>?> SelectedNode { get; }
+    ObservableTree<ITreePage, Routable.NavigationId> TreeView { get; }
+    BindableReactiveProperty<ObservableTreeNode<ITreePage, Routable.NavigationId>?> SelectedNode { get; }
     BindableReactiveProperty<ITreeSubpage?> SelectedPage { get; }
     ISynchronizedViewList<BreadCrumbItem> BreadCrumb { get; }
     bool IsMenuVisible { get; }
@@ -23,19 +24,19 @@ public class DesignTimeTreePageViewModel : TreePageViewModel<IPage, ITreeSubpage
     {
         DesignTime.ThrowIfNotDesignMode();
         Nodes.Add(
-            new TreePage("node1", "Node1", MaterialIconKind.Abacus, "node1", NavigationId.Empty)
+            new TreePage("node1", "Node1", MaterialIconKind.Abacus, "node1", Routable.NavigationId.Empty)
         );
         Nodes.Add(
-            new TreePage("node2", "node2", MaterialIconKind.Abacus, "node2", NavigationId.Empty)
+            new TreePage("node2", "node2", MaterialIconKind.Abacus, "node2", Routable.NavigationId.Empty)
         );
         Nodes.Add(
-            new TreePage("node3", "node3", MaterialIconKind.Abacus, "node3", NavigationId.Empty)
+            new TreePage("node3", "node3", MaterialIconKind.Abacus, "node3", Routable.NavigationId.Empty)
         );
         Nodes.Add(
-            new TreePage("node4", "node4", MaterialIconKind.Abacus, "node4", NavigationId.Empty)
+            new TreePage("node4", "node4", MaterialIconKind.Abacus, "node4", Routable.NavigationId.Empty)
         );
         Nodes.Add(
-            new TreePage("node5", "node5", MaterialIconKind.Abacus, "node5", NavigationId.Empty)
+            new TreePage("node5", "node5", MaterialIconKind.Abacus, "node5", Routable.NavigationId.Empty)
         );
         Nodes.Add(new TreePage("node1.1", "node1.1", MaterialIconKind.Abacus, "node1", "node1"));
         Nodes.Add(new TreePage("node1.2", "node1.2", MaterialIconKind.Abacus, "node1", "node1"));
@@ -52,7 +53,7 @@ public class DesignTimeTreePageViewModel : TreePageViewModel<IPage, ITreeSubpage
         Init();
     }
 
-    protected override ValueTask<ITreeSubpage?> CreateSubPage(NavigationId id)
+    protected override ValueTask<ITreeSubpage?> CreateSubPage(Routable.NavigationId id)
     {
         var set = new SettingsAppearanceViewModel();
         set.Menu.Add(new MenuItem("cmd0", "Command"));

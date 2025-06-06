@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using Asv.IO;
 using Newtonsoft.Json;
 
-namespace Asv.Avalonia;
+namespace Asv.Avalonia.Routable;
 
 /// <summary>
 /// Represents a unique identifier for navigation, consisting of a type identifier and optional arguments.

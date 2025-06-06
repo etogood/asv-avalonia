@@ -1,5 +1,6 @@
 ﻿using System.Composition;
 using System.Diagnostics;
+using Asv.Avalonia.Routable;
 using Asv.Common;
 using Avalonia.Input;
 using Avalonia.Threading;
@@ -17,13 +18,14 @@ public interface ILogViewerViewModel : IPage { }
 public class LogViewerViewModel
     : PageViewModel<ILogViewerViewModel>,
         ILogViewerViewModel,
-        ISupportPagination
+        ISupportPagination,
+        ISupportCancel, 
+        ISupportRefresh
 {
     private readonly ILogService _logService;
     private readonly ISearchService _search;
     private readonly ObservableList<LogMessageViewModel> _itemsSource = new();
     private readonly ILogger<LogViewerViewModel> _logger;
-    private LogMessageViewModel _selectedItem;
     public const string PageId = "log";
     public const MaterialIconKind PageIcon = MaterialIconKind.Journal;
 
@@ -152,21 +154,17 @@ public class LogViewerViewModel
             "search",
             loggerFactory,
             UpdateImpl,
-            TimeSpan.FromSeconds(1)
+            TimeSpan.FromMilliseconds(500)
         )
             .SetRoutableParent(this)
             .DisposeItWith(Disposable);
 
         Skip.Skip(1).Subscribe(_ => Search.Refresh());
 
-        Next = new ReactiveCommand(_ =>
-            PaginationCommand.Execute(this, Skip.Value + Take.Value, Take.Value)
-        ).DisposeItWith(Disposable);
-        Previous = new ReactiveCommand(_ =>
-        {
-            var temp = Skip.Value - Take.Value;
-            PaginationCommand.Execute(this, temp < 0 ? 0 : temp, Take.Value);
-        }).DisposeItWith(Disposable);
+        Next = new ReactiveCommand(_ => Commands.NextPage(this))
+            .DisposeItWith(Disposable);
+        Previous = new ReactiveCommand(_ => Commands.PreviousPage(this))
+            .DisposeItWith(Disposable);
 
         Search.Refresh();
     }
@@ -269,6 +267,16 @@ public class LogViewerViewModel
         }
     }
 
+    public void Refresh()
+    {
+        Search.Refresh();
+    }
+
+    public void Cancel()
+    {
+        Search.Cancel();
+    }
+
     public override ValueTask<IRoutable> Navigate(NavigationId id)
     {
         if (id == Search.Id)
@@ -300,7 +308,7 @@ public class LogViewerViewModel
 
     public LogMessageViewModel SelectedItem
     {
-        get => _selectedItem;
-        set => SetField(ref _selectedItem, value);
+        get;
+        set => SetField(ref field, value);
     }
 }

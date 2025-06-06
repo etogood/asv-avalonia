@@ -1,3 +1,5 @@
+using Asv.Avalonia.Routable;
+
 namespace Asv.Avalonia;
 
 /// <summary>

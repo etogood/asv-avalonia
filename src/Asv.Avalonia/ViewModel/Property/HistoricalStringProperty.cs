@@ -1,3 +1,4 @@
+using Asv.Avalonia.Routable;
 using R3;
 
 namespace Asv.Avalonia;
@@ -84,11 +85,6 @@ public sealed class HistoricalStringProperty : HistoricalPropertyBase<string?, s
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
         yield break;
-    }
-
-    protected override ValueTask InternalCatchEvent(AsyncRoutedEvent e)
-    {
-        return ValueTask.CompletedTask;
     }
 
     private void InternalInitValidationRules(

@@ -14,7 +14,7 @@ public interface IViewModel : IDisposable, INotifyPropertyChanged
     /// Gets the unique identifier of the view model.
     /// This can be used to differentiate instances within the application.
     /// </summary>
-    NavigationId Id { get; }
+    Routable.NavigationId Id { get; }
 
     void InitArgs(string? args);
 

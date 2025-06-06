@@ -1,8 +1,6 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+﻿using Avalonia.Controls;
 
-namespace Asv.Avalonia.Commands;
+namespace Asv.Avalonia;
 
 [ExportViewFor(typeof(SettingsCommandsViewModel))]
 public partial class SettingsCommandsView : UserControl

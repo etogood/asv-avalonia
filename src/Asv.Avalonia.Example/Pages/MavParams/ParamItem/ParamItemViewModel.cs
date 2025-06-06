@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Asv.Avalonia.Routable;
 using Asv.Common;
 using Asv.Mavlink;
 using Asv.Mavlink.Common;

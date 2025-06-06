@@ -1,4 +1,5 @@
-﻿using Asv.Common;
+﻿using Asv.Avalonia.Routable;
+using Asv.Common;
 
 namespace Asv.Avalonia;
 
@@ -10,7 +11,7 @@ public abstract class OpenPageCommandBase(string pageId, INavigationService nav)
         CancellationToken cancel
     )
     {
-        await nav.GoTo(new NavigationPath(new NavigationId(pageId)));
+        await nav.GoTo(new NavigationPath(new Routable.NavigationId(pageId)));
         return null;
     }
 
@@ -19,7 +20,7 @@ public abstract class OpenPageCommandBase(string pageId, INavigationService nav)
         CancellationToken cancel
     )
     {
-        await nav.GoTo(new NavigationPath(new NavigationId(pageId, newValue.Value)));
+        await nav.GoTo(new NavigationPath(new Routable.NavigationId(pageId, newValue.Value)));
         return null;
     }
 
