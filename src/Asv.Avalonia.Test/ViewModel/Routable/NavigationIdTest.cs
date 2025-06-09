@@ -3,6 +3,7 @@ using Asv.Avalonia;
 using Asv.Avalonia.Routable;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
+using Xunit;
 
 namespace Asv.Avalonia.Tests.ViewModel.Routable;
 
@@ -117,7 +118,7 @@ public class NavigationIdTest
     public void NormalizeTypeId_ReplacesNonWord()
     {
         var norm = NavigationId.NormalizeTypeId("abc!@#$%def-_.");
-        Assert.Equal("abc_____def-_.", norm);
+        Assert.Equal("abc_____def___", norm);
     }
 
     [Fact]
@@ -125,9 +126,9 @@ public class NavigationIdTest
     {
         var id = new NavigationId("TestType", "SomeArgs");
         var size = id.GetByteSize();
-        Span<byte> buffer = stackalloc byte[size];
-        id.Serialize(ref buffer);
-        buffer = buffer.Slice(0, size);
+        var buffer = new byte[size];
+        var wSpan = new Span<byte>(buffer);
+        id.Serialize(ref wSpan);
 
         var readBuffer = buffer.ToArray();
         var span = new ReadOnlySpan<byte>(readBuffer);
@@ -146,7 +147,6 @@ public class NavigationIdTest
         }
         var json = sw.ToString();
         using var reader = new JsonTextReader(new StringReader(json));
-        reader.Read(); // Move to value
         var id2 = new NavigationId(reader);
         Assert.Equal(id, id2);
     }

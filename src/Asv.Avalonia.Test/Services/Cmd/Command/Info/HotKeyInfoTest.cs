@@ -1,6 +1,7 @@
 ﻿using Asv.Avalonia;
 using Avalonia.Input;
 using JetBrains.Annotations;
+using Xunit;
 
 namespace Asv.Avalonia.Tests.Services.Cmd.Command.Info;
 
@@ -44,7 +45,7 @@ public class HotKeyInfoTest
         string input = "";
 
         // Act & Assert
-        Assert.Throws<FormatException>(() => HotKeyInfo.Parse(input));
+        Assert.Throws<ArgumentException>(() => HotKeyInfo.Parse(input));
     }
 
     [Fact]

@@ -10,6 +10,11 @@ public class HotKeyInfo(KeyGesture gesture, Key? additional = null) : IEquatable
 
     public static HotKeyInfo Parse(string value)
     {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            throw new ArgumentException("Value cannot be null or whitespace.", nameof(value));
+        }
+
         var items = value.Split(Separator);
         switch (items.Length)
         {

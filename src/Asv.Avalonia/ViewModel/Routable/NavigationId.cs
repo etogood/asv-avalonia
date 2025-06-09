@@ -73,7 +73,17 @@ public readonly partial struct NavigationId
 
     public NavigationId(JsonReader reader)
     {
-        Parse(reader.ReadAsString(), out var typeId, out var args);
+        ArgumentNullException.ThrowIfNull(reader);
+        var str = reader.ReadAsString();
+        if (str == null)
+        {
+            throw new ArgumentNullException(
+                nameof(reader),
+                "String value expected in JSON reader."
+            );
+        }
+
+        Parse(str, out var typeId, out var args);
         Id = typeId;
         Args = args;
     }
