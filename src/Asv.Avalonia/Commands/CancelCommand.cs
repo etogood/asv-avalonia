@@ -16,7 +16,7 @@ public class CancelCommand : ContextCommand<ISupportCancel>
             Name = "Cancel",
             Description = "Cancel the current operation",
             Icon = MaterialIconKind.Cancel,
-            DefaultHotKey = "Shift+F5",
+            DefaultHotKey = "Ctrl+F5",
             Source = SystemModule.Instance,
         };
 

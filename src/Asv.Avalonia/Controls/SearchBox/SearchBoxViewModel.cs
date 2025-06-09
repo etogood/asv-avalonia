@@ -122,6 +122,11 @@ public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgre
     public BindableReactiveProperty<bool> IsExecuting => _isExecuting;
     public BindableReactiveProperty<double> Progress => _progress;
 
+    public void Clear()
+    {
+        Text.Value = string.Empty;
+    }
+
     public void Cancel()
     {
         _cancellationTokenSource?.Cancel(false);

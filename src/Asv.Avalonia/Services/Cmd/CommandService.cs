@@ -33,6 +33,8 @@ public class CommandService : AsyncDisposableOnce, ICommandService
     private readonly Subject<CommandSnapshot> _onCommand;
     private KeyGesture? _prevKeyGesture;
     private IAppPath _path;
+    private Subject<HotKeyInfo> _hotKeySubject;
+    private readonly ReactiveProperty<bool> _isHotKeyRecognitionEnabled;
 
     [ImportingConstructor]
     public CommandService(
@@ -60,6 +62,9 @@ public class CommandService : AsyncDisposableOnce, ICommandService
 
         _onCommand = new Subject<CommandSnapshot>().AddTo(ref dispose);
 
+        _hotKeySubject = new Subject<HotKeyInfo>().AddTo(ref dispose);
+        _isHotKeyRecognitionEnabled = new ReactiveProperty<bool>(true).AddTo(ref dispose);
+
         _disposeId = dispose.Build();
     }
 
@@ -84,12 +89,18 @@ public class CommandService : AsyncDisposableOnce, ICommandService
             }
 
             HotKeyInfo keyInfo;
+
             if (keyEventArgs.KeyModifiers == KeyModifiers.None)
             {
                 if (_prevKeyGesture != null)
                 {
                     // we have a gesture, but no key modifiers => maybe this is additional key for previous the gesture
                     keyInfo = new HotKeyInfo(_prevKeyGesture, keyEventArgs.Key);
+                }
+                else if (keyEventArgs.Key is >= Key.F1 and <= Key.F12)
+                {
+                    // we have a function key without modifiers, so we can treat it as a gesture
+                    keyInfo = new HotKeyInfo(keyEventArgs.Key);
                 }
                 else
                 {
@@ -100,6 +111,14 @@ public class CommandService : AsyncDisposableOnce, ICommandService
             else
             {
                 keyInfo = new HotKeyInfo(keyEventArgs.Key, keyEventArgs.KeyModifiers);
+            }
+
+            // publish the hot key event
+            _hotKeySubject.OnNext(keyInfo);
+
+            if (_isHotKeyRecognitionEnabled.CurrentValue == false)
+            {
+                return;
             }
 
             var command = _gestureVsCommand.GetValueOrDefault(keyInfo);
@@ -117,6 +136,8 @@ public class CommandService : AsyncDisposableOnce, ICommandService
                     command[0].Info.Id,
                     CommandArg.Empty
                 );
+                _prevKeyGesture = null; // reset previous gesture after execution
+                keyEventArgs.Handled = true;
             }
             else
             {
@@ -333,6 +354,10 @@ public class CommandService : AsyncDisposableOnce, ICommandService
         _logger.ZLogError($"Command with id '{commandId}' not found.");
         return ValueTask.FromException(new CommandNotFoundException(commandId));
     }
+
+    public Observable<HotKeyInfo> OnHotKey => _hotKeySubject;
+
+    public ReactiveProperty<bool> IsHotKeyRecognitionEnabled => _isHotKeyRecognitionEnabled;
 
     public void SetHotKey(string commandId, HotKeyInfo hotKey)
     {

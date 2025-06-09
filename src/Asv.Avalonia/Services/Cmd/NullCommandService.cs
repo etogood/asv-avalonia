@@ -34,6 +34,9 @@ public class NullCommandService : ICommandService
         return ValueTask.CompletedTask;
     }
 
+    public Observable<HotKeyInfo> OnHotKey { get; } = new Subject<HotKeyInfo>();
+    public ReactiveProperty<bool> IsHotKeyRecognitionEnabled { get; } = new();
+
     public void SetHotKey(string commandId, HotKeyInfo hotKey)
     {
         // Do nothing

@@ -11,10 +11,10 @@ public class DebugWindowViewModel : ViewModelBase, IDebugWindow
     private readonly ISynchronizedView<IPage, DebugPageViewModel> _pageView;
 
     public DebugWindowViewModel()
-        : this(DesignTime.Navigation, DesignTime.ShellHost) { }
+        : this(DesignTime.Navigation, DesignTime.ShellHost, DesignTime.CommandService) { }
 
     [ImportingConstructor]
-    public DebugWindowViewModel(INavigationService nav, IShellHost host)
+    public DebugWindowViewModel(INavigationService nav, IShellHost host, ICommandService cmd)
         : base(ModelId)
     {
         SelectedControlPath = nav.SelectedControlPath.ToReadOnlyBindableReactiveProperty();
@@ -22,6 +22,7 @@ public class DebugWindowViewModel : ViewModelBase, IDebugWindow
         Pages = _pageView.ToNotifyCollectionChanged();
         BackwardStack = nav.BackwardStack.ToNotifyCollectionChanged();
         ForwardStack = nav.ForwardStack.ToNotifyCollectionChanged();
+        HotKey = cmd.OnHotKey.ToReadOnlyBindableReactiveProperty();
     }
 
     public NotifyCollectionChangedSynchronizedViewList<NavigationPath> ForwardStack { get; }
@@ -30,6 +31,8 @@ public class DebugWindowViewModel : ViewModelBase, IDebugWindow
 
     public NotifyCollectionChangedSynchronizedViewList<DebugPageViewModel> Pages { get; }
     public IReadOnlyBindableReactiveProperty<NavigationPath> SelectedControlPath { get; }
+
+    public IReadOnlyBindableReactiveProperty<HotKeyInfo?> HotKey { get; }
 
     protected override void Dispose(bool disposing)
     {

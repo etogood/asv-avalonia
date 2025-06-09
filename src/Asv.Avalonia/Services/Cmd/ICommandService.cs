@@ -13,6 +13,9 @@ public interface ICommandService : IExportable
         CommandArg param,
         CancellationToken cancel = default
     );
+    Observable<HotKeyInfo> OnHotKey { get; }
+    ReactiveProperty<bool> IsHotKeyRecognitionEnabled { get; }
+
     void SetHotKey(string commandId, HotKeyInfo hotKey);
     HotKeyInfo GetHotKey(string commandId);
     Observable<CommandSnapshot> OnCommand { get; }

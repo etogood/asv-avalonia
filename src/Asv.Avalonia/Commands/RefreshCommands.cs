@@ -16,7 +16,7 @@ public class RefreshCommand : ContextCommand<ISupportRefresh>
             Name = "Refresh",
             Description = "Refresh the current page",
             Icon = MaterialIconKind.Refresh,
-            DefaultHotKey = "Ctrl+F5",
+            DefaultHotKey = "F5",
             Source = SystemModule.Instance,
         };
 
