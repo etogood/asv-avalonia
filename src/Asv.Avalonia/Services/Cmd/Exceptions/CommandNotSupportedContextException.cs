@@ -1,6 +1,4 @@
-﻿using Asv.Avalonia.Routable;
-
-namespace Asv.Avalonia;
+﻿namespace Asv.Avalonia;
 
 #pragma warning disable RCS1194
 public class CommandNotSupportedContextException(

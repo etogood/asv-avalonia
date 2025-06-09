@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using System.Composition;
 using System.Diagnostics;
 using System.Reflection.Metadata.Ecma335;
-using Asv.Avalonia.Routable;
 using Asv.Cfg;
 using Asv.Common;
 using Avalonia.Controls;

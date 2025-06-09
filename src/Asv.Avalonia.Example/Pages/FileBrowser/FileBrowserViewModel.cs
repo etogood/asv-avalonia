@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Asv.Avalonia.IO;
-using Asv.Avalonia.Routable;
 using Asv.Common;
 using Asv.IO;
 using Asv.Mavlink;

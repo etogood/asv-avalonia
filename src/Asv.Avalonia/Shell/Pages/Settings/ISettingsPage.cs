@@ -1,4 +1,3 @@
-using Asv.Avalonia.Routable;
 using Asv.Common;
 using ObservableCollections;
 using R3;
@@ -12,7 +11,7 @@ public interface ISettingsPage : IPage
 
 public interface ISettingsSubPage : ITreeSubpage<ISettingsPage> { }
 
-public abstract class SettingsSubPage(Routable.NavigationId id)
+public abstract class SettingsSubPage(NavigationId id)
     : TreeSubpage<ISettingsPage>(id),
         ISettingsSubPage
 {

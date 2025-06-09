@@ -3,16 +3,16 @@ using ObservableCollections;
 
 namespace Asv.Avalonia;
 
-public class TreePageMenuNode : ObservableTreeNode<ITreePage, Routable.NavigationId>
+public class TreePageMenuNode : ObservableTreeNode<ITreePage, NavigationId>
 {
     public TreePageMenuNode(
         ITreePage baseItem,
         IReadOnlyObservableList<ITreePage> source,
-        Func<ITreePage, Routable.NavigationId> keySelector,
-        Func<ITreePage, Routable.NavigationId> parentSelector,
+        Func<ITreePage, NavigationId> keySelector,
+        Func<ITreePage, NavigationId> parentSelector,
         IComparer<ITreePage> comparer,
-        CreateNodeDelegate<ITreePage, Routable.NavigationId> createNodeFactory,
-        ObservableTreeNode<ITreePage, Routable.NavigationId>? parentNode
+        CreateNodeDelegate<ITreePage, NavigationId> createNodeFactory,
+        ObservableTreeNode<ITreePage, NavigationId>? parentNode
     )
         : base(
             baseItem,

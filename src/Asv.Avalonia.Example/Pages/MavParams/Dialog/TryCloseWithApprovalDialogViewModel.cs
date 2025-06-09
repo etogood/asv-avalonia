@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Asv.Avalonia.Routable;
 
 namespace Asv.Avalonia.Example;
 

@@ -2,7 +2,6 @@
 using System.Composition;
 using System.Threading.Tasks;
 using Asv.Avalonia.GeoMap;
-using Asv.Avalonia.Routable;
 using Asv.Common;
 using Material.Icons;
 

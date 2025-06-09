@@ -1,4 +1,3 @@
-using Asv.Avalonia.Routable;
 using Asv.Cfg;
 using Asv.Common;
 using Material.Icons;
@@ -99,7 +98,7 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
     #endregion
 
     #region Routable
-    public override ValueTask<IRoutable> Navigate(Routable.NavigationId id)
+    public override ValueTask<IRoutable> Navigate(NavigationId id)
     {
         var page = _pages.FirstOrDefault(x => x.Id == id);
         if (page == null)

@@ -1,4 +1,4 @@
-﻿namespace Asv.Avalonia.Routable;
+﻿namespace Asv.Avalonia;
 
 public class NavigationException : Exception
 {

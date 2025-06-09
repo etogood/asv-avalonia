@@ -1,9 +1,8 @@
-using Asv.Avalonia.Routable;
 using R3;
 
 namespace Asv.Avalonia;
 
-public abstract class HistoricalPropertyBase<TModel, TView>(Routable.NavigationId id)
+public abstract class HistoricalPropertyBase<TModel, TView>(NavigationId id)
     : RoutableViewModel(id),
         IHistoricalProperty<TModel>
 {

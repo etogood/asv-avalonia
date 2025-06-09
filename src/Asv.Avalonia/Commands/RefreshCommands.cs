@@ -1,6 +1,7 @@
 ﻿using System.Composition;
-using Asv.Avalonia;
 using Material.Icons;
+
+namespace Asv.Avalonia;
 
 [ExportCommand]
 [Shared]

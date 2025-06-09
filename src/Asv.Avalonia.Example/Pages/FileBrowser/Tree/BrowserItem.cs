@@ -1,5 +1,4 @@
-﻿using Asv.Avalonia.Routable;
-using Asv.Mavlink;
+﻿using Asv.Mavlink;
 using Avalonia.Media;
 
 namespace Asv.Avalonia.Example;

@@ -4,7 +4,7 @@ using System.Text;
 using Asv.IO;
 using Newtonsoft.Json;
 
-namespace Asv.Avalonia.Routable;
+namespace Asv.Avalonia;
 
 /// <summary>
 /// Represents a list of <see cref="NavigationId"/> instances optimized for performance and memory usage.

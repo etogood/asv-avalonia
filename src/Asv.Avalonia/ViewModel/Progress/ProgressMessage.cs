@@ -1,4 +1,4 @@
-namespace Asv.Avalonia.Progress;
+namespace Asv.Avalonia;
 
 public class ProgressMessage(double progress, string message)
 {

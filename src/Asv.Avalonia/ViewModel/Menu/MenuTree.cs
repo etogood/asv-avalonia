@@ -3,12 +3,12 @@ using ObservableCollections;
 
 namespace Asv.Avalonia;
 
-public class MenuTree : ObservableTree<IMenuItem, Routable.NavigationId>
+public class MenuTree : ObservableTree<IMenuItem, NavigationId>
 {
     public MenuTree(IReadOnlyObservableList<IMenuItem> flatList)
         : base(
             flatList,
-            Routable.NavigationId.Empty,
+            NavigationId.Empty,
             x => x.Id,
             x => x.ParentId,
             MenuComparer.Instance,

@@ -1,5 +1,4 @@
-﻿using Asv.Avalonia.Routable;
-using Avalonia.Media;
+﻿using Avalonia.Media;
 using Material.Icons;
 
 namespace Asv.Avalonia;
@@ -8,9 +7,7 @@ namespace Asv.Avalonia;
 /// Represents a base view model with a title (header) and an optional icon.
 /// This can be used as a foundation for view models that require a title and icon representation.
 /// </summary>
-public class HeadlinedViewModel(Routable.NavigationId id)
-    : RoutableViewModel(id),
-        IHeadlinedViewModel
+public class HeadlinedViewModel(NavigationId id) : RoutableViewModel(id), IHeadlinedViewModel
 {
     private string? _title;
     private MaterialIconKind? _icon;
@@ -56,7 +53,7 @@ public class HeadlinedViewModel(Routable.NavigationId id)
 
     public int Order { get; set; }
 
-    public override ValueTask<IRoutable> Navigate(Routable.NavigationId id) => new(this);
+    public override ValueTask<IRoutable> Navigate(NavigationId id) => new(this);
 
     public override IEnumerable<IRoutable> GetRoutableChildren() => [];
 }

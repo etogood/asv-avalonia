@@ -1,4 +1,3 @@
-using Asv.Avalonia.Routable;
 using Avalonia.Input;
 
 namespace Asv.Avalonia
@@ -12,15 +11,12 @@ namespace Asv.Avalonia
         public MenuItem(string id, string header, string? parentId = null)
             : base(id)
         {
-            ParentId =
-                parentId == null
-                    ? Routable.NavigationId.Empty
-                    : new Routable.NavigationId(parentId);
+            ParentId = parentId == null ? NavigationId.Empty : new NavigationId(parentId);
             Order = 0;
             Header = header;
         }
 
-        public Routable.NavigationId ParentId { get; }
+        public NavigationId ParentId { get; }
 
         public bool StaysOpenOnClick
         {

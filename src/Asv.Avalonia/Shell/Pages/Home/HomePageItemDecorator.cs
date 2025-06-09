@@ -1,4 +1,3 @@
-using Asv.Avalonia.Routable;
 using Asv.Common;
 using ObservableCollections;
 
@@ -31,7 +30,7 @@ public class HomePageItemDecorator : ExtendableViewModel<IHomePageItem>
         throw new NotImplementedException();
     }
 
-    public override ValueTask<IRoutable> Navigate(Routable.NavigationId id)
+    public override ValueTask<IRoutable> Navigate(NavigationId id)
     {
         // this is a decorator, it should not be routable
         throw new NotImplementedException();

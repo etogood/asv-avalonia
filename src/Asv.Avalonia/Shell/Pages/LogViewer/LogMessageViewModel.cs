@@ -1,5 +1,4 @@
-﻿using Asv.Avalonia.Routable;
-using Material.Icons;
+﻿using Material.Icons;
 using Microsoft.Extensions.Logging;
 using R3;
 

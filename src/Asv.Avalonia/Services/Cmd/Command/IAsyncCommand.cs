@@ -1,5 +1,4 @@
 using System.Composition;
-using Asv.Avalonia.Routable;
 
 namespace Asv.Avalonia;
 

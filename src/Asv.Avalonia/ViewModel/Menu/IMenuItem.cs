@@ -7,7 +7,7 @@ namespace Asv.Avalonia;
 
 public interface IMenuItem : IActionViewModel
 {
-    Routable.NavigationId ParentId { get; }
+    NavigationId ParentId { get; }
     bool StaysOpenOnClick { get; }
     public bool IsEnabled { get; }
     public KeyGesture? HotKey { get; }

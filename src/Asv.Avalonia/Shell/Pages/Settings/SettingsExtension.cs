@@ -17,7 +17,7 @@ public class SettingsExtension() : IExtensionFor<ISettingsPage>
                 RS.SettingsAppearanceViewModel_Name,
                 MaterialIconKind.ThemeLightDark,
                 SettingsAppearanceViewModel.PageId,
-                Routable.NavigationId.Empty
+                NavigationId.Empty
             ).DisposeItWith(contextDispose)
         );
 
@@ -27,7 +27,7 @@ public class SettingsExtension() : IExtensionFor<ISettingsPage>
                 RS.SettingsUnitsViewModel_Name,
                 MaterialIconKind.TemperatureCelsius,
                 SettingsUnitsViewModel.PageId,
-                Routable.NavigationId.Empty
+                NavigationId.Empty
             ).DisposeItWith(contextDispose)
         );
 
@@ -37,7 +37,7 @@ public class SettingsExtension() : IExtensionFor<ISettingsPage>
                 RS.SettingsCommandListViewModel_Name,
                 MaterialIconKind.KeyboardSettings,
                 SettingsCommandsViewModel.SubPageId,
-                Routable.NavigationId.Empty
+                NavigationId.Empty
             ).DisposeItWith(contextDispose)
         );
     }

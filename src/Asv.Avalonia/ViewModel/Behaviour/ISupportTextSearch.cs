@@ -1,5 +1,3 @@
-using Asv.Avalonia.Routable;
-
 namespace Asv.Avalonia;
 
 public interface ISupportTextSearch : IRoutable

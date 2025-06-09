@@ -1,4 +1,4 @@
-namespace Asv.Avalonia.Routable;
+namespace Asv.Avalonia;
 
 public delegate ValueTask RoutedEventHandler(IRoutable owner, AsyncRoutedEvent e);
 

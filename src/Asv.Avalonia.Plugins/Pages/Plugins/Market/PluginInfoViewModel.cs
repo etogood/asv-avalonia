@@ -1,4 +1,3 @@
-using Asv.Avalonia.Progress;
 using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;

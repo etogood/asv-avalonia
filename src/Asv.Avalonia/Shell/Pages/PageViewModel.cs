@@ -12,7 +12,7 @@ public abstract class PageViewModel<TContext> : ExtendableViewModel<TContext>, I
     private string _title;
     private MaterialIconKind _icon;
 
-    protected PageViewModel(Routable.NavigationId id, ICommandService cmd)
+    protected PageViewModel(NavigationId id, ICommandService cmd)
         : base(id)
     {
         History = cmd.CreateHistory(this);

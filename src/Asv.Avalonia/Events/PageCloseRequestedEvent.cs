@@ -1,6 +1,4 @@
-﻿using Asv.Avalonia.Routable;
-
-namespace Asv.Avalonia;
+﻿namespace Asv.Avalonia;
 
 /// <summary>
 /// Represents an event triggered by a page to notify its parent (IShell) that it requests closure.

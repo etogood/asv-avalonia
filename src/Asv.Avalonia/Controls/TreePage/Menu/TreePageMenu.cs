@@ -3,12 +3,12 @@ using ObservableCollections;
 
 namespace Asv.Avalonia;
 
-public class TreePageMenu : ObservableTree<ITreePage, Routable.NavigationId>
+public class TreePageMenu : ObservableTree<ITreePage, NavigationId>
 {
     public TreePageMenu(IReadOnlyObservableList<ITreePage> flatList)
         : base(
             flatList,
-            Routable.NavigationId.Empty,
+            NavigationId.Empty,
             x => x.Id,
             x => x.ParentId,
             TreePageComparer.Instance,

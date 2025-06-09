@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Asv.Avalonia.Routable;
 using Asv.Common;
 using Asv.Mavlink;
 using R3;

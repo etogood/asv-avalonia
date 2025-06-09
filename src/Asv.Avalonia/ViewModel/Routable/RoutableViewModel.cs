@@ -1,4 +1,4 @@
-namespace Asv.Avalonia.Routable;
+namespace Asv.Avalonia;
 
 public abstract class RoutableViewModel(NavigationId id) : DisposableViewModel(id), IRoutable
 {

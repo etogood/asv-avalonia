@@ -4,7 +4,7 @@ using Asv.Common;
 using ObservableCollections;
 using R3;
 
-namespace Asv.Avalonia.Routable;
+namespace Asv.Avalonia;
 
 /// <summary>
 /// Provides extension methods for working with <see cref="IRoutable"/> components,

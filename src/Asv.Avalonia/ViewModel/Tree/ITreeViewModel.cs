@@ -2,7 +2,7 @@
 
 public interface ITreeViewModel : IViewModel
 {
-    Routable.NavigationId ParentId { get; }
+    NavigationId ParentId { get; }
     int Order { get; }
 }
 

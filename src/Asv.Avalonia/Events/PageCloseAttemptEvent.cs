@@ -1,6 +1,4 @@
-﻿using Asv.Avalonia.Routable;
-
-namespace Asv.Avalonia;
+﻿namespace Asv.Avalonia;
 
 /// <summary>
 /// Represents an event triggered when an attempt is made to close a page.

@@ -1,10 +1,9 @@
-using Asv.Avalonia.Routable;
 using Asv.Common;
 using R3;
 
 namespace Asv.Avalonia;
 
-public abstract class DialogViewModelBase(Routable.NavigationId id) : RoutableViewModel(id)
+public abstract class DialogViewModelBase(NavigationId id) : RoutableViewModel(id)
 {
     private readonly HashSet<IBindableReactiveProperty> _validationData = new(
         EqualityComparer<IBindableReactiveProperty>.Default

@@ -8,12 +8,12 @@ namespace Asv.Avalonia;
 /// property change notifications and a proper disposal mechanism.
 /// This class is designed to be inherited by other view models.
 /// </summary>
-public abstract class ViewModelBase(Routable.NavigationId id) : IViewModel
+public abstract class ViewModelBase(NavigationId id) : IViewModel
 {
     private volatile int _isDisposed;
-    private Routable.NavigationId _id = id;
+    private NavigationId _id = id;
 
-    public Routable.NavigationId Id
+    public NavigationId Id
     {
         get => _id;
         private set => SetField(ref _id, value);

@@ -1,5 +1,4 @@
-﻿using Asv.Avalonia.Routable;
-using Asv.Common;
+﻿using Asv.Common;
 using Microsoft.Extensions.Logging;
 using R3;
 using ZLogger;
@@ -149,7 +148,7 @@ public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgre
         yield break;
     }
 
-    public override ValueTask<IRoutable> Navigate(Routable.NavigationId id)
+    public override ValueTask<IRoutable> Navigate(NavigationId id)
     {
         Focus();
         return base.Navigate(id);

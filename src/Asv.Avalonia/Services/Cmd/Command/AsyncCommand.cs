@@ -1,6 +1,4 @@
-﻿using Asv.Avalonia.Routable;
-
-namespace Asv.Avalonia;
+﻿namespace Asv.Avalonia;
 
 public abstract class AsyncCommand : IAsyncCommand
 {

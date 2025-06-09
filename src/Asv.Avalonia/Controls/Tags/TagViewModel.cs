@@ -14,7 +14,7 @@ public enum TagType
     Info4,
 }
 
-public class TagViewModel(Routable.NavigationId id) : ViewModelBase(id)
+public class TagViewModel(NavigationId id) : ViewModelBase(id)
 {
     private TagType? _tagType;
     private string? _key;

@@ -1,6 +1,4 @@
-﻿using Asv.Avalonia.Routable;
-
-namespace Asv.Avalonia.Example.Api;
+﻿namespace Asv.Avalonia.Example.Api;
 
 public interface IWellKnownCommands { }
 
