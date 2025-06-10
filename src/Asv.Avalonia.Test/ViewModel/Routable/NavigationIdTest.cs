@@ -24,12 +24,15 @@ public class NavigationIdTest
         Assert.Equal("Test.Type", id.Id);
         Assert.Equal("param1", id.Args);
     }
-
+    
     [Fact]
-    public void Constructor_Throws_OnNullTypeId()
+    public void ExplicitConstructor_ValidTypeId_WithArgs()
     {
-        Assert.Throws<ArgumentNullException>(() => new NavigationId(null!));
+        NavigationId nav = "Test.Type?param1=sdsd";
+        Assert.Equal("Test.Type", nav.Id);
+        Assert.Equal("param1=sdsd", nav.Args);
     }
+
 
     [Fact]
     public void Constructor_Throws_OnInvalidTypeId()

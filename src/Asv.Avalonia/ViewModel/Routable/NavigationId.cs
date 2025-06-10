@@ -38,7 +38,7 @@ public readonly partial struct NavigationId
     /// <param name="args">The optional arguments associated with the navigation identifier.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeId"/> is null.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="typeId"/> contains invalid characters.</exception>
-    public NavigationId(string typeId, string? args = null)
+    public NavigationId(string typeId, string? args)
     {
         if (typeId == null)
         {
@@ -57,6 +57,13 @@ public readonly partial struct NavigationId
         Args = args;
     }
 
+    public NavigationId(string value)
+    {
+        Parse(value, out var typeId, out var args);
+        Id = typeId;
+        Args = args;
+    }
+    
     public NavigationId(ref ReadOnlySpan<byte> buffer)
     {
         Id = BinSerialize.ReadString(ref buffer);
@@ -96,10 +103,9 @@ public readonly partial struct NavigationId
     /// <returns>A new <see cref="NavigationId"/> instance parsed from the string.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
     /// <exception cref="ArgumentException">Thrown when the type identifier part of <paramref name="value"/> contains invalid characters.</exception>
-    public static implicit operator NavigationId(string? value)
+    public static implicit operator NavigationId(string value)
     {
-        Parse(value, out var typeId, out var args);
-        return new NavigationId(typeId, args);
+        return new NavigationId(value);
     }
 
     public static void Parse(string? value, out string id, out string? args)
