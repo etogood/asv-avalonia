@@ -36,6 +36,7 @@ public partial class CommandArg
         {
             return arg.Value;
         }
+
         throw new InvalidCastException($"Cannot cast {GetType().Name} to {nameof(Double)}");
     }
 }
