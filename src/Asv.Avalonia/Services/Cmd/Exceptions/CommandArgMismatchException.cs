@@ -1,5 +1,6 @@
 namespace Asv.Avalonia;
 
+// todo: must inherit CommandBaseException as it is used in CommandBase
 public sealed class CommandArgMismatchException : ArgumentException
 {
     public CommandArgMismatchException(Type expected)

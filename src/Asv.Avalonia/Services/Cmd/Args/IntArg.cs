@@ -29,6 +29,26 @@ public partial class CommandArg
     {
         return new IntArg(value);
     }
+
+    public static IntArg CreateInteger(int value)
+    {
+        return new IntArg(value);
+    }
+
+    public static IntArg CreateInteger(long value)
+    {
+        return new IntArg(value);
+    }
+
+    public int AsInt()
+    {
+        if (this is IntArg arg)
+        {
+            return (int)arg.Value;
+        }
+
+        throw new ArgumentException($"Cannot cast {this.GetType().Name} to {nameof(IntArg)}");
+    }
 }
 
 public class IntArg(long value) : CommandArg

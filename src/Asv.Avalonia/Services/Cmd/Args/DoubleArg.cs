@@ -24,6 +24,20 @@ public partial class CommandArg
     {
         return new DoubleArg(value);
     }
+
+    public static DoubleArg CreateDouble(double value)
+    {
+        return new DoubleArg(value);
+    }
+
+    public double AsDouble()
+    {
+        if (this is DoubleArg arg)
+        {
+            return arg.Value;
+        }
+        throw new InvalidCastException($"Cannot cast {GetType().Name} to {nameof(Double)}");
+    }
 }
 
 public class DoubleArg(double value) : CommandArg

@@ -29,11 +29,11 @@ public class TextSearchCommand : ContextCommand<ISupportTextSearch, StringArg>
     {
         var oldValue = context.SearchText;
         context.Query(arg.Value);
-        return ValueTask.FromResult<StringArg?>(CommandArg.FromString(oldValue));
+        return ValueTask.FromResult<StringArg?>(CommandArg.CreateString(oldValue));
     }
 
     public static ValueTask ExecuteCommand(SearchBoxViewModel owner, string? value)
     {
-        return owner.ExecuteCommand(Id, CommandArg.FromString(value ?? string.Empty));
+        return owner.ExecuteCommand(Id, CommandArg.CreateString(value ?? string.Empty));
     }
 }

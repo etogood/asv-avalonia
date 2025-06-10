@@ -6,6 +6,8 @@ namespace Asv.Avalonia;
 public partial class CommandArg
 {
     public static CommandArg Empty => EmptyArg.Instance;
+
+    public bool IsEmpty() => this is EmptyArg;
 }
 
 public class EmptyArg : CommandArg

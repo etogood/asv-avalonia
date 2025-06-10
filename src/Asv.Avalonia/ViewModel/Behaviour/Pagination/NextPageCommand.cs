@@ -9,7 +9,7 @@ public class NextPageCommand : ContextCommand<ISupportPagination>
 {
     public const string Id = $"{BaseId}.page.next";
 
-    public override ICommandInfo Info =>
+    public static ICommandInfo StaticInfo =>
         new CommandInfo
         {
             Id = Id,
@@ -19,6 +19,13 @@ public class NextPageCommand : ContextCommand<ISupportPagination>
             DefaultHotKey = "Ctrl+Right",
             Source = SystemModule.Instance,
         };
+
+    public static ValueTask ExecuteAtContext(IRoutable context)
+    {
+        return context.ExecuteCommand(Id, CommandArg.Empty);
+    }
+
+    public override ICommandInfo Info => StaticInfo;
 
     protected override async ValueTask<CommandArg?> InternalExecute(
         ISupportPagination context,

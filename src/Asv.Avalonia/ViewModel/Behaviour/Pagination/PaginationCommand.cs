@@ -23,6 +23,9 @@ public class PaginationCommand : ContextCommand<ISupportPagination, ListArg>
 
     public override ICommandInfo Info => StaticInfo;
 
+    public static ValueTask ExecuteAtContext(IRoutable context, int skip, int take) =>
+        context.ExecuteCommand(Id, new ListArg(2) { new IntArg(skip), new IntArg(take) });
+
     public override ValueTask<ListArg?> InternalExecute(
         ISupportPagination context,
         ListArg arg,

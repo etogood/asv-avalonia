@@ -7,13 +7,70 @@ using Newtonsoft.Json;
 
 namespace Asv.Avalonia;
 
+public partial class CommandArg
+{
+    public static DictArg CreateDictionary(int capacity)
+    {
+        return new DictArg(capacity);
+    }
+
+    public static DictArg CreateDictionary()
+    {
+        return new DictArg();
+    }
+
+    public static DictArg CreateDictionary(IDictionary<string, CommandArg> dictionary)
+    {
+        return new DictArg(dictionary);
+    }
+
+    public static DictArg CreateDictionary(
+        params IEnumerable<KeyValuePair<string, CommandArg>> collection
+    )
+    {
+        return new DictArg(collection);
+    }
+
+    public DictArg AsDictionary()
+    {
+        if (this is DictArg list)
+        {
+            return list;
+        }
+
+        throw new ArgumentException(
+            $"Cannot convert {GetType().Name} to {nameof(DictArg)}. Expected a dictionary type."
+        );
+    }
+}
+
 public class DictArg : CommandArg, IDictionary<string, CommandArg>
 {
-    private readonly Dictionary<string, CommandArg> _dictionary = new(
-        StringComparer.InvariantCultureIgnoreCase
-    );
+    public static IEqualityComparer<string> Comparer => StringComparer.InvariantCultureIgnoreCase;
 
     protected internal static CommandArg CreateDefault() => new DictArg();
+
+    private readonly Dictionary<string, CommandArg> _dictionary;
+
+    public DictArg()
+    {
+        _dictionary = new(Comparer);
+    }
+
+    public DictArg(int capacity)
+    {
+        _dictionary = new(capacity, Comparer);
+    }
+
+    public DictArg(IDictionary<string, CommandArg> dictionary)
+    {
+        _dictionary = new(dictionary, Comparer);
+    }
+
+    public DictArg(IEnumerable<KeyValuePair<string, CommandArg>> collection)
+    {
+        _dictionary = new(collection, Comparer);
+    }
 
     public override Id TypeId => Id.Dict;
 

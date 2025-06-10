@@ -7,9 +7,19 @@ public partial class CommandArg
 {
     public static CommandArg EmptyString => new StringArg(string.Empty);
 
-    public static StringArg FromString(string value)
+    public static StringArg CreateString(string value)
     {
         return new StringArg(value);
+    }
+
+    public string AsString()
+    {
+        if (this is StringArg stringArg)
+        {
+            return stringArg.Value;
+        }
+
+        throw new ArgumentException($"Cannot convert {GetType().Name} to {nameof(StringArg)}.");
     }
 }
 

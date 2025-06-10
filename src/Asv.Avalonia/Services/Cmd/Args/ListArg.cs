@@ -4,6 +4,26 @@ using Newtonsoft.Json;
 
 namespace Asv.Avalonia;
 
+public partial class CommandArg
+{
+    public static ListArg CreateList(params IEnumerable<CommandArg> value)
+    {
+        return new ListArg(value);
+    }
+
+    public ListArg AsList()
+    {
+        if (this is ListArg list)
+        {
+            return list;
+        }
+
+        throw new ArgumentException(
+            $"Cannot convert {this.GetType().Name} to ListArg. Expected a ListArg."
+        );
+    }
+}
+
 public class ListArg : CommandArg, IList<CommandArg>
 {
     protected internal static CommandArg CreateDefault() => new ListArg();
@@ -13,6 +33,16 @@ public class ListArg : CommandArg, IList<CommandArg>
     public ListArg() => _items = [];
 
     public ListArg(int capacity) => _items = new List<CommandArg>(capacity);
+
+    public ListArg(params IEnumerable<CommandArg> items)
+    {
+        if (items is null)
+        {
+            throw new ArgumentNullException(nameof(items), "Items cannot be null.");
+        }
+
+        _items = new List<CommandArg>(items);
+    }
 
     public override Id TypeId => Id.List;
 

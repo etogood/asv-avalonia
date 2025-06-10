@@ -9,16 +9,19 @@ public class PreviousPageCommand : ContextCommand<ISupportPagination>
 {
     public const string Id = $"{BaseId}.page.back";
 
-    public override ICommandInfo Info =>
-        new CommandInfo
-        {
-            Id = Id,
-            Name = "Previous Page",
-            Description = "Go to previous page",
-            Icon = MaterialIconKind.ArrowLeftBold,
-            DefaultHotKey = "Ctrl+Left",
-            Source = SystemModule.Instance,
-        };
+    internal static readonly ICommandInfo StaticInfo = new CommandInfo
+    {
+        Id = Id,
+        Name = "Previous Page",
+        Description = "Go to previous page",
+        Icon = MaterialIconKind.ArrowLeftBold,
+        DefaultHotKey = "Ctrl+Left",
+        Source = SystemModule.Instance,
+    };
+    public override ICommandInfo Info => StaticInfo;
+
+    public static ValueTask ExecuteAtContext(IRoutable context) =>
+        context.ExecuteCommand(Id, CommandArg.Empty);
 
     protected override async ValueTask<CommandArg?> InternalExecute(
         ISupportPagination context,

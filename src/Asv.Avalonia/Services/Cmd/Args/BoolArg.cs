@@ -23,6 +23,21 @@ public partial class CommandArg
     {
         return new BoolArg(value);
     }
+
+    public static BoolArg CreateBool(bool value)
+    {
+        return new BoolArg(value);
+    }
+
+    public bool AsBool()
+    {
+        if (this is BoolArg arg)
+        {
+            return arg.Value;
+        }
+
+        throw new InvalidCastException($"Cannot cast {GetType().Name} to {nameof(Boolean)}");
+    }
 }
 
 public class BoolArg(bool value) : CommandArg

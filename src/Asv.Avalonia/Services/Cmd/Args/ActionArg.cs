@@ -12,6 +12,82 @@ public partial class CommandArg
 
     public static ActionArg ChangeAction(string id, CommandArg options) =>
         new(id, options, ActionArg.Kind.Change);
+
+    public ActionArg AsAction()
+    {
+        if (this is ActionArg actionArg)
+        {
+            return actionArg;
+        }
+
+        throw new InvalidCastException(
+            $"Cannot cast {GetType().Name} to {nameof(ActionArg)}. "
+                + "This command argument is not an action."
+        );
+    }
+
+    public CommandArg AsAddAction()
+    {
+        var action = AsAction();
+        if (action.Action != ActionArg.Kind.Add)
+        {
+            throw new InvalidCastException(
+                $"Cannot cast {GetType().Name} to {nameof(ActionArg)}. "
+                    + "This command argument is not an add action."
+            );
+        }
+
+        return action.Value
+            ?? throw new InvalidOperationException(
+                "Add action does not have a value. "
+                    + "Ensure that the action was created with a valid value."
+            );
+    }
+
+    public void AsRemoveAction(out string id, out CommandArg? options)
+    {
+        var action = AsAction();
+        if (action.Action != ActionArg.Kind.Remove)
+        {
+            throw new InvalidCastException(
+                $"Cannot cast {GetType().Name} to {nameof(ActionArg)}. "
+                    + "This command argument is not a remove action."
+            );
+        }
+
+        id =
+            action.SubjectId
+            ?? throw new InvalidOperationException(
+                "Remove action does not have a subject ID. "
+                    + "Ensure that the action was created with a valid subject ID."
+            );
+        options = null; // Remove action does not have an options value
+    }
+
+    public string AsChangeAction(out CommandArg options)
+    {
+        var action = AsAction();
+        if (action.Action != ActionArg.Kind.Change)
+        {
+            throw new InvalidCastException(
+                $"Cannot cast {GetType().Name} to {nameof(ActionArg)}. "
+                    + "This command argument is not a change action."
+            );
+        }
+
+        options =
+            action.Value
+            ?? throw new InvalidOperationException(
+                "Change action does not have a value. "
+                    + "Ensure that the action was created with a valid value."
+            );
+
+        return action.SubjectId
+            ?? throw new InvalidOperationException(
+                "Change action does not have a subject ID. "
+                    + "Ensure that the action was created with a valid subject ID."
+            );
+    }
 }
 
 public class ActionArg(string? subjectId, CommandArg? value, ActionArg.Kind action) : CommandArg
