@@ -167,26 +167,12 @@ public static class RoutableMixin
 
     public static IDisposable SetRoutableParent<T>(
         this IObservableCollection<T> src,
-        IRoutable parent,
-        bool disposeWhenRemoveView
+        IRoutable parent
     )
         where T : class, IRoutable
     {
         var sub1 = src.ObserveAdd().Subscribe(x => x.Value.Parent = parent);
-        IDisposable sub2;
-        if (disposeWhenRemoveView)
-        {
-            sub2 = src.ObserveRemove()
-                .Subscribe(x =>
-                {
-                    x.Value.Parent = null;
-                    x.Value.Dispose();
-                });
-        }
-        else
-        {
-            sub2 = src.ObserveRemove().Subscribe(x => x.Value.Parent = null);
-        }
+        var sub2 = src.ObserveRemove().Subscribe(x => x.Value.Parent = null);
 
         return new CompositeDisposable(sub1, sub2);
     }

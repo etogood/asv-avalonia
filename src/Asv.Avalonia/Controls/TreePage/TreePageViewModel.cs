@@ -22,7 +22,8 @@ public abstract class TreePageViewModel<TContext, TSubPage>
     {
         _container = container;
         Nodes = [];
-        Nodes.SetRoutableParent(this, true);
+        Nodes.SetRoutableParent(this).DisposeItWith(Disposable);
+        Nodes.DisposeRemovedItems().DisposeItWith(Disposable);
         TreeView = new TreePageMenu(Nodes).DisposeItWith(Disposable);
         SelectedNode = new BindableReactiveProperty<ObservableTreeNode<
             ITreePage,
