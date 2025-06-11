@@ -63,7 +63,7 @@ public readonly partial struct NavigationId
         Id = typeId;
         Args = args;
     }
-    
+
     public NavigationId(ref ReadOnlySpan<byte> buffer)
     {
         Id = BinSerialize.ReadString(ref buffer);

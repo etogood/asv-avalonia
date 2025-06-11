@@ -51,7 +51,7 @@ public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgre
             Text.Skip(1)
                 .Debounce(throttleTime.Value)
                 .SubscribeAwait(
-                    (x, _) => TextSearchCommand.ExecuteCommand(this, x),
+                    (x, _) => TextSearchCommand.Execute(this, x),
                     AwaitOperation.Parallel
                 )
                 .DisposeItWith(Disposable);
@@ -69,6 +69,11 @@ public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgre
     }
 
     public string SearchText => _searchText;
+
+    public void QueryWithCommand(string? text)
+    {
+        TextSearchCommand.Execute(this, text);
+    }
 
     public void Query(string? text)
     {

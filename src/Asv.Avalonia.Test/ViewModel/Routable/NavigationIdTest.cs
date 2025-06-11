@@ -24,7 +24,7 @@ public class NavigationIdTest
         Assert.Equal("Test.Type", id.Id);
         Assert.Equal("param1", id.Args);
     }
-    
+
     [Fact]
     public void ExplicitConstructor_ValidTypeId_WithArgs()
     {
@@ -32,7 +32,6 @@ public class NavigationIdTest
         Assert.Equal("Test.Type", nav.Id);
         Assert.Equal("param1=sdsd", nav.Args);
     }
-
 
     [Fact]
     public void Constructor_Throws_OnInvalidTypeId()

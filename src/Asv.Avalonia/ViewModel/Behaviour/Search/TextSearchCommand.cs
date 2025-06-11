@@ -32,7 +32,7 @@ public class TextSearchCommand : ContextCommand<ISupportTextSearch, StringArg>
         return ValueTask.FromResult<StringArg?>(CommandArg.CreateString(oldValue));
     }
 
-    public static ValueTask ExecuteCommand(SearchBoxViewModel owner, string? value)
+    public static ValueTask Execute(SearchBoxViewModel owner, string? value)
     {
         return owner.ExecuteCommand(Id, CommandArg.CreateString(value ?? string.Empty));
     }

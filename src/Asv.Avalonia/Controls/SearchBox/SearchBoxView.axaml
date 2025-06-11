@@ -17,7 +17,7 @@
                  Watermark="Search"
                  MinHeight="0" Height="25" >
             <TextBox.KeyBindings>
-                <KeyBinding Gesture="Enter" Command="{Binding Query}" CommandParameter="{Binding Text.Value}"/>
+                <KeyBinding Gesture="Enter" Command="{Binding QueryWithCommand}" CommandParameter="{Binding Text.Value}"/>
                 <KeyBinding Gesture="Escape" Command="{Binding Clear}"/>
             </TextBox.KeyBindings>
             <TextBox.InnerLeftContent>
