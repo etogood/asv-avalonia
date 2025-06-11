@@ -215,7 +215,10 @@ public static class ObservableMixin
     public static void RemoveAll<T>(this ObservableHashSet<T> src)
         where T : notnull
     {
-        src.RemoveRange(src);
+        foreach (var item in src)
+        {
+            src.Remove(item);
+        }
     }
 
     public static void PopAll<T>(this ObservableStack<T> src)
