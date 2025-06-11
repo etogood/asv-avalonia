@@ -154,6 +154,13 @@ public static class ObservableMixin
         src.Clear();
     }
 
+    public static void ClearWithItemsDispose<T>(this ObservableHashSet<T> src)
+        where T : IDisposable
+    {
+        src.CollectionItemsDispose();
+        src.Clear();
+    }
+
     public static void ClearWithItemsDispose<T>(this ObservableStack<T> src)
         where T : IDisposable
     {
@@ -210,12 +217,6 @@ public static class ObservableMixin
         {
             src.RemoveLast();
         }
-    }
-
-    public static void RemoveAll<T>(this ObservableHashSet<T> src)
-        where T : notnull
-    {
-        src.RemoveRange(src);
     }
 
     public static void PopAll<T>(this ObservableStack<T> src)
