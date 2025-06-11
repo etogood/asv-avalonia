@@ -196,6 +196,28 @@ public static class ObservableMixin
         src.RemoveRange(0, src.Count);
     }
 
+    public static void RemoveAll<T>(this ObservableRingBuffer<T> src)
+    {
+        while (src.Count > 0)
+        {
+            src.RemoveLast();
+        }
+    }
+
+    public static void RemoveAll<T>(this ObservableFixedSizeRingBuffer<T> src)
+    {
+        while (src.Count > 0)
+        {
+            src.RemoveLast();
+        }
+    }
+
+    public static void RemoveAll<T>(this ObservableHashSet<T> src)
+        where T : notnull
+    {
+        src.RemoveRange(src);
+    }
+
     public static void PopAll<T>(this ObservableStack<T> src)
     {
         src.PopRange(src.Count);

@@ -40,7 +40,8 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
         SelectedPage = new BindableReactiveProperty<IPage?>();
         MainMenu = new ObservableList<IMenuItem>();
         MainMenuView = new MenuTree(MainMenu).DisposeItWith(Disposable);
-        MainMenu.SetRoutableParent(this, true).DisposeItWith(Disposable);
+        MainMenu.SetRoutableParent(this).DisposeItWith(Disposable);
+        MainMenu.DisposeRemovedItems().DisposeItWith(Disposable);
         SelectedPage.Subscribe(page => Navigation.ForceFocus(page)).DisposeItWith(Disposable);
     }
 
