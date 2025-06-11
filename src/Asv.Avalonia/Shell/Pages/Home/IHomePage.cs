@@ -25,9 +25,11 @@ public class HomePageItem : HeadlinedViewModel, IHomePageItem
         Disposable.AddAction(() => Actions.Clear());
         Disposable.AddAction(() => Info.Clear());
 
-        Actions.SetRoutableParent(this, true).DisposeItWith(Disposable);
+        Actions.SetRoutableParent(this).DisposeItWith(Disposable);
+        Actions.DisposeRemovedItems().DisposeItWith(Disposable);
 
-        Info.SetRoutableParent(this, true).DisposeItWith(Disposable);
+        Info.SetRoutableParent(this).DisposeItWith(Disposable);
+        Info.DisposeRemovedItems().DisposeItWith(Disposable);
     }
 
     public ObservableList<IActionViewModel> Actions { get; } = [];

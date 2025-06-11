@@ -95,7 +95,8 @@ public class HomePageViewModel : PageViewModel<IHomePage>, IHomePage
         Title = "Home";
 
         Tools = [];
-        Tools.SetRoutableParent(this, true).DisposeItWith(Disposable);
+        Tools.SetRoutableParent(this).DisposeItWith(Disposable);
+        Tools.DisposeRemovedItems().DisposeItWith(Disposable);
         ToolsView = Tools.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
 
         Items = [];

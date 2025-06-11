@@ -47,10 +47,12 @@ public class FlightPageViewModel : PageViewModel<IFlightMode>, IFlightMode
         Title = RS.FlightPageViewModel_Title;
         Icon = PageIcon;
         Anchors = [];
-        Anchors.SetRoutableParent(this, true).DisposeItWith(Disposable);
+        Anchors.SetRoutableParent(this).DisposeItWith(Disposable);
+        Anchors.DisposeRemovedItems().DisposeItWith(Disposable);
         AnchorsView = Anchors.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
         Widgets = [];
-        Widgets.SetRoutableParent(this, true).DisposeItWith(Disposable);
+        Widgets.SetRoutableParent(this).DisposeItWith(Disposable);
+        Widgets.DisposeRemovedItems().DisposeItWith(Disposable);
         WidgetsView = Widgets.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
         SelectedAnchor = new BindableReactiveProperty<IMapAnchor?>().DisposeItWith(Disposable);
     }

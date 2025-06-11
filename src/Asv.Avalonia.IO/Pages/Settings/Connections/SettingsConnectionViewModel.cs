@@ -51,7 +51,8 @@ public class SettingsConnectionViewModel
         };
 
         MenuView = new MenuTree(Menu).DisposeItWith(Disposable);
-        Menu.SetRoutableParent(this, true).DisposeItWith(Disposable);
+        Menu.SetRoutableParent(this).DisposeItWith(Disposable);
+        Menu.DisposeRemovedItems().DisposeItWith(Disposable);
 
         foreach (var port in deviceManager.Router.Ports)
         {
