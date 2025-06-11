@@ -1,5 +1,6 @@
 using Asv.Cfg;
 using Avalonia.Controls;
+using DotNext;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -7,7 +8,9 @@ namespace Asv.Avalonia;
 
 public static class DesignTime
 {
-    public const string Id = "DesingTimeId";
+    public const string AllowedCharacters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    public static string Id => Random.Shared.NextString(AllowedCharacters, 16);
 
     public static void ThrowIfNotDesignMode()
     {

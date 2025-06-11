@@ -166,7 +166,7 @@
         
     </Styles.Resources>
     
-    <FluentTheme>
+    <FluentTheme DensityStyle="Compact">
         <FluentTheme.Palettes>
             <ColorPaletteResources x:Key="Light" Accent="#ff8961cc" AltHigh="White" AltLow="White" AltMedium="White" AltMediumHigh="White" AltMediumLow="White" BaseHigh="Black" BaseLow="#ffeeceff" BaseMedium="#ffa987bc" BaseMediumHigh="#ff7b5890" BaseMediumLow="#ff9270a6" ChromeAltLow="#ff7b5890" ChromeBlackHigh="Black" ChromeBlackLow="#ffeeceff" ChromeBlackMedium="#ff7b5890" ChromeBlackMediumLow="#ffa987bc" ChromeDisabledHigh="#ffeeceff" ChromeDisabledLow="#ffa987bc" ChromeGray="#ff9270a6" ChromeHigh="#ffeeceff" ChromeLow="#fffeeaff" ChromeMedium="#fffbe4ff" ChromeMediumLow="#fffeeaff" ChromeWhite="White" ListLow="#fffbe4ff" ListMedium="#ffeeceff" RegionColor="#fffef6ff" />
            
@@ -205,7 +205,7 @@
                                    AltLow="#ff313438"
                                    AltMedium="#ff6f737a"
                                    AltMediumHigh="#ff868a91"
-                                   AltMediumLow="#ff4b5059"
+                                   AltMediumLow="#FF363940"
                                    BaseHigh="#ffced0d6"
                                    BaseLow="#ff2b2d30"
                                    BaseMedium="#ffbcbec4"
