@@ -1,15 +1,21 @@
+using Microsoft.Extensions.Logging;
+using ZLogger;
+
 namespace Asv.Avalonia;
 
-public abstract class RoutableViewModel(NavigationId id) : DisposableViewModel(id), IRoutable
+public abstract class RoutableViewModel(NavigationId id, ILoggerFactory loggerFactory)
+    : DisposableViewModel(id, loggerFactory),
+        IRoutable
 {
     private RoutedEventHandler? _routedEventHandler;
-
     public IRoutable? Parent { get; set; }
 
     public async ValueTask Rise(AsyncRoutedEvent e)
     {
         if (IsDisposed)
         {
+            // If the view model is disposed, we should not process any events
+            Logger.ZLogWarning($"{this} is disposed, but try to rise event {e}");
             return;
         }
 

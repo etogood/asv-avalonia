@@ -818,7 +818,7 @@ public class FileBrowserViewModel : DevicePageViewModel<FileBrowserViewModel>
 
     protected override void AfterLoadExtensions() { }
 
-    protected override void AfterDeviceInitialized(IClientDevice device)
+    protected override void AfterDeviceInitialized(IClientDevice device, CancellationToken cancel)
     {
         Title = $"Browser[{device.Id}]";
         Client = device.GetMicroservice<IFtpClient>();

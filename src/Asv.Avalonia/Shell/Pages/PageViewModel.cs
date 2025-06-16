@@ -9,10 +9,9 @@ namespace Asv.Avalonia;
 public abstract class PageViewModel<TContext> : ExtendableViewModel<TContext>, IPage
     where TContext : class, IPage
 {
-    private string _title;
-    private MaterialIconKind _icon;
+    private readonly ILogger<PageViewModel<TContext>> _privateLogger;
 
-    protected PageViewModel(NavigationId id, ICommandService cmd)
+    protected PageViewModel(NavigationId id, ICommandService cmd, ILoggerFactory loggerFactory)
         : base(id)
     {
         History = cmd.CreateHistory(this);
@@ -20,10 +19,12 @@ public abstract class PageViewModel<TContext> : ExtendableViewModel<TContext>, I
         Title = id.ToString();
         HasChanges = new BindableReactiveProperty<bool>(false);
         TryClose = new BindableAsyncCommand(ClosePageCommand.Id, this);
+        _privateLogger = loggerFactory.CreateLogger<PageViewModel<TContext>>();
     }
 
     public async ValueTask TryCloseAsync()
     {
+        _privateLogger.ZLogTrace($"Try close page {Title}[{Id}]");
         try
         {
             var reasons = await this.RequestChildCloseApproval();
@@ -45,14 +46,14 @@ public abstract class PageViewModel<TContext> : ExtendableViewModel<TContext>, I
 
     public MaterialIconKind Icon
     {
-        get => _icon;
-        set => SetField(ref _icon, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public string Title
     {
-        get => _title;
-        set => SetField(ref _title, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public ICommandHistory History { get; }

@@ -1,53 +1,48 @@
 using Avalonia.Media;
 using Material.Icons;
+using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia;
 
-public abstract class ExtendableHeadlinedViewModel<TSelfInterface>(NavigationId id)
-    : ExtendableViewModel<TSelfInterface>(id),
-        IHeadlinedViewModel
+public abstract class ExtendableHeadlinedViewModel<TSelfInterface>(
+    NavigationId id,
+    LoggerFactory loggerFactory
+) : ExtendableViewModel<TSelfInterface>(id, loggerFactory), IHeadlinedViewModel
     where TSelfInterface : class
 {
-    private MaterialIconKind? _icon;
-    private IBrush? _iconBrush = Brushes.BlueViolet;
-    private string? _header;
-    private string? _description;
-    private int _order;
-    private bool _isVisible = true;
-
     public MaterialIconKind? Icon
     {
-        get => _icon;
-        set => SetField(ref _icon, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public IBrush? IconBrush
     {
-        get => _iconBrush;
-        set => SetField(ref _iconBrush, value);
-    }
+        get;
+        set => SetField(ref field, value);
+    } = Brushes.BlueViolet;
 
     public string? Header
     {
-        get => _header;
-        set => SetField(ref _header, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public string? Description
     {
-        get => _description;
-        set => SetField(ref _description, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public bool IsVisible
     {
-        get => _isVisible;
-        set => SetField(ref _isVisible, value);
-    }
+        get;
+        set => SetField(ref field, value);
+    } = true;
 
     public int Order
     {
-        get => _order;
-        set => SetField(ref _order, value);
+        get;
+        set => SetField(ref field, value);
     }
 }

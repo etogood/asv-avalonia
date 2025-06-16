@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia;
@@ -6,7 +7,8 @@ namespace Asv.Avalonia;
 /// Represents a base view model that supports disposable resources and cancellation handling.
 /// This class ensures proper cleanup of resources when the view model is disposed.
 /// </summary>
-public class DisposableViewModel(NavigationId id) : ViewModelBase(id)
+public class DisposableViewModel(NavigationId id, ILoggerFactory loggerFactory)
+    : ViewModelBase(id, loggerFactory)
 {
     private volatile CancellationTokenSource? _cancel;
     private volatile CompositeDisposable? _dispose;
@@ -84,6 +86,8 @@ public class DisposableViewModel(NavigationId id) : ViewModelBase(id)
             // Dispose of cancellation token and composite disposable
             _cancel?.Dispose();
             _dispose?.Dispose();
+            _cancel = null;
+            _dispose = null;
         }
     }
 }

@@ -285,7 +285,7 @@ public class MavParamsPageViewModel
         _cancellationTokenSource.Dispose();
     }
 
-    protected override void AfterDeviceInitialized(IClientDevice device)
+    protected override void AfterDeviceInitialized(IClientDevice device, CancellationToken cancel)
     {
         Title = $"Params[{device.Id}]";
         _paramsClient = device.GetMicroservice<IParamsClientEx>();

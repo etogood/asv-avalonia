@@ -22,6 +22,7 @@
             CA1510,
             CA1851
         </WarningsAsErrors>
+        <LangVersion>preview</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>

@@ -1,10 +1,12 @@
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia;
 
-public abstract class HistoricalPropertyBase<TModel, TView>(NavigationId id)
-    : RoutableViewModel(id),
-        IHistoricalProperty<TModel>
+public abstract class HistoricalPropertyBase<TModel, TView>(
+    NavigationId id,
+    ILoggerFactory loggerFactory
+) : RoutableViewModel(id, loggerFactory), IHistoricalProperty<TModel>
 {
     public abstract BindableReactiveProperty<TView> ViewValue { get; }
     public abstract ReactiveProperty<TModel> ModelValue { get; }

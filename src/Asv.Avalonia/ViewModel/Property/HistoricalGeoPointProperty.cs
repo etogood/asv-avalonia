@@ -1,4 +1,5 @@
 using Asv.Common;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia;
@@ -12,9 +13,10 @@ public sealed class HistoricalGeoPointProperty : CompositeHistoricalPropertyBase
         ReactiveProperty<GeoPoint> modelValue,
         IUnit latUnit,
         IUnit lonUnit,
-        IUnit altUnit
+        IUnit altUnit,
+        ILoggerFactory loggerFactory
     )
-        : base(id)
+        : base(id, loggerFactory)
     {
         _modelValue = modelValue;
         var modelLat = new ReactiveProperty<double>().DisposeItWith(Disposable);

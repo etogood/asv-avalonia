@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia;
@@ -8,8 +9,8 @@ public abstract class ViewModelBaseWithValidation : ViewModelBase
 {
     protected ReactiveProperty<ValidationResult> IsValid { get; }
 
-    protected ViewModelBaseWithValidation(string id)
-        : base(id)
+    protected ViewModelBaseWithValidation(NavigationId id, ILoggerFactory loggerFactory)
+        : base(id, loggerFactory)
     {
         IsValid = new ReactiveProperty<ValidationResult>(Validate());
     }

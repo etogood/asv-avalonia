@@ -1,5 +1,6 @@
 ﻿using Avalonia.Media;
 using Material.Icons;
+using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia;
 
@@ -7,48 +8,44 @@ namespace Asv.Avalonia;
 /// Represents a base view model with a title (header) and an optional icon.
 /// This can be used as a foundation for view models that require a title and icon representation.
 /// </summary>
-public class HeadlinedViewModel(NavigationId id) : RoutableViewModel(id), IHeadlinedViewModel
+public class HeadlinedViewModel(NavigationId id, ILoggerFactory loggerFactory)
+    : RoutableViewModel(id, loggerFactory),
+        IHeadlinedViewModel
 {
-    private string? _title;
-    private MaterialIconKind? _icon;
-    private string? _description;
-    private IBrush? _iconBrush = Brushes.Violet;
-    private bool _isVisible = true;
-
     /// <summary>
     /// Gets or sets the icon associated with the view model.
     /// </summary>
     public MaterialIconKind? Icon
     {
-        get => _icon;
-        set => SetField(ref _icon, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public IBrush? IconBrush
     {
-        get => _iconBrush;
-        set => SetField(ref _iconBrush, value);
-    }
+        get;
+        set => SetField(ref field, value);
+    } = Brushes.Violet;
 
     public bool IsVisible
     {
-        get => _isVisible;
-        set => SetField(ref _isVisible, value);
-    }
+        get;
+        set => SetField(ref field, value);
+    } = true;
 
     /// <summary>
     /// Gets or sets the header (title) of the view model.
     /// </summary>
     public string? Header
     {
-        get => _title;
-        set => SetField(ref _title, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public string? Description
     {
-        get => _description;
-        set => SetField(ref _description, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public int Order { get; set; }

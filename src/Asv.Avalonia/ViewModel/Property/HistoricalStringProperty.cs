@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia;
@@ -16,9 +17,10 @@ public sealed class HistoricalStringProperty : HistoricalPropertyBase<string?, s
     public HistoricalStringProperty(
         string id,
         ReactiveProperty<string?> modelValue,
+        ILoggerFactory loggerFactory,
         IList<Func<string?, ValidationResult>>? validationRules = null
     )
-        : base(id)
+        : base(id, loggerFactory)
     {
         InternalInitValidationRules(validationRules);
         _modelValue = modelValue;

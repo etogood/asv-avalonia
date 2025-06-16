@@ -1,49 +1,99 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Specialized;
+using System.Diagnostics;
 using Asv.Common;
 using Asv.IO;
+using Microsoft.Extensions.Logging;
+using ObservableCollections;
 using R3;
+using ZLogger;
 
 namespace Asv.Avalonia.IO;
 
 public abstract class DevicePageViewModel<T> : PageViewModel<T>, IDevicePage
     where T : class, IDevicePage
 {
+    public const string ArgsDeviceIdKey = "dev_id";
     private readonly IDeviceManager? _devices;
-    private readonly Subject<IClientDevice> _afterDeviceInitializedCallback;
+    private string? _targetDeviceId;
+    private IDisposable? _waitInitSubscription;
+    private CancellationTokenSource? _deviceDisconnectedToken;
+    private readonly ReactiveProperty<DeviceWrapper?> _target;
+    private readonly ILogger<DevicePageViewModel<T>> _logger;
 
-    protected DevicePageViewModel(NavigationId id, IDeviceManager devices, ICommandService cmd)
+    protected DevicePageViewModel(
+        NavigationId id,
+        IDeviceManager devices,
+        ICommandService cmd,
+        ILoggerFactory logger
+    )
         : base(id, cmd)
     {
         _devices = devices;
-        _afterDeviceInitializedCallback = new Subject<IClientDevice>().DisposeItWith(Disposable);
+        _logger = logger.CreateLogger<DevicePageViewModel<T>>();
+        _target = new ReactiveProperty<DeviceWrapper?>().DisposeItWith(Disposable);
+        Disposable.AddAction(DeviceRemoved);
     }
 
-    protected override void InternalInitArgs(string? args)
+    protected override void InternalInitArgs(NameValueCollection args)
     {
-        Debug.Assert(_devices != null, "_devices != null");
+        _logger.ZLogTrace($"{this} init args: {args}");
         base.InternalInitArgs(args);
+        Debug.Assert(_devices != null, "_devices != null");
+        _targetDeviceId =
+            args[ArgsDeviceIdKey]
+            ?? throw new ArgumentNullException(
+                $"{ArgsDeviceIdKey} argument is required for {GetType().Name} page"
+            );
+        _devices
+            .Explorer.Devices.ObserveAdd()
+            .Where(_targetDeviceId, (e, id) => e.Value.Key.AsString() == id)
+            .Subscribe(x => DeviceFoundButNotInitialized(x.Value.Value))
+            .DisposeItWith(Disposable);
 
-        Device = _devices.Explorer.Devices.Values.FirstOrDefault(x => x.Id.AsString() == args);
-        if (Device == null)
+        _devices
+            .Explorer.Devices.ObserveRemove()
+            .Where(_targetDeviceId, (e, id) => e.Value.Key.AsString() == id)
+            .Subscribe(_ => DeviceRemoved())
+            .DisposeItWith(Disposable);
+
+        foreach (
+            var device in _devices.Explorer.Devices.Where(x => x.Key.AsString() == _targetDeviceId)
+        )
         {
-            // TODO: say user that device not found
-            return;
+            DeviceFoundButNotInitialized(device.Value);
         }
+    }
 
-        // we need to wait until device is initialized
-        Device
+    private void DeviceRemoved()
+    {
+        _deviceDisconnectedToken?.Cancel(false);
+        _deviceDisconnectedToken?.Dispose();
+        _deviceDisconnectedToken = null;
+        _waitInitSubscription?.Dispose();
+        _waitInitSubscription = null;
+    }
+
+    private void DeviceFoundButNotInitialized(IClientDevice device)
+    {
+        DeviceRemoved();
+        _waitInitSubscription = device
             .State.Where(x => x == ClientDeviceState.Complete)
             .Take(1)
-            .Subscribe(_ => AfterDeviceInitialized(Device))
-            .DisposeItWith(Disposable);
+            .Subscribe(device, DeviceFoundAndInitialized);
     }
 
-    protected virtual void AfterDeviceInitialized(IClientDevice device)
+    private void DeviceFoundAndInitialized(ClientDeviceState state, IClientDevice device)
     {
-        _afterDeviceInitializedCallback.OnNext(device);
+        Debug.Assert(_waitInitSubscription != null, nameof(_waitInitSubscription) + " != null");
+        _waitInitSubscription.Dispose();
+        _deviceDisconnectedToken = new CancellationTokenSource();
+        AfterDeviceInitialized(device, _deviceDisconnectedToken.Token);
+        _target.OnNext(new DeviceWrapper(device, _deviceDisconnectedToken.Token));
     }
 
-    public IClientDevice? Device { get; private set; }
-
-    public Observable<IClientDevice> OnDeviceInitialized => _afterDeviceInitializedCallback;
+    protected abstract void AfterDeviceInitialized(
+        IClientDevice device,
+        CancellationToken onDisconnectedToken
+    );
+    public ReadOnlyReactiveProperty<DeviceWrapper?> Target => _target;
 }
