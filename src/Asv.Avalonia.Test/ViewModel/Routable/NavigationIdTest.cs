@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Specialized;
+using System.Text;
 using Asv.Avalonia;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -79,7 +80,7 @@ public class NavigationIdTest
     [Fact]
     public void ChangeArgs_CreatesNewInstanceWithArgs()
     {
-        var id = new NavigationId("id", null);
+        var id = new NavigationId("id");
         var changed = id.ChangeArgs("x");
         Assert.Equal("id", changed.Id);
         Assert.Equal("x", changed.Args);
@@ -159,5 +160,74 @@ public class NavigationIdTest
         using var reader = new JsonTextReader(sr);
         reader.Read();
         Assert.Throws<ArgumentNullException>(() => new NavigationId(reader));
+    }
+
+    [Fact]
+    public void Constructor_WithNameValueCollection_CreatesCorrectArgs()
+    {
+        var args = new NameValueCollection
+        {
+            { "key1", "value1" },
+            { "key2", "value with space" },
+            { "empty", "" },
+        };
+
+        var id = new NavigationId("nav.test", args);
+        var parsedArgs = NavigationId.ParseArgs(id.Args);
+
+        Assert.Equal("nav.test", id.Id);
+        Assert.Equal("value1", parsedArgs["key1"]);
+        Assert.Equal("value with space", parsedArgs["key2"]);
+        Assert.Equal("", parsedArgs["empty"]);
+    }
+
+    [Fact]
+    public void ParseArgs_ParsesQueryStringCorrectly()
+    {
+        var query = "a=1&b=hello%20world&c=";
+        var args = NavigationId.ParseArgs(query);
+
+        Assert.Equal("1", args["a"]);
+        Assert.Equal("hello world", args["b"]);
+        Assert.Equal("", args["c"]);
+    }
+
+    [Fact]
+    public void CreateArgs_EncodesNameValueCollectionProperly()
+    {
+        var nvc = new NameValueCollection
+        {
+            { "k1", "v1" },
+            { "key with space", "value with space" },
+            { "empty", "" },
+        };
+
+        var query = NavigationId.CreateArgs(nvc);
+        // В порядке добавления, URL-кодировка:
+        Assert.Contains("k1=v1", query);
+        Assert.Contains("key+with+space=value+with+space", query);
+        Assert.Contains("empty=", query);
+    }
+
+    [Fact]
+    public void CreateArgs_EmptyOrNullCollection_ReturnsEmptyString()
+    {
+        var emptyArgs = new NameValueCollection();
+        Assert.Equal(string.Empty, NavigationId.CreateArgs(emptyArgs));
+
+        NameValueCollection? nullArgs = null;
+        Assert.Throws<NullReferenceException>(() => NavigationId.CreateArgs(nullArgs!));
+    }
+
+    [Fact]
+    public void ArgsSerialization_RoundTrip_Works()
+    {
+        var input = new NameValueCollection { { "alpha", "beta" }, { "gamma", "delta" } };
+
+        var argsStr = NavigationId.CreateArgs(input);
+        var output = NavigationId.ParseArgs(argsStr);
+
+        Assert.Equal("beta", output["alpha"]);
+        Assert.Equal("delta", output["gamma"]);
     }
 }

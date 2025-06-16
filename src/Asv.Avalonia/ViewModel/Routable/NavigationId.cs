@@ -1,5 +1,7 @@
+using System.Collections.Specialized;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using Asv.IO;
 using Newtonsoft.Json;
 
@@ -56,6 +58,9 @@ public readonly partial struct NavigationId
         Id = typeId;
         Args = args;
     }
+
+    public NavigationId(string typeId, NameValueCollection args)
+        : this(typeId, CreateArgs(args)) { }
 
     public NavigationId(string value)
     {
@@ -128,6 +133,36 @@ public readonly partial struct NavigationId
 
         id = value[..separatorIndex];
         args = separatorIndex < value.Length - 1 ? value[(separatorIndex + 1)..] : null;
+    }
+
+    public static NameValueCollection ParseArgs(string? args)
+    {
+        return string.IsNullOrWhiteSpace(args)
+            ? new NameValueCollection()
+            : HttpUtility.ParseQueryString(args);
+    }
+
+    public static string CreateArgs(NameValueCollection args)
+    {
+        if (args.Count == 0)
+        {
+            return string.Empty;
+        }
+
+        var sb = new StringBuilder();
+        foreach (var key in args.AllKeys)
+        {
+            if (sb.Length > 0)
+            {
+                sb.Append('&');
+            }
+
+            sb.Append(HttpUtility.UrlEncode(key));
+            sb.Append('=');
+            sb.Append(HttpUtility.UrlEncode(args[key] ?? string.Empty));
+        }
+
+        return sb.ToString();
     }
 
     /// <summary>

@@ -10,7 +10,7 @@ public abstract class OpenPageCommandBase(string pageId, INavigationService nav)
         CancellationToken cancel
     )
     {
-        await nav.GoTo(new NavigationPath(new NavigationId(pageId, null)));
+        await nav.GoTo(new NavigationPath(new NavigationId(pageId)));
         return null;
     }
 
