@@ -64,6 +64,7 @@ public abstract class DevicePageViewModel<T> : PageViewModel<T>, IDevicePage
 
     private void DeviceRemoved()
     {
+        Logger.ZLogTrace($"{this} device removed: {_targetDeviceId}");
         _deviceDisconnectedToken?.Cancel(false);
         _deviceDisconnectedToken?.Dispose();
         _deviceDisconnectedToken = null;
@@ -74,6 +75,7 @@ public abstract class DevicePageViewModel<T> : PageViewModel<T>, IDevicePage
     private void DeviceFoundButNotInitialized(IClientDevice device)
     {
         DeviceRemoved();
+        Logger.ZLogTrace($"{this} device found: {device.Id}");
         _waitInitSubscription = device
             .State.Where(x => x == ClientDeviceState.Complete)
             .Take(1)
@@ -82,11 +84,19 @@ public abstract class DevicePageViewModel<T> : PageViewModel<T>, IDevicePage
 
     private void DeviceFoundAndInitialized(ClientDeviceState state, IClientDevice device)
     {
-        Debug.Assert(_waitInitSubscription != null, nameof(_waitInitSubscription) + " != null");
-        _waitInitSubscription.Dispose();
-        _deviceDisconnectedToken = new CancellationTokenSource();
-        AfterDeviceInitialized(device, _deviceDisconnectedToken.Token);
-        _target.OnNext(new DeviceWrapper(device, _deviceDisconnectedToken.Token));
+        Logger.ZLogTrace($"{this} device initialized: {device.Id}");
+        try
+        {
+            _waitInitSubscription?.Dispose();
+            _deviceDisconnectedToken = new CancellationTokenSource();
+            AfterDeviceInitialized(device, _deviceDisconnectedToken.Token);
+            _target.OnNext(new DeviceWrapper(device, _deviceDisconnectedToken.Token));
+        }
+        catch (Exception e)
+        {
+            Logger.ZLogError(e, $"Error while initializing device {device.Id} in {this}");
+            throw;
+        }
     }
 
     protected abstract void AfterDeviceInitialized(
