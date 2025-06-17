@@ -35,7 +35,7 @@ public class SettingsCommandsItemViewModel : RoutableViewModel
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
-        yield break;
+        return [];
     }
 
     public bool IsSelected

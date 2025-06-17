@@ -45,7 +45,7 @@ public class LogMessageViewModel : RoutableViewModel
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
-        yield break;
+        return [];
     }
 
     protected override void Dispose(bool disposing)

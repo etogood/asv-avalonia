@@ -55,6 +55,6 @@ public class HeadlinedViewModel(NavigationId id, ILoggerFactory loggerFactory)
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
-        yield break;
+        return [];
     }
 }

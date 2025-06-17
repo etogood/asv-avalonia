@@ -85,7 +85,7 @@ public sealed class HistoricalStringProperty : HistoricalPropertyBase<string?, s
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
-        yield break;
+        return [];
     }
 
     private void InternalInitValidationRules(

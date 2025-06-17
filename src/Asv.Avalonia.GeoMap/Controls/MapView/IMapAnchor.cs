@@ -118,7 +118,7 @@ public class MapAnchor<TContext> : ExtendableViewModel<TContext>, IMapAnchor
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
-        yield break;
+        return [];
     }
 
     protected override void AfterLoadExtensions()

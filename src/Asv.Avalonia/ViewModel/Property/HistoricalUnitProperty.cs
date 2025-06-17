@@ -83,7 +83,7 @@ public sealed class HistoricalUnitProperty : HistoricalPropertyBase<double, stri
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
-        yield break;
+        return [];
     }
 
     protected override ValueTask InternalCatchEvent(AsyncRoutedEvent e)

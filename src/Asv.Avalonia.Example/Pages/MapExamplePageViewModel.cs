@@ -40,7 +40,7 @@ public class MapExamplePageViewModel : PageViewModel<IMapContext>, IMapContext
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
-        yield break;
+        return [];
     }
 
     protected override IMapContext GetContext()

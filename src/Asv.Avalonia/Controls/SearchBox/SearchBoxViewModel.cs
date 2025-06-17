@@ -153,7 +153,7 @@ public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgre
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
-        yield break;
+        return [];
     }
 
     public override ValueTask<IRoutable> Navigate(NavigationId id)
