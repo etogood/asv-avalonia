@@ -119,8 +119,12 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
 
         if (path[0] != _host.Shell.Id)
         {
+            Debug.Assert(
+                false,
+                "Selected control has no IShell parent!!! May be you forgot to set Parent for the control?"
+            );
             _logger.ZLogWarning(
-                $"Selected control {routable} has invalid path: {string.Join(",", path)}"
+                $"Selected control {routable} has invalid path: {string.Join(",", path)}. It's must start with IShell Id: {_host.Shell.Id}"
             );
             return;
         }
