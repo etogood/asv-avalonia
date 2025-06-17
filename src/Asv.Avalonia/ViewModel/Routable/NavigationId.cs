@@ -203,6 +203,42 @@ public readonly partial struct NavigationId
             : HttpUtility.ParseQueryString(args);
     }
 
+    public static string CreateArgs(params IEnumerable<KeyValuePair<string, string>> args)
+    {
+        var sb = new StringBuilder();
+        foreach (var kvp in args)
+        {
+            if (sb.Length > 0)
+            {
+                sb.Append('&');
+            }
+
+            sb.Append(HttpUtility.UrlEncode(kvp.Key));
+            sb.Append('=');
+            sb.Append(HttpUtility.UrlEncode(kvp.Value));
+        }
+
+        return sb.ToString();
+    }
+
+    public static string CreateArgs(IReadOnlyDictionary<string, string> args)
+    {
+        var sb = new StringBuilder();
+        foreach (var kvp in args)
+        {
+            if (sb.Length > 0)
+            {
+                sb.Append('&');
+            }
+
+            sb.Append(HttpUtility.UrlEncode(kvp.Key));
+            sb.Append('=');
+            sb.Append(HttpUtility.UrlEncode(kvp.Value));
+        }
+
+        return sb.ToString();
+    }
+
     public static string CreateArgs(NameValueCollection args)
     {
         if (args.Count == 0)

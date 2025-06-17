@@ -387,10 +387,19 @@ public class CommandService : AsyncDisposableOnce, ICommandService
         var context = await _nav.GoTo(command.ContextPath);
         if (_commands.TryGetValue(command.CommandId, out var factory) && command.OldValue != null)
         {
-            await factory.Execute(context, command.OldValue, cancel);
-            _logger.ZLogTrace(
-                $"Undo command {factory.Info.Id}: context: {context}, param: {command.NewValue}"
-            );
+            if (factory.CanExecute(context, command.OldValue, out var target))
+            {
+                await factory.Execute(target, command.OldValue, cancel);
+                _logger.ZLogTrace(
+                    $"Undo command {factory.Info.Id}: context: {context}, param: {command.NewValue}"
+                );
+            }
+            else
+            {
+                _logger.ZLogWarning(
+                    $"Can't undo command {factory.Info.Id} in context {context}: {nameof(factory.CanExecute)} check failed."
+                );
+            }
         }
     }
 
@@ -399,10 +408,19 @@ public class CommandService : AsyncDisposableOnce, ICommandService
         var context = await _nav.GoTo(command.ContextPath);
         if (_commands.TryGetValue(command.CommandId, out var factory))
         {
-            await factory.Execute(context, command.NewValue, cancel);
-            _logger.ZLogTrace(
-                $"Redo command {factory.Info.Id}: context: {context}, param: {command.NewValue}"
-            );
+            if (factory.CanExecute(context, command.NewValue, out var target))
+            {
+                await factory.Execute(target, command.NewValue, cancel);
+                _logger.ZLogTrace(
+                    $"Redo command {factory.Info.Id}: context: {context}, param: {command.NewValue}"
+                );
+            }
+            else
+            {
+                _logger.ZLogWarning(
+                    $"Can't redo command {factory.Info.Id} in context {context}: {nameof(factory.CanExecute)} check failed."
+                );
+            }
         }
     }
 

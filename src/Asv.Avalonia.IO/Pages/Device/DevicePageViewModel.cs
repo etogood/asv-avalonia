@@ -12,7 +12,6 @@ namespace Asv.Avalonia.IO;
 public abstract class DevicePageViewModel<T> : PageViewModel<T>, IDevicePage
     where T : class, IDevicePage
 {
-    public const string ArgsDeviceIdKey = "dev_id";
     private readonly IDeviceManager? _devices;
     private string? _targetDeviceId;
     private IDisposable? _waitInitSubscription;
@@ -38,9 +37,9 @@ public abstract class DevicePageViewModel<T> : PageViewModel<T>, IDevicePage
         base.InternalInitArgs(args);
         Debug.Assert(_devices != null, "_devices != null");
         _targetDeviceId =
-            args[ArgsDeviceIdKey]
+            args[DevicePageViewModelMixin.ArgsDeviceIdKey]
             ?? throw new ArgumentNullException(
-                $"{ArgsDeviceIdKey} argument is required for {GetType().Name} page"
+                $"{DevicePageViewModelMixin.ArgsDeviceIdKey} argument is required for {GetType().Name} page"
             );
         _devices
             .Explorer.Devices.ObserveAdd()
