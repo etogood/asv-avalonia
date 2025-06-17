@@ -29,7 +29,7 @@ public class MissionProgressViewModel : RoutableViewModel
     private bool _isOnMission;
 
     public MissionProgressViewModel()
-        : base(SystemModule.Name)
+        : base(DesignTime.Id, DesignTime.LoggerFactory)
     {
         IsDownloaded.Value = true;
         MissionDistance.Value = "1000";
@@ -47,13 +47,12 @@ public class MissionProgressViewModel : RoutableViewModel
         IUnitService unitService,
         ILoggerFactory loggerFactory
     )
-        : base($"{id}.mission.progress")
+        : base($"{id}.mission.progress", loggerFactory)
     {
         ArgumentNullException.ThrowIfNull(device);
         ArgumentNullException.ThrowIfNull(unitService);
         ArgumentNullException.ThrowIfNull(loggerFactory);
 
-        ILogger log = loggerFactory.CreateLogger<MissionProgressViewModel>();
         _device = device;
         DistanceUnitItem.Value = unitService.Units.Values.First(unit =>
             unit.UnitId == DistanceBase.Id
@@ -203,7 +202,7 @@ public class MissionProgressViewModel : RoutableViewModel
         _missionClient.Reached.Subscribe(i => ReachedIndex.Value = i).DisposeItWith(Disposable);
         _missionClient.Current.Subscribe(i => CurrentIndex.Value = i).DisposeItWith(Disposable);
         InitiateMissionPoints(_cts.Token)
-            .SafeFireAndForget(ex => log.LogError(ex, "Mission progress error"));
+            .SafeFireAndForget(ex => Logger.LogError(ex, "Mission progress error"));
 
         _distanceBeforeMission =
             _missionClient.MissionItems.Count == 0

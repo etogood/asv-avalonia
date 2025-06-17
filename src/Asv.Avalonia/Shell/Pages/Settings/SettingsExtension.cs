@@ -1,13 +1,14 @@
 using System.Composition;
 using Asv.Common;
 using Material.Icons;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia;
 
 [ExportExtensionFor<ISettingsPage>]
 [method: ImportingConstructor]
-public class SettingsExtension() : IExtensionFor<ISettingsPage>
+public class SettingsExtension(ILoggerFactory loggerFactory) : IExtensionFor<ISettingsPage>
 {
     public void Extend(ISettingsPage context, CompositeDisposable contextDispose)
     {
@@ -17,7 +18,8 @@ public class SettingsExtension() : IExtensionFor<ISettingsPage>
                 RS.SettingsAppearanceViewModel_Name,
                 MaterialIconKind.ThemeLightDark,
                 SettingsAppearanceViewModel.PageId,
-                NavigationId.Empty
+                NavigationId.Empty,
+                loggerFactory
             ).DisposeItWith(contextDispose)
         );
 
@@ -27,7 +29,8 @@ public class SettingsExtension() : IExtensionFor<ISettingsPage>
                 RS.SettingsUnitsViewModel_Name,
                 MaterialIconKind.TemperatureCelsius,
                 SettingsUnitsViewModel.PageId,
-                NavigationId.Empty
+                NavigationId.Empty,
+                loggerFactory
             ).DisposeItWith(contextDispose)
         );
 
@@ -37,7 +40,8 @@ public class SettingsExtension() : IExtensionFor<ISettingsPage>
                 RS.SettingsCommandListViewModel_Name,
                 MaterialIconKind.KeyboardSettings,
                 SettingsCommandsViewModel.SubPageId,
-                NavigationId.Empty
+                NavigationId.Empty,
+                loggerFactory
             ).DisposeItWith(contextDispose)
         );
     }

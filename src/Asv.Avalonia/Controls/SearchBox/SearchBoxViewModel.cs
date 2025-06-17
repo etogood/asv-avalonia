@@ -20,7 +20,6 @@ public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgre
     private readonly BindableReactiveProperty<double> _progress;
 
     private string _searchText = string.Empty;
-    private readonly ILogger<SearchBoxViewModel> _logger;
     private CancellationTokenSource? _cancellationTokenSource;
 
     public SearchBoxViewModel()
@@ -30,15 +29,14 @@ public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgre
     }
 
     public SearchBoxViewModel(
-        string id,
+        NavigationId id,
         ILoggerFactory loggerFactory,
         SearchDelegate searchCallback,
         TimeSpan? throttleTime = null
     )
-        : base(id)
+        : base(id, loggerFactory)
     {
         _searchCallback = searchCallback;
-        _logger = loggerFactory.CreateLogger<SearchBoxViewModel>();
 
         Text = new BindableReactiveProperty<string>(string.Empty).DisposeItWith(Disposable);
 
@@ -77,7 +75,7 @@ public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgre
 
     public void Query(string? text)
     {
-        _logger.ZLogDebug($"Begin search '{Id}' with text '{text}'");
+        Logger.ZLogDebug($"Begin search '{Id}' with text '{text}'");
         if (_isExecuting.Value)
         {
             Cancel();
@@ -88,7 +86,7 @@ public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgre
 
     private void ErrorHandler(Exception err)
     {
-        _logger.LogError(err, $"Error in search '{Id}': {err.Message}");
+        Logger.LogError(err, $"Error in search '{Id}': {err.Message}");
         _isExecuting.Value = false;
         _canExecute.Value = true;
         _progress.Value = 1;
@@ -139,7 +137,7 @@ public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgre
         _isExecuting.Value = false;
         _canExecute.Value = true;
         _progress.Value = 1;
-        _logger.LogWarning($"Search '{Id}' was cancelled");
+        Logger.LogWarning($"Search '{Id}' was cancelled");
     }
 
     public void Refresh()

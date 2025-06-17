@@ -1,18 +1,14 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia.Example;
 
-public class TryCloseWithApprovalDialogViewModel : DialogViewModelBase
+public class TryCloseWithApprovalDialogViewModel(ILoggerFactory loggerFactory)
+    : DialogViewModelBase(DialogId, loggerFactory)
 {
     public const string DialogId = "params.close-with-approval-dialog.text";
 
-    public TryCloseWithApprovalDialogViewModel()
-        : base(DialogId)
-    {
-        Message = RS.ParamPageViewModel_DataLossDialog_Content;
-    }
-
-    public string Message { get; }
+    public string Message { get; } = RS.ParamPageViewModel_DataLossDialog_Content;
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {

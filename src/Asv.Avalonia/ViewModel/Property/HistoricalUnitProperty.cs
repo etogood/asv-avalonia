@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia;
@@ -19,9 +20,10 @@ public sealed class HistoricalUnitProperty : HistoricalPropertyBase<double, stri
         string id,
         ReactiveProperty<double> modelValue,
         IUnit unit,
+        ILoggerFactory loggerFactory,
         string? format = null
     )
-        : base(id)
+        : base(id, loggerFactory)
     {
         _modelValue = modelValue;
         _unit = unit;

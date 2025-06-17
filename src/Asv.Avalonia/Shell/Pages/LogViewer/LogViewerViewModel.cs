@@ -23,13 +23,13 @@ public class LogViewerViewModel
 {
     private readonly ILogService _logService;
     private readonly ISearchService _search;
+    private readonly ILoggerFactory _loggerFactory;
     private readonly ObservableList<LogMessageViewModel> _itemsSource = new();
-    private readonly ILogger<LogViewerViewModel> _logger;
     public const string PageId = "log";
     public const MaterialIconKind PageIcon = MaterialIconKind.Journal;
 
     public LogViewerViewModel()
-        : base(DesignTime.Id, NullCommandService.Instance)
+        : base(DesignTime.Id, NullCommandService.Instance, DesignTime.LoggerFactory)
     {
         DesignTime.ThrowIfNotDesignMode();
         Title = "Log Viewer";
@@ -48,7 +48,8 @@ public class LogViewerViewModel
                     "Design time log message",
                     "This is a design time log message for the Log Viewer. It will not be shown in the actual application."
                 ),
-                this
+                this,
+                DesignTime.LoggerFactory
             )
         );
         _itemsSource.Add(
@@ -60,7 +61,8 @@ public class LogViewerViewModel
                     "Design time log message 2",
                     "This is another design time log message for the Log Viewer. It will not be shown in the actual application."
                 ),
-                this
+                this,
+                DesignTime.LoggerFactory
             )
         );
         _itemsSource.Add(
@@ -72,7 +74,8 @@ public class LogViewerViewModel
                     "Design time log message 3",
                     "This is yet another design time log message for the Log Viewer. It will not be shown in the actual application."
                 ),
-                this
+                this,
+                DesignTime.LoggerFactory
             )
         );
         _itemsSource.Add(
@@ -84,7 +87,8 @@ public class LogViewerViewModel
                     "Design time log message 4",
                     "This is a debug log message for the Log Viewer. It will not be shown in the actual application."
                 ),
-                this
+                this,
+                DesignTime.LoggerFactory
             )
         );
         _itemsSource.Add(
@@ -96,7 +100,8 @@ public class LogViewerViewModel
                     "Design time log message 5",
                     "This is a critical log message for the Log Viewer. It will not be shown in the actual application."
                 ),
-                this
+                this,
+                DesignTime.LoggerFactory
             )
         );
         _itemsSource.Add(
@@ -108,7 +113,8 @@ public class LogViewerViewModel
                     "Design time log message 6",
                     "This is a trace log message for the Log Viewer. It will not be shown in the actual application."
                 ),
-                this
+                this,
+                DesignTime.LoggerFactory
             )
         );
         _itemsSource.Add(
@@ -120,7 +126,8 @@ public class LogViewerViewModel
                     "Design time log message 7",
                     "This is a log message with no specific level for the Log Viewer. It will not be shown in the actual application."
                 ),
-                this
+                this,
+                DesignTime.LoggerFactory
             )
         );
     }
@@ -132,13 +139,13 @@ public class LogViewerViewModel
         ISearchService search,
         ILoggerFactory loggerFactory
     )
-        : base(PageId, cmd)
+        : base(PageId, cmd, loggerFactory)
     {
         _logService = logService;
         _search = search;
+        _loggerFactory = loggerFactory;
         Title = "Log Viewer";
         Icon = PageIcon;
-        _logger = loggerFactory.CreateLogger<LogViewerViewModel>();
         Items = _itemsSource
             .ToNotifyCollectionChangedSlim()
             .SetRoutableParent(this, Disposable)
@@ -189,7 +196,7 @@ public class LogViewerViewModel
             var filtered = 0;
             var total = 0;
             var skip = 0;
-            _logger.ZLogTrace($"Start filtering log messages with filter: '{text}'");
+            Logger.ZLogTrace($"Start filtering log messages with filter: '{text}'");
             progress.Report(double.NaN);
 
             await foreach (
@@ -204,7 +211,14 @@ public class LogViewerViewModel
                 ++total;
 
                 if (
-                    LogMessageViewModel.TryCreate(logMessage, this, _search, text, out var vm)
+                    LogMessageViewModel.TryCreate(
+                        logMessage,
+                        this,
+                        _search,
+                        text,
+                        _loggerFactory,
+                        out var vm
+                    )
                     && vm != null
                 )
                 {

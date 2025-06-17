@@ -2,7 +2,7 @@
 using Asv.Cfg;
 using Asv.IO;
 using Material.Icons;
-using ObservableCollections;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia.IO;
@@ -25,7 +25,7 @@ public class TcpPortViewModelConfig
 public class TcpPortViewModel : PortViewModel
 {
     private readonly IConfiguration _cfgSvc;
-    private readonly ObservableList<string> _hostHistorySource;
+    private readonly ILoggerFactory _loggerFactory;
     public const MaterialIconKind DefaultIcon = MaterialIconKind.UploadNetworkOutline;
 
     public TcpPortViewModel()
@@ -36,12 +36,12 @@ public class TcpPortViewModel : PortViewModel
     }
 
     [ImportingConstructor]
-    public TcpPortViewModel(IConfiguration cfgSvc)
-        : base($"{TcpClientProtocolPort.Scheme}-editor")
+    public TcpPortViewModel(IConfiguration cfgSvc, ILoggerFactory loggerFactory)
+        : base($"{TcpClientProtocolPort.Scheme}-editor", loggerFactory)
     {
         _cfgSvc = cfgSvc;
+        _loggerFactory = loggerFactory;
         Icon = DefaultIcon;
-        _hostHistorySource = [];
         Config = _cfgSvc.Get<TcpPortViewModelConfig>();
         AddToValidation(Host = new BindableReactiveProperty<string>(), HostValidate);
         AddToValidation(PortNumber = new BindableReactiveProperty<string>(), PortValidate);
@@ -94,14 +94,14 @@ public class TcpPortViewModel : PortViewModel
     {
         TagsSource.Clear();
         TagsSource.Add(
-            new TagViewModel(nameof(config.Scheme))
+            new TagViewModel(nameof(config.Scheme), _loggerFactory)
             {
                 Value = RS.TcpPortViewModel_TagViewModel_Value,
                 TagType = TagType.Info2,
             }
         );
         TagsSource.Add(
-            new TagViewModel(nameof(config.Host))
+            new TagViewModel(nameof(config.Host), _loggerFactory)
             {
                 Value = $"{config.Host}:{config.Port}",
                 TagType = TagType.Success,

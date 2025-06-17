@@ -13,6 +13,7 @@ namespace Asv.Avalonia.IO;
 [Export(SerialProtocolPort.Scheme, typeof(IPortViewModel))]
 public class SerialPortViewModel : PortViewModel
 {
+    private readonly ILoggerFactory _loggerFactory;
     private readonly ObservableList<string> _portSource;
     public const MaterialIconKind DefaultIcon = MaterialIconKind.SerialPort;
 
@@ -24,8 +25,9 @@ public class SerialPortViewModel : PortViewModel
 
     [ImportingConstructor]
     public SerialPortViewModel(ILoggerFactory loggerFactory)
-        : base($"{SerialProtocolPort.Scheme}-editor")
+        : base($"{SerialProtocolPort.Scheme}-editor", loggerFactory)
     {
+        _loggerFactory = loggerFactory;
         Icon = DefaultIcon;
 
         AddToValidation(PortName = new BindableReactiveProperty<string?>(), ValidatePortName);
@@ -107,14 +109,14 @@ public class SerialPortViewModel : PortViewModel
     {
         TagsSource.Clear();
         TagsSource.Add(
-            new TagViewModel(nameof(config.Scheme))
+            new TagViewModel(nameof(config.Scheme), _loggerFactory)
             {
                 Value = RS.SerialPortViewModel_TagViewModel_Value,
                 TagType = TagType.Info,
             }
         );
         TagsSource.Add(
-            new TagViewModel(nameof(config.PortName))
+            new TagViewModel(nameof(config.PortName), _loggerFactory)
             {
                 Value = GetOptions(config),
                 TagType = TagType.Success,

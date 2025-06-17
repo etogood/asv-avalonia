@@ -1,5 +1,6 @@
 ﻿using System.Composition;
 using Asv.Common;
+using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;
 
@@ -13,12 +14,16 @@ public class SettingsCommandsViewModel : SettingsSubPage
     private readonly ISynchronizedView<ICommandInfo, SettingsCommandsItemViewModel> _itemsView;
 
     // This is a common constructor for design time and runtime.
-    private SettingsCommandsViewModel(string id, ICommandService svc)
-        : base(id)
+    private SettingsCommandsViewModel(
+        NavigationId id,
+        ICommandService svc,
+        ILoggerFactory loggerFactory
+    )
+        : base(id, loggerFactory)
     {
         _itemsSource = [];
         _itemsView = _itemsSource
-            .CreateView(x => new SettingsCommandsItemViewModel(x, svc))
+            .CreateView(x => new SettingsCommandsItemViewModel(x, svc, loggerFactory))
             .DisposeMany(Disposable)
             .SetRoutableParent(this, Disposable)
             .DisposeItWith(Disposable);
@@ -32,7 +37,7 @@ public class SettingsCommandsViewModel : SettingsSubPage
         );
 
         var filter = new ReactiveProperty<string?>().DisposeItWith(Disposable);
-        SearchText = new HistoricalStringProperty("search", filter)
+        SearchText = new HistoricalStringProperty("search", filter, loggerFactory)
             .SetRoutableParent(this)
             .DisposeItWith(Disposable);
 
@@ -52,7 +57,7 @@ public class SettingsCommandsViewModel : SettingsSubPage
     }
 
     public SettingsCommandsViewModel()
-        : this(DesignTime.Id, DesignTime.CommandService)
+        : this(DesignTime.Id, DesignTime.CommandService, DesignTime.LoggerFactory)
     {
         DesignTime.ThrowIfNotDesignMode();
         _itemsSource.Add(UndoCommand.StaticInfo);
@@ -61,8 +66,8 @@ public class SettingsCommandsViewModel : SettingsSubPage
     }
 
     [ImportingConstructor]
-    public SettingsCommandsViewModel(ICommandService svc)
-        : this(SubPageId, svc)
+    public SettingsCommandsViewModel(ICommandService svc, ILoggerFactory loggerFactory)
+        : this(SubPageId, svc, loggerFactory)
     {
         _itemsSource.AddRange(svc.Commands.OrderBy(x => x.Name));
     }

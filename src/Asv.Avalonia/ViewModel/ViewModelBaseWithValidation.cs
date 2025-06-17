@@ -10,7 +10,7 @@ public abstract class ViewModelBaseWithValidation : ViewModelBase
     protected ReactiveProperty<ValidationResult> IsValid { get; }
 
     protected ViewModelBaseWithValidation(NavigationId id, ILoggerFactory loggerFactory)
-        : base(id, loggerFactory)
+        : base(id: id, loggerFactory)
     {
         IsValid = new ReactiveProperty<ValidationResult>(Validate());
     }

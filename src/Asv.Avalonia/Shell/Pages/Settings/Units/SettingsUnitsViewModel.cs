@@ -1,5 +1,6 @@
 using System.Composition;
 using Asv.Common;
+using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;
 
@@ -12,17 +13,20 @@ public class SettingsUnitsViewModel : SettingsSubPage
     private readonly ISynchronizedView<IUnit, MeasureUnitViewModel> _view;
 
     public SettingsUnitsViewModel()
-        : this(DesignTime.UnitService)
+        : this(DesignTime.UnitService, DesignTime.LoggerFactory)
     {
         DesignTime.ThrowIfNotDesignMode();
     }
 
     [ImportingConstructor]
-    public SettingsUnitsViewModel(IUnitService unit)
-        : base(PageId)
+    public SettingsUnitsViewModel(IUnitService unit, ILoggerFactory loggerFactory)
+        : base(PageId, loggerFactory)
     {
         var observableList = new ObservableList<IUnit>(unit.Units.Values);
-        _view = observableList.CreateView(x => new MeasureUnitViewModel(x) { Parent = this });
+        _view = observableList.CreateView(x => new MeasureUnitViewModel(x, loggerFactory)
+        {
+            Parent = this,
+        });
         Items = _view.ToNotifyCollectionChanged().DisposeItWith(Disposable);
         SelectedItem = new BindableReactiveProperty<MeasureUnitViewModel>().DisposeItWith(
             Disposable

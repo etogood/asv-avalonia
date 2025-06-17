@@ -1,5 +1,6 @@
 using System.Composition;
 using Material.Icons;
+using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia;
 
@@ -12,7 +13,12 @@ public class SettingsPageViewModel
     public const MaterialIconKind PageIcon = MaterialIconKind.Settings;
 
     public SettingsPageViewModel()
-        : base(PageId, DesignTime.CommandService, NullContainerHost.Instance)
+        : base(
+            PageId,
+            DesignTime.CommandService,
+            NullContainerHost.Instance,
+            DesignTime.LoggerFactory
+        )
     {
         DesignTime.ThrowIfNotDesignMode();
         Title = RS.SettingsPageViewModel_Title;
@@ -20,8 +26,12 @@ public class SettingsPageViewModel
     }
 
     [ImportingConstructor]
-    public SettingsPageViewModel(ICommandService svc, IContainerHost host)
-        : base(PageId, svc, host)
+    public SettingsPageViewModel(
+        ICommandService svc,
+        IContainerHost host,
+        ILoggerFactory loggerFactory
+    )
+        : base(PageId, svc, host, loggerFactory)
     {
         Title = RS.SettingsPageViewModel_Title;
     }

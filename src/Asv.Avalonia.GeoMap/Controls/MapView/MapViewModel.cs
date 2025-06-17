@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using Asv.Common;
 using Material.Icons;
+using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;
 
@@ -21,10 +22,10 @@ public interface IMapWidget : IHeadlinedViewModel
 public class MapViewModel : RoutableViewModel, IMap
 {
     public MapViewModel()
-        : this("id")
+        : this(DesignTime.Id, DesignTime.LoggerFactory)
     {
         DesignTime.ThrowIfNotDesignMode();
-        var drone = new MapAnchor<IMapAnchor>("1")
+        var drone = new MapAnchor<IMapAnchor>(DesignTime.Id, DesignTime.LoggerFactory)
         {
             Icon = MaterialIconKind.Navigation,
             Location = new GeoPoint(53, 53, 100),
@@ -42,8 +43,8 @@ public class MapViewModel : RoutableViewModel, IMap
         );
     }
 
-    public MapViewModel(string id)
-        : base(id)
+    public MapViewModel(NavigationId id, ILoggerFactory loggerFactory)
+        : base(id, loggerFactory)
     {
         Anchors = new ObservableList<IMapAnchor>();
         AnchorsView = Anchors.ToNotifyCollectionChangedSlim();

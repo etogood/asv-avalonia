@@ -11,16 +11,28 @@ namespace Asv.Avalonia;
 /// property change notifications and a proper disposal mechanism.
 /// This class is designed to be inherited by other view models.
 /// </summary>
-public abstract class ViewModelBase(NavigationId id, ILoggerFactory loggerFactory) : IViewModel
+public abstract class ViewModelBase : IViewModel
 {
-    protected ILogger Logger { get; } = loggerFactory.CreateLogger<ViewModelBase>();
+    protected ILogger Logger { get; }
     private volatile int _isDisposed;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ViewModelBase"/> class.
+    /// Represents the base implementation of a view model that provides
+    /// property change notifications and a proper disposal mechanism.
+    /// This class is designed to be inherited by other view models.
+    /// </summary>
+    protected ViewModelBase(NavigationId id, ILoggerFactory loggerFactory)
+    {
+        Logger = loggerFactory.CreateLogger(GetType());
+        Id = id;
+    }
 
     public NavigationId Id
     {
         get;
         private set => SetField(ref field, value);
-    } = id;
+    }
 
     public override string ToString()
     {

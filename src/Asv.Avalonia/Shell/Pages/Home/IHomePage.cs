@@ -1,4 +1,5 @@
 using Asv.Common;
+using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;
 
@@ -19,8 +20,8 @@ public interface IHomePageItem : IHeadlinedViewModel
 
 public class HomePageItem : HeadlinedViewModel, IHomePageItem
 {
-    public HomePageItem(NavigationId id)
-        : base(id)
+    public HomePageItem(NavigationId id, ILoggerFactory loggerFactory)
+        : base(id, loggerFactory)
     {
         Disposable.AddAction(() => Actions.Clear());
         Disposable.AddAction(() => Info.Clear());

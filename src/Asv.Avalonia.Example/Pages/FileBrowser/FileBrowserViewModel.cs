@@ -23,7 +23,7 @@ public class FileBrowserViewModel : DevicePageViewModel<FileBrowserViewModel>
     public const MaterialIconKind PageIcon = MaterialIconKind.FolderEye;
 
     private readonly YesOrNoDialogPrefab _yesNoDialog;
-    private readonly ILogger<FileBrowserViewModel> _log;
+    private readonly ILoggerFactory _loggerFactory;
     private readonly INavigationService _navigation;
     private readonly string _localRootPath;
 
@@ -37,19 +37,19 @@ public class FileBrowserViewModel : DevicePageViewModel<FileBrowserViewModel>
 
         _localItems =
         [
-            new DirectoryItem("0", string.Empty, "/", "test"),
-            new DirectoryItem("1", "0", "/", "test"),
-            new DirectoryItem("2", "0", "/", "test"),
-            new DirectoryItem("0_1", string.Empty, "/", "test"),
-            new DirectoryItem("0_2", string.Empty, "/", "test"),
+            new DirectoryItem("0", string.Empty, "/", "test", DesignTime.LoggerFactory),
+            new DirectoryItem("1", "0", "/", "test", DesignTime.LoggerFactory),
+            new DirectoryItem("2", "0", "/", "test", DesignTime.LoggerFactory),
+            new DirectoryItem("0_1", string.Empty, "/", "test", DesignTime.LoggerFactory),
+            new DirectoryItem("0_2", string.Empty, "/", "test", DesignTime.LoggerFactory),
         ];
         _remoteItems =
         [
-            new DirectoryItem("0", string.Empty, "/", "test"),
-            new DirectoryItem("1", "0", "/", "test"),
-            new DirectoryItem("2", "0", "/", "test"),
-            new DirectoryItem("0_1", string.Empty, "/", "test"),
-            new DirectoryItem("0_2", string.Empty, "/", "test"),
+            new DirectoryItem("0", string.Empty, "/", "test", DesignTime.LoggerFactory),
+            new DirectoryItem("1", "0", "/", "test", DesignTime.LoggerFactory),
+            new DirectoryItem("2", "0", "/", "test", DesignTime.LoggerFactory),
+            new DirectoryItem("0_1", string.Empty, "/", "test", DesignTime.LoggerFactory),
+            new DirectoryItem("0_2", string.Empty, "/", "test", DesignTime.LoggerFactory),
         ];
 
         LocalItemsView = new BrowserTree(_localItems, _localRootPath);
@@ -65,14 +65,14 @@ public class FileBrowserViewModel : DevicePageViewModel<FileBrowserViewModel>
         IDeviceManager devices,
         IDialogService dialogService,
         IAppPath appPath,
-        ILoggerFactory log,
+        ILoggerFactory loggerFactory,
         INavigationService navigation
     )
-        : base(PageId, devices, cmd)
+        : base(PageId, devices, cmd, loggerFactory)
     {
         _localRootPath = appPath.UserDataFolder;
         _yesNoDialog = dialogService.GetDialogPrefab<YesOrNoDialogPrefab>();
-        _log = log.CreateLogger<FileBrowserViewModel>();
+        _loggerFactory = loggerFactory;
         _navigation = navigation;
 
         _localItems = [];
@@ -263,13 +263,13 @@ public class FileBrowserViewModel : DevicePageViewModel<FileBrowserViewModel>
                 switch (e)
                 {
                     case OperationCanceledException:
-                        _log.LogWarning("Upload was canceled.");
+                        Logger.LogWarning("Upload was canceled.");
                         break;
                     case FtpNackException:
-                        _log.LogError(e, "Server returned NACK.");
+                        Logger.LogError(e, "Server returned NACK.");
                         break;
                     case not null:
-                        _log.LogError(e, "Unexpected error during upload.");
+                        Logger.LogError(e, "Unexpected error during upload.");
                         break;
                 }
             });
@@ -287,13 +287,13 @@ public class FileBrowserViewModel : DevicePageViewModel<FileBrowserViewModel>
                 switch (e)
                 {
                     case OperationCanceledException:
-                        _log.LogWarning("Download was canceled.");
+                        Logger.LogWarning("Download was canceled.");
                         break;
                     case FtpNackException:
-                        _log.LogError(e, "Server returned NACK.");
+                        Logger.LogError(e, "Server returned NACK.");
                         break;
                     case not null:
-                        _log.LogError(e, "Unexpected error during download.");
+                        Logger.LogError(e, "Unexpected error during download.");
                         break;
                 }
             });
@@ -311,13 +311,13 @@ public class FileBrowserViewModel : DevicePageViewModel<FileBrowserViewModel>
                 switch (e)
                 {
                     case OperationCanceledException:
-                        _log.LogWarning("Burst download was canceled.");
+                        Logger.LogWarning("Burst download was canceled.");
                         break;
                     case FtpNackException:
-                        _log.LogError(e, "Server returned NACK.");
+                        Logger.LogError(e, "Server returned NACK.");
                         break;
                     case not null:
-                        _log.LogError(e, "Unexpected error during burst download.");
+                        Logger.LogError(e, "Unexpected error during burst download.");
                         break;
                 }
             });
@@ -428,7 +428,7 @@ public class FileBrowserViewModel : DevicePageViewModel<FileBrowserViewModel>
                 cancel: ct
             );
             await File.WriteAllBytesAsync(path, stream.ToArray(), ct);
-            _log.LogInformation(
+            Logger.LogInformation(
                 "File downloaded successfully: {Header}",
                 RemoteSelectedItem.Value?.Base.Header
             );
@@ -460,7 +460,7 @@ public class FileBrowserViewModel : DevicePageViewModel<FileBrowserViewModel>
             path = Path.Combine(path, RemoteSelectedItem.Value!.Base.Header!);
         }
 
-        using var viewModel = new BurstDownloadDialogViewModel("burst.dialog");
+        using var viewModel = new BurstDownloadDialogViewModel("burst.dialog", _loggerFactory);
         var dialog = new ContentDialog(viewModel, _navigation)
         {
             Title = RS.FileBrowserViewModel_BurstDownloadDialog_Title,
@@ -484,7 +484,7 @@ public class FileBrowserViewModel : DevicePageViewModel<FileBrowserViewModel>
                 ct
             );
             await File.WriteAllBytesAsync(path, stream.ToArray(), ct);
-            _log.LogInformation(
+            Logger.LogInformation(
                 "File downloaded successfully: {Header}",
                 RemoteSelectedItem.Value?.Base.Header
             );
@@ -561,7 +561,7 @@ public class FileBrowserViewModel : DevicePageViewModel<FileBrowserViewModel>
                         await ClientEx.Base.RemoveFile(item.Key, ct);
                         break;
                     default:
-                        _log.LogError("Unknown FTP entry type: ({type})", item.Value.Type);
+                        Logger.LogError("Unknown FTP entry type: ({type})", item.Value.Type);
                         break;
                 }
             }
@@ -707,7 +707,7 @@ public class FileBrowserViewModel : DevicePageViewModel<FileBrowserViewModel>
 
                 lock (items)
                 {
-                    items.Add(new DirectoryItem(id, parentPath, dir, name));
+                    items.Add(new DirectoryItem(id, parentPath, dir, name, _loggerFactory));
                 }
 
                 ProcessDirectory(dir, items);
@@ -725,7 +725,16 @@ public class FileBrowserViewModel : DevicePageViewModel<FileBrowserViewModel>
 
                 lock (items)
                 {
-                    items.Add(new FileItem(id, parentPath, file, fileInfo.Name, fileInfo.Length));
+                    items.Add(
+                        new FileItem(
+                            id,
+                            parentPath,
+                            file,
+                            fileInfo.Name,
+                            fileInfo.Length,
+                            _loggerFactory
+                        )
+                    );
                 }
             }
         );
@@ -743,7 +752,8 @@ public class FileBrowserViewModel : DevicePageViewModel<FileBrowserViewModel>
                     "_",
                     string.Empty,
                     MavlinkFtpHelper.DirectorySeparator.ToString(),
-                    "_"
+                    "_",
+                    _loggerFactory
                 );
                 items.Add(root);
                 return;
@@ -755,19 +765,22 @@ public class FileBrowserViewModel : DevicePageViewModel<FileBrowserViewModel>
                     NavigationId.NormalizeTypeId(e.Value.Path),
                     e.Value.ParentPath,
                     e.Key,
-                    e.Value.Name
+                    e.Value.Name,
+                    _loggerFactory
                 ),
                 FtpEntryType.File => new FileItem(
                     NavigationId.NormalizeTypeId(e.Value.Path),
                     e.Value.ParentPath,
                     e.Key,
                     e.Value.Name,
-                    ((FtpFile)e.Value).Size
+                    ((FtpFile)e.Value).Size,
+                    _loggerFactory
                 ),
                 _ => new BrowserItem(
                     NavigationId.NormalizeTypeId(e.Value.Path),
                     e.Value.ParentPath,
-                    e.Key
+                    e.Key,
+                    _loggerFactory
                 ),
             };
 

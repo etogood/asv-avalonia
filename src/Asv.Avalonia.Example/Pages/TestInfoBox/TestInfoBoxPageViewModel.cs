@@ -15,8 +15,6 @@ public class TestInfoBoxPageViewModel : PageViewModel<DialogBoardViewModel>
     public const string PageId = "info-box";
     public const MaterialIconKind PageIcon = MaterialIconKind.TestTube;
 
-    private readonly ILogger _logger;
-
     public TestInfoBoxPageViewModel()
         : this(DesignTime.CommandService, NullLoggerFactory.Instance)
     {
@@ -27,10 +25,9 @@ public class TestInfoBoxPageViewModel : PageViewModel<DialogBoardViewModel>
 
     [ImportingConstructor]
     public TestInfoBoxPageViewModel(ICommandService cmd, ILoggerFactory logFactory)
-        : base(PageId, cmd)
+        : base(PageId, cmd, logFactory)
     {
         Title = "Test infobox";
-        _logger = logFactory.CreateLogger<TestInfoBoxPageViewModel>();
 
         IsVisible = new BindableReactiveProperty<bool>(false);
         ShowInfoBox = new ReactiveCommand(ShowInfoBoxImpl);

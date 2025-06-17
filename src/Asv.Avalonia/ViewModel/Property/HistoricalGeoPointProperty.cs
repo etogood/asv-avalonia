@@ -9,7 +9,7 @@ public sealed class HistoricalGeoPointProperty : CompositeHistoricalPropertyBase
     private readonly ReactiveProperty<GeoPoint> _modelValue;
 
     public HistoricalGeoPointProperty(
-        string id,
+        NavigationId id,
         ReactiveProperty<GeoPoint> modelValue,
         IUnit latUnit,
         IUnit lonUnit,
@@ -55,15 +55,15 @@ public sealed class HistoricalGeoPointProperty : CompositeHistoricalPropertyBase
             })
             .DisposeItWith(Disposable);
 
-        Latitude = new HistoricalUnitProperty("lat", modelLat, latUnit)
+        Latitude = new HistoricalUnitProperty("lat", modelLat, latUnit, loggerFactory)
         {
             Parent = this,
         }.DisposeItWith(Disposable);
-        Longitude = new HistoricalUnitProperty("lon", modelLon, lonUnit)
+        Longitude = new HistoricalUnitProperty("lon", modelLon, lonUnit, loggerFactory)
         {
             Parent = this,
         }.DisposeItWith(Disposable);
-        Altitude = new HistoricalUnitProperty("alt", modelAlt, altUnit)
+        Altitude = new HistoricalUnitProperty("alt", modelAlt, altUnit, loggerFactory)
         {
             Parent = this,
         }.DisposeItWith(Disposable);

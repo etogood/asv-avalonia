@@ -16,21 +16,19 @@ public class PluginsSourcesViewModel : PageViewModel<PluginsSourcesViewModel>
     private readonly IPluginManager _mng;
     private readonly INavigationService _navigation;
     private readonly ILoggerFactory _loggerFactory;
-    private readonly ILogger _logger;
     private readonly ReactiveCommand _update;
-    private readonly ObservableList<IPluginServerInfo> _items;
     private readonly ISynchronizedView<IPluginServerInfo, PluginSourceViewModel> _view;
 
     public PluginsSourcesViewModel()
         : this(
             DesignTime.CommandService,
             NullPluginManager.Instance,
-            NullLoggerFactory.Instance,
-            NullNavigationService.Instance
+            DesignTime.LoggerFactory,
+            DesignTime.Navigation
         )
     {
         DesignTime.ThrowIfNotDesignMode();
-        _items = new ObservableList<IPluginServerInfo>(
+        var items = new ObservableList<IPluginServerInfo>(
             [
                 new SourceInfo(
                     new SourceRepository(
@@ -46,7 +44,7 @@ public class PluginsSourcesViewModel : PageViewModel<PluginsSourcesViewModel>
                 ),
             ]
         );
-        Items = _items.ToNotifyCollectionChanged(x => new PluginSourceViewModel(
+        Items = items.ToNotifyCollectionChanged(x => new PluginSourceViewModel(
             x,
             NullLoggerFactory.Instance,
             this
@@ -60,32 +58,31 @@ public class PluginsSourcesViewModel : PageViewModel<PluginsSourcesViewModel>
         ILoggerFactory loggerFactory,
         INavigationService navigationService
     )
-        : base(PageId, cmd)
+        : base(PageId, cmd, loggerFactory)
     {
         _mng = mng;
         _navigation = navigationService;
         _loggerFactory = loggerFactory;
-        _logger = loggerFactory.CreateLogger<PluginsSourcesViewModel>();
-        _items = new ObservableList<IPluginServerInfo>();
-        _view = _items.CreateView(info => new PluginSourceViewModel(info, loggerFactory, this));
+        var items = new ObservableList<IPluginServerInfo>();
+        _view = items.CreateView(info => new PluginSourceViewModel(info, loggerFactory, this));
         SelectedItem = new BindableReactiveProperty<PluginSourceViewModel?>();
         Items = _view.ToNotifyCollectionChanged();
 
         _update = new ReactiveCommand(_ =>
         {
-            _items.Clear();
-            _items.AddRange(mng.Servers);
+            items.Clear();
+            items.AddRange(mng.Servers);
         });
         _update.IgnoreOnErrorResume(ex =>
-            _logger.LogError(
-                $"RS.PluginsSourcesViewModel_PluginsSourcesViewModel_ErrorToUpdate\nWith error:{ex.Message}"
+            Logger.LogError(
+                $"{RS.PluginsSourcesViewModel_PluginsSourcesViewModel_ErrorToUpdate}\nWith error:{ex.Message}"
             )
         );
         _update.Execute(Unit.Default);
 
         Add = new ReactiveCommand(AddImpl);
         Add.IgnoreOnErrorResume(ex =>
-            _logger.LogError(
+            Logger.LogError(
                 $"{RS.PluginsSourcesViewModel_PluginsSourcesViewModel_ErrorToUpdate}\nWith error:{ex.Message}"
             )
         );

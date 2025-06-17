@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Composition;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia.Example;
 
@@ -10,7 +11,7 @@ public class DocumentPageViewModel : PageViewModel<DocumentPageViewModel>
     public const string PageId = "document";
 
     public DocumentPageViewModel()
-        : this(DesignTime.CommandService)
+        : this(DesignTime.CommandService, DesignTime.LoggerFactory)
     {
         DesignTime.ThrowIfNotDesignMode();
 
@@ -18,8 +19,8 @@ public class DocumentPageViewModel : PageViewModel<DocumentPageViewModel>
     }
 
     [ImportingConstructor]
-    public DocumentPageViewModel(ICommandService cmd)
-        : base(PageId, cmd)
+    public DocumentPageViewModel(ICommandService cmd, ILoggerFactory loggerFactory)
+        : base(PageId, cmd, loggerFactory)
     {
         Title = RS.DocumentPageViewModel_Title;
     }

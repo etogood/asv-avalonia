@@ -38,7 +38,6 @@ public class MavParamsPageViewModel
     private CancellationTokenSource _cancellationTokenSource;
     private ISynchronizedView<KeyValuePair<string, ParamItem>, ParamItemViewModel> _view;
     private readonly ILoggerFactory _loggerFactory;
-    private readonly ILogger _log;
     private readonly INavigationService _nav;
     private readonly IConfiguration _cfg;
     private readonly ObservableList<ParamItemViewModel> _viewedParamsList; // TODO: Separate viewModels for this collection and all params
@@ -50,9 +49,9 @@ public class MavParamsPageViewModel
     public MavParamsPageViewModel()
         : this(
             NullDeviceManager.Instance,
-            NullCommandService.Instance,
-            NullLoggerFactory.Instance,
-            new InMemoryConfiguration(),
+            DesignTime.CommandService,
+            DesignTime.LoggerFactory,
+            DesignTime.Configuration,
             NullNavigationService.Instance
         )
     {
@@ -78,7 +77,7 @@ public class MavParamsPageViewModel
         IConfiguration cfg,
         INavigationService nav
     )
-        : base(PageId, devices, cmd)
+        : base(PageId, devices, cmd, loggerFactory)
     {
         ArgumentNullException.ThrowIfNull(devices);
         ArgumentNullException.ThrowIfNull(cmd);
@@ -89,7 +88,6 @@ public class MavParamsPageViewModel
         Title = "Params";
 
         _loggerFactory = loggerFactory;
-        _log = loggerFactory.CreateLogger<MavParamsPageViewModel>();
         _cfg = cfg;
         _config = _cfg.Get<ParamsConfig>();
         _nav = nav;
@@ -100,11 +98,19 @@ public class MavParamsPageViewModel
 
         _cancellationTokenSource = new CancellationTokenSource();
 
-        SearchText = new HistoricalStringProperty($"{PageId}{nameof(SearchText)}", _searchText)
+        SearchText = new HistoricalStringProperty(
+            $"{PageId}{nameof(SearchText)}",
+            _searchText,
+            loggerFactory
+        )
         {
             Parent = this,
         };
-        ShowStaredOnly = new HistoricalBoolProperty($"{PageId}.{ShowStaredOnly}", _showStarredOnly)
+        ShowStaredOnly = new HistoricalBoolProperty(
+            $"{PageId}.{ShowStaredOnly}",
+            _showStarredOnly,
+            loggerFactory
+        )
         {
             Parent = this,
         };
@@ -223,7 +229,9 @@ public class MavParamsPageViewModel
             }
 
             this.ExecuteCommand(RemoveAllPinsCommand.Id)
-                .SafeFireAndForget(ex => _log.LogError(ex, "Something went wrong with unpin all"));
+                .SafeFireAndForget(ex =>
+                    Logger.LogError(ex, "Something went wrong with unpin all")
+                );
         });
     }
 
@@ -259,11 +267,11 @@ public class MavParamsPageViewModel
             {
                 if (ex is TaskCanceledException)
                 {
-                    _log.LogInformation("User canceled updating params");
+                    Logger.LogInformation("User canceled updating params");
                     return;
                 }
 
-                _log.LogError(ex, "Error to read all param items");
+                Logger.LogError(ex, "Error to read all param items");
             });
 
         foreach (var item in viewed)
@@ -338,7 +346,7 @@ public class MavParamsPageViewModel
             return true;
         }
 
-        using var vm = new TryCloseWithApprovalDialogViewModel();
+        using var vm = new TryCloseWithApprovalDialogViewModel(_loggerFactory);
         var dialog = new ContentDialog(vm, _nav)
         {
             Title = RS.ParamPageViewModel_DataLossDialog_Title,

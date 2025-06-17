@@ -1,4 +1,5 @@
 using Material.Icons;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia;
@@ -13,16 +14,15 @@ public interface ITreePage : IHeadlinedViewModel
 
 public class TreePage : HeadlinedViewModel, ITreePage
 {
-    private string? _status;
-
     public TreePage(
         NavigationId id,
         string title,
         MaterialIconKind? icon,
         NavigationId navigateTo,
-        NavigationId parentId
+        NavigationId parentId,
+        ILoggerFactory loggerFactory
     )
-        : base(id)
+        : base(id, loggerFactory)
     {
         NavigateTo = navigateTo;
         ParentId = parentId;
@@ -36,8 +36,8 @@ public class TreePage : HeadlinedViewModel, ITreePage
 
     public string? Status
     {
-        get => _status;
-        set => SetField(ref _status, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public override IEnumerable<IRoutable> GetRoutableChildren()

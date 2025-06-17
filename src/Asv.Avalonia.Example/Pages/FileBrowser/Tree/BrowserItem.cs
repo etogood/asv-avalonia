@@ -1,24 +1,18 @@
 ﻿using Asv.Mavlink;
 using Avalonia.Media;
+using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia.Example;
 
 public class BrowserItem : HeadlinedViewModel, IBrowserItem
 {
-    private string _path = string.Empty;
-    private string? _parentPath;
-    private FileSize? _size;
-    private bool _hasChildren;
-    private bool _isExpanded;
-    private bool _isSelected;
-    private bool _isInEditMode;
-    private string _editedName = string.Empty;
-    private string? _crc32Hex;
-    private SolidColorBrush _crc32Color = null!;
-    private FtpEntryType _ftpEntryType;
-
-    public BrowserItem(NavigationId id, string? parentPath, string path)
-        : base(id)
+    public BrowserItem(
+        NavigationId id,
+        string? parentPath,
+        string path,
+        ILoggerFactory loggerFactory
+    )
+        : base(id, loggerFactory)
     {
         ParentPath = parentPath;
         Path = path;
@@ -27,67 +21,67 @@ public class BrowserItem : HeadlinedViewModel, IBrowserItem
 
     public string Path
     {
-        get => _path;
-        set => SetField(ref _path, value);
-    }
+        get;
+        set => SetField(ref field, value);
+    } = string.Empty;
 
     public string? ParentPath
     {
-        get => _parentPath;
-        set => SetField(ref _parentPath, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public FileSize? Size
     {
-        get => _size;
-        set => SetField(ref _size, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public bool HasChildren
     {
-        get => _hasChildren;
-        set => SetField(ref _hasChildren, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public bool IsExpanded
     {
-        get => _isExpanded;
-        set => SetField(ref _isExpanded, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public bool IsSelected
     {
-        get => _isSelected;
-        set => SetField(ref _isSelected, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public bool IsInEditMode
     {
-        get => _isInEditMode;
-        set => SetField(ref _isInEditMode, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public string EditedName
     {
-        get => _editedName;
-        set => SetField(ref _editedName, value);
-    }
+        get;
+        set => SetField(ref field, value);
+    } = string.Empty;
 
     public string? Crc32Hex
     {
-        get => _crc32Hex;
-        set => SetField(ref _crc32Hex, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public SolidColorBrush Crc32Color
     {
-        get => _crc32Color;
-        set => SetField(ref _crc32Color, value);
-    }
+        get;
+        set => SetField(ref field, value);
+    } = null!;
 
     public FtpEntryType FtpEntryType
     {
-        get => _ftpEntryType;
-        set => SetField(ref _ftpEntryType, value);
+        get;
+        set => SetField(ref field, value);
     }
 }

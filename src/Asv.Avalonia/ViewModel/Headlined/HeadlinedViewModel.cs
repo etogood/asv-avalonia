@@ -50,7 +50,11 @@ public class HeadlinedViewModel(NavigationId id, ILoggerFactory loggerFactory)
 
     public int Order { get; set; }
 
-    public override ValueTask<IRoutable> Navigate(NavigationId id) => new(this);
+    public override ValueTask<IRoutable> Navigate(NavigationId id) =>
+        ValueTask.FromResult<IRoutable>(this);
 
-    public override IEnumerable<IRoutable> GetRoutableChildren() => [];
+    public override IEnumerable<IRoutable> GetRoutableChildren()
+    {
+        yield break;
+    }
 }

@@ -12,7 +12,7 @@ public class PluginInfoViewModel : DisposableViewModel
     private ILocalPluginInfo? _localInfo;
 
     public PluginInfoViewModel()
-        : base(string.Empty)
+        : base(DesignTime.Id, DesignTime.LoggerFactory)
     {
         DesignTime.ThrowIfNotDesignMode();
         Install = CoreDesignTime.CancellableCommand<Unit>();
@@ -26,7 +26,7 @@ public class PluginInfoViewModel : DisposableViewModel
         IPluginManager manager,
         ILoggerFactory logFactory
     )
-        : base(id)
+        : base(id, logFactory)
     {
         _pluginInfo = pluginInfo;
         _manager = manager;

@@ -6,7 +6,7 @@ namespace Asv.Avalonia;
 
 public abstract class ExtendableHeadlinedViewModel<TSelfInterface>(
     NavigationId id,
-    LoggerFactory loggerFactory
+    ILoggerFactory loggerFactory
 ) : ExtendableViewModel<TSelfInterface>(id, loggerFactory), IHeadlinedViewModel
     where TSelfInterface : class
 {

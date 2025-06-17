@@ -12,24 +12,21 @@ public class PluginInstallerViewModelConfig
 public class PluginInstallerViewModel : DialogViewModelBase
 {
     public const string ViewModelId = "plugins.installed.installer.dialog";
-
-    private readonly ILoggerFactory _loggerFactory;
     private readonly IPluginManager _manager;
-    private readonly ILogger _logger;
 
     public PluginInstallerViewModel()
-        : base(ViewModelId) { }
+        : base(DesignTime.Id, DesignTime.LoggerFactory)
+    {
+        DesignTime.ThrowIfNotDesignMode();
+    }
 
     public PluginInstallerViewModel(
         IConfiguration cfg,
         ILoggerFactory loggerFactory,
         IPluginManager manager
     )
-        : base(ViewModelId)
+        : base(ViewModelId, loggerFactory)
     {
-        _loggerFactory = loggerFactory;
-        _logger = loggerFactory.CreateLogger<PluginInstallerViewModel>();
-
         _manager = manager;
         var config = cfg.Get<PluginInstallerViewModelConfig>();
         NugetPackageFilePath = new BindableReactiveProperty<string>(config.NugetPackageFilePath);
@@ -65,7 +62,7 @@ public class PluginInstallerViewModel : DialogViewModelBase
             new Progress<ProgressMessage>(m => progress.Report(m.Progress)),
             cancel
         );
-        _logger.LogInformation("Plugin installed successfully");
+        Logger.LogInformation("Plugin installed successfully");
     }
 
     public override void ApplyDialog(ContentDialog dialog)

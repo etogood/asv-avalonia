@@ -1,13 +1,13 @@
 ﻿using System.Composition;
 using Asv.Common;
+using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia;
 
 [ExportMainMenuAttribute]
-public class FileMenu : MenuItem
+[method: ImportingConstructor]
+public class FileMenu(ILoggerFactory loggerFactory)
+    : MenuItem(MenuId, RS.ShellView_Toolbar_File, loggerFactory)
 {
     public const string MenuId = "shell.menu.file";
-
-    public FileMenu()
-        : base(MenuId, RS.ShellView_Toolbar_File) { }
 }

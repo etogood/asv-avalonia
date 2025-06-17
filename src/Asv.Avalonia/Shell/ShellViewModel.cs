@@ -12,11 +12,7 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
 {
     private readonly ObservableList<IPage> _pages;
     private readonly IContainerHost _container;
-    private readonly IConfiguration _cfg;
     private readonly ICommandService _cmd;
-    private readonly ILogger<ShellViewModel> _logger;
-    private ShellErrorState _errorState;
-    private string _title;
 
     protected ShellViewModel(
         IContainerHost ioc,
@@ -24,15 +20,13 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
         IConfiguration cfg,
         string id
     )
-        : base(id)
+        : base(id, loggerFactory)
     {
         ArgumentNullException.ThrowIfNull(ioc);
         _container = ioc;
-        _cfg = cfg;
         _cmd = ioc.GetExport<ICommandService>();
         Navigation = ioc.GetExport<INavigationService>();
         _pages = new ObservableList<IPage>();
-        _logger = loggerFactory.CreateLogger<ShellViewModel>();
         PagesView = _pages.ToNotifyCollectionChangedSlim();
         Close = new ReactiveCommand((_, c) => CloseAsync(c));
         ChangeWindowState = new ReactiveCommand((_, c) => ChangeWindowModeAsync(c));
@@ -140,7 +134,7 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
                 break;
             case PageCloseRequestedEvent close:
             {
-                _logger.ZLogInformation($"Close page [{close.Page.Id}]");
+                Logger.ZLogInformation($"Close page [{close.Page.Id}]");
 
                 // TODO: save page layout
                 if (_pages is [HomePageViewModel])
@@ -171,14 +165,14 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
 
     public ShellErrorState ErrorState
     {
-        get => _errorState;
-        set => SetField(ref _errorState, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public string Title
     {
-        get => _title;
-        set => SetField(ref _title, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     #region Dispose

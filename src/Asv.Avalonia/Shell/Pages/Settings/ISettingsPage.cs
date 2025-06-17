@@ -1,4 +1,5 @@
 using Asv.Common;
+using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;
 
@@ -11,8 +12,8 @@ public interface ISettingsPage : IPage
 
 public interface ISettingsSubPage : ITreeSubpage<ISettingsPage> { }
 
-public abstract class SettingsSubPage(NavigationId id)
-    : TreeSubpage<ISettingsPage>(id),
+public abstract class SettingsSubPage(NavigationId id, ILoggerFactory loggerFactory)
+    : TreeSubpage<ISettingsPage>(id, loggerFactory),
         ISettingsSubPage
 {
     public override ValueTask Init(ISettingsPage context) => ValueTask.CompletedTask;

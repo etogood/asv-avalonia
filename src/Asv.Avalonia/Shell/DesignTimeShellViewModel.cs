@@ -34,10 +34,10 @@ public class DesignTimeShellViewModel : ShellViewModel
 
         InternalPages.Add(new SettingsPageViewModel());
 
-        var file = new FileMenu();
+        var file = new FileMenu(DesignTime.LoggerFactory);
         MainMenu.Add(file);
-        MainMenu.Add(new MenuItem("open", "Open", file.Id.Id));
-        MainMenu.Add(new EditMenu());
+        MainMenu.Add(new MenuItem("open", "Open", DesignTime.LoggerFactory, file.Id.Id));
+        MainMenu.Add(new EditMenu(DesignTime.LoggerFactory));
     }
 
     public override INavigationService Navigation => DesignTime.Navigation;

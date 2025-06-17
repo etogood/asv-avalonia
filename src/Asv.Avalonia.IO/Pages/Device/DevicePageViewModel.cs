@@ -18,25 +18,23 @@ public abstract class DevicePageViewModel<T> : PageViewModel<T>, IDevicePage
     private IDisposable? _waitInitSubscription;
     private CancellationTokenSource? _deviceDisconnectedToken;
     private readonly ReactiveProperty<DeviceWrapper?> _target;
-    private readonly ILogger<DevicePageViewModel<T>> _logger;
 
     protected DevicePageViewModel(
         NavigationId id,
         IDeviceManager devices,
         ICommandService cmd,
-        ILoggerFactory logger
+        ILoggerFactory loggerFactory
     )
-        : base(id, cmd)
+        : base(id, cmd, loggerFactory)
     {
         _devices = devices;
-        _logger = logger.CreateLogger<DevicePageViewModel<T>>();
         _target = new ReactiveProperty<DeviceWrapper?>().DisposeItWith(Disposable);
         Disposable.AddAction(DeviceRemoved);
     }
 
     protected override void InternalInitArgs(NameValueCollection args)
     {
-        _logger.ZLogTrace($"{this} init args: {args}");
+        Logger.ZLogTrace($"{this} init args: {args}");
         base.InternalInitArgs(args);
         Debug.Assert(_devices != null, "_devices != null");
         _targetDeviceId =

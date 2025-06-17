@@ -1,16 +1,17 @@
-﻿namespace Asv.Avalonia;
+﻿using Microsoft.Extensions.Logging;
+
+namespace Asv.Avalonia;
 
 public class SettingsCommandsItemViewModel : RoutableViewModel
 {
-    private readonly ICommandService _svc;
-    private bool _isSelected;
-    private HotKeyInfo? _currentHotKey;
-
-    public SettingsCommandsItemViewModel(ICommandInfo cmd, ICommandService svc)
-        : base(cmd.Id)
+    public SettingsCommandsItemViewModel(
+        ICommandInfo cmd,
+        ICommandService svc,
+        ILoggerFactory loggerFactory
+    )
+        : base(cmd.Id, loggerFactory)
     {
-        _svc = svc;
-        CurrentHotKey = _svc.GetHotKey(cmd.Id);
+        CurrentHotKey = svc.GetHotKey(cmd.Id);
         Info = cmd;
     }
 
@@ -18,8 +19,8 @@ public class SettingsCommandsItemViewModel : RoutableViewModel
 
     public HotKeyInfo? CurrentHotKey
     {
-        get => _currentHotKey;
-        set => SetField(ref _currentHotKey, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public bool Filter(string text)
@@ -39,7 +40,7 @@ public class SettingsCommandsItemViewModel : RoutableViewModel
 
     public bool IsSelected
     {
-        get => _isSelected;
-        set => SetField(ref _isSelected, value);
+        get;
+        set => SetField(ref field, value);
     }
 }

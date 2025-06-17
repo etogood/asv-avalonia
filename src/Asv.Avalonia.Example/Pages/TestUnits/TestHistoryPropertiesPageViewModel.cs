@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Composition;
 using Material.Icons;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia.Example;
@@ -19,14 +20,18 @@ public class TestHistoryPropertiesPageViewModel : PageViewModel<TestHistoryPrope
     private readonly ReactiveProperty<string?> _stringWithManyValidations;
 
     public TestHistoryPropertiesPageViewModel()
-        : this(DesignTime.UnitService, DesignTime.CommandService)
+        : this(DesignTime.UnitService, DesignTime.CommandService, DesignTime.LoggerFactory)
     {
         DesignTime.ThrowIfNotDesignMode();
     }
 
     [ImportingConstructor]
-    public TestHistoryPropertiesPageViewModel(IUnitService unit, ICommandService commandService)
-        : base(PageId, commandService)
+    public TestHistoryPropertiesPageViewModel(
+        IUnitService unit,
+        ICommandService commandService,
+        ILoggerFactory loggerFactory
+    )
+        : base(PageId, commandService, loggerFactory)
     {
         Title = "Test History Properties";
         var un = unit.Units[VelocityBase.Id];
@@ -36,20 +41,25 @@ public class TestHistoryPropertiesPageViewModel : PageViewModel<TestHistoryPrope
         _stringWithOneValidation = new ReactiveProperty<string?>();
         _stringWithManyValidations = new ReactiveProperty<string?>();
 
-        IsTurnedOn = new HistoricalBoolProperty($"{PageId}.{nameof(Speed)}", _isTurnedOn)
+        IsTurnedOn = new HistoricalBoolProperty(
+            $"{PageId}.{nameof(Speed)}",
+            _isTurnedOn,
+            loggerFactory
+        )
         {
             Parent = this,
         };
 
         TurnOn = new ReactiveCommand(_ => IsTurnedOn.ViewValue.Value = !IsTurnedOn.ViewValue.Value);
 
-        Speed = new HistoricalUnitProperty($"{PageId}.{nameof(Speed)}", _speed, un)
+        Speed = new HistoricalUnitProperty($"{PageId}.{nameof(Speed)}", _speed, un, loggerFactory)
         {
             Parent = this,
         };
         StringPropWithoutValidation = new HistoricalStringProperty(
             $"{PageId}.{nameof(StringPropWithoutValidation)}",
-            _stringWithoutValidation
+            _stringWithoutValidation,
+            loggerFactory
         )
         {
             Parent = this,
@@ -58,6 +68,7 @@ public class TestHistoryPropertiesPageViewModel : PageViewModel<TestHistoryPrope
         StringPropWithOneValidation = new HistoricalStringProperty(
             $"{PageId}.{nameof(StringPropWithOneValidation)}",
             _stringWithOneValidation,
+            loggerFactory,
             [
                 v =>
                 {
@@ -77,6 +88,7 @@ public class TestHistoryPropertiesPageViewModel : PageViewModel<TestHistoryPrope
         StringPropWithManyValidations = new HistoricalStringProperty(
             $"{PageId}.{nameof(StringPropWithManyValidations)}",
             _stringWithManyValidations,
+            loggerFactory,
             [
                 v =>
                 {

@@ -2,6 +2,7 @@
 using System.Composition;
 using Asv.Common;
 using Asv.IO;
+using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;
 
@@ -19,7 +20,7 @@ public class SettingsConnectionViewModel
     public const string SubPageId = "settings.connection1";
 
     public SettingsConnectionViewModel()
-        : this(NullDeviceManager.Instance, NullContainerHost.Instance)
+        : this(NullDeviceManager.Instance, NullContainerHost.Instance, DesignTime.LoggerFactory)
     {
         DesignTime.ThrowIfNotDesignMode();
         var port1 = new PortViewModel();
@@ -32,8 +33,12 @@ public class SettingsConnectionViewModel
     }
 
     [ImportingConstructor]
-    public SettingsConnectionViewModel(IDeviceManager deviceManager, IContainerHost containerHost)
-        : base(SubPageId)
+    public SettingsConnectionViewModel(
+        IDeviceManager deviceManager,
+        IContainerHost containerHost,
+        ILoggerFactory loggerFactory
+    )
+        : base(SubPageId, loggerFactory)
     {
         _deviceManager = deviceManager;
         _containerHost = containerHost;

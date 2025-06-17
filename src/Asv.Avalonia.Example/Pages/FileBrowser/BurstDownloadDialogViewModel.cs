@@ -2,11 +2,13 @@
 using System.ComponentModel.DataAnnotations;
 using Asv.Common;
 using Asv.Mavlink;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia.Example;
 
-public class BurstDownloadDialogViewModel(string id) : DialogViewModelBase(id)
+public class BurstDownloadDialogViewModel(string id, ILoggerFactory loggerFactory)
+    : DialogViewModelBase(id, loggerFactory)
 {
     [Range(1, MavlinkFtpHelper.MaxDataSize)]
     public BindableReactiveProperty<byte?> PacketSize { get; } =

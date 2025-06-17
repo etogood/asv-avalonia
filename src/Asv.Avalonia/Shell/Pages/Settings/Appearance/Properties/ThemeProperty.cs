@@ -1,4 +1,5 @@
 using System.Composition;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia;
@@ -12,14 +13,14 @@ public class ThemeProperty : RoutableViewModel
     public const string ViewModelId = "theme.current";
 
     public ThemeProperty()
-        : this(DesignTime.ThemeService)
+        : this(DesignTime.ThemeService, DesignTime.LoggerFactory)
     {
         DesignTime.ThrowIfNotDesignMode();
     }
 
     [ImportingConstructor]
-    public ThemeProperty(IThemeService svc)
-        : base(ViewModelId)
+    public ThemeProperty(IThemeService svc, ILoggerFactory loggerFactory)
+        : base(ViewModelId, loggerFactory)
     {
         _svc = svc;
         SelectedItem = new BindableReactiveProperty<IThemeInfo>(svc.CurrentTheme.CurrentValue);

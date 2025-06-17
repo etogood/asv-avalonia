@@ -1,16 +1,19 @@
+using System.Composition;
 using Avalonia.Media;
 using Material.Icons;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia.Example.Plugin.PluginExample;
 
 [ExportExtensionFor<IHomePage>]
-public class HomePagePluginExtension : IExtensionFor<IHomePage>
+[method: ImportingConstructor]
+public class HomePagePluginExtension(ILoggerFactory loggerFactory) : IExtensionFor<IHomePage>
 {
     public void Extend(IHomePage context, CompositeDisposable contextDispose)
     {
         context.Tools.Add(
-            new ActionViewModel("plugin_action")
+            new ActionViewModel("plugin_action", loggerFactory)
             {
                 Parent = null,
                 Icon = MaterialIconKind.Plugin,

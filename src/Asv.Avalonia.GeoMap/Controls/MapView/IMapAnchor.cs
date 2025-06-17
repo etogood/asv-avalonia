@@ -1,6 +1,7 @@
 ﻿using Asv.Common;
 using Avalonia.Media;
 using Material.Icons;
+using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;
 
@@ -26,91 +27,78 @@ public interface IMapAnchor : IRoutable
 public class MapAnchor<TContext> : ExtendableViewModel<TContext>, IMapAnchor
     where TContext : class, IMapAnchor
 {
-    private MaterialIconKind _icon;
-    private GeoPoint _location;
-    private double _azimuth;
-    private IBrush _foreground = Brushes.NavajoWhite;
-    private HorizontalOffset _centerX;
-    private VerticalOffset _centerY;
-    private bool _isReadOnly;
-    private bool _isSelected;
-    private bool _isVisible = true;
-    private string? _title;
-    private IPen? _polygonPen;
-    private bool _isPolygonClosed;
-
-    public MapAnchor(string id)
-        : base(id)
+    public MapAnchor(NavigationId id, ILoggerFactory loggerFactory)
+        : base(id, loggerFactory)
     {
-        Title = id;
+        Title = id.ToString();
         Polygon = new ObservableList<GeoPoint>();
         PolygonView = Polygon.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
     }
 
     public double Azimuth
     {
-        get => _azimuth;
-        set => SetField(ref _azimuth, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public GeoPoint Location
     {
-        get => _location;
-        set => SetField(ref _location, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public MaterialIconKind Icon
     {
-        get => _icon;
-        set => SetField(ref _icon, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public IBrush Foreground
     {
-        get => _foreground;
-        set => SetField(ref _foreground, value);
-    }
+        get;
+        set => SetField(ref field, value);
+    } = Brushes.NavajoWhite;
 
     public HorizontalOffset CenterX
     {
-        get => _centerX;
-        set => SetField(ref _centerX, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public VerticalOffset CenterY
     {
-        get => _centerY;
-        set => SetField(ref _centerY, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public bool IsReadOnly
     {
-        get => _isReadOnly;
-        set => SetField(ref _isReadOnly, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public bool IsSelected
     {
-        get => _isSelected;
-        set => SetField(ref _isSelected, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public bool IsVisible
     {
-        get => _isVisible;
-        set => SetField(ref _isVisible, value);
-    }
+        get;
+        set => SetField(ref field, value);
+    } = true;
 
     public IPen? PolygonPen
     {
-        get => _polygonPen;
-        set => SetField(ref _polygonPen, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public bool IsPolygonClosed
     {
-        get => _isPolygonClosed;
-        set => SetField(ref _isPolygonClosed, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public ObservableList<GeoPoint> Polygon { get; }
@@ -119,8 +107,8 @@ public class MapAnchor<TContext> : ExtendableViewModel<TContext>, IMapAnchor
 
     public string? Title
     {
-        get => _title;
-        set => SetField(ref _title, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public override ValueTask<IRoutable> Navigate(NavigationId id)
@@ -130,7 +118,7 @@ public class MapAnchor<TContext> : ExtendableViewModel<TContext>, IMapAnchor
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
-        return [];
+        yield break;
     }
 
     protected override void AfterLoadExtensions()

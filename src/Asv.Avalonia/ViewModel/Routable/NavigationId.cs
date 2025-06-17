@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using Asv.IO;
+using DotNext;
 using Newtonsoft.Json;
 
 namespace Asv.Avalonia;
@@ -16,6 +17,66 @@ public readonly partial struct NavigationId
         ISizedSpanSerializable,
         IJsonSerializable
 {
+    #region Generation
+
+    private const string AllowedCharacters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-.";
+
+    public static string GenerateRandomAsString(int length = 16) =>
+        Random.Shared.NextString(AllowedCharacters, length);
+
+    public static NavigationId GenerateRandom(int length = 16) => GenerateRandomAsString(length);
+
+    public static string GenerateByHashAsString<T1>(T1 value1) =>
+        HashCode.Combine(value1).ToString();
+
+    public static string GenerateByHashAsString<T1, T2>(T1 value1, T2 value2) =>
+        HashCode.Combine(value1, value2).ToString();
+
+    public static string GenerateByHashAsString<T1, T2, T3>(T1 value1, T2 value2, T3 value3) =>
+        HashCode.Combine(value1, value2, value3).ToString();
+
+    public static string GenerateByHashAsString<T1, T2, T3, T4>(
+        T1 value1,
+        T2 value2,
+        T3 value3,
+        T4 value4
+    ) => HashCode.Combine(value1, value2, value3, value4).ToString();
+
+    public static string GenerateByHashAsString<T1, T2, T3, T4, T5>(
+        T1 value1,
+        T2 value2,
+        T3 value3,
+        T4 value4,
+        T5 value5
+    ) => HashCode.Combine(value1, value2, value3, value4, value5).ToString();
+
+    public static NavigationId GenerateByHash<T1>(T1 value1) =>
+        new(GenerateByHashAsString(value1), (string?)null);
+
+    public static NavigationId GenerateByHash<T1, T2>(T1 value1, T2 value2) =>
+        new(GenerateByHashAsString(value1, value2), (string?)null);
+
+    public static NavigationId GenerateByHash<T1, T2, T3>(T1 value1, T2 value2, T3 value3) =>
+        new(GenerateByHashAsString(value1, value2, value3), (string?)null);
+
+    public static NavigationId GenerateByHash<T1, T2, T3, T4>(
+        T1 value1,
+        T2 value2,
+        T3 value3,
+        T4 value4
+    ) => new(GenerateByHashAsString(value1, value2, value3, value4), (string?)null);
+
+    public static NavigationId GenerateByHash<T1, T2, T3, T4, T5>(
+        T1 value1,
+        T2 value2,
+        T3 value3,
+        T4 value4,
+        T5 value5
+    ) => new(GenerateByHashAsString(value1, value2, value3, value4, value5), (string?)null);
+
+    #endregion
+
     private const string TypeIdRegexString = "^[a-zA-Z0-9\\._\\-]+$";
 
     [GeneratedRegex(TypeIdRegexString, RegexOptions.Compiled)]

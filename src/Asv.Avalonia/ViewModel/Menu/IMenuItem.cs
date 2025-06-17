@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Avalonia.Input;
 using Material.Icons;
+using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia;
 
@@ -15,9 +16,9 @@ public interface IMenuItem : IActionViewModel
 
 public static class MenuItemMixin
 {
-    public static IMenuItem CreateMenu(this ICommandInfo cmdInfo)
+    public static IMenuItem CreateMenu(this ICommandInfo cmdInfo, ILoggerFactory loggerFactory)
     {
-        var item = new MenuItem(cmdInfo.Id, cmdInfo.Name)
+        var item = new MenuItem(cmdInfo.Id, cmdInfo.Name, loggerFactory)
         {
             Description = cmdInfo.Description,
             Icon = cmdInfo.Icon,

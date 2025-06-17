@@ -1,21 +1,26 @@
 using Asv.Common;
 using Asv.IO;
 using Material.Icons;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia.IO;
 
 public class HomePageDeviceItem : HomePageItem
 {
-    public HomePageDeviceItem(IClientDevice device, IDeviceManager deviceManager)
-        : base(NavigationId.NormalizeTypeId(device.Id.AsString()))
+    public HomePageDeviceItem(
+        IClientDevice device,
+        IDeviceManager deviceManager,
+        ILoggerFactory loggerFactory
+    )
+        : base(NavigationId.NormalizeTypeId(device.Id.AsString()), loggerFactory)
     {
         Device = device;
         Icon = deviceManager.GetIcon(device.Id);
         IconBrush = deviceManager.GetDeviceBrush(device.Id);
         device.Name.Subscribe(x => Header = x).DisposeItWith(Disposable);
         Info.Add(
-            new HeadlinedViewModel("id")
+            new HeadlinedViewModel(DesignTime.Id, DesignTime.LoggerFactory)
             {
                 Icon = MaterialIconKind.IdCard,
                 Header = "StaticId",
@@ -23,14 +28,14 @@ public class HomePageDeviceItem : HomePageItem
             }
         );
         Info.Add(
-            new HeadlinedViewModel("type")
+            new HeadlinedViewModel(DesignTime.Id, DesignTime.LoggerFactory)
             {
                 Icon = MaterialIconKind.MergeType,
                 Header = "Type",
                 Description = device.Id.DeviceClass,
             }
         );
-        var linkInfo = new HeadlinedViewModel("link")
+        var linkInfo = new HeadlinedViewModel(DesignTime.Id, DesignTime.LoggerFactory)
         {
             Icon = MaterialIconKind.Network,
             Header = "Link",

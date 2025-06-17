@@ -2,12 +2,13 @@
 using Asv.Avalonia.IO;
 using Asv.IO;
 using Asv.Mavlink;
+using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia.Example;
 
 [ExportExtensionFor<IHomePageItem>]
 [method: ImportingConstructor]
-public class HomePageFileBrowserExtension() : HomePageDeviceItemAction
+public class HomePageFileBrowserExtension(ILoggerFactory loggerFactory) : HomePageDeviceItemAction
 {
     protected override IActionViewModel? TryCreateAction(
         IClientDevice device,
@@ -19,7 +20,7 @@ public class HomePageFileBrowserExtension() : HomePageDeviceItemAction
             return null;
         }
 
-        return new ActionViewModel("browser")
+        return new ActionViewModel("browser", loggerFactory)
         {
             Header = OpenFileBrowserCommand.StaticInfo.Name,
             Description = OpenFileBrowserCommand.StaticInfo.Description,

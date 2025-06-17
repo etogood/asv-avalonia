@@ -23,7 +23,6 @@ public class ParamItemViewModelConfig
 
 public class ParamItemViewModel : RoutableViewModel
 {
-    private readonly ILogger _log;
     private readonly ParamItem _paramItem;
     private readonly ReactiveProperty<string?> _value;
     private readonly ReactiveProperty<bool> _isPinned;
@@ -33,7 +32,7 @@ public class ParamItemViewModel : RoutableViewModel
     private bool _internalUpdate;
 
     public ParamItemViewModel()
-        : base("param_item") // use base class instead of ParamItem, because there is no way to create an empty Param item
+        : base("param_item", DesignTime.LoggerFactory) // use base class instead of ParamItem, because there is no way to create an empty Param item
     {
         DesignTime.ThrowIfNotDesignMode();
 
@@ -47,16 +46,15 @@ public class ParamItemViewModel : RoutableViewModel
     public ParamItemViewModel(
         NavigationId id,
         ParamItem paramItem,
-        ILoggerFactory log,
+        ILoggerFactory loggerFactory,
         ParamsConfig config
     )
-        : base(id)
+        : base(id, loggerFactory)
     {
         ArgumentNullException.ThrowIfNull(paramItem);
-        ArgumentNullException.ThrowIfNull(log);
+        ArgumentNullException.ThrowIfNull(loggerFactory);
         ArgumentNullException.ThrowIfNull(config);
 
-        _log = log.CreateLogger<ParamItemViewModel>();
         _paramItem = paramItem;
         Name = paramItem.Name;
         DisplayName = paramItem.Info.DisplayName ?? string.Empty;
@@ -72,15 +70,22 @@ public class ParamItemViewModel : RoutableViewModel
 
         _isUpdate = new BindableReactiveProperty<bool>();
         _isWriting = new BindableReactiveProperty<bool>();
-        IsPinned = new HistoricalBoolProperty($"{id}.{nameof(IsPinned)}", _isPinned)
+        IsPinned = new HistoricalBoolProperty($"{id}.{nameof(IsPinned)}", _isPinned, loggerFactory)
         {
             Parent = this,
         };
-        IsStarred = new HistoricalBoolProperty($"{id}.{nameof(IsStarred)}", _isStarred)
+        IsStarred = new HistoricalBoolProperty(
+            $"{id}.{nameof(IsStarred)}",
+            _isStarred,
+            loggerFactory
+        )
         {
             Parent = this,
         };
-        Value = new HistoricalStringProperty($"{id}.{nameof(Value)}", _value) { Parent = this };
+        Value = new HistoricalStringProperty($"{id}.{nameof(Value)}", _value, loggerFactory)
+        {
+            Parent = this,
+        };
         IsSynced = new BindableReactiveProperty<bool>();
         StarKind = new BindableReactiveProperty<MaterialIconKind>();
 
@@ -312,7 +317,7 @@ public class ParamItemViewModel : RoutableViewModel
         }
         catch (Exception ex)
         {
-            _log.LogError(ex, "Read {Name} error", Name);
+            Logger.LogError(ex, "Read {Name} error", Name);
         }
         finally
         {
@@ -329,7 +334,7 @@ public class ParamItemViewModel : RoutableViewModel
         }
         catch (Exception ex)
         {
-            _log.LogError(ex, "Write {Name} error", Name);
+            Logger.LogError(ex, "Write {Name} error", Name);
         }
         finally
         {

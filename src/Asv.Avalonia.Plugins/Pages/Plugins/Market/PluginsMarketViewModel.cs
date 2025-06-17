@@ -28,8 +28,7 @@ public class PluginsMarketViewModel : PageViewModel<PluginsMarketViewModel>
     {
         DesignTime.ThrowIfNotDesignMode();
         _plugins = new ObservableList<PluginInfoViewModel>(
-            new[]
-            {
+            [
                 new PluginInfoViewModel
                 {
                     Id = "#1",
@@ -51,7 +50,7 @@ public class PluginsMarketViewModel : PageViewModel<PluginsMarketViewModel>
                     Description = "Example plugin",
                     LastVersion = "0.1.0",
                 },
-            }
+            ]
         );
         PluginsView = _plugins.CreateView(x => x).ToNotifyCollectionChanged();
         SelectedPlugin = new BindableReactiveProperty<PluginInfoViewModel?>(_plugins[0]);
@@ -64,7 +63,7 @@ public class PluginsMarketViewModel : PageViewModel<PluginsMarketViewModel>
         ILoggerFactory loggerFactory,
         IConfiguration cfg
     )
-        : base(PageId, cmd)
+        : base(PageId, cmd, loggerFactory)
     {
         Title = "Plugin Manager";
         _manager = manager ?? throw new ArgumentNullException(nameof(manager));

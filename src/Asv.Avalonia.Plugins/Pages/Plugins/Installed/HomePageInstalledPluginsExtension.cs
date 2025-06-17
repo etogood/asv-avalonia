@@ -1,15 +1,21 @@
+using System.Composition;
 using Asv.Common;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia.Plugins;
 
 [ExportExtensionFor<IHomePage>]
-public class HomePageInstalledPluginsExtension : IExtensionFor<IHomePage>
+[method: ImportingConstructor]
+public class HomePageInstalledPluginsExtension(ILoggerFactory loggerFactory)
+    : IExtensionFor<IHomePage>
 {
     public void Extend(IHomePage context, CompositeDisposable contextDispose)
     {
         context.Tools.Add(
-            OpenInstalledPluginsCommand.StaticInfo.CreateAction().DisposeItWith(contextDispose)
+            OpenInstalledPluginsCommand
+                .StaticInfo.CreateAction(loggerFactory)
+                .DisposeItWith(contextDispose)
         );
     }
 }

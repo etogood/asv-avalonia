@@ -25,8 +25,6 @@ public class DialogBoardViewModel : PageViewModel<DialogBoardViewModel>
     private readonly YesOrNoDialogPrefab _yesNoDialog;
     private readonly InputDialogPrefab _inputDialog;
 
-    private readonly ILogger<DialogBoardViewModel> _logger;
-
     public DialogBoardViewModel()
         : this(DesignTime.CommandService, NullLoggerFactory.Instance, NullDialogService.Instance)
     {
@@ -37,13 +35,12 @@ public class DialogBoardViewModel : PageViewModel<DialogBoardViewModel>
     [ImportingConstructor]
     public DialogBoardViewModel(
         ICommandService cmd,
-        ILoggerFactory logFactory,
+        ILoggerFactory loggerFactory,
         IDialogService dialogService
     )
-        : base(PageId, cmd)
+        : base(PageId, cmd, loggerFactory)
     {
         Title = RS.DialogPageViewModel_Title;
-        _logger = logFactory.CreateLogger<DialogBoardViewModel>();
 
         _selectFolderDialog = dialogService.GetDialogPrefab<SelectFolderDialogDesktopPrefab>();
         _observeFolderDialog = dialogService.GetDialogPrefab<ObserveFolderDialogPrefab>();
@@ -77,7 +74,7 @@ public class DialogBoardViewModel : PageViewModel<DialogBoardViewModel>
             var payload = new OpenFileDialogPayload { Title = "Open File" };
 
             var result = await _openFileDialog.ShowDialogAsync(payload);
-            _logger.LogInformation("OpenFile result = {result}", result);
+            Logger.LogInformation("OpenFile result = {result}", result);
         }
     }
 
@@ -88,7 +85,7 @@ public class DialogBoardViewModel : PageViewModel<DialogBoardViewModel>
             var payload = new SaveFileDialogPayload { Title = "Save File" };
 
             var result = await _saveFileDialog.ShowDialogAsync(payload);
-            _logger.LogInformation("SaveFile result = {result}", result);
+            Logger.LogInformation("SaveFile result = {result}", result);
         }
     }
 
@@ -99,7 +96,7 @@ public class DialogBoardViewModel : PageViewModel<DialogBoardViewModel>
             var payload = new SelectFolderDialogPayload { Title = "Select Folder File" };
 
             var result = await _selectFolderDialog.ShowDialogAsync(payload);
-            _logger.LogInformation("SelectFolder result = {result}", result);
+            Logger.LogInformation("SelectFolder result = {result}", result);
         }
     }
 
@@ -114,7 +111,7 @@ public class DialogBoardViewModel : PageViewModel<DialogBoardViewModel>
             };
 
             var result = await _observeFolderDialog.ShowDialogAsync(payload);
-            _logger.LogInformation("ObserveFolder result = {result}", result);
+            Logger.LogInformation("ObserveFolder result = {result}", result);
         }
     }
 
@@ -127,7 +124,7 @@ public class DialogBoardViewModel : PageViewModel<DialogBoardViewModel>
         };
 
         var res = await _yesNoDialog.ShowDialogAsync(payload);
-        _logger.LogInformation("YesNo result = {res}", res);
+        Logger.LogInformation("YesNo result = {res}", res);
     }
 
     private async ValueTask SaveCancelAsync(Unit unit, CancellationToken cancellationToken)
@@ -135,7 +132,7 @@ public class DialogBoardViewModel : PageViewModel<DialogBoardViewModel>
         var payload = new SaveCancelDialogPayload { Title = "Сохранение", Message = "Сохранить?" };
 
         var res = await _saveCancelDialog.ShowDialogAsync(payload);
-        _logger.LogInformation("SaveCancel result = {res}", res);
+        Logger.LogInformation("SaveCancel result = {res}", res);
     }
 
     private async ValueTask ShowUnitInputAsync(Unit unit, CancellationToken cancellationToken)
@@ -147,7 +144,7 @@ public class DialogBoardViewModel : PageViewModel<DialogBoardViewModel>
         };
 
         var res = await _inputDialog.ShowDialogAsync(payload);
-        _logger.LogInformation("UnitInput result = {res}", res);
+        Logger.LogInformation("UnitInput result = {res}", res);
     }
 
     public override IEnumerable<IRoutable> GetRoutableChildren()

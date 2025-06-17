@@ -1,4 +1,5 @@
 using System.Composition;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia;
@@ -14,14 +15,18 @@ public class LanguageProperty : RoutableViewModel
     public BindableReactiveProperty<ILanguageInfo> SelectedItem { get; }
 
     public LanguageProperty()
-        : this(DesignTime.LocalizationService, null!)
+        : this(DesignTime.LocalizationService, null!, DesignTime.LoggerFactory)
     {
         DesignTime.ThrowIfNotDesignMode();
     }
 
     [ImportingConstructor]
-    public LanguageProperty(ILocalizationService svc, IDialogService dialog)
-        : base(ViewModelId)
+    public LanguageProperty(
+        ILocalizationService svc,
+        IDialogService dialog,
+        ILoggerFactory loggerFactory
+    )
+        : base(ViewModelId, loggerFactory)
     {
         _svc = svc;
         _dialog = dialog.GetDialogPrefab<YesOrNoDialogPrefab>();

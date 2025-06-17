@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Asv.Avalonia.GeoMap;
 using Asv.Common;
 using Material.Icons;
+using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia.Example;
 
@@ -15,7 +16,7 @@ public class MapExamplePageViewModel : PageViewModel<IMapContext>, IMapContext
     public const string PageId = "MapExamplePage";
 
     public MapExamplePageViewModel()
-        : this(DesignTime.CommandService)
+        : this(DesignTime.CommandService, DesignTime.LoggerFactory)
     {
         DesignTime.ThrowIfNotDesignMode();
 
@@ -23,13 +24,13 @@ public class MapExamplePageViewModel : PageViewModel<IMapContext>, IMapContext
     }
 
     [ImportingConstructor]
-    public MapExamplePageViewModel(ICommandService cmd)
-        : base(PageId, cmd)
+    public MapExamplePageViewModel(ICommandService cmd, ILoggerFactory loggerFactory)
+        : base(PageId, cmd, loggerFactory)
     {
         Title = RS.MapExamplePageViewModel_Title;
-        Anchors = new MapViewModel("asdasd");
+        Anchors = new MapViewModel("Anthor1", loggerFactory);
         Anchors.Anchors.Add(
-            new MapAnchor<IMapAnchor>("1")
+            new MapAnchor<IMapAnchor>("1", loggerFactory)
             {
                 Icon = MaterialIconKind.Navigation,
                 Location = new GeoPoint(53, 53, 0),

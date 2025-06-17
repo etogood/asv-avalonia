@@ -8,9 +8,7 @@ namespace Asv.Avalonia;
 
 public static class DesignTime
 {
-    public const string AllowedCharacters =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    public static string Id => Random.Shared.NextString(AllowedCharacters, 16);
+    public static NavigationId Id => NavigationId.GenerateRandom();
 
     public static void ThrowIfNotDesignMode()
     {

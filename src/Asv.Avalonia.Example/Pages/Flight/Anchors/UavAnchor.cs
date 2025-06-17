@@ -4,6 +4,7 @@ using Asv.Common;
 using Asv.IO;
 using Asv.Mavlink;
 using Material.Icons;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia.Example;
@@ -14,13 +15,18 @@ public class UavAnchor : MapAnchor<UavAnchor>
     public DeviceId DeviceId { get; }
 
     public UavAnchor()
-        : base("uav_design_time")
+        : base(DesignTime.Id, DesignTime.LoggerFactory)
     {
         DesignTime.ThrowIfNotDesignMode();
     }
 
-    public UavAnchor(DeviceId deviceId, IClientDevice dev, IPositionClientEx pos)
-        : base("uav")
+    public UavAnchor(
+        DeviceId deviceId,
+        IClientDevice dev,
+        IPositionClientEx pos,
+        ILoggerFactory loggerFactory
+    )
+        : base("uav", loggerFactory)
     {
         DeviceId = deviceId;
         InitArgs(deviceId.AsString());

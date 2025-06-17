@@ -9,22 +9,19 @@ namespace Asv.Avalonia;
 public abstract class PageViewModel<TContext> : ExtendableViewModel<TContext>, IPage
     where TContext : class, IPage
 {
-    private readonly ILogger<PageViewModel<TContext>> _privateLogger;
-
     protected PageViewModel(NavigationId id, ICommandService cmd, ILoggerFactory loggerFactory)
-        : base(id)
+        : base(id, loggerFactory)
     {
         History = cmd.CreateHistory(this);
         Icon = MaterialIconKind.Window;
         Title = id.ToString();
         HasChanges = new BindableReactiveProperty<bool>(false);
         TryClose = new BindableAsyncCommand(ClosePageCommand.Id, this);
-        _privateLogger = loggerFactory.CreateLogger<PageViewModel<TContext>>();
     }
 
     public async ValueTask TryCloseAsync()
     {
-        _privateLogger.ZLogTrace($"Try close page {Title}[{Id}]");
+        Logger.ZLogTrace($"Try close page {Title}[{Id}]");
         try
         {
             var reasons = await this.RequestChildCloseApproval();
@@ -38,9 +35,7 @@ public abstract class PageViewModel<TContext> : ExtendableViewModel<TContext>, I
         }
         catch (Exception e)
         {
-            LoggerFactory
-                ?.CreateLogger<PageViewModel<TContext>>()
-                .ZLogError(e, $"Error on close page {Title}[{Id}]: {e.Message}");
+            Logger.ZLogError(e, $"Error on close page {Title}[{Id}]: {e.Message}");
         }
     }
 

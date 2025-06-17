@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Asv.Common;
 using Asv.IO;
 using Material.Icons;
+using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;
 
@@ -17,17 +18,21 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
     private readonly ObservableList<TagViewModel> _tagsSource = [];
 
     public PortViewModel()
-        : this("designTime")
+        : this(DesignTime.Id, DesignTime.LoggerFactory)
     {
         DesignTime.ThrowIfNotDesignMode();
         InitArgs(Guid.NewGuid().ToString());
         Icon = MaterialIconKind.Connection;
-        TagsSource.Add(new TagViewModel("ip") { Key = "ip", Value = "127.0.0.1" });
-        TagsSource.Add(new TagViewModel("port") { Key = "port", Value = "7341" });
+        TagsSource.Add(
+            new TagViewModel("ip", DesignTime.LoggerFactory) { Key = "ip", Value = "127.0.0.1" }
+        );
+        TagsSource.Add(
+            new TagViewModel("port", DesignTime.LoggerFactory) { Key = "port", Value = "7341" }
+        );
     }
 
-    public PortViewModel(NavigationId id)
-        : base(id)
+    public PortViewModel(NavigationId id, ILoggerFactory loggerFactory)
+        : base(id, loggerFactory)
     {
         TagsView = TagsSource.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
         _hasValidationError = new BindableReactiveProperty<bool>().DisposeItWith(Disposable);

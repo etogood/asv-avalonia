@@ -1,5 +1,6 @@
 ﻿using Asv.Avalonia.Tree;
 using Asv.Common;
+using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;
 
@@ -13,14 +14,20 @@ public abstract class TreePageViewModel<TContext, TSubPage>
 {
     private readonly ReactiveProperty<ITreeSubpage?> _selectedPage;
     private readonly IContainerHost _container;
+    private readonly ILoggerFactory _loggerFactory;
     private readonly ObservableList<BreadCrumbItem> _breadCrumbSource;
     private bool _internalNavigate;
-    private bool _isMenuVisible = true;
 
-    public TreePageViewModel(NavigationId id, ICommandService cmd, IContainerHost container)
-        : base(id, cmd)
+    public TreePageViewModel(
+        NavigationId id,
+        ICommandService cmd,
+        IContainerHost container,
+        ILoggerFactory loggerFactory
+    )
+        : base(id, cmd, loggerFactory)
     {
         _container = container;
+        _loggerFactory = loggerFactory;
         Nodes = [];
         Nodes.SetRoutableParent(this).DisposeItWith(Disposable);
         Nodes.DisposeRemovedItems().DisposeItWith(Disposable);
@@ -50,9 +57,9 @@ public abstract class TreePageViewModel<TContext, TSubPage>
 
     public bool IsMenuVisible
     {
-        get => _isMenuVisible;
-        set => SetField(ref _isMenuVisible, value);
-    }
+        get;
+        set => SetField(ref field, value);
+    } = true;
 
     #endregion
 
@@ -82,7 +89,7 @@ public abstract class TreePageViewModel<TContext, TSubPage>
     protected virtual ITreeSubpage? CreateDefaultPage()
     {
         return SelectedNode.Value != null
-            ? new GroupTreePageItemViewModel(SelectedNode.Value, Navigate)
+            ? new GroupTreePageItemViewModel(SelectedNode.Value, Navigate, _loggerFactory)
             : null;
     }
 

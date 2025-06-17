@@ -6,13 +6,15 @@ namespace Asv.Avalonia.LogViewer;
 
 public class LogMessageViewModel : RoutableViewModel
 {
-    public LogMessageViewModel(LogMessage @base, IRoutable parent)
+    private readonly ILoggerFactory _loggerFactory;
+
+    public LogMessageViewModel(LogMessage @base, IRoutable parent, ILoggerFactory loggerFactory)
         : base(
-            HashCode
-                .Combine(@base.Message, @base.Category, @base.Message, @base.Description)
-                .ToString()
+            NavigationId.GenerateByHash(@base.Message, @base.Category, @base.Description),
+            loggerFactory
         )
     {
+        _loggerFactory = loggerFactory;
         Base = @base;
         Parent = parent;
     }
@@ -56,22 +58,22 @@ public class LogMessageViewModel : RoutableViewModel
         IRoutable parent,
         ISearchService search,
         string? query,
+        ILoggerFactory loggerFactory,
         out LogMessageViewModel? msg
     )
     {
         msg = null;
-        var msgSelection = Selection.Empty;
         var catSelection = Selection.Empty;
 
         var result =
-            search.Match(logMessage.Message, query, out msgSelection)
+            search.Match(logMessage.Message, query, out var msgSelection)
             || search.Match(logMessage.Category, query, out catSelection);
         if (!result)
         {
             return false;
         }
 
-        msg = new LogMessageViewModel(logMessage, parent)
+        msg = new LogMessageViewModel(logMessage, parent, loggerFactory)
         {
             MessageSelection = msgSelection,
             CategorySelection = catSelection,

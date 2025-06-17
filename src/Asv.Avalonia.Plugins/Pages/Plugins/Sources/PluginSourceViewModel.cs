@@ -7,8 +7,10 @@ public class PluginSourceViewModel : RoutableViewModel
 {
     public const string ViewModelIdPart = "plugins.sources.source";
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public PluginSourceViewModel()
-        : base(ViewModelIdPart)
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+        : base(DesignTime.Id, DesignTime.LoggerFactory)
     {
         DesignTime.ThrowIfNotDesignMode();
     }
@@ -18,7 +20,7 @@ public class PluginSourceViewModel : RoutableViewModel
         ILoggerFactory loggerFactory,
         PluginsSourcesViewModel sourcesViewModel
     )
-        : base($"{ViewModelIdPart}.{Guid.NewGuid().ToString()}")
+        : base($"{ViewModelIdPart}.{NavigationId.GenerateRandomAsString()}", loggerFactory)
     {
         ArgumentNullException.ThrowIfNull(pluginServerInfo);
         ArgumentNullException.ThrowIfNull(loggerFactory);

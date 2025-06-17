@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Asv.Common;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia.Example;
@@ -9,8 +10,8 @@ public class SetAltitudeDialogViewModel : DialogViewModelBase
 {
     public const string DialogId = "dialog.altitude";
 
-    public SetAltitudeDialogViewModel(in IUnit unit)
-        : base(DialogId)
+    public SetAltitudeDialogViewModel(in IUnit unit, ILoggerFactory loggerFactory)
+        : base(DialogId, loggerFactory)
     {
         AltitudeUnit =
             unit as AltitudeBase

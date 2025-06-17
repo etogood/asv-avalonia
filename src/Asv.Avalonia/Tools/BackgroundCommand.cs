@@ -14,26 +14,17 @@ public delegate Task BackgroundCommandDelegate<in TArg>(
     CancellationToken cancel
 );
 
-public class BackgroundCommand<TArg> : ViewModelBase
+public class BackgroundCommand<TArg>(
+    string id,
+    BackgroundCommandDelegate<TArg> execute,
+    ILoggerFactory loggerFactory
+) : ViewModelBase(id, loggerFactory)
 {
-    private readonly BackgroundCommandDelegate<TArg> _execute;
     private readonly BindableReactiveProperty<bool> _isExecuting = new();
     private readonly BindableReactiveProperty<bool> _canExecute = new();
     private readonly BindableReactiveProperty<double> _progress = new();
     private readonly BindableReactiveProperty<string> _progressMessage = new();
-    private readonly ILogger<BackgroundCommand<TArg>> _logger;
     private CancellationTokenSource? _cancellationTokenSource;
-
-    public BackgroundCommand(
-        string id,
-        BackgroundCommandDelegate<TArg> execute,
-        ILoggerFactory loggerFactory
-    )
-        : base(id)
-    {
-        _execute = execute;
-        _logger = loggerFactory.CreateLogger<BackgroundCommand<TArg>>();
-    }
 
     public void Execute(TArg arg)
     {
@@ -48,7 +39,7 @@ public class BackgroundCommand<TArg> : ViewModelBase
 
     private void ErrorHandler(Exception err)
     {
-        _logger.LogError(err, $"Command '{Id}' execution failed");
+        Logger.LogError(err, $"Command '{Id}' execution failed");
         _isExecuting.Value = false;
         _canExecute.Value = true;
         _progress.Value = 1;
@@ -68,7 +59,7 @@ public class BackgroundCommand<TArg> : ViewModelBase
                 _cancellationTokenSource != null,
                 nameof(_cancellationTokenSource) + " != null"
             );
-            await _execute(
+            await execute(
                 arg,
                 (text, progress) =>
                 {
@@ -80,11 +71,13 @@ public class BackgroundCommand<TArg> : ViewModelBase
         }
         catch (OperationCanceledException)
         {
+            Logger.LogWarning($"Command '{Id}' was cancelled by user");
             Cancel();
             return;
         }
         catch (Exception ex)
         {
+            Logger.LogError(ex, $"Command '{Id}' execution failed: {ex.Message}");
             ErrorHandler(ex);
             return;
         }
@@ -101,7 +94,7 @@ public class BackgroundCommand<TArg> : ViewModelBase
         _isExecuting.Value = false;
         _canExecute.Value = true;
         _progress.Value = 1;
-        _logger.LogWarning($"Command '{Id}' was cancelled");
+        Logger.LogWarning($"Command '{Id}' was cancelled");
     }
 
     public IReadOnlyBindableReactiveProperty<bool> IsExecuting => _isExecuting;

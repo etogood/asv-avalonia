@@ -39,10 +39,10 @@ public class FlightUavAnchorsExtension(
         return model.Key == vm.Device.Id;
     }
 
-    private static UavAnchor? TryCreateAnchor(KeyValuePair<DeviceId, IClientDevice> device)
+    private UavAnchor? TryCreateAnchor(KeyValuePair<DeviceId, IClientDevice> device)
     {
         var pos = device.Value.GetMicroservice<IPositionClientEx>();
-        return pos != null ? new UavAnchor(device.Key, device.Value, pos) : null;
+        return pos != null ? new UavAnchor(device.Key, device.Value, pos, loggerFactory) : null;
     }
 
     private static bool RemoveAnchor(KeyValuePair<DeviceId, IClientDevice> dev, UavAnchor anchor)

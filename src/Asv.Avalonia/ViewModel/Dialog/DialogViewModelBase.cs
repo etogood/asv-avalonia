@@ -1,9 +1,11 @@
 using Asv.Common;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia;
 
-public abstract class DialogViewModelBase(NavigationId id) : RoutableViewModel(id)
+public abstract class DialogViewModelBase(NavigationId id, ILoggerFactory loggerFactory)
+    : RoutableViewModel(id, loggerFactory)
 {
     private readonly HashSet<IBindableReactiveProperty> _validationData = new(
         EqualityComparer<IBindableReactiveProperty>.Default

@@ -1,4 +1,5 @@
 ﻿using Material.Icons;
+using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia;
 
@@ -14,35 +15,31 @@ public enum TagType
     Info4,
 }
 
-public class TagViewModel(NavigationId id) : ViewModelBase(id)
+public class TagViewModel(NavigationId id, ILoggerFactory loggerFactory)
+    : ViewModelBase(id: id, loggerFactory)
 {
-    private TagType? _tagType;
-    private string? _key;
-    private string? _value;
-    private MaterialIconKind? _icon;
-
     public TagType? TagType
     {
-        get => _tagType;
-        set => SetField(ref _tagType, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public string? Key
     {
-        get => _key;
-        set => SetField(ref _key, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public string? Value
     {
-        get => _value;
-        set => SetField(ref _value, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public MaterialIconKind? Icon
     {
-        get => _icon;
-        set => SetField(ref _icon, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     protected override void Dispose(bool disposing)
