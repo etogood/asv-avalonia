@@ -10,7 +10,7 @@
                     <StackPanel>
                         <avalonia:MaterialIcon Kind="Window"/>
                         <Button>Button</Button>
-                        <Button Theme="{StaticResource TransparentButton}">Button</Button>
+                        <Button Theme="{DynamicResource TransparentButton}">Button</Button>
                         <TabControl Width="200" Height="200">
                             <TabItem Header="Header 1"/>
                             <TabItem Header="Header 2"/>
@@ -244,6 +244,8 @@
     <StyleInclude Source="avares://Asv.Avalonia/Controls/TelemBox/TelemBox.axaml"/>
     <StyleInclude Source="avares://Asv.Avalonia/Controls/GeoPoint/GeoPointEditor.axaml"/>
     <StyleInclude Source="avares://Asv.Avalonia/Controls/Tags/Tag.axaml"/>
+    <StyleInclude Source="avares://Asv.Avalonia/Controls/SplashScreens/AwaitingScreen.axaml"/>
+    <StyleInclude Source="avares://Asv.Avalonia/Controls/SplashScreens/ActionScreen.axaml"/>
     
     <!-- <StyleInclude Source="avares://Avalonia.Controls.TreeDataGrid/Themes/Fluent.axaml"/> -->
     <!--<FluentTheme DensityStyle="Compact" >
