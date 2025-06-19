@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Composition;
+using Asv.Common;
 using Material.Icons;
 using Microsoft.Extensions.Logging;
 using R3;
@@ -52,12 +53,12 @@ public class TestHistoryPropertiesPageViewModel : PageViewModel<TestHistoryPrope
 
         TurnOn = new ReactiveCommand(_ => IsTurnedOn.ViewValue.Value = !IsTurnedOn.ViewValue.Value);
 
-        Speed = new HistoricalUnitProperty($"{PageId}.{nameof(Speed)}", _speed, un, loggerFactory)
+        Speed = new HistoricalUnitProperty(nameof(Speed), _speed, un, loggerFactory)
         {
             Parent = this,
         };
         StringPropWithoutValidation = new HistoricalStringProperty(
-            $"{PageId}.{nameof(StringPropWithoutValidation)}",
+            nameof(StringPropWithoutValidation),
             _stringWithoutValidation,
             loggerFactory
         )
@@ -66,7 +67,7 @@ public class TestHistoryPropertiesPageViewModel : PageViewModel<TestHistoryPrope
         };
 
         StringPropWithOneValidation = new HistoricalStringProperty(
-            $"{PageId}.{nameof(StringPropWithOneValidation)}",
+            nameof(StringPropWithOneValidation),
             _stringWithOneValidation,
             loggerFactory,
             [
@@ -86,7 +87,7 @@ public class TestHistoryPropertiesPageViewModel : PageViewModel<TestHistoryPrope
         };
 
         StringPropWithManyValidations = new HistoricalStringProperty(
-            $"{PageId}.{nameof(StringPropWithManyValidations)}",
+            nameof(StringPropWithManyValidations),
             _stringWithManyValidations,
             loggerFactory,
             [

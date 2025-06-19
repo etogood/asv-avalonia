@@ -8,6 +8,7 @@ public sealed class HistoricalBoolProperty : HistoricalPropertyBase<bool, bool>
 {
     private readonly ReactiveProperty<bool> _modelValue;
     private bool _internalChange;
+    private bool _externalChange;
 
     public HistoricalBoolProperty(
         NavigationId id,
@@ -56,12 +57,19 @@ public sealed class HistoricalBoolProperty : HistoricalPropertyBase<bool, bool>
             return;
         }
 
+        _externalChange = true;
         var newValue = new BoolArg(userValue);
         await this.ExecuteCommand(ChangeBoolPropertyCommand.Id, newValue, cancel: cancel);
+        _externalChange = false;
     }
 
     protected override void OnChangeByModel(bool modelValue)
     {
+        if (_externalChange)
+        {
+            return;
+        }
+
         _internalChange = true;
         ViewValue.OnNext(modelValue);
         _internalChange = false;

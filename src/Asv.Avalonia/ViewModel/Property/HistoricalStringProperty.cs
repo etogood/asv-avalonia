@@ -9,6 +9,7 @@ public sealed class HistoricalStringProperty : HistoricalPropertyBase<string?, s
     private readonly IList<Func<string?, ValidationResult>> _validationRules = [];
 
     private bool _internalChange;
+    private bool _externalChange;
 
     public override ReactiveProperty<string?> ModelValue => _modelValue;
     public override BindableReactiveProperty<string?> ViewValue { get; } = new();
@@ -72,12 +73,19 @@ public sealed class HistoricalStringProperty : HistoricalPropertyBase<string?, s
             return;
         }
 
+        _externalChange = true;
         var newValue = new StringArg(userValue ?? string.Empty);
-        await this.ExecuteCommand(ChangeStringPropertyCommand.Id, newValue);
+        await this.ExecuteCommand(ChangeStringPropertyCommand.Id, newValue, cancel);
+        _externalChange = false;
     }
 
     protected override void OnChangeByModel(string? modelValue)
     {
+        if (_externalChange)
+        {
+            return;
+        }
+
         _internalChange = true;
         ViewValue.OnNext(modelValue);
         _internalChange = false;
