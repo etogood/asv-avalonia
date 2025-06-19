@@ -1,8 +1,4 @@
-﻿using System.Collections.Specialized;
-using Avalonia.Collections;
-using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
-using Avalonia.Controls.Primitives;
+﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
 
 namespace Asv.Avalonia;
@@ -12,6 +8,7 @@ public enum WorkspaceDock
     Left,
     Right,
     Bottom,
+    Center,
 }
 
 public class Workspace : ItemsControl

@@ -1,15 +1,22 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:avalonia="clr-namespace:Asv.Avalonia">
+        xmlns:avalonia="clr-namespace:Asv.Avalonia"
+        xmlns:avalonia1="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:avalonia2="clr-namespace:Asv.Avalonia;assembly=Asv.Avalonia">
     <Design.PreviewWith>
         <StackPanel Spacing="4" Width="200">
-            <avalonia:WorkspaceItem Background="Black" Header="HEADER">
+            <avalonia:WorkspaceItem Header="HEADER">
+                <avalonia:WorkspaceItem.Flyout>
+                    <MenuFlyout>
+                        <MenuItem Header="Action1"></MenuItem>
+                    </MenuFlyout>
+                </avalonia:WorkspaceItem.Flyout>
                 <StackPanel>
                     <TextBlock Text="AAAA"/>
                     <TextBox></TextBox>
                 </StackPanel>
             </avalonia:WorkspaceItem>
-            <avalonia:WorkspaceItem Width="200" Background="Black" Header="asdasd" >
+            <avalonia:WorkspaceItem Width="200" Header="asdasd" >
                 <StackPanel>
                     <TextBlock Text="AAAA"/>
                     <TextBox></TextBox>
@@ -23,29 +30,50 @@
         <!-- Set Defaults -->
         <Setter Property="Padding" Value="8"></Setter>
         <Setter Property="avalonia:WorkspacePanel.Dock" Value="{Binding Position, RelativeSource={RelativeSource Self}}"/>
-        <Setter Property="Background" Value="{DynamicResource RegionBrush}"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeBlackMediumBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource SystemControlBackgroundChromeBlackHighBrush}"/>
         <Setter Property="BorderThickness" Value="{DynamicResource ThemeBorderThickness}"/>
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}"/>
         <Setter Property="Template">
             <ControlTemplate>
-                <Expander
-                    Background="{TemplateBinding Background}" 
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="{TemplateBinding CornerRadius}" 
-                    Padding="{TemplateBinding Padding}"
-                    HeaderTemplate="{TemplateBinding HeaderTemplate}"
-                    Header="{TemplateBinding Header}">
-                    <Viewbox  Grid.Row="1">
+                <Border CornerRadius="{TemplateBinding CornerRadius}" Background="{TemplateBinding Background}">
+                    <StackPanel Spacing="4" Margin="{TemplateBinding Padding}">
+                        <DockPanel>
+                           
+                            <Button IsVisible="{TemplateBinding Flyout, Converter={x:Static ObjectConverters.IsNotNull}}" Margin="0" Padding="5,4" DockPanel.Dock="Right" Theme="{DynamicResource TransparentButton}"
+                                    Flyout="{TemplateBinding Flyout}">
+                                <avalonia1:MaterialIcon Kind="DotsVertical" Width="18" Height="18"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalAlignment="Center"/>
+                                
+                            </Button>
+                            <ToggleButton HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" Padding="2,4" IsChecked="{TemplateBinding IsExpanded, Mode=TwoWay}" HorizontalAlignment="Stretch" Theme="{DynamicResource TransparentButton}">
+                                <DockPanel>
+                                    <avalonia1:MaterialIcon DockPanel.Dock="Left" Kind="{TemplateBinding Icon}"
+                                                            Width="16" Height="16"
+                                                            Margin="0,0,4,0"
+                                                            VerticalAlignment="Center"
+                                                            HorizontalAlignment="Left"/>
+                                    <avalonia1:MaterialIcon IsVisible="{TemplateBinding IsExpanded}" DockPanel.Dock="Right" Kind="MenuUp"
+                                                            Width="20" Height="20"/>
+                                    <avalonia1:MaterialIcon IsVisible="{TemplateBinding IsExpanded, Converter={x:Static BoolConverters.Not}}" DockPanel.Dock="Right" Kind="MenuDown"
+                                                            Width="20" Height="20"/>
+                                    <TextBlock VerticalAlignment="Center" Text="{TemplateBinding Header}"/>    
+                                </DockPanel>
+                            </ToggleButton>
+                            
+                            
+                        </DockPanel>
                         <ContentPresenter Name="PART_ContentPresenter"
+                                          IsVisible="{TemplateBinding IsExpanded, Mode=TwoWay}"
                                           ContentTemplate="{TemplateBinding ContentTemplate}"
                                           Content="{TemplateBinding Content}"
                                           VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                           HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          RenderTransformOrigin="0,0"/>       
-                    </Viewbox>
-                </Expander>
+                                          RenderTransformOrigin="0,0"/>
+                    </StackPanel>    
+                </Border>
+                
             </ControlTemplate>
         </Setter>
     </Style>
