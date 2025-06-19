@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using R3;
 using ZLogger;
-using AsyncLock = DotNext.Threading.AsyncLock;
 
 namespace Asv.Avalonia;
 

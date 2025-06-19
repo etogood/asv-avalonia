@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Asv.IO;

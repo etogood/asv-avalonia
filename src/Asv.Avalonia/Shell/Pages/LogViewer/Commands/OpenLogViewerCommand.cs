@@ -1,6 +1,4 @@
 ﻿using System.Composition;
-using System.Reactive.Disposables;
-using Avalonia.Input;
 
 namespace Asv.Avalonia.LogViewer;
 

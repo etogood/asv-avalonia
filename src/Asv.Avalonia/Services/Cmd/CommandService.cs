@@ -120,19 +120,23 @@ public class CommandService : AsyncDisposableOnce, ICommandService
                 return;
             }
 
-            var command = _gestureVsCommand.GetValueOrDefault(keyInfo);
-            if (command == null)
+            var matchedCommands = _commandsVsGesture
+                .Where(kvp => kvp.Value == keyInfo)
+                .Select(kvp => _commands[kvp.Key])
+                .ToImmutableArray();
+
+            if (matchedCommands == default)
             {
                 // we cant find a command for this gesture, but maybe we need additional key after this gesture
                 _prevKeyGesture = keyInfo.Gesture;
                 return;
             }
 
-            if (command.Length == 1)
+            if (matchedCommands.Length == 1)
             {
                 // only one command for this gesture, so we can execute it immediately
                 await _nav.SelectedControl.CurrentValue.ExecuteCommand(
-                    command[0].Info.Id,
+                    matchedCommands[0].Info.Id,
                     CommandArg.Empty
                 );
                 _prevKeyGesture = null; // reset previous gesture after execution
@@ -141,14 +145,14 @@ public class CommandService : AsyncDisposableOnce, ICommandService
             else
             {
                 // we have multiple commands for this gesture, so we need check can execute for each command
-                foreach (var item in command)
+                foreach (var item in matchedCommands)
                 {
                     // we execute first command that can be executed in the current context
                     // TODO: ask user which command to execute if multiple commands can be executed
                     if (item.CanExecute(_nav.SelectedControl.CurrentValue, CommandArg.Empty, out _))
                     {
                         await _nav.SelectedControl.CurrentValue.ExecuteCommand(
-                            command[0].Info.Id,
+                            matchedCommands[0].Info.Id,
                             CommandArg.Empty
                         );
                         break;
@@ -222,12 +226,7 @@ public class CommandService : AsyncDisposableOnce, ICommandService
         {
             if (string.IsNullOrWhiteSpace(hotKey))
             {
-                SetKeyGesture(
-                    ref keyVsCommandBuilder,
-                    ref commandVsKeyBuilder,
-                    _commands[commandId],
-                    null
-                );
+                // if custom key is null => load default value
                 continue;
             }
 
@@ -357,6 +356,14 @@ public class CommandService : AsyncDisposableOnce, ICommandService
     public Observable<HotKeyInfo> OnHotKey => _hotKeySubject;
 
     public ReactiveProperty<bool> IsHotKeyRecognitionEnabled => _isHotKeyRecognitionEnabled;
+
+    public void ResetAllHotKeys()
+    {
+        var config = _cfg.Get<CommandServiceConfig>();
+        config.HotKeys.Clear();
+        _cfg.Set(config);
+        ReloadHotKeys(out _commandsVsGesture, out _gestureVsCommand);
+    }
 
     public void SetHotKey(string commandId, HotKeyInfo? hotKey)
     {

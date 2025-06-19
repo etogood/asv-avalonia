@@ -1,6 +1,4 @@
-﻿using System.Composition.Hosting;
-
-namespace Asv.Avalonia;
+﻿namespace Asv.Avalonia;
 
 public interface IContainerHost : IExportable
 {

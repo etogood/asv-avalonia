@@ -1,4 +1,3 @@
-using DotNext.Patterns;
 using R3;
 
 namespace Asv.Avalonia;

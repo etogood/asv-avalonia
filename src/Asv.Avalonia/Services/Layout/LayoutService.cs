@@ -1,7 +1,6 @@
 ﻿using System.Composition;
 using Asv.Cfg;
 using Microsoft.Extensions.Logging;
-using R3;
 using ZLogger;
 
 namespace Asv.Avalonia;

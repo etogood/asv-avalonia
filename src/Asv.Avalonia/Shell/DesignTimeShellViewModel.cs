@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Logging.Abstractions;
-using R3;
 
 namespace Asv.Avalonia;
 

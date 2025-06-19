@@ -1,4 +1,3 @@
-using System.Windows.Input;
 using Asv.Avalonia.Tree;
 using Material.Icons;
 using ObservableCollections;

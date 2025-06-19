@@ -1,7 +1,6 @@
 using Asv.Common;
 using Microsoft.Extensions.Logging;
 using ObservableCollections;
-using R3;
 
 namespace Asv.Avalonia;
 

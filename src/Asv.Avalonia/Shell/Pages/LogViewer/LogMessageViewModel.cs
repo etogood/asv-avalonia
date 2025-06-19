@@ -1,6 +1,5 @@
 ﻿using Material.Icons;
 using Microsoft.Extensions.Logging;
-using R3;
 
 namespace Asv.Avalonia.LogViewer;
 
