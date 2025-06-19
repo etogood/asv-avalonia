@@ -1,23 +1,23 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="using:Asv.Avalonia.SplashScreens"
-        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia">
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:avalonia1="clr-namespace:Asv.Avalonia">
     <Design.PreviewWith>
         <Grid ColumnDefinitions="*,*">
             <ThemeVariantScope Grid.Column="0" RequestedThemeVariant="Dark">
                 <Border Background="{DynamicResource SystemRegionBrush}">
-                    <controls:AwaitingScreen Header="Connecting" Description="Connect to the device..." Background="{DynamicResource SystemRegionBrush}" Width="500" Height="500" />    
+                    <avalonia1:AwaitingScreen Header="Connecting" Description="Connect to the device..." Background="{DynamicResource SystemRegionBrush}" Width="500" Height="500" />    
                 </Border>
             </ThemeVariantScope>
             <ThemeVariantScope Grid.Column="1" RequestedThemeVariant="Light">
                 <Border Background="{DynamicResource SystemRegionBrush}">
-                    <controls:AwaitingScreen Header="Connecting" Description="Connect to the device..." Background="{DynamicResource SystemRegionBrush}" Width="500" Height="500" />    
+                    <avalonia1:AwaitingScreen Header="Connecting" Description="Connect to the device..." Background="{DynamicResource SystemRegionBrush}" Width="500" Height="500" />    
                 </Border>
             </ThemeVariantScope>
         </Grid>
     </Design.PreviewWith>
 
-    <Style Selector="controls|AwaitingScreen">
+    <Style Selector="avalonia1|AwaitingScreen">
         <!-- Set Defaults -->
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>

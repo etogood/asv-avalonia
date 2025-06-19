@@ -1,33 +1,33 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="using:Asv.Avalonia.SplashScreens"
-        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia">
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:avalonia1="clr-namespace:Asv.Avalonia">
     <Design.PreviewWith>
         <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
             <ThemeVariantScope Grid.Column="0" Grid.Row="0" RequestedThemeVariant="Dark">
                 <Border Background="{DynamicResource SystemRegionBrush}">
-                    <controls:ActionScreen IsExecuting="True" Header="Turn ON" Description="Turn on device" Background="{DynamicResource SystemRegionBrush}" Width="500" Height="250" />    
+                    <avalonia1:ActionScreen IsExecuting="True" Header="Turn ON" Description="Turn on device" Background="{DynamicResource SystemRegionBrush}" Width="500" Height="250" />    
                 </Border>
             </ThemeVariantScope>
             <ThemeVariantScope Grid.Column="1" Grid.Row="0" RequestedThemeVariant="Light">
                 <Border Background="{DynamicResource SystemRegionBrush}">
-                    <controls:ActionScreen IsExecuting="True"  Header="Turn ON" Description="Turn on device" Background="{DynamicResource SystemRegionBrush}" Width="500" Height="250" />    
+                    <avalonia1:ActionScreen IsExecuting="True"  Header="Turn ON" Description="Turn on device" Background="{DynamicResource SystemRegionBrush}" Width="500" Height="250" />    
                 </Border>
             </ThemeVariantScope>
             <ThemeVariantScope Grid.Column="0" Grid.Row="1" RequestedThemeVariant="Dark">
                 <Border Background="{DynamicResource SystemRegionBrush}">
-                    <controls:ActionScreen IsExecuting="False" Header="Turn ON" Description="Turn on device" Background="{DynamicResource SystemRegionBrush}" Width="500" Height="250" />    
+                    <avalonia1:ActionScreen IsExecuting="False" Header="Turn ON" Description="Turn on device" Background="{DynamicResource SystemRegionBrush}" Width="500" Height="250" />    
                 </Border>
             </ThemeVariantScope>
             <ThemeVariantScope Grid.Column="1" Grid.Row="1" RequestedThemeVariant="Light">
                 <Border Background="{DynamicResource SystemRegionBrush}">
-                    <controls:ActionScreen IsExecuting="False"  Header="Turn ON" Description="Turn on device" Background="{DynamicResource SystemRegionBrush}" Width="500" Height="250" />    
+                    <avalonia1:ActionScreen IsExecuting="False"  Header="Turn ON" Description="Turn on device" Background="{DynamicResource SystemRegionBrush}" Width="500" Height="250" />    
                 </Border>
             </ThemeVariantScope>
         </Grid>
     </Design.PreviewWith>
 
-    <Style Selector="controls|ActionScreen">
+    <Style Selector="avalonia1|ActionScreen">
         <!-- Set Defaults -->
         <Setter Property="Template">
             <ControlTemplate>

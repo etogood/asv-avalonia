@@ -1,9 +1,8 @@
 ﻿using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Material.Icons;
 
-namespace Asv.Avalonia.SplashScreens;
+namespace Asv.Avalonia;
 
 public class AwaitingScreen : TemplatedControl
 {
