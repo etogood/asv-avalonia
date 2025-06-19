@@ -10,6 +10,7 @@ public sealed class HistoricalUnitProperty : HistoricalPropertyBase<double, stri
     private readonly string? _format;
 
     private bool _internalChange;
+    private bool _externalChange;
 
     public override ReactiveProperty<double> ModelValue => _modelValue;
     public override BindableReactiveProperty<string?> ViewValue { get; } = new();
@@ -69,13 +70,20 @@ public sealed class HistoricalUnitProperty : HistoricalPropertyBase<double, stri
             return;
         }
 
+        _externalChange = true;
         var value = _unit.CurrentUnitItem.CurrentValue.ParseToSi(userValue);
         var newValue = new DoubleArg(value);
-        await this.ExecuteCommand(ChangeDoublePropertyCommand.Id, newValue);
+        await this.ExecuteCommand(ChangeDoublePropertyCommand.Id, newValue, cancel);
+        _externalChange = false;
     }
 
     protected override void OnChangeByModel(double modelValue)
     {
+        if (_externalChange)
+        {
+            return;
+        }
+
         _internalChange = true;
         ViewValue.OnNext(_unit.CurrentUnitItem.CurrentValue.PrintFromSi(modelValue, _format));
         _internalChange = false;
