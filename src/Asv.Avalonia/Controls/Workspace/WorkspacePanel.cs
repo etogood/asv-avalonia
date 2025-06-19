@@ -2,18 +2,25 @@
 using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls;
+using Avalonia.Data;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 
 namespace Asv.Avalonia;
 
-public class WorkspacePanel : Panel
+public partial class WorkspacePanel : Panel
 {
     private readonly StackPanel _leftPanel;
     private readonly StackPanel _rightPanel;
     private readonly DockPanel _centerPanel;
     private readonly AvaloniaList<Control> _bottomPanel;
+    private readonly ColumnDefinition _leftColumn;
+    private readonly ColumnDefinition _centerColumn;
+    private readonly ColumnDefinition _rightColumn;
+    private readonly RowDefinition _centerRow;
+    private readonly RowDefinition _bottomRow;
 
     static WorkspacePanel()
     {
@@ -22,24 +29,43 @@ public class WorkspacePanel : Panel
 
     public WorkspacePanel()
     {
-        var mainGrid =
-            // Create the main Grid
-            new Grid { Name = "MainGrid", ShowGridLines = false };
+        var mainGrid = new Grid { Name = "MainGrid", ShowGridLines = false };
 
         mainGrid.ColumnDefinitions =
         [
-            new ColumnDefinition(new GridLength(1, GridUnitType.Star)),
+            _leftColumn = new ColumnDefinition
+            {
+                [!ColumnDefinition.WidthProperty] = this[!LeftWidthProperty],
+                [!ColumnDefinition.MinWidthProperty] = this[!MinLeftWidthProperty],
+            },
             new ColumnDefinition(new GridLength(5, GridUnitType.Pixel)) { MaxWidth = 5 },
-            new ColumnDefinition(new GridLength(3, GridUnitType.Star)),
+            _centerColumn = new ColumnDefinition
+            {
+                [!ColumnDefinition.WidthProperty] = this[!CentralWidthProperty],
+                [!ColumnDefinition.MinWidthProperty] = this[!MinCentralWidthProperty],
+            },
             new ColumnDefinition(new GridLength(5, GridUnitType.Pixel)) { MaxWidth = 5 },
-            new ColumnDefinition(new GridLength(1, GridUnitType.Star)),
+            _rightColumn = new ColumnDefinition
+            {
+                [!ColumnDefinition.WidthProperty] = this[!RightWidthProperty],
+                [!ColumnDefinition.MinWidthProperty] = this[!MinRightWidthProperty],
+            },
         ];
+
         mainGrid.RowDefinitions =
         [
             new RowDefinition(GridLength.Auto),
-            new RowDefinition(new GridLength(3, GridUnitType.Star)),
+            _centerRow = new RowDefinition
+            {
+                [!RowDefinition.HeightProperty] = this[!CentralHeightProperty],
+                [!RowDefinition.MinHeightProperty] = this[!MinCentralHeightProperty],
+            },
             new RowDefinition(new GridLength(5, GridUnitType.Pixel)) { MaxHeight = 5 },
-            new RowDefinition(new GridLength(1, GridUnitType.Star)),
+            _bottomRow = new RowDefinition
+            {
+                [!RowDefinition.HeightProperty] = this[!BottomHeightProperty],
+                [!RowDefinition.MinHeightProperty] = this[!MinBottomHeightProperty],
+            },
         ];
 
         // Left ScrollViewer with the StackPanel
@@ -101,6 +127,8 @@ public class WorkspacePanel : Panel
             Cursor = Cursor.Parse("SizeAll"),
             ResizeBehavior = GridResizeBehavior.PreviousAndNext,
         };
+        verticalSplitter1.DragCompleted += HorizontalSplitterOnDragCompleted;
+
         Grid.SetRow(verticalSplitter1, 0);
         Grid.SetRowSpan(verticalSplitter1, 4);
         Grid.SetColumn(verticalSplitter1, 1);
@@ -115,6 +143,8 @@ public class WorkspacePanel : Panel
             Cursor = Cursor.Parse("SizeAll"),
             ResizeBehavior = GridResizeBehavior.PreviousAndNext,
         };
+        verticalSplitter2.DragCompleted += HorizontalSplitterOnDragCompleted;
+
         Grid.SetRow(verticalSplitter2, 0);
         Grid.SetRowSpan(verticalSplitter2, 4);
         Grid.SetColumn(verticalSplitter2, 3);
@@ -129,6 +159,7 @@ public class WorkspacePanel : Panel
             Cursor = Cursor.Parse("SizeAll"),
             ResizeBehavior = GridResizeBehavior.PreviousAndNext,
         };
+        horizontalSplitter.DragCompleted += HorizontalSplitterOnDragCompleted;
         Grid.SetRow(horizontalSplitter, 2);
         Grid.SetColumn(horizontalSplitter, 1);
         Grid.SetColumnSpan(horizontalSplitter, 3);
@@ -147,13 +178,19 @@ public class WorkspacePanel : Panel
         VisualChildren.Add(mainGrid);
     }
 
-    public static readonly AttachedProperty<WorkspaceDock> DockProperty =
-        AvaloniaProperty.RegisterAttached<WorkspacePanel, Control, WorkspaceDock>("Dock");
-
-    public static void SetDock(Control obj, WorkspaceDock value) =>
-        obj.SetValue(DockProperty, value);
-
-    public static WorkspaceDock GetDock(Control obj) => obj.GetValue(DockProperty);
+    private void HorizontalSplitterOnDragCompleted(object? sender, VectorEventArgs e)
+    {
+        RaiseEvent(
+            new WorkspaceEventArgs
+            {
+                LeftColumnActualWidth = _leftColumn.ActualWidth,
+                CenterColumnActualWidth = _centerColumn.ActualWidth,
+                RightColumnActualWidth = _rightColumn.ActualWidth,
+                CenterRowActualHeight = _centerRow.ActualHeight,
+                BottomRowActualHeight = _bottomRow.ActualHeight,
+            }
+        );
+    }
 
     protected override void ChildrenChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {

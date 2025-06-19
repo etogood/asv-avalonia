@@ -51,7 +51,7 @@
         <!-- Set Defaults -->
         <Setter Property="ItemsPanel">
             <ItemsPanelTemplate>
-                <avalonia:WorkspacePanel/>
+                <avalonia:WorkspacePanel LeftWidth="*" CentralWidth="4*" RightWidth="2*" />
             </ItemsPanelTemplate>
         </Setter>
         <Setter Property="Template">
