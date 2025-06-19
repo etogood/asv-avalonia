@@ -20,7 +20,10 @@ public class GroupTreePageItemViewModel : TreeSubpage
             NavigationId.Empty,
             NavigationId.Empty,
             DesignTime.LoggerFactory
-        );
+        )
+        {
+            Description = "This is a description for Item 1",
+        };
         var flatList = new ObservableList<ITreePage>
         {
             root,
@@ -31,7 +34,10 @@ public class GroupTreePageItemViewModel : TreeSubpage
                 NavigationId.Empty,
                 root.Id,
                 DesignTime.LoggerFactory
-            ),
+            )
+            {
+                Description = "This is a description for Item 2",
+            },
             new TreePage(
                 "item3",
                 "Item 3",
@@ -39,7 +45,10 @@ public class GroupTreePageItemViewModel : TreeSubpage
                 NavigationId.Empty,
                 root.Id,
                 DesignTime.LoggerFactory
-            ),
+            )
+            {
+                Description = "This is a description for Item 3",
+            },
         };
         var tree = new ObservableTree<ITreePage, NavigationId>(
             flatList,
