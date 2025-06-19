@@ -26,14 +26,14 @@ public class CommandService : AsyncDisposableOnce, ICommandService
     private readonly IConfiguration _cfg;
     private readonly ILoggerFactory _loggerFactory;
     private readonly ImmutableDictionary<string, IAsyncCommand> _commands;
-    private ImmutableDictionary<string, HotKeyInfo> _commandsVsGesture;
+    private ImmutableDictionary<string, HotKeyInfo?> _commandsVsGesture;
     private ImmutableDictionary<HotKeyInfo, ImmutableArray<IAsyncCommand>> _gestureVsCommand;
     private readonly ILogger<CommandService> _logger;
     private readonly IDisposable _disposeId;
     private readonly Subject<CommandSnapshot> _onCommand;
     private KeyGesture? _prevKeyGesture;
-    private IAppPath _path;
-    private Subject<HotKeyInfo> _hotKeySubject;
+    private readonly IAppPath _path;
+    private readonly Subject<HotKeyInfo> _hotKeySubject;
     private readonly ReactiveProperty<bool> _isHotKeyRecognitionEnabled;
 
     [ImportingConstructor]
@@ -194,7 +194,7 @@ public class CommandService : AsyncDisposableOnce, ICommandService
     }
 
     private void ReloadHotKeys(
-        out ImmutableDictionary<string, HotKeyInfo> commandVsGesture,
+        out ImmutableDictionary<string, HotKeyInfo?> commandVsGesture,
         out ImmutableDictionary<HotKeyInfo, ImmutableArray<IAsyncCommand>> gestureVsCommand
     )
     {
@@ -202,7 +202,7 @@ public class CommandService : AsyncDisposableOnce, ICommandService
             HotKeyInfo,
             ImmutableArray<IAsyncCommand>
         >();
-        var commandVsKeyBuilder = ImmutableDictionary.CreateBuilder<string, HotKeyInfo>();
+        var commandVsKeyBuilder = ImmutableDictionary.CreateBuilder<string, HotKeyInfo?>();
 
         // define hotkeys by default values
         foreach (var value in _commands.Values)
@@ -359,18 +359,19 @@ public class CommandService : AsyncDisposableOnce, ICommandService
 
     public ReactiveProperty<bool> IsHotKeyRecognitionEnabled => _isHotKeyRecognitionEnabled;
 
-    public void SetHotKey(string commandId, HotKeyInfo hotKey)
+    public void SetHotKey(string commandId, HotKeyInfo? hotKey)
     {
-        ArgumentNullException.ThrowIfNull(hotKey);
         if (!_commands.ContainsKey(commandId))
         {
             throw new CommandNotFoundException(commandId);
         }
-
+        var config = _cfg.Get<CommandServiceConfig>();
+        config.HotKeys[commandId] = hotKey?.ToString();
+        _cfg.Set(config);
         ReloadHotKeys(out _commandsVsGesture, out _gestureVsCommand);
     }
 
-    public HotKeyInfo GetHotKey(string commandId)
+    public HotKeyInfo? GetHotKey(string commandId)
     {
         if (_commandsVsGesture.TryGetValue(commandId, out var gesture))
         {

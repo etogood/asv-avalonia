@@ -188,6 +188,8 @@ public partial class WorkspacePanel : Panel
                 RightColumnActualWidth = _rightColumn.ActualWidth,
                 CenterRowActualHeight = _centerRow.ActualHeight,
                 BottomRowActualHeight = _bottomRow.ActualHeight,
+                Route = RoutingStrategies.Bubble,
+                RoutedEvent = WorkspaceChangedEvent,
             }
         );
     }

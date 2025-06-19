@@ -42,7 +42,7 @@ public class NullCommandService : ICommandService
         // Do nothing
     }
 
-    public HotKeyInfo GetHotKey(string commandId)
+    public HotKeyInfo? GetHotKey(string commandId)
     {
         return HotKeyInfo.Parse("Ctrl + X ; K");
     }
