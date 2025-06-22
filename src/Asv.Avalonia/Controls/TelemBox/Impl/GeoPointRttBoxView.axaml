@@ -1,0 +1,26 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avalonia="clr-namespace:Asv.Avalonia;assembly=Asv.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="150" d:DesignHeight="450"
+             x:Class="Asv.Avalonia.GeoPointRttBoxView"
+             x:DataType="avalonia:GeoPointRttBoxViewModel">
+    <Design.DataContext>
+        <avalonia:GeoPointRttBoxViewModel/>
+    </Design.DataContext>
+    <avalonia:RttBox Width="150" IsUpdated="{Binding IsUpdated}" HorizontalContentAlignment="Left" Padding="4" HorizontalAlignment="Stretch" FontSize="16" Icon="{Binding Icon}" Header="{Binding Header}" SmallHeader="{Binding ShortHeader}">
+        <Grid RowDefinitions="*,*,*,*" ColumnDefinitions="Auto,5,*">
+            <TextBlock FontWeight="SemiBold" Grid.Column="0"  Grid.Row="0" Text="Lat"/>
+            <TextBlock FontWeight="SemiBold" Grid.Column="0"  Grid.Row="1" Text="Lon"/>
+            <TextBlock FontWeight="SemiBold" Grid.Column="0"  Grid.Row="2" Text="Alt"/>
+            <SelectableTextBlock Grid.Column="2" Grid.Row="0" Text="{Binding LatitudeString}"/>
+            <SelectableTextBlock Grid.Column="2" Grid.Row="1" Text="{Binding LongitudeString}"/>
+            <SelectableTextBlock Grid.Column="2" Grid.Row="2" Text="{Binding AltitudeString}"/>
+        </Grid>
+        
+        <avalonia:RttBox.SmallContent>
+            
+        </avalonia:RttBox.SmallContent>
+    </avalonia:RttBox>
+</UserControl>
