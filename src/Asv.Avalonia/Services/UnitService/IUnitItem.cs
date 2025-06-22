@@ -12,10 +12,10 @@ public interface IUnitItem
     double Parse(string? value);
     double ParseToSi(string? value) => ToSi(Parse(value));
     string Print(double value, string? format = null);
-    string PrintFromSi(double value, string? format = null) => Print(FromSi(value));
+    string PrintFromSi(double value, string? format = null) => Print(FromSi(value), format);
     string PrintWithUnits(double value, string? format = null);
     string PrintFromSiWithUnits(double value, string? format = null) =>
-        PrintWithUnits(FromSi(value));
+        PrintWithUnits(FromSi(value), format);
     double FromSi(double siValue);
     double ToSi(double value);
 }
