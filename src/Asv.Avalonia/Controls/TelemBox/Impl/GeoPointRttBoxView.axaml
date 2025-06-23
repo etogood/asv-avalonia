@@ -3,13 +3,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:avalonia="clr-namespace:Asv.Avalonia;assembly=Asv.Avalonia"
-             mc:Ignorable="d" d:DesignWidth="150" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="250" d:DesignHeight="450"
              x:Class="Asv.Avalonia.GeoPointRttBoxView"
+             HorizontalAlignment="Stretch"
+             HorizontalContentAlignment="Stretch"
              x:DataType="avalonia:GeoPointRttBoxViewModel">
     <Design.DataContext>
-        <avalonia:GeoPointRttBoxViewModel/>
+        <avalonia:GeoPointRttBoxViewModel />
     </Design.DataContext>
-    <avalonia:RttBox Width="150" IsUpdated="{Binding IsUpdated}" HorizontalContentAlignment="Left" Padding="4" HorizontalAlignment="Stretch" FontSize="16" Icon="{Binding Icon}" Header="{Binding Header}" SmallHeader="{Binding ShortHeader}">
+    <avalonia:RttBox IsUpdated="{Binding IsUpdated}" HorizontalContentAlignment="Left" Padding="4" HorizontalAlignment="Stretch" FontSize="16" Icon="{Binding Icon}" Header="{Binding Header}" SmallHeader="{Binding ShortHeader}">
         <Grid RowDefinitions="*,*,*,*" ColumnDefinitions="Auto,5,*">
             <TextBlock FontWeight="SemiBold" Grid.Column="0"  Grid.Row="0" Text="Lat"/>
             <TextBlock FontWeight="SemiBold" Grid.Column="0"  Grid.Row="1" Text="Lon"/>
