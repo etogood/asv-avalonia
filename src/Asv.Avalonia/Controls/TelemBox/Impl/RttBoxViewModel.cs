@@ -3,6 +3,19 @@ using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia;
 
+public enum RttBoxStatus
+{
+    Normal,
+    Unknown,
+    Success,
+    Warning,
+    Error,
+    Info1,
+    Info2,
+    Info3,
+    Info4,
+}
+
 public class RttBoxViewModel : RoutableViewModel
 {
     public RttBoxViewModel()
@@ -33,6 +46,12 @@ public class RttBoxViewModel : RoutableViewModel
     }
 
     public string? ShortHeader
+    {
+        get;
+        set => SetField(ref field, value);
+    }
+
+    public RttBoxStatus Status
     {
         get;
         set => SetField(ref field, value);

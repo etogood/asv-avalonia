@@ -7,13 +7,12 @@
             <ThemeVariantScope Grid.Column="0" Grid.Row="0" RequestedThemeVariant="Dark">
                 <Border Background="{DynamicResource SystemRegionBrush}">
                     <WrapPanel ItemWidth="200">
-                        <Button HorizontalAlignment="Stretch" Background="Red">asdasd</Button>
                         <controls:RttBox HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Header="Freq TX" Icon="Temperature" Margin="2" >
                             <TextBlock Text="115.">
                                 <Run FontSize="15" Foreground="{DynamicResource AsvForegroundUnknownBrush}" Text="456 654"/>
                             </TextBlock>
                         </controls:RttBox>
-                        <controls:RttBox Classes="info" IsUpdated="True" Header="Freq TX" Icon="Temperature" Margin="2" >
+                        <controls:RttBox Classes="info1" IsUpdated="True" Header="Freq TX" Icon="Temperature" Margin="2" >
                             <DockPanel>
                                 <ProgressBar 
                                     IsIndeterminate="True"
@@ -108,7 +107,7 @@
         <Setter Property="IconBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
         <Setter Property="BorderThickness" Value="2"/>
         <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}"/>
-        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="MinWidth" Value="150"/>
         <Setter Property="FontSize" Value="30"/>
         <Setter Property="HeaderFontSize" Value="18"/>
@@ -146,7 +145,6 @@
                                                   Foreground="{TemplateBinding Foreground}"
                                                   BorderBrush="{TemplateBinding BorderBrush}"
                                                   ContentTemplate="{TemplateBinding SmallContentTemplate}"
-                                                  Padding="{TemplateBinding Padding}"
                                                   Content="{TemplateBinding SmallContent}"/>
                                 <TextBlock IsVisible="{TemplateBinding IsExpanded}" FontSize="{TemplateBinding HeaderFontSize}" VerticalAlignment="Center" Foreground="{TemplateBinding BorderBrush}" HorizontalAlignment="Center" Text="{TemplateBinding Header}"/>
                             </DockPanel>
@@ -199,7 +197,7 @@
                 <Setter Property="Foreground" Value="{DynamicResource AsvForegroundSuccessBrush}"/>
             </Style>
             
-            <Style Selector="^.info">
+            <Style Selector="^.info1">
                 <Setter Property="Background" Value="{DynamicResource AsvBackgroundInfoBrush}"/>
                 <Setter Property="IconBrush" Value="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
                 <Setter Property="BorderBrush" Value="{DynamicResource AsvForegroundInfoBrush}"/>

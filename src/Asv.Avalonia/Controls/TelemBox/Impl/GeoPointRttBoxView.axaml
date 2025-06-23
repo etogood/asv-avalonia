@@ -11,7 +11,21 @@
     <Design.DataContext>
         <avalonia:GeoPointRttBoxViewModel />
     </Design.DataContext>
-    <avalonia:RttBox IsUpdated="{Binding IsUpdated}" HorizontalContentAlignment="Left" Padding="4" HorizontalAlignment="Stretch" FontSize="16" Icon="{Binding Icon}" Header="{Binding Header}" SmallHeader="{Binding ShortHeader}">
+    <avalonia:RttBox IsUpdated="{Binding IsUpdated}" 
+                     Padding="4" 
+                     FontSize="16" 
+                     HorizontalContentAlignment="Left"
+                     Icon="{Binding Icon}" 
+                     Header="{Binding Header}" 
+                     SmallContent="{Binding ShortStatusText}"
+                     SmallHeader="{Binding ShortHeader}"
+                     Classes.error="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Error}"
+                     Classes.warning="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Warning}"
+                     Classes.success="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Success}"
+                     Classes.info1="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info1}"
+                     Classes.info2="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info2}"
+                     Classes.info3="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info3}"
+                     Classes.info4="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info4}">
         <Grid RowDefinitions="*,*,*,*" ColumnDefinitions="Auto,5,*">
             <TextBlock FontWeight="SemiBold" Grid.Column="0"  Grid.Row="0" Text="Lat"/>
             <TextBlock FontWeight="SemiBold" Grid.Column="0"  Grid.Row="1" Text="Lon"/>
@@ -19,10 +33,9 @@
             <SelectableTextBlock Grid.Column="2" Grid.Row="0" Text="{Binding LatitudeString}"/>
             <SelectableTextBlock Grid.Column="2" Grid.Row="1" Text="{Binding LongitudeString}"/>
             <SelectableTextBlock Grid.Column="2" Grid.Row="2" Text="{Binding AltitudeString}"/>
+            <TextBlock IsVisible="{Binding StatusText, Converter={x:Static ObjectConverters.IsNotNull}}" Grid.ColumnSpan="3" FontWeight="SemiBold" Grid.Column="0"  Grid.Row="3" Text="{Binding StatusText}"/>
         </Grid>
         
-        <avalonia:RttBox.SmallContent>
-            
-        </avalonia:RttBox.SmallContent>
+        
     </avalonia:RttBox>
 </UserControl>

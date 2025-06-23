@@ -28,42 +28,42 @@
     </Design.PreviewWith>
     
     <Style Selector="controls|Tag">
-        <Setter Property="Foreground" Value="{StaticResource AsvForegroundInfo3Brush}"/>
-        <Setter Property="Background" Value="{StaticResource AsvBackgroundInfo3Brush}"/>
-        <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}"/>
+        <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfo3Brush}"/>
+        <Setter Property="Background" Value="{DynamicResource AsvBackgroundInfo3Brush}"/>
+        <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}"/>
         <Setter Property="BorderThickness" Value="1"/>
         
         <Style Selector="^.error">
-            <Setter Property="Foreground" Value="{StaticResource AsvForegroundErrorBrush}"/>
-            <Setter Property="Background" Value="{StaticResource AsvBackgroundErrorBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundErrorBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource AsvBackgroundErrorBrush}"/>
         </Style>
         <Style Selector="^.warning">
-            <Setter Property="Foreground" Value="{StaticResource AsvForegroundWarningBrush}"/>
-            <Setter Property="Background" Value="{StaticResource AsvBackgroundWarningBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundWarningBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource AsvBackgroundWarningBrush}"/>
         </Style>
         <Style Selector="^.success">
-            <Setter Property="Foreground" Value="{StaticResource AsvForegroundSuccessBrush}"/>
-            <Setter Property="Background" Value="{StaticResource AsvBackgroundSuccessBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundSuccessBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource AsvBackgroundSuccessBrush}"/>
         </Style>
         <Style Selector="^.unknown">
-            <Setter Property="Foreground" Value="{StaticResource AsvForegroundUnknownBrush}"/>
-            <Setter Property="Background" Value="{StaticResource AsvBackgroundSuccessBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundUnknownBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource AsvBackgroundSuccessBrush}"/>
         </Style>
         <Style Selector="^.info">
-            <Setter Property="Foreground" Value="{StaticResource AsvForegroundInfoBrush}"/>
-            <Setter Property="Background" Value="{StaticResource AsvBackgroundInfoBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfoBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource AsvBackgroundInfoBrush}"/>
         </Style>
         <Style Selector="^.info2">
-            <Setter Property="Foreground" Value="{StaticResource AsvForegroundInfo2Brush}"/>
-            <Setter Property="Background" Value="{StaticResource AsvBackgroundInfo2Brush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfo2Brush}"/>
+            <Setter Property="Background" Value="{DynamicResource AsvBackgroundInfo2Brush}"/>
         </Style>
         <Style Selector="^.info3">
-            <Setter Property="Foreground" Value="{StaticResource AsvForegroundInfo3Brush}"/>
-            <Setter Property="Background" Value="{StaticResource AsvBackgroundInfo3Brush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfo3Brush}"/>
+            <Setter Property="Background" Value="{DynamicResource AsvBackgroundInfo3Brush}"/>
         </Style>
         <Style Selector="^.info3">
-            <Setter Property="Foreground" Value="{StaticResource AsvForegroundInfo4Brush}"/>
-            <Setter Property="Background" Value="{StaticResource AsvBackgroundInfo4Brush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfo4Brush}"/>
+            <Setter Property="Background" Value="{DynamicResource AsvBackgroundInfo4Brush}"/>
         </Style>
             <!-- Set Defaults -->
         <Setter Property="Template">

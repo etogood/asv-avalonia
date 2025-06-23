@@ -17,6 +17,8 @@ public class GeoPointRttBoxViewModel : RttBoxViewModel
         var start = new GeoPoint(55.75, 37.6173, 250.0); // Moscow coordinates
         var sub = new Subject<GeoPoint>();
         Observable<GeoPoint> value = sub;
+        var index = 0;
+        var maxIndex = Enum.GetValues<RttBoxStatus>().Length;
         Observable
             .Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
             .Subscribe(x =>
@@ -26,6 +28,7 @@ public class GeoPointRttBoxViewModel : RttBoxViewModel
                     start.Longitude + Random.Shared.NextDouble(),
                     start.Altitude + Random.Shared.NextDouble() + 0.5
                 );
+                Status = Enum.GetValues<RttBoxStatus>()[index++ % maxIndex];
                 sub.OnNext(point);
             });
         _latitudeUnit = new DmsLatitudeUnit();
@@ -105,6 +108,18 @@ public class GeoPointRttBoxViewModel : RttBoxViewModel
     }
 
     public string LatitudeString
+    {
+        get;
+        set => SetField(ref field, value);
+    }
+
+    public string? StatusText
+    {
+        get;
+        set => SetField(ref field, value);
+    }
+
+    public string? ShortStatusText
     {
         get;
         set => SetField(ref field, value);
