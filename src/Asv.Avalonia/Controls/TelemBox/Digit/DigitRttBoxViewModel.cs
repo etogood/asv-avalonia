@@ -1,4 +1,5 @@
 using Asv.Common;
+using Asv.Drones.Gui.Plugin.Afis;
 using Material.Icons;
 using Microsoft.Extensions.Logging;
 using R3;

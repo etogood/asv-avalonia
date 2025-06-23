@@ -10,7 +10,6 @@ public class SplitDigitRttBoxViewModel : DigitRttBoxViewModel
     public SplitDigitRttBoxViewModel()
     {
         DesignTime.ThrowIfNotDesignMode();
-        FractionDigits = 5;
     }
 
     public int? FractionDigits { get; set; }

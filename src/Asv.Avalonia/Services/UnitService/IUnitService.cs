@@ -56,8 +56,8 @@ public static class Units
         var dotIndex = origin.IndexOf(DecimalSeparator);
         if (dotIndex > 0)
         {
-            fracStr = origin[(dotIndex + 1)..];
-            intStr = $"{DecimalSeparator}{origin[..dotIndex]}";
+            fracStr = $"{DecimalSeparator}{origin[(dotIndex + 1)..]}";
+            intStr = origin[..dotIndex];
         }
         else
         {
