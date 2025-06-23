@@ -14,7 +14,8 @@
     <avalonia:RttBox IsUpdated="{Binding IsUpdated}" 
                      Padding="4" 
                      FontSize="16" 
-                     HorizontalContentAlignment="Left"
+                     IsNetworkError="{Binding IsNetworkError}"
+                     HorizontalContentAlignment="Stretch"
                      Icon="{Binding Icon}" 
                      Header="{Binding Header}" 
                      SmallContent="{Binding ShortStatusText}"
@@ -26,7 +27,7 @@
                      Classes.info2="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info2}"
                      Classes.info3="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info3}"
                      Classes.info4="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info4}">
-        <Grid RowDefinitions="*,*,*,*" ColumnDefinitions="Auto,5,*">
+        <Grid RowDefinitions="*,*,*,*, Auto" ColumnDefinitions="Auto,5,*">
             <TextBlock FontWeight="SemiBold" Grid.Column="0"  Grid.Row="0" Text="Lat"/>
             <TextBlock FontWeight="SemiBold" Grid.Column="0"  Grid.Row="1" Text="Lon"/>
             <TextBlock FontWeight="SemiBold" Grid.Column="0"  Grid.Row="2" Text="Alt"/>
@@ -34,6 +35,21 @@
             <SelectableTextBlock Grid.Column="2" Grid.Row="1" Text="{Binding LongitudeString}"/>
             <SelectableTextBlock Grid.Column="2" Grid.Row="2" Text="{Binding AltitudeString}"/>
             <TextBlock IsVisible="{Binding StatusText, Converter={x:Static ObjectConverters.IsNotNull}}" Grid.ColumnSpan="3" FontWeight="SemiBold" Grid.Column="0"  Grid.Row="3" Text="{Binding StatusText}"/>
+            <ProgressBar
+                Grid.ColumnSpan="3" Grid.Column="0" Grid.Row="4"
+                IsVisible="{Binding ProgressStatus, Converter={x:Static ObjectConverters.IsNotNull}}" 
+                Minimum="0" 
+                Maximum="1" 
+                Value="{Binding Progress}"
+                IsIndeterminate="{Binding Progress, Converter={x:Static avalonia:DoubleTrueIfNanConverter.Instance}}" 
+                Classes.error="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Error}"
+                Classes.warning="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Warning}"
+                Classes.success="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Success}"
+                Classes.info1="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info1}"
+                Classes.info2="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info2}"
+                Classes.info3="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info3}"
+                Classes.info4="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info4}"
+                />
         </Grid>
         
         

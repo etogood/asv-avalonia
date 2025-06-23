@@ -7,7 +7,7 @@
             <ThemeVariantScope Grid.Column="0" Grid.Row="0" RequestedThemeVariant="Dark">
                 <Border Background="{DynamicResource SystemRegionBrush}">
                     <WrapPanel ItemWidth="200">
-                        <controls:RttBox HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Header="Freq TX" Icon="Temperature" Margin="2" >
+                        <controls:RttBox IsNetworkError="True" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Header="Freq TX" Icon="Temperature" Margin="2" >
                             <TextBlock Text="115.">
                                 <Run FontSize="15" Foreground="{DynamicResource AsvForegroundUnknownBrush}" Text="456 654"/>
                             </TextBlock>
@@ -134,7 +134,16 @@
                                 </Border>
                                 <TextBlock Margin="4,0,0,0" IsVisible="{TemplateBinding IsExpanded, Converter={x:Static BoolConverters.Not}}" FontSize="{TemplateBinding HeaderFontSize}" DockPanel.Dock="Left" Text="{TemplateBinding SmallHeader}"/>
                                  
-                                <Ellipse IsVisible="{TemplateBinding IsUpdated, Converter={x:Static ObjectConverters.IsNotNull}}" Name="Indicator" Opacity="0" Classes.fadeout="{TemplateBinding IsUpdated}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="4,3,3,0" />
+                                <Panel DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" >
+                                    <Ellipse Width="5" Height="5" Fill="{DynamicResource AsvForegroundSuccessBrush}" IsVisible="{TemplateBinding IsUpdated, Converter={x:Static ObjectConverters.IsNotNull}}" Opacity="0" Classes.fadeout="{TemplateBinding IsUpdated}" Margin="4,3,3,0" />
+                                    <avalonia:MaterialIcon
+                                        ToolTip.Tip="Connection error"
+                                        IsVisible="{TemplateBinding IsNetworkError, Converter={x:Static ObjectConverters.IsNotNull}}" 
+                                        Opacity="0" Classes.blink="{TemplateBinding IsNetworkError}" 
+                                        Width="18" Height="18" Kind="CloseNetwork" 
+                                        Foreground="{DynamicResource AsvForegroundErrorBrush}" Margin="4,3,3,0"/>
+                                </Panel>
+                                
                                 <ContentPresenter Name="PART_SmallContentPresenter"
                                                   DockPanel.Dock="Right"
                                                   IsVisible="{TemplateBinding IsExpanded, Converter={x:Static BoolConverters.Not}}"

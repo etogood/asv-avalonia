@@ -126,4 +126,17 @@ public class RttBox : ContentControl
         get;
         set => SetAndRaise(SmallHeaderProperty, ref field, value);
     }
+
+    public static readonly DirectProperty<RttBox, bool?> IsNetworkErrorProperty =
+        AvaloniaProperty.RegisterDirect<RttBox, bool?>(
+            nameof(IsNetworkError),
+            o => o.IsNetworkError,
+            (o, v) => o.IsNetworkError = v
+        );
+
+    public bool? IsNetworkError
+    {
+        get;
+        set => SetAndRaise(IsNetworkErrorProperty, ref field, value);
+    }
 }

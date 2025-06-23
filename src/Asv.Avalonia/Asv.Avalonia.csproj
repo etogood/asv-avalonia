@@ -120,6 +120,13 @@
           <DependentUpon>DialogTextView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Controls\TelemBox\Gnss\GeoPointRttBoxView.axaml.cs">
+          <DependentUpon>GeoPointRttBoxView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Controls\TelemBox\Distance\SplitDigitRttBoxView.axaml.cs">
+          <DependentUpon>SplitDigitRttBoxView.axaml</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>

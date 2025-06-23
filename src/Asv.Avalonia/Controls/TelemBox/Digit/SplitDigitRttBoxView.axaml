@@ -1,0 +1,58 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avalonia="clr-namespace:Asv.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="250" d:DesignHeight="450"
+             x:Class="Asv.Avalonia.SplitDigitRttBoxView"
+             x:DataType="avalonia:SplitDigitRttBoxViewModel">
+    <Design.DataContext>
+        <avalonia:SplitDigitRttBoxViewModel />
+    </Design.DataContext>
+    <avalonia:RttBox IsUpdated="{Binding IsUpdated}" 
+                     Padding="4" 
+                     HorizontalContentAlignment="Stretch"
+                     Icon="{Binding Icon}" 
+                     Header="{Binding Header}" 
+                     IsNetworkError="{Binding IsNetworkError}"
+                     SmallHeader="{Binding ShortHeader}"
+                     Classes.error="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Error}"
+                     Classes.warning="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Warning}"
+                     Classes.success="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Success}"
+                     Classes.info1="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info1}"
+                     Classes.info2="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info2}"
+                     Classes.info3="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info3}"
+                     Classes.info4="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info4}">
+        <avalonia:RttBox.SmallContent>
+            <TextBlock VerticalAlignment="Center"  Margin="0,0,4,0">
+                <Run Text="{Binding ValueString}"/><Run Text="{Binding FracString}" />
+                <Run Text="{Binding Units}" Foreground="{DynamicResource AsvForegroundUnknownBrush}" />
+            </TextBlock>
+        </avalonia:RttBox.SmallContent>
+        <StackPanel>
+            <DockPanel>
+                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" DockPanel.Dock="Right" FontSize="20" Foreground="{DynamicResource AsvForegroundUnknownBrush}" Text="{Binding Units}"/>
+                <TextBlock Padding="0" HorizontalAlignment="Center" >
+                    <Run Text="{Binding ValueString}"/><Run Text="{Binding FracString}" FontSize="20" Foreground="{DynamicResource AsvForegroundUnknownBrush}"/>
+                </TextBlock>
+            </DockPanel>
+            <ProgressBar 
+                IsVisible="{Binding ProgressStatus, Converter={x:Static ObjectConverters.IsNotNull}}" 
+                Margin="4,2" 
+                Minimum="0" 
+                Maximum="1" 
+                Value="{Binding Progress}"
+                IsIndeterminate="{Binding Progress, Converter={x:Static avalonia:DoubleTrueIfNanConverter.Instance}}" 
+                Classes.error="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Error}"
+                Classes.warning="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Warning}"
+                Classes.success="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Success}"
+                Classes.info1="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info1}"
+                Classes.info2="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info2}"
+                Classes.info3="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info3}"
+                Classes.info4="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info4}"
+                DockPanel.Dock="Bottom"/>
+        </StackPanel>
+        
+        
+    </avalonia:RttBox>
+</UserControl>

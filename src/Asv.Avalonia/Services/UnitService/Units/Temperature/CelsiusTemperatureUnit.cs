@@ -34,7 +34,7 @@ public sealed class CelsiusTemperatureUnit() : UnitItemBase(1)
             return new UnitItemValueIsNullOrEmptyError();
         }
 
-        value = value.Replace(',', '.');
+        value = value.Replace(',', Units.DecimalSeparator);
         if (!double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var v))
         {
             return new UnitItemValueIsNanError();

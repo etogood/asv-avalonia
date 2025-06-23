@@ -7,6 +7,7 @@ namespace Asv.Avalonia;
 
 public class GeoPointRttBoxViewModel : RttBoxViewModel
 {
+    private readonly TimeSpan? _networkErrorTimeout;
     private readonly IUnitItem _latitudeUnit;
     private readonly IUnitItem _longitudeUnit;
     private readonly IUnitItem _altitudeUnit;
@@ -20,16 +21,26 @@ public class GeoPointRttBoxViewModel : RttBoxViewModel
         var index = 0;
         var maxIndex = Enum.GetValues<RttBoxStatus>().Length;
         Observable
-            .Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
+            .Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2))
             .Subscribe(x =>
             {
+                if (Random.Shared.NextDouble() > 0.9)
+                {
+                    IsNetworkError = true;
+                    return;
+                }
+
                 var point = new GeoPoint(
                     start.Latitude + Random.Shared.NextDouble(),
                     start.Longitude + Random.Shared.NextDouble(),
                     start.Altitude + Random.Shared.NextDouble() + 0.5
                 );
                 Status = Enum.GetValues<RttBoxStatus>()[index++ % maxIndex];
+                ProgressStatus = Enum.GetValues<RttBoxStatus>()[index++ % maxIndex];
+                Progress = Random.Shared.NextDouble();
+                StatusText = Status.ToString();
                 sub.OnNext(point);
+                Updated();
             });
         _latitudeUnit = new DmsLatitudeUnit();
         _longitudeUnit = new DmsLongitudeUnit();
@@ -48,10 +59,12 @@ public class GeoPointRttBoxViewModel : RttBoxViewModel
         NavigationId id,
         ILoggerFactory loggerFactory,
         IUnitService units,
-        Observable<GeoPoint> value
+        Observable<GeoPoint> value,
+        TimeSpan? networkErrorTimeout
     )
-        : base(id, loggerFactory)
+        : base(id, loggerFactory, networkErrorTimeout)
     {
+        _networkErrorTimeout = networkErrorTimeout;
         _latitudeUnit =
             units[LatitudeBase.Id]?.CurrentUnitItem.CurrentValue
             ?? throw new ArgumentException("Latitude unit not found in unit service");
@@ -70,8 +83,6 @@ public class GeoPointRttBoxViewModel : RttBoxViewModel
 
     private void OnValueChanged(GeoPoint geoPoint)
     {
-        IsUpdated = false;
-        IsUpdated = true;
         if (
             double.IsNaN(geoPoint.Latitude)
             || double.IsNaN(geoPoint.Longitude)
@@ -91,23 +102,28 @@ public class GeoPointRttBoxViewModel : RttBoxViewModel
                 "F2"
             );
         }
+
+        if (_networkErrorTimeout != null)
+        {
+            Updated();
+        }
     }
 
     public string NotAvailableString { get; set; } = "N\\A";
 
-    public string AltitudeString
+    public string? AltitudeString
     {
         get;
         set => SetField(ref field, value);
     }
 
-    public string LongitudeString
+    public string? LongitudeString
     {
         get;
         set => SetField(ref field, value);
     }
 
-    public string LatitudeString
+    public string? LatitudeString
     {
         get;
         set => SetField(ref field, value);
