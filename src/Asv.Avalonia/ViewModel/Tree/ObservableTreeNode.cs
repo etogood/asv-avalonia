@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Asv.Common;
 using ObservableCollections;
 using R3;
@@ -7,7 +9,8 @@ namespace Asv.Avalonia.Tree;
 public class ObservableTreeNode<T, TKey>
     : AsyncDisposableOnce,
         IComparable<ObservableTreeNode<T, TKey>>,
-        IComparable
+        IComparable,
+        INotifyPropertyChanged
     where TKey : IEquatable<TKey>
 {
     private readonly Func<T, TKey> _parentSelector;
@@ -225,5 +228,24 @@ public class ObservableTreeNode<T, TKey>
     )
     {
         return Comparer<ObservableTreeNode<T, TKey>>.Default.Compare(left, right) >= 0;
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value))
+        {
+            return false;
+        }
+
+        field = value;
+        OnPropertyChanged(propertyName);
+        return true;
     }
 }

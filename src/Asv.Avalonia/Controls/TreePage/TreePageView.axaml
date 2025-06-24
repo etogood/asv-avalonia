@@ -39,6 +39,7 @@
                 <Style Selector="TreeViewItem" x:DataType="avalonia:TreePageMenuNode">
                     <Setter Property="HorizontalAlignment" Value="Stretch" />
                     <Setter Property="IsVisible" Value="{Binding Base.IsVisible}" />
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                 </Style>
             </TreeView.Styles>
             <TreeView.ItemTemplate>
