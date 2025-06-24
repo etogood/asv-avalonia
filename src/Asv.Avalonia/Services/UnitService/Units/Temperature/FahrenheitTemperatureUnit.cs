@@ -32,7 +32,7 @@ public sealed class FahrenheitTemperatureUnit() : UnitItemBase(1)
             return new UnitItemValueIsNullOrEmptyError();
         }
 
-        value = value.Replace(',', Units.DecimalSeparator);
+        value = value.Replace(',', '.');
         if (!double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var v))
         {
             return new UnitItemValueIsNullOrEmptyError();

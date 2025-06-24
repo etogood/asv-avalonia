@@ -111,6 +111,12 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
         }
 
         var path = routable.GetPathToRoot();
+
+        if (_selectedControl.Value?.Id == routable.Id && _selectedControlPath.Value == path)
+        {
+            return;
+        }
+
         if (path == default || path.Count == 0)
         {
             _logger.ZLogWarning($"Selected control {routable} has empty path");
@@ -128,11 +134,6 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
             );
             return;
         }
-
-        /*if (_selectedControl.Value?.StaticId == routable.StaticId && _selectedControlPath.Value == path)
-        {
-            return;
-        }*/
 
         _selectedControl.Value = routable;
         _selectedControlPath.Value = path;

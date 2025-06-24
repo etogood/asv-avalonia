@@ -32,7 +32,13 @@ public class ClosePageCommand : ContextCommand<IPage>
         CancellationToken cancel
     )
     {
-        await context.TryCloseAsync();
+        var isForce = false;
+        if (newValue is BoolArg b)
+        {
+            isForce = b.Value;
+        }
+
+        await context.TryCloseAsync(isForce);
         return null;
     }
 }

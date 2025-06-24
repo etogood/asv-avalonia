@@ -17,7 +17,7 @@ public abstract class UnitItemBase(double multiplier) : IUnitItem
             return false;
         }
 
-        value = value.Trim().Replace(',', Units.DecimalSeparator);
+        value = value.Trim().Replace(',', '.');
 
         if (Units.All.Any(x => value.EndsWith(x)))
         {
@@ -34,7 +34,7 @@ public abstract class UnitItemBase(double multiplier) : IUnitItem
             return new UnitItemValueIsNullOrEmptyError();
         }
 
-        value = value.Trim().Replace(',', Units.DecimalSeparator);
+        value = value.Trim().Replace(',', '.');
 
         if (Units.All.Any(x => value.EndsWith(x)))
         {
@@ -56,7 +56,7 @@ public abstract class UnitItemBase(double multiplier) : IUnitItem
             return double.NaN;
         }
 
-        value = value.Trim().Replace(',', Units.DecimalSeparator);
+        value = value.Trim().Replace(',', '.');
 
         double decMul = 1;
         if (Units.Kilo.Any(x => value.EndsWith(x)))
@@ -85,16 +85,12 @@ public abstract class UnitItemBase(double multiplier) : IUnitItem
 
     public virtual string Print(double value, string? format = null)
     {
-        return double.IsNaN(value)
-            ? Units.NotAvailableString
-            : value.ToString(format, CultureInfo.InvariantCulture);
+        return value.ToString(format, CultureInfo.InvariantCulture);
     }
 
     public virtual string PrintWithUnits(double value, string? format = null)
     {
-        return double.IsNaN(value)
-            ? Units.NotAvailableString
-            : $"{value.ToString(format, CultureInfo.InvariantCulture)} {Symbol}";
+        return $"{value.ToString(format, CultureInfo.InvariantCulture)} {Symbol}";
     }
 
     public virtual double FromSi(double siValue)

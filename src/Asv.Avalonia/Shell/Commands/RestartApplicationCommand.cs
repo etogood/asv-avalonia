@@ -37,16 +37,24 @@ public class RestartApplicationCommand : ContextCommand<IRoutable>
             isForce = b.Value;
         }
 
-        if (!isForce)
+        try
         {
-            var reasons = await context.RequestRestartApplicationApproval();
-            if (reasons.Count != 0)
+            if (!isForce)
             {
-                // TODO: Think about a better approach to handle restrictions
+                var reasons = await context.RequestRestartApplicationApproval();
+                if (reasons.Count != 0)
+                {
+                    return null;
+                }
             }
-        }
 
-        await context.RequestRestart();
+            await context.RequestRestart();
+            return null;
+        }
+        catch
+        {
+            // TODO: add logging later
+        }
 
         return null;
     }

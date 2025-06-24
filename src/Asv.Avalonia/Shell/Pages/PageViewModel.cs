@@ -19,16 +19,18 @@ public abstract class PageViewModel<TContext> : ExtendableViewModel<TContext>, I
         TryClose = new BindableAsyncCommand(ClosePageCommand.Id, this);
     }
 
-    public async ValueTask TryCloseAsync()
+    public async ValueTask TryCloseAsync(bool isForce)
     {
         Logger.ZLogTrace($"Try close page {Title}[{Id}]");
         try
         {
-            var reasons = await this.RequestChildCloseApproval();
-            if (reasons.Count != 0)
+            if (!isForce)
             {
-                // TODO: send a callback with restrictions. If you have any restriction just call its callback before you close the page.
-                // TODO: ask user to save changes
+                var reasons = await this.RequestChildCloseApproval();
+                if (reasons.Count != 0)
+                {
+                    return;
+                }
             }
 
             await this.RequestClose();
