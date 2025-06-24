@@ -134,9 +134,7 @@
               Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, 
               ConverterParameter={x:Static avalonia:ShellErrorState.Warning} }"
         >
-            <DockPanel>
-                <TextBlock Text="asdasdasd"></TextBlock>
-            </DockPanel>
+           
         </Border>
         
         
