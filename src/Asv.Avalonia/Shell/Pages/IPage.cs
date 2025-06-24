@@ -11,5 +11,5 @@ public interface IPage : IRoutable, IExportable
     ICommandHistory History { get; }
     BindableReactiveProperty<bool> HasChanges { get; }
     ICommand TryClose { get; }
-    ValueTask TryCloseAsync();
+    ValueTask TryCloseAsync(bool force);
 }

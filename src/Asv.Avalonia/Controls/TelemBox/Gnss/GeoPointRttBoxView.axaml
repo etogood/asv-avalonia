@@ -51,7 +51,5 @@
                 Classes.info4="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info4}"
                 />
         </Grid>
-        
-        
     </avalonia:RttBox>
 </UserControl>

@@ -120,12 +120,16 @@
           <DependentUpon>DialogTextView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Controls\TelemBox\Gnss\GeoPointRttBoxView.axaml.cs">
-          <DependentUpon>GeoPointRttBoxView.axaml</DependentUpon>
+        <Compile Update="Controls\Dock\DockControl.axaml.cs">
+          <DependentUpon>DockControl.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Controls\TelemBox\Distance\SplitDigitRttBoxView.axaml.cs">
-          <DependentUpon>SplitDigitRttBoxView.axaml</DependentUpon>
+        <Compile Update="Controls\Dock\DockWindow.axaml.cs">
+          <DependentUpon>DockWindow.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Controls\TelemBox\Digit\DigitRttBoxView.axaml.cs">
+          <DependentUpon>DigitRttBoxView.axaml</DependentUpon>
         </Compile>
     </ItemGroup>
 
@@ -179,5 +183,13 @@
     <ItemGroup>
       <AdditionalFiles Include="Controls\Workspace\Workspace.axaml" />
       <AdditionalFiles Include="Controls\Workspace\WorkspaceItem.axaml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Shell\View\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AvaloniaXaml Remove="Shell\View\DockWindow.axaml" />
     </ItemGroup>
 </Project>

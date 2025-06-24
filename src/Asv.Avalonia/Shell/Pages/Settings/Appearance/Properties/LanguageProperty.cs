@@ -48,7 +48,7 @@ public class LanguageProperty : RoutableViewModel
 
         _internalChange = true;
         var newValue = new StringArg(userValue.Id);
-        await this.ExecuteCommand(ChangeLanguageFreeCommand.Id, newValue);
+        await this.ExecuteCommand(ChangeLanguageFreeCommand.Id, newValue, cancel: cancel);
         _internalChange = false;
 
         var dialogPayload = new YesOrNoDialogPayload
@@ -61,7 +61,7 @@ public class LanguageProperty : RoutableViewModel
 
         if (isReloadReady)
         {
-            await this.ExecuteCommand(RestartApplicationCommand.Id);
+            await this.ExecuteCommand(RestartApplicationCommand.Id, cancel: cancel);
         }
     }
 
