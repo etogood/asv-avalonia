@@ -128,9 +128,6 @@
           <DependentUpon>DockWindow.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Controls\TelemBox\Digit\DigitRttBoxView.axaml.cs">
-          <DependentUpon>DigitRttBoxView.axaml</DependentUpon>
-        </Compile>
     </ItemGroup>
 
     <ItemGroup>
@@ -183,10 +180,6 @@
     <ItemGroup>
       <AdditionalFiles Include="Controls\Workspace\Workspace.axaml" />
       <AdditionalFiles Include="Controls\Workspace\WorkspaceItem.axaml" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Shell\View\" />
     </ItemGroup>
 
     <ItemGroup>

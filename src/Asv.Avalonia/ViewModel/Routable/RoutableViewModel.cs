@@ -8,7 +8,12 @@ public abstract class RoutableViewModel(NavigationId id, ILoggerFactory loggerFa
         IRoutable
 {
     private RoutedEventHandler? _routedEventHandler;
-    public IRoutable? Parent { get; set; }
+
+    public IRoutable? Parent
+    {
+        get;
+        set => SetField(ref field, value);
+    }
 
     public async ValueTask Rise(AsyncRoutedEvent e)
     {

@@ -4,10 +4,10 @@ using Avalonia.Markup.Xaml;
 
 namespace Asv.Avalonia;
 
-[ExportViewFor<DigitRttBoxViewModel>]
-public partial class DigitRttBoxView : UserControl
+[ExportViewFor<SingleRttBoxViewModel>]
+public partial class SingleRttBoxView : UserControl
 {
-    public DigitRttBoxView()
+    public SingleRttBoxView()
     {
         InitializeComponent();
     }

@@ -3,11 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:avalonia="clr-namespace:Asv.Avalonia"
-             mc:Ignorable="d" d:DesignWidth="250" d:DesignHeight="450"
-             x:Class="Asv.Avalonia.DigitRttBoxView"
-             x:DataType="avalonia:DigitRttBoxViewModel">
+             mc:Ignorable="d" d:DesignWidth="250" d:DesignHeight="200"
+             x:Class="Asv.Avalonia.SingleRttBoxView"
+             x:DataType="avalonia:SingleRttBoxViewModel">
     <Design.DataContext>
-        <avalonia:DigitRttBoxViewModel />
+        <avalonia:SingleRttBoxViewModel />
     </Design.DataContext>
     <avalonia:RttBox IsUpdated="{Binding IsUpdated}" 
                      Padding="4" 
