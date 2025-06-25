@@ -73,7 +73,7 @@ public class TwoColumnRttBoxViewModel : RttBoxViewModel
     public KeyValueViewModel Right { get; } = new();
 }
 
-public class TwoColumnRttBoxViewModel<T> : SingleRttBoxViewModel
+public class TwoColumnRttBoxViewModel<T> : TwoColumnRttBoxViewModel
 {
     private readonly TimeSpan? _networkErrorTimeout;
 
