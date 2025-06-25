@@ -421,6 +421,36 @@
         <Setter Property="Width" Value="{DynamicResource  IconElementThemeWidth}"/>
         <Setter Property="Height" Value="{DynamicResource  IconElementThemeHeight}"/>
         <Setter Property="Foreground" Value="{DynamicResource  TextControlForeground}"/>
+        <Style Selector="^.error">
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundErrorBrush}"/>
+        </Style>
+        <Style Selector="^.warning">
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundWarningBrush}"/>
+        </Style>
+        
+        <Style Selector="^.unknown">
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundUnknownBrush}"/>
+        </Style>
+            
+        <Style Selector="^.success">
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundSuccessBrush}"/>
+        </Style>
+            
+        <Style Selector="^.info">
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfoBrush}"/>
+        </Style>
+            
+        <Style Selector="^.info2">
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfo2Brush}"/>
+        </Style>
+            
+        <Style Selector="^.info3">
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfo3Brush}"/>
+        </Style>
+            
+        <Style Selector="^.info4">
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfo4Brush}"/>
+        </Style>
     </Style>
     <!--Header-->
     <Style Selector="TextBlock">
@@ -446,34 +476,34 @@
         </Style>
         
         <Style Selector="^.error">
-            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundErrorColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundErrorBrush}"/>
         </Style>
         <Style Selector="^.warning">
-            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundWarningColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundWarningBrush}"/>
         </Style>
         
         <Style Selector="^.unknown">
-            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundUnknownColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundUnknownBrush}"/>
         </Style>
             
         <Style Selector="^.success">
-            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundSuccessColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundSuccessBrush}"/>
         </Style>
             
         <Style Selector="^.info">
-            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfoColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfoBrush}"/>
         </Style>
             
         <Style Selector="^.info2">
-            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfo2Color}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfo2Brush}"/>
         </Style>
             
         <Style Selector="^.info3">
-            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfo3Color}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfo3Brush}"/>
         </Style>
             
         <Style Selector="^.info4">
-            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfo4Color}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfo4Brush}"/>
         </Style>
     </Style>
     <Style Selector="TextBox">
