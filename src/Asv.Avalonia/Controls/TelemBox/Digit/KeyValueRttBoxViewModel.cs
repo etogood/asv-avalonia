@@ -67,7 +67,27 @@ public class KeyValueRttBoxViewModel : RttBoxViewModel
 
     public NotifyCollectionChangedSynchronizedViewList<KeyValueViewModel> Items { get; }
 
-    protected ObservableList<KeyValueViewModel> ItemsSource => _itemsSource;
+    public KeyValueViewModel this[int index, string header, string? units]
+    {
+        get
+        {
+            if (index < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), "Index is out of range");
+            }
+            while (index >= _itemsSource.Count)
+            {
+                _itemsSource.Add(new KeyValueViewModel { Header = header, Units = units });
+            }
+
+            var item = _itemsSource[index];
+            item.Header = header;
+            item.Units = units;
+            return item;
+        }
+    }
+
+    public ObservableList<KeyValueViewModel> ItemsSource => _itemsSource;
 
     public string? ShortValueString
     {
