@@ -24,6 +24,7 @@ public class RttBoxViewModel : RoutableViewModel
     public RttBoxViewModel()
         : base(DesignTime.Id, DesignTime.LoggerFactory)
     {
+        _timeProvider = TimeProvider.System;
         DesignTime.ThrowIfNotDesignMode();
     }
 

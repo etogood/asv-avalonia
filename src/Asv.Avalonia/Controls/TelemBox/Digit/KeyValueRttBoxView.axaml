@@ -2,24 +2,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:avalonia="clr-namespace:Asv.Avalonia;assembly=Asv.Avalonia"
+             xmlns:avalonia="clr-namespace:Asv.Avalonia"
              mc:Ignorable="d" d:DesignWidth="250" d:DesignHeight="450"
-             x:Class="Asv.Avalonia.GeoPointRttBoxView"
-             HorizontalAlignment="Stretch"
-             HorizontalContentAlignment="Stretch"
-             x:DataType="avalonia:GeoPointRttBoxViewModel">
+             x:Class="Asv.Avalonia.KeyValueRttBoxView"
+             x:DataType="avalonia:KeyValueRttBoxViewModel">
     <Design.DataContext>
-        <avalonia:GeoPointRttBoxViewModel />
+        <avalonia:KeyValueRttBoxViewModel />
     </Design.DataContext>
     <avalonia:RttBox IsUpdated="{Binding IsUpdated}" 
                      Padding="4" 
-                     FontSize="18" 
-                     IsNetworkError="{Binding IsNetworkError}"
+                     FontSize="18"
                      HorizontalContentAlignment="Stretch"
                      Icon="{Binding Icon}" 
                      Header="{Binding Header}" 
-                     SmallContent="{Binding ShortStatusText}"
-                     SmallHeader="{Binding ShortHeader}"
+                     IsNetworkError="{Binding IsNetworkError}"
+                     
                      Classes.error="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Error}"
                      Classes.warning="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Warning}"
                      Classes.success="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Success}"
@@ -27,17 +24,41 @@
                      Classes.info2="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info2}"
                      Classes.info3="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info3}"
                      Classes.info4="{Binding Status, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info4}">
-        <Grid RowDefinitions="*,*,*,4,Auto,4,Auto" ColumnDefinitions="Auto,5,*">
-            <TextBlock FontSize="15" Foreground="{DynamicResource AsvForegroundUnknownBrush}"  Grid.Column="0"  Grid.Row="0" Text="Lat"/>
-            <TextBlock FontSize="15" Foreground="{DynamicResource AsvForegroundUnknownBrush}"  Grid.Column="0"  Grid.Row="1" Text="Lon"/>
-            <TextBlock FontSize="15" Foreground="{DynamicResource AsvForegroundUnknownBrush}"  Grid.Column="0"  Grid.Row="2" Text="Alt"/>
-            <SelectableTextBlock Grid.Column="2" Grid.Row="0" Text="{Binding LatitudeString}"/>
-            <SelectableTextBlock Grid.Column="2" Grid.Row="1" Text="{Binding LongitudeString}"/>
-            <SelectableTextBlock Grid.Column="2" Grid.Row="2" Text="{Binding AltitudeString}"/>
-            
+        <avalonia:RttBox.SmallContent>
+            <TextBlock VerticalAlignment="Center"  Margin="0,0,4,0">
+                <Run Text="{Binding ShortValueString}"/>
+                <Run Text="{Binding ShortUnits}" Foreground="{DynamicResource AsvForegroundUnknownBrush}" />
+            </TextBlock>
+        </avalonia:RttBox.SmallContent>
+        <StackPanel>
+            <ItemsControl Grid.IsSharedSizeScope="True" ItemsSource="{Binding Items}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Spacing="4"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition SharedSizeGroup="TitleGroup" Width="Auto" />
+                                <ColumnDefinition Width="4" />
+                                <ColumnDefinition SharedSizeGroup="UnitGroup" Width="Auto" />
+                                <ColumnDefinition Width="4" />
+                                <ColumnDefinition SharedSizeGroup="ValueGroup" Width="Auto" />
+                                <ColumnDefinition Width="4" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" FontSize="15" IsVisible="{Binding Header, Converter={x:Static ObjectConverters.IsNotNull}}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="{DynamicResource AsvForegroundUnknownBrush}" Text="{Binding Header}"/>
+                            <TextBlock Grid.Column="2" Padding="0" Text="{Binding ValueString}" HorizontalAlignment="Left" />
+                            <TextBlock Grid.Column="4" IsVisible="{Binding Units, Converter={x:Static ObjectConverters.IsNotNull}}" HorizontalAlignment="Left" VerticalAlignment="Center"  FontSize="15" Foreground="{DynamicResource AsvForegroundUnknownBrush}" Text="{Binding Units}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
             <ProgressBar
-                Grid.ColumnSpan="3" Grid.Column="0" Grid.Row="4"
                 IsVisible="{Binding ProgressStatus, Converter={x:Static ObjectConverters.IsNotNull}}" 
+                Margin="0,4,0,0" 
                 Minimum="0" 
                 Maximum="1" 
                 Value="{Binding Progress}"
@@ -49,8 +70,10 @@
                 Classes.info2="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info2}"
                 Classes.info3="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info3}"
                 Classes.info4="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info4}"
-                />
-            <TextBlock Foreground="{DynamicResource AsvForegroundUnknownBrush}" FontSize="15" IsVisible="{Binding StatusText, Converter={x:Static ObjectConverters.IsNotNull}}" Grid.ColumnSpan="3" Grid.Column="0"  Grid.Row="6" Text="{Binding StatusText}"/>
-        </Grid>
+            />
+            <TextBlock Margin="0,4,0,0"  HorizontalAlignment="Left" Foreground="{DynamicResource AsvForegroundUnknownBrush}" FontSize="15" IsVisible="{Binding StatusText, Converter={x:Static ObjectConverters.IsNotNull}}" Text="{Binding StatusText}"/>
+        </StackPanel>
+        
+        
     </avalonia:RttBox>
 </UserControl>
