@@ -1,4 +1,5 @@
-﻿using System.IO.Pipes;
+﻿using System.ComponentModel.DataAnnotations;
+using System.IO.Pipes;
 using Asv.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

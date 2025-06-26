@@ -21,6 +21,7 @@ public static class SoloRunFeatureMixin
                     config.Pipe ??= info.Name;
                 }
             );
+
         var subBuilder = new SoloRunFeatureBuilder();
         configure?.Invoke(subBuilder);
         subBuilder.Build(options);
