@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Asv.Common;
 using Material.Icons;
 using Microsoft.Extensions.Logging;
@@ -14,10 +15,9 @@ public class GeoPointRttBoxViewModel : RttBoxViewModel
 
     public GeoPointRttBoxViewModel()
     {
+        Location = new ReactiveProperty<GeoPoint>(GeoPoint.NaN).DisposeItWith(Disposable);
         DesignTime.ThrowIfNotDesignMode();
         var start = new GeoPoint(55.75, 37.6173, 250.0); // Moscow coordinates
-        var sub = new Subject<GeoPoint>();
-        Observable<GeoPoint> value = sub;
         var index = 0;
         var maxIndex = Enum.GetValues<RttBoxStatus>().Length;
         Observable
@@ -39,7 +39,7 @@ public class GeoPointRttBoxViewModel : RttBoxViewModel
                 ProgressStatus = Enum.GetValues<RttBoxStatus>()[index++ % maxIndex];
                 Progress = Random.Shared.NextDouble();
                 StatusText = Status.ToString();
-                sub.OnNext(point);
+                Location.OnNext(point);
                 Updated();
             });
         _latitudeUnit = new DmsLatitudeUnit();
@@ -48,22 +48,19 @@ public class GeoPointRttBoxViewModel : RttBoxViewModel
         Header = "UAV position";
         ShortHeader = "UAV";
         Icon = MaterialIconKind.AddressMarker;
-        value
-            .ThrottleLastFrame(1)
-            .ObserveOnUIThreadDispatcher()
-            .Subscribe(OnValueChanged)
-            .DisposeItWith(Disposable);
+
+        Location.Subscribe(OnValueChanged).DisposeItWith(Disposable);
     }
 
     public GeoPointRttBoxViewModel(
         NavigationId id,
         ILoggerFactory loggerFactory,
         IUnitService units,
-        Observable<GeoPoint> value,
         TimeSpan? networkErrorTimeout
     )
         : base(id, loggerFactory, networkErrorTimeout)
     {
+        Location = new ReactiveProperty<GeoPoint>(GeoPoint.NaN).DisposeItWith(Disposable);
         _networkErrorTimeout = networkErrorTimeout;
         _latitudeUnit =
             units[LatitudeBase.Id]?.CurrentUnitItem.CurrentValue
@@ -74,12 +71,11 @@ public class GeoPointRttBoxViewModel : RttBoxViewModel
         _altitudeUnit =
             units[AltitudeBase.Id]?.CurrentUnitItem.CurrentValue
             ?? throw new ArgumentException("Altitude unit not found in unit service");
-        value
-            .ThrottleLastFrame(1)
-            .ObserveOnUIThreadDispatcher()
-            .Subscribe(OnValueChanged)
-            .DisposeItWith(Disposable);
+
+        Location.Subscribe(OnValueChanged).DisposeItWith(Disposable);
     }
+
+    public ReactiveProperty<GeoPoint> Location { get; }
 
     private void OnValueChanged(GeoPoint geoPoint)
     {
@@ -101,11 +97,6 @@ public class GeoPointRttBoxViewModel : RttBoxViewModel
                 _altitudeUnit.FromSi(geoPoint.Altitude),
                 "F2"
             );
-        }
-
-        if (_networkErrorTimeout != null)
-        {
-            Updated();
         }
     }
 
@@ -139,5 +130,39 @@ public class GeoPointRttBoxViewModel : RttBoxViewModel
     {
         get;
         set => SetField(ref field, value);
+    }
+}
+
+public class GeoPointRttBoxViewModel<T> : GeoPointRttBoxViewModel
+{
+    private readonly TimeSpan? _networkErrorTimeout;
+
+    public GeoPointRttBoxViewModel(
+        NavigationId id,
+        ILoggerFactory loggerFactory,
+        IUnitService units,
+        Observable<T> value,
+        TimeSpan? networkErrorTimeout
+    )
+        : base(id, loggerFactory, units, networkErrorTimeout)
+    {
+        _networkErrorTimeout = networkErrorTimeout;
+        value
+            .ThrottleLastFrame(1)
+            .ObserveOnUIThreadDispatcher()
+            .Subscribe(this, (x, self) => UpdateAction?.Invoke(self, x))
+            .DisposeItWith(Disposable);
+    }
+
+    public required Action<GeoPointRttBoxViewModel<T>, T> UpdateAction { get; init; }
+
+    private void OnValueChanged(T value)
+    {
+        Debug.Assert(UpdateAction != null, "UpdateAction must be set");
+        UpdateAction(this, value);
+        if (_networkErrorTimeout != null)
+        {
+            Updated();
+        }
     }
 }
