@@ -8,7 +8,6 @@ namespace Asv.Avalonia;
 
 public class GeoPointRttBoxViewModel : RttBoxViewModel
 {
-    private readonly TimeSpan? _networkErrorTimeout;
     private readonly IUnitItem _latitudeUnit;
     private readonly IUnitItem _longitudeUnit;
     private readonly IUnitItem _altitudeUnit;
@@ -61,7 +60,6 @@ public class GeoPointRttBoxViewModel : RttBoxViewModel
         : base(id, loggerFactory, networkErrorTimeout)
     {
         Location = new ReactiveProperty<GeoPoint>(GeoPoint.NaN).DisposeItWith(Disposable);
-        _networkErrorTimeout = networkErrorTimeout;
         _latitudeUnit =
             units[LatitudeBase.Id]?.CurrentUnitItem.CurrentValue
             ?? throw new ArgumentException("Latitude unit not found in unit service");
@@ -150,7 +148,7 @@ public class GeoPointRttBoxViewModel<T> : GeoPointRttBoxViewModel
         value
             .ThrottleLastFrame(1)
             .ObserveOnUIThreadDispatcher()
-            .Subscribe(this, (x, self) => UpdateAction?.Invoke(self, x))
+            .Subscribe(OnValueChanged)
             .DisposeItWith(Disposable);
     }
 
