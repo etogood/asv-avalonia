@@ -1143,6 +1143,12 @@ namespace Asv.Avalonia {
             }
         }
         
+        public static string ToolsMenu_Home {
+            get {
+                return ResourceManager.GetString("ToolsMenu_Home", resourceCulture);
+            }
+        }
+        
         public static string ChangeThemeCommand_CommandInfo_Description {
             get {
                 return ResourceManager.GetString("ChangeThemeCommand_CommandInfo_Description", resourceCulture);
@@ -1362,6 +1368,18 @@ namespace Asv.Avalonia {
         public static string OpenSettingsCommand_CommandInfo_Description {
             get {
                 return ResourceManager.GetString("OpenSettingsCommand_CommandInfo_Description", resourceCulture);
+            }
+        }
+        
+        public static string OpenHomePageCommand_CommandInfo_Name {
+            get {
+                return ResourceManager.GetString("OpenHomePageCommand_CommandInfo_Name", resourceCulture);
+            }
+        }
+        
+        public static string OpenHomePageCommand_CommandInfo_Description {
+            get {
+                return ResourceManager.GetString("OpenHomePageCommand_CommandInfo_Description", resourceCulture);
             }
         }
         
