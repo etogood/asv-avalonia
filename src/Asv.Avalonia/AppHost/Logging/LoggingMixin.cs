@@ -1,4 +1,5 @@
 ﻿using Avalonia.Threading;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ZLogger;
@@ -35,6 +36,34 @@ public static class LoggingMixin
                         )
                 );
             });
+        });
+        return builder;
+    }
+
+    public static IHostApplicationBuilder UseLogToFile(
+        this IHostApplicationBuilder builder,
+        string? folderName = null,
+        int? rollingSizeKb = null
+    )
+    {
+        var cfg = builder
+            .Configuration.GetSection(LogServiceConfig.Section)
+            .Get<LogServiceConfig>();
+
+        var rolling =
+            rollingSizeKb
+            ?? cfg?.RollingSizeKb
+            ?? throw new Exception($"Missing {nameof(LogServiceConfig.RollingSizeKb)} option");
+        var folder =
+            folderName
+            ?? cfg?.Folder
+            ?? throw new Exception($"Missing {nameof(LogServiceConfig.Folder)} option");
+
+        builder.Logging.AddZLoggerRollingFile(options =>
+        {
+            options.FilePathSelector = (dt, index) => $"{folder}/{dt:yyyy-MM-dd}_{index}.logs";
+            options.UseJsonFormatter();
+            options.RollingSizeKB = rolling;
         });
         return builder;
     }

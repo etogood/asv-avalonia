@@ -1,6 +1,5 @@
-using System.Composition;
 using System.Runtime.CompilerServices;
-using Avalonia.Threading;
+using DotNext.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -90,7 +89,7 @@ public class LogService : ILogService, IExportable
         [EnumeratorCancellation] CancellationToken cancel = default
     )
     {
-        foreach (var logFilePath in Directory.EnumerateFiles(_logsFolder, "*.logs").Order())
+        await foreach (var logFilePath in Directory.EnumerateFiles(_logsFolder, "*.logs").Order())
         {
             await using var fs = new FileStream(
                 logFilePath,
@@ -108,19 +107,22 @@ public class LogService : ILogService, IExportable
                 leaveOpen: true
             );
 
-            var rdr = new JsonTextReader(new StreamReader(fs)) { SupportMultipleContent = true };
+            var rdr = new JsonTextReader(sr) { SupportMultipleContent = true };
 
             while (
                 !cancel.IsCancellationRequested && await rdr.ReadAsync(cancel).ConfigureAwait(false)
             )
             {
-                if (rdr.TokenType == JsonToken.StartObject)
+                if (rdr.TokenType != JsonToken.StartObject)
                 {
-                    var item = Serializer.Deserialize<LogMessage>(rdr);
-                    if (item != null)
-                    {
-                        yield return item;
-                    }
+                    continue;
+                }
+
+                var item = Serializer.Deserialize<LogMessage>(rdr);
+
+                if (item is not null)
+                {
+                    yield return item;
                 }
             }
         }

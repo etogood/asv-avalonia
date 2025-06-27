@@ -22,6 +22,7 @@ sealed class Program
         builder
             .UseAvalonia(BuildAvaloniaApp)
             .UseLogToConsoleOnDebug()
+            .UseLogToFile()
             .SetLogLevel(LogLevel.Trace)
             .UseAppPath(opt => opt.WithRelativeFolder("data"))
             .UseJsonUserConfig(opt =>
