@@ -1,4 +1,5 @@
 ﻿using System.Collections.Specialized;
+using System.ComponentModel;
 using Asv.Common;
 using Avalonia;
 using Avalonia.Controls;
@@ -15,6 +16,7 @@ namespace Asv.Avalonia;
 
 public class ShellItem
 {
+    public required string Id { get; init; }
     public TabItem TabControl { get; init; } = new();
     public int Column { get; set; }
 }
@@ -23,6 +25,7 @@ public class DockControl : SelectingItemsControl
 {
     private const int ColumnIncrement = 2;
     private readonly List<Border> _targetBorders = [];
+    private readonly List<ShellItem> _windowedItems = [];
     private List<ShellItem> _shellItems = [];
     private TabItem? _selectedTab;
     private Border _leftSelector;
@@ -222,15 +225,46 @@ public class DockControl : SelectingItemsControl
                 return;
             }
 
+            if (_selectedTab.Content is HomePageViewModel)
+            {
+                return;
+            }
+
+            var shellItem = _shellItems.FirstOrDefault(item => item.TabControl == _selectedTab);
+            if (shellItem is null)
+            {
+                return;
+            }
+
             parent.Items.Remove(_selectedTab);
-            var win = new Window()
+            _shellItems.Remove(shellItem);
+
+            var win = new Window
             {
                 Content = _selectedTab.Content,
                 Title = (_selectedTab.Header as TabStripItem)?.Content?.ToString(),
             };
+            _windowedItems.Add(shellItem);
+            win.Closing += OnClosing;
             win.Show();
             _selectedTab = null;
             return;
+
+            void OnClosing(object? sender, CancelEventArgs args)
+            {
+                if (win.Content is IPage page)
+                {
+                    TryCloseAsync(page, false).SafeFireAndForget();
+                }
+
+                win.Closing -= OnClosing;
+            }
+
+            async Task TryCloseAsync(IPage page, bool force)
+            {
+                await page.TryCloseAsync(force);
+                _windowedItems.Remove(shellItem);
+            }
         }
 
         foreach (var child in _dropTargetGrid.Children)
@@ -291,7 +325,7 @@ public class DockControl : SelectingItemsControl
     private void CreateTabs()
     {
 #pragma warning disable CS8714 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'notnull' constraint.
-        var existingItems = _shellItems.ToDictionary(
+        var occupiedColumns = _shellItems.ToDictionary(
             key => key.TabControl.Content,
             value => value.Column
         );
@@ -307,20 +341,31 @@ public class DockControl : SelectingItemsControl
         if (_dropTargetGrid is null)
         {
             throw new ArgumentNullException(
-                $"_dropTargetGrid in {nameof(DockControl)} is not found"
+                $"{nameof(_dropTargetGrid)} in {nameof(DockControl)} is not found"
             );
         }
 
         foreach (var content in Items)
         {
-            if (content is null)
+            if (content is not IPage page)
             {
                 continue;
             }
 
-            var column = existingItems.GetValueOrDefault(content, 0);
+            var column = occupiedColumns.GetValueOrDefault(content, 0);
 
-            var shellItem = new ShellItem { TabControl = CreateTabItem(content), Column = column };
+            if (_windowedItems.Any(it => it.Id == page.Id))
+            {
+                continue;
+            }
+
+            var item = CreateTabItem(content);
+            var shellItem = new ShellItem
+            {
+                Id = page.Id.ToString(),
+                TabControl = item,
+                Column = column,
+            };
 
             _shellItems.Add(shellItem);
         }

@@ -1,7 +1,9 @@
-﻿using Avalonia;
+﻿using Asv.Common;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using R3;
 
 namespace Asv.Avalonia;
 
@@ -27,6 +29,11 @@ public partial class DockWindow : Window
         base.OnPropertyChanged(change);
         if (change.Property == CloseRequestedProperty)
         {
+            if (DataContext is IPage page)
+            {
+                page.TryClose.Execute(Unit.Default);
+            }
+
             Close();
         }
     }
