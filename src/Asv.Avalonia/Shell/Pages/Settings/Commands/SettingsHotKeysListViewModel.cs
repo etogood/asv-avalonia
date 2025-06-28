@@ -12,7 +12,7 @@ namespace Asv.Avalonia;
 [ExportSettings(PageId)]
 public class SettingsHotKeysListViewModel : SettingsSubPage
 {
-    public const string PageId = "settings.hot-keys";
+    public const string PageId = "hotkeys";
 
     private readonly ICommandService _commandsService;
     private readonly ILoggerFactory _loggerFactory;
