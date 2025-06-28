@@ -1,6 +1,5 @@
 using System.Composition;
 using Asv.Cfg;
-using Avalonia.Controls.ApplicationLifetimes;
 using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia;

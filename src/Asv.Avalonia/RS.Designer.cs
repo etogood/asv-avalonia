@@ -165,24 +165,6 @@ namespace Asv.Avalonia {
             }
         }
         
-        public static string SettingsCommandListMapView_Header_Name {
-            get {
-                return ResourceManager.GetString("SettingsCommandListMapView_Header_Name", resourceCulture);
-            }
-        }
-        
-        public static string SettingsCommandListMapView_Header_Description {
-            get {
-                return ResourceManager.GetString("SettingsCommandListMapView_Header_Description", resourceCulture);
-            }
-        }
-        
-        public static string SettingsCommandListMapView_Header_DefaultHotKey {
-            get {
-                return ResourceManager.GetString("SettingsCommandListMapView_Header_DefaultHotKey", resourceCulture);
-            }
-        }
-        
         public static string HomePageViewModel_Title {
             get {
                 return ResourceManager.GetString("HomePageViewModel_Title", resourceCulture);
@@ -207,9 +189,9 @@ namespace Asv.Avalonia {
             }
         }
         
-        public static string SettingsCommandListViewModel_Name {
+        public static string SettingsHotKeysListViewModel_Name {
             get {
-                return ResourceManager.GetString("SettingsCommandListViewModel_Name", resourceCulture);
+                return ResourceManager.GetString("SettingsHotKeysListViewModel_Name", resourceCulture);
             }
         }
         
@@ -270,18 +252,6 @@ namespace Asv.Avalonia {
         public static string ShellView_Toolbar_Help {
             get {
                 return ResourceManager.GetString("ShellView_Toolbar_Help", resourceCulture);
-            }
-        }
-        
-        public static string SettingsCommandListMapView_Header_CustomHotKey {
-            get {
-                return ResourceManager.GetString("SettingsCommandListMapView_Header_CustomHotKey", resourceCulture);
-            }
-        }
-        
-        public static string SettingsCommandListView_Action_ResetCustomHotKeys {
-            get {
-                return ResourceManager.GetString("SettingsCommandListView_Action_ResetCustomHotKeys", resourceCulture);
             }
         }
         
@@ -1404,6 +1374,96 @@ namespace Asv.Avalonia {
         public static string ResetHotKeysCommand_CommandInfo_Description {
             get {
                 return ResourceManager.GetString("ResetHotKeysCommand_CommandInfo_Description", resourceCulture);
+            }
+        }
+        
+        public static string SettingsHotKeysListView_SearchBar_Watermark {
+            get {
+                return ResourceManager.GetString("SettingsHotKeysListView_SearchBar_Watermark", resourceCulture);
+            }
+        }
+        
+        public static string SettingsHotKeysListView_ResetButton_Content {
+            get {
+                return ResourceManager.GetString("SettingsHotKeysListView_ResetButton_Content", resourceCulture);
+            }
+        }
+        
+        public static string SettingsHotKeysListView_HotKey_Header {
+            get {
+                return ResourceManager.GetString("SettingsHotKeysListView_HotKey_Header", resourceCulture);
+            }
+        }
+        
+        public static string SettingsHotKeysListView_Name_Header {
+            get {
+                return ResourceManager.GetString("SettingsHotKeysListView_Name_Header", resourceCulture);
+            }
+        }
+        
+        public static string SettingsHotKeysListView_Description_Header {
+            get {
+                return ResourceManager.GetString("SettingsHotKeysListView_Description_Header", resourceCulture);
+            }
+        }
+        
+        public static string SettingsHotKeysListView_Source_Header {
+            get {
+                return ResourceManager.GetString("SettingsHotKeysListView_Source_Header", resourceCulture);
+            }
+        }
+        
+        public static string ChangeHotKeyPropertyCommand_CommandInfo_Name {
+            get {
+                return ResourceManager.GetString("ChangeHotKeyPropertyCommand_CommandInfo_Name", resourceCulture);
+            }
+        }
+        
+        public static string ChangeHotKeyPropertyCommand_CommandInfo_Description {
+            get {
+                return ResourceManager.GetString("ChangeHotKeyPropertyCommand_CommandInfo_Description", resourceCulture);
+            }
+        }
+        
+        public static string SettingsHotKeysListView_DataGrid_Command_Header {
+            get {
+                return ResourceManager.GetString("SettingsHotKeysListView_DataGrid_Command_Header", resourceCulture);
+            }
+        }
+        
+        public static string SettingsHotKeysListView_DataGrid_CustomHotKey_Header {
+            get {
+                return ResourceManager.GetString("SettingsHotKeysListView_DataGrid_CustomHotKey_Header", resourceCulture);
+            }
+        }
+        
+        public static string SettingsHotKeysListView_DataGrid_DefaultHotKey_Header {
+            get {
+                return ResourceManager.GetString("SettingsHotKeysListView_DataGrid_DefaultHotKey_Header", resourceCulture);
+            }
+        }
+        
+        public static string SettingsHotKeysListView_DataGrid_Description_Header {
+            get {
+                return ResourceManager.GetString("SettingsHotKeysListView_DataGrid_Description_Header", resourceCulture);
+            }
+        }
+        
+        public static string SettingsHotKeysListView_DataGrid_Source_Header {
+            get {
+                return ResourceManager.GetString("SettingsHotKeysListView_DataGrid_Source_Header", resourceCulture);
+            }
+        }
+        
+        public static string HotKeyViewModel_HotKeyCaptureDialog_Title {
+            get {
+                return ResourceManager.GetString("HotKeyViewModel_HotKeyCaptureDialog_Title", resourceCulture);
+            }
+        }
+        
+        public static string HotKeyViewModel_HotKeyCaptureDialog_Message {
+            get {
+                return ResourceManager.GetString("HotKeyViewModel_HotKeyCaptureDialog_Message", resourceCulture);
             }
         }
     }

@@ -1,4 +1,3 @@
-using Avalonia.Input;
 using R3;
 
 namespace Asv.Avalonia;
@@ -36,6 +35,11 @@ public class NullCommandService : ICommandService
 
     public Observable<HotKeyInfo> OnHotKey { get; } = new Subject<HotKeyInfo>();
     public ReactiveProperty<bool> IsHotKeyRecognitionEnabled { get; } = new();
+
+    public void ResetAllHotKeys()
+    {
+        // Do nothing
+    }
 
     public void SetHotKey(string commandId, HotKeyInfo hotKey)
     {

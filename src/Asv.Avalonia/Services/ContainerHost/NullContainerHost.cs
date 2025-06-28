@@ -1,5 +1,3 @@
-using System.Composition.Hosting;
-
 namespace Asv.Avalonia;
 
 public class NullContainerHost : IContainerHost

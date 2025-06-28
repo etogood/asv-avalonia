@@ -1,7 +1,4 @@
-using System.Collections.ObjectModel;
-using System.Windows.Input;
 using Avalonia.Input;
-using Material.Icons;
 using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia;

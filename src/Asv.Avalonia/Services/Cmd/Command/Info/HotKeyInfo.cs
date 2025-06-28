@@ -37,6 +37,8 @@ public class HotKeyInfo(KeyGesture gesture, Key? additional = null) : IEquatable
 
     public static implicit operator HotKeyInfo(string value) => Parse(value);
 
+    public static implicit operator string?(HotKeyInfo? value) => value?.ToString();
+
     public KeyGesture Gesture => _gesture;
     public Key? AdditionalKey => _additional;
 

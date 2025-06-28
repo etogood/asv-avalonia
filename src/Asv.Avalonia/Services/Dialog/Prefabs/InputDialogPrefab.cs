@@ -49,11 +49,6 @@ public sealed class InputDialogPrefab(INavigationService nav, ILoggerFactory log
             return vm.Input.CurrentValue;
         }
 
-        if (vm.Parent is not null)
-        {
-            await vm.Navigate(vm.Parent.Id);
-        }
-
         return null;
     }
 }
