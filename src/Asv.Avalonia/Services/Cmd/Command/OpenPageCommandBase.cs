@@ -1,6 +1,4 @@
-﻿using Asv.Common;
-
-namespace Asv.Avalonia;
+﻿namespace Asv.Avalonia;
 
 public abstract class OpenPageCommandBase(string pageId, INavigationService nav)
     : StatelessCommand<StringArg, EmptyArg>
