@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using Asv.Common;
 using Avalonia.Data.Converters;
 using Material.Icons;
 using Material.Icons.Avalonia;
@@ -11,6 +12,10 @@ public class MaterialIconConverter : IValueConverter
 
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
+        if (value == null)
+        {
+            return null;
+        }
         if (value is MaterialIconKind kind)
         {
             return new MaterialIcon { Kind = kind };
@@ -18,13 +23,18 @@ public class MaterialIconConverter : IValueConverter
 
         if (value is string str)
         {
+            if (str.IsNullOrWhiteSpace())
+            {
+                return null;
+            }
+
             if (Enum.TryParse(str, true, out kind))
             {
                 return new MaterialIcon { Kind = kind };
             }
         }
 
-        return new MaterialIcon();
+        return null;
     }
 
     public object? ConvertBack(

@@ -76,7 +76,7 @@
                             </DockPanel>
                             
                         </controls:RttBox>
-                        <controls:RttBox Classes="info2" IsUpdated="True" Header="Frequency Rx" Margin="2" Content="RTK Fixed"/>
+                        <controls:RttBox IsNetworkError="True" Classes="info2" IsUpdated="True" Header="Frequency Rx" Margin="2" Content="RTK Fixed"/>
                         <controls:RttBox Classes="info3" IsUpdated="True" Header="DDM" Icon="Frequency" Margin="2" Content="15%"/>
                         <controls:RttBox Classes="info4" IsUpdated="True" Header="Power" Content="15 dBm" Margin="2"/>
                         <controls:RttBox IsUpdated="True" Classes="error" Header="Frequency TX" Icon="Temperature" Margin="2" Content="RTK Fixed" />    
