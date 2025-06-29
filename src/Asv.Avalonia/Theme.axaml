@@ -404,6 +404,21 @@
     
     <!--MaterialIcon-->
     <Style Selector="avalonia|MaterialIcon">
+        <Style Selector="^.blink">
+            <Style.Animations>
+                <Animation IterationCount="Infinite" Duration="0:0:1"> 
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Opacity" Value="1.0"/>
+                    </KeyFrame>
+                    <KeyFrame Cue="50%">
+                        <Setter Property="Opacity" Value="0.0"/>
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Opacity" Value="1.0"/>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
         <Style Selector="^.accent">
             <Setter Property="Foreground" Value="{DynamicResource  SystemAccentColorLight1}"/>
         </Style>
