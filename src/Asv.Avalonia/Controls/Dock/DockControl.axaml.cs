@@ -63,6 +63,7 @@ public class DockControl : SelectingItemsControl
                 return;
             }
 
+            _shellItems.ForEach(item => item.TabControl.IsSelected = false);
             SelectedItem = selected.TabControl.Content;
             selected.TabControl.IsSelected = true;
         }
