@@ -36,7 +36,7 @@
                 <DataGridTemplateColumn Header="{x:Static avalonia:RS.SettingsUnitsView_Header_Selected}" MinWidth="150" >
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">
                                 <Run Text="{Binding Name.Value}"/>
                                 <Run Text=" [ "/>
                                 <Run Text="{Binding Symbol.Value}"/>
@@ -46,7 +46,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.CellEditingTemplate>
                         <DataTemplate>
-                            <ComboBox HorizontalAlignment="Stretch" VerticalAlignment="Center" ItemsSource="{Binding Base.AvailableUnits.Values}" 
+                            <ComboBox IsDropDownOpen="True" HorizontalAlignment="Stretch" VerticalAlignment="Center" ItemsSource="{Binding Base.AvailableUnits.Values}" 
                                       SelectedItem="{Binding SelectedItem.Value}" >
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
@@ -65,7 +65,7 @@
                 <DataGridTemplateColumn Header="{x:Static avalonia:RS.SettingsUnitsView_Header_Default}" MinWidth="150">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock HorizontalAlignment="Center" Foreground="{DynamicResource ButtonForegroundDisabled}" VerticalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Left" Foreground="{DynamicResource ButtonForegroundDisabled}" VerticalAlignment="Center">
                                 <Run Text="{Binding Base.InternationalSystemUnit.Name}"/>
                                 <Run Text=" [ "/>
                                 <Run Text="{Binding Base.InternationalSystemUnit.Symbol}"/>
