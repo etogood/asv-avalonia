@@ -57,18 +57,6 @@ namespace Asv.Avalonia.IO {
             }
         }
         
-        public static string PortViewModel_ValidateName_PortNameRequiredException {
-            get {
-                return ResourceManager.GetString("PortViewModel_ValidateName_PortNameRequiredException", resourceCulture);
-            }
-        }
-        
-        public static string PortViewModel_ValidateName_PortNameTooLongException {
-            get {
-                return ResourceManager.GetString("PortViewModel_ValidateName_PortNameTooLongException", resourceCulture);
-            }
-        }
-        
         public static string SettingsPageExtension_TreePage_Title {
             get {
                 return ResourceManager.GetString("SettingsPageExtension_TreePage_Title", resourceCulture);
@@ -150,6 +138,18 @@ namespace Asv.Avalonia.IO {
         public static string SerialPortViewModel_TagViewModel_Value {
             get {
                 return ResourceManager.GetString("SerialPortViewModel_TagViewModel_Value", resourceCulture);
+            }
+        }
+        
+        public static string PortCrudCommand_CommandInfo_Name {
+            get {
+                return ResourceManager.GetString("PortCrudCommand_CommandInfo_Name", resourceCulture);
+            }
+        }
+        
+        public static string PortCrudCommand_CommandInfo_Description {
+            get {
+                return ResourceManager.GetString("PortCrudCommand_CommandInfo_Description", resourceCulture);
             }
         }
     }

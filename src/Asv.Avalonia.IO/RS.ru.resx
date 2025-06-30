@@ -17,12 +17,6 @@
     <data name="PortView_Title" xml:space="preserve">
         <value>Общие Настройки</value>
     </data>
-    <data name="PortViewModel_ValidateName_PortNameTooLongException" xml:space="preserve">
-        <value>Имя порта слишком длинное. Максимальная длина 50 символов</value>
-    </data>
-    <data name="PortViewModel_ValidateName_PortNameRequiredException" xml:space="preserve">
-        <value>Имя порта обязательно</value>
-    </data>
     <data name="SettingsPageExtension_TreePage_Title" xml:space="preserve">
         <value>Подключение</value>
     </data>
@@ -64,5 +58,11 @@
     </data>
     <data name="SerialPortViewModel_TagViewModel_Value" xml:space="preserve">
         <value>СЕРИЙНЫЙ</value>
+    </data>
+    <data name="PortCrudCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Добавить/Убрать/Изменить порт</value>
+    </data>
+    <data name="PortCrudCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда для добавления, удаления или изменения порта</value>
     </data>
 </root>

@@ -73,7 +73,7 @@
            
             <avalonia1:SearchBoxView DockPanel.Dock="Right" Margin="0,0,8,0" DataContext="{Binding Search}"/>
             
-            <TextBlock Classes="h1" Text="Log messages"></TextBlock>
+            <TextBlock Classes="h1" Text="{x:Static avalonia1:RS.LogViewerView_LogMessagesList_Title}"></TextBlock>
             
         </DockPanel>
         <DockPanel DockPanel.Dock="Bottom" Height="20">
@@ -84,7 +84,7 @@
         </DockPanel>
         <DataGrid Focusable="False" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" IsReadOnly="True" BorderThickness="0">
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Time"  >
+                <DataGridTemplateColumn Header="{x:Static avalonia1:RS.LogViewerView_LogMessagesList_TimeSection}"  >
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Margin="4,0" Orientation="Horizontal" Spacing="4">
@@ -109,7 +109,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Category"  >
+                <DataGridTemplateColumn Header="{x:Static avalonia1:RS.LogViewerView_LogMessagesList_CategorySection}"  >
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <SelectableTextBlock
@@ -126,7 +126,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn  Header="Message">
+                <DataGridTemplateColumn  Header="{x:Static avalonia1:RS.LogViewerView_LogMessagesList_MessageSection}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <SelectableTextBlock 
@@ -145,6 +145,5 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        
     </DockPanel>
 </UserControl>

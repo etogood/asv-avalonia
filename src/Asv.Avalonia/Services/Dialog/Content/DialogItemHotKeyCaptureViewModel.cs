@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Asv.Common;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia;
@@ -11,16 +12,18 @@ public sealed class DialogItemHotKeyCaptureViewModel : DialogViewModelBase
         : this(DesignTime.LoggerFactory)
     {
         DesignTime.ThrowIfNotDesignMode();
-        HotKey = new BindableReactiveProperty<HotKeyInfo?>(HotKeyInfo.Parse("Ctrl+C"));
+        HotKey = new BindableReactiveProperty<HotKeyInfo?>(
+            HotKeyInfo.Parse("Ctrl+C")
+        ).DisposeItWith(Disposable);
     }
 
     public DialogItemHotKeyCaptureViewModel(ILoggerFactory loggerFactory)
         : base(DialogId, loggerFactory)
     {
-        HotKey = new BindableReactiveProperty<HotKeyInfo?>();
+        HotKey = new BindableReactiveProperty<HotKeyInfo?>().DisposeItWith(Disposable);
     }
 
-    public BindableReactiveProperty<HotKeyInfo?> HotKey { get; set; }
+    public BindableReactiveProperty<HotKeyInfo?> HotKey { get; }
 
     public override IEnumerable<IRoutable> GetRoutableChildren() => [];
 }

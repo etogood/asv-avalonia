@@ -24,12 +24,6 @@
     <data name="PortView_Title" xml:space="preserve">
         <value>Common Settings</value>
     </data>
-    <data name="PortViewModel_ValidateName_PortNameRequiredException" xml:space="preserve">
-        <value>Port name is required</value>
-    </data>
-    <data name="PortViewModel_ValidateName_PortNameTooLongException" xml:space="preserve">
-        <value>Port name is too long. Max length is 50 characters</value>
-    </data>
     <data name="SettingsPageExtension_TreePage_Title" xml:space="preserve">
         <value>Connection</value>
     </data>
@@ -71,5 +65,11 @@
     </data>
     <data name="SerialPortViewModel_TagViewModel_Value" xml:space="preserve">
         <value>SERIAL</value>
+    </data>
+    <data name="PortCrudCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Add/Remove/Change port</value>
+    </data>
+    <data name="PortCrudCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Command to add/remove/change port</value>
     </data>
 </root>

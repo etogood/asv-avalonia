@@ -1,15 +1,18 @@
 using Avalonia.Controls;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Asv.Avalonia;
 
-public class DialogItemTextViewModel : DialogViewModelBase
+public class DialogItemTextViewModel(ILoggerFactory loggerFactory)
+    : DialogViewModelBase(DialogId, loggerFactory)
 {
     public const string DialogId = "dialog.item.text";
 
-    public DialogItemTextViewModel(ILoggerFactory loggerFactory)
-        : base(DialogId, loggerFactory)
+    public DialogItemTextViewModel()
+        : this(NullLoggerFactory.Instance)
     {
+        DesignTime.ThrowIfNotDesignMode();
         if (Design.IsDesignMode)
         {
             Message = "Example";

@@ -496,76 +496,6 @@
     <data name="LanguageProperty_RestartDialog_Message" xml:space="preserve">
         <value>For the changes to take effect, you need to restart the application</value>
     </data>
-   
-    <data name="AddSerialPortCommand_CommandInfo_Name" xml:space="preserve">
-        <value>Add serial port</value>
-    </data>
-    <data name="AddSerialPortCommand_CommandInfo_Description" xml:space="preserve">
-        <value>Command that adds a serial port</value>
-    </data>
-    <data name="Unit_Byte_Abbreviation" xml:space="preserve">
-        <value>byte</value>
-    </data>
-    <data name="Unit_Kilobyte_Abbreviation" xml:space="preserve">
-        <value>KB</value>
-    </data>
-    <data name="Unit_Megabyte_Abbreviation" xml:space="preserve">
-        <value>MB</value>
-    </data>
-    <data name="Unit_Gigabyte_Abbreviation" xml:space="preserve">
-        <value>GB</value>
-    </data>
-    <data name="Unit_Terabyte_Abbreviation" xml:space="preserve">
-        <value>TB</value>
-    </data>
-    <data name="FileBrowserView_NewFolder_Button_Tooltip" xml:space="preserve">
-        <value>New folder</value>
-    </data>
-    <data name="FileBrowserView_Rename_Button_Tooltip" xml:space="preserve">
-        <value>Rename</value>
-    </data>
-    <data name="FileBrowserView_CRC32_Button_Tooltip" xml:space="preserve">
-        <value>Calculate CRC32</value>
-    </data>
-    <data name="FileBrowserView_Delete_Button_Tooltip" xml:space="preserve">
-        <value>Delete</value>
-    </data>
-    <data name="FileBrowserView_Search_Watermark" xml:space="preserve">
-        <value>Search</value>
-    </data>
-    <data name="FileBrowserView_Refresh_Button_Tooltip" xml:space="preserve">
-        <value>Refresh</value>
-    </data>
-    <data name="FileBrowserView_CommitRename_Button_Tooltip" xml:space="preserve">
-        <value>Save</value>
-    </data>
-    <data name="FileBrowserView_Upload_button_Tooltip" xml:space="preserve">
-        <value>Upload file</value>
-    </data>
-    <data name="FileBrowserView_Download_button_Tooltip" xml:space="preserve">
-        <value>Download file</value>
-    </data>
-    <data name="FileBrowserView_CompareSelectedItems_Button_Tooltip" xml:space="preserve">
-        <value>Compare selected items</value>
-    </data>
-    <data name="FileBrowserView_FindFile_Button_Tooltip" xml:space="preserve">
-        <value>Search for the file</value>
-    </data>
-    <data name="FileBrowserViewModel_UploadDialog_Title" xml:space="preserve">
-        <value>Upload</value>
-    </data>
-    <data name="FileBrowserViewModel_UploadDialog_PrimaryButtonText" xml:space="preserve">
-        <value>Cancel</value>
-    </data>
-    <data name="FileBrowserViewModel_DownloadDialog_Title" xml:space="preserve">
-        <value>Download</value>
-    </data>
-    <data name="FileBrowserViewModel_DownloadDialog_SecondaryButtonText" xml:space="preserve">
-        <value>Download</value>
-    </data>
-    <data name="FileBrowserViewModel_DownloadDialog_PrimaryButtonText" xml:space="preserve">
-        <value>Cancel</value>
-    </data>
     <data name="ChangeStringPropertyCommand_CommandInfo_Name" xml:space="preserve">
         <value>Change string property</value>
     </data>
@@ -586,12 +516,6 @@
     </data>
     <data name="ChangeThemeCommand_CommandInfo_Name" xml:space="preserve">
         <value>Change theme</value>
-    </data>
-    <data name="Not_Available" xml:space="preserve">
-        <value>N/A</value>
-    </data>
-    <data name="DialogPageViewModel_Title" xml:space="preserve">
-        <value>Dialogs</value>
     </data>
     <data name="Mah_UnitItem_Name" xml:space="preserve">
         <value>Milliampere per hour</value>
@@ -662,9 +586,6 @@
     <data name="Progress_Description" xml:space="preserve">
         <value>Progress unit</value>
     </data>
-    <data name="ProgressPercentUnit_Name" xml:space="preserve">
-        <value>Percent</value>
-    </data>
     <data name="Percent_Progress_Description" xml:space="preserve">
         <value>Progress value in percentage</value>
     </data>
@@ -673,18 +594,6 @@
     </data>
     <data name="InParts_Progress_Description" xml:space="preserve">
         <value>Progress in parts</value>
-    </data>
-    <data name="ChangeKeyGesturePropertyCommand_CommandInfo_Name" xml:space="preserve">
-        <value>Change KeyGesture property</value>
-    </data>
-    <data name="ChangeKeyGesturePropertyCommand_CommandInfo_Description" xml:space="preserve">
-        <value>Command changes the value of a property with the KeyGeture type</value>
-    </data>
-    <data name="ConfirmChangeHotKeyCommand_CommandInfo_Name" xml:space="preserve">
-        <value>Confirm change hotkey</value>
-    </data>
-    <data name="ConfirmChangeHotKeyCommand_CommandInfo_Description" xml:space="preserve">
-        <value>Command that confirms hotkey change</value>
     </data>
     <data name="OpenSettingsCommand_CommandInfo_Name" xml:space="preserve">
         <value>Open settings command</value>
@@ -698,35 +607,8 @@
     <data name="OpenHomePageCommand_CommandInfo_Description" xml:space="preserve">
         <value>Command that opens home page</value>
     </data>
-    <data name="ResetHotKeysCommand_CommandInfo_Name" xml:space="preserve">
-        <value>Reset Hotkeys</value>
-    </data>
-    <data name="ResetHotKeysCommand_CommandInfo_Description" xml:space="preserve">
-        <value>Command that resets the hotkeys</value>
-    </data>
-    <data name="SettingsHotKeysListView_SearchBar_Watermark" xml:space="preserve">
-        <value>Search</value>
-    </data>
     <data name="SettingsHotKeysListView_ResetButton_Content" xml:space="preserve">
         <value>Reset all</value>
-    </data>
-    <data name="SettingsHotKeysListView_HotKey_Header" xml:space="preserve">
-        <value>Hot key</value>
-    </data>
-    <data name="SettingsHotKeysListView_Name_Header" xml:space="preserve">
-        <value>Command</value>
-    </data>
-    <data name="SettingsHotKeysListView_Description_Header" xml:space="preserve">
-        <value>Description</value>
-    </data>
-    <data name="SettingsHotKeysListView_Source_Header" xml:space="preserve">
-        <value>Source</value>
-    </data>
-    <data name="ChangeHotKeyPropertyCommand_CommandInfo_Name" xml:space="preserve">
-        <value>Change hot key property</value>
-    </data>
-    <data name="ChangeHotKeyPropertyCommand_CommandInfo_Description" xml:space="preserve">
-        <value>Command changes value of a hot key property</value>
     </data>
     <data name="SettingsHotKeysListView_DataGrid_Command_Header" xml:space="preserve">
         <value>Command</value>
@@ -748,5 +630,71 @@
     </data>
     <data name="HotKeyViewModel_HotKeyCaptureDialog_Message" xml:space="preserve">
         <value>Edit hot key</value>
+    </data>
+    <data name="RttBox_NetworkError_ToolTip" xml:space="preserve">
+        <value>Connection error</value>
+    </data>
+    <data name="InParts_SDM_Description" xml:space="preserve">
+        <value>SDM in parts</value>
+    </data>
+    <data name="HomePageView_DeviceBrowser_Title" xml:space="preserve">
+        <value>Device browser</value>
+    </data>
+    <data name="HomePageView_DeviceBrowser_NoneText" xml:space="preserve">
+        <value>Device not selected</value>
+    </data>
+    <data name="LogViewer_CommandInfo_Name" xml:space="preserve">
+        <value>Open LogViewer</value>
+    </data>
+    <data name="LogViewer_CommandInfo_Description" xml:space="preserve">
+        <value>Command that opens LogViewer</value>
+    </data>
+    <data name="LogViewerView_LogMessagesList_Title" xml:space="preserve">
+        <value>Log Messages</value>
+    </data>
+    <data name="LogViewerView_LogMessagesList_TimeSection" xml:space="preserve">
+        <value>Time</value>
+    </data>
+    <data name="LogViewerView_LogMessagesList_CategorySection" xml:space="preserve">
+        <value>Category</value>
+    </data>
+    <data name="LogViewerView_LogMessagesList_MessageSection" xml:space="preserve">
+        <value>Message</value>
+    </data>
+    <data name="LogViewerViewModel_Title" xml:space="preserve">
+        <value>Log Viewer</value>
+    </data>
+    <data name="LogViewerViewModel_Pagination_SkippedFiltered" xml:space="preserve">
+        <value>Skipped {0}, filtered {1} messages from {2}</value>
+    </data>
+    <data name="LogViewerViewModel_Pagination_SkippedFilteredBy" xml:space="preserve">
+        <value>Skipped {0}, filtered {1} messages from {2} by {3:F0} ms</value>
+    </data>
+    <data name="ShellView_UnsplitAllTabsButton_ToolTip" xml:space="preserve">
+        <value>Un split all tabs</value>
+    </data>
+    <data name="CancelCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Cancel</value>
+    </data>
+    <data name="CancelCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Command that cancels current operation</value>
+    </data>
+    <data name="RefreshCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Refresh</value>
+    </data>
+    <data name="RefreshCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Command that makes a refresh</value>
+    </data>
+    <data name="FocusSearchBoxCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Go to search box</value>
+    </data>
+    <data name="FocusSearchBoxCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Command that focuses on the search box</value>
+    </data>
+    <data name="TextSearchCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Search text</value>
+    </data>
+    <data name="TextSearchCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Command for searching text in the current context</value>
     </data>
 </root>

@@ -18,7 +18,7 @@ public abstract class TreePageViewModel<TContext, TSubPage>
     private readonly ObservableList<BreadCrumbItem> _breadCrumbSource;
     private bool _internalNavigate;
 
-    public TreePageViewModel(
+    protected TreePageViewModel(
         NavigationId id,
         ICommandService cmd,
         IContainerHost container,

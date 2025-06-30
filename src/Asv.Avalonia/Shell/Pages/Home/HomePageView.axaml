@@ -44,7 +44,7 @@
             <Button Theme="{DynamicResource TransparentButton}" DockPanel.Dock="Right" >
                 <avalonia:MaterialIcon Kind="Connection"/>
             </Button>
-            <TextBlock Margin="4" Classes="h1" Text="Device browser"/>
+            <TextBlock Margin="4" Classes="h1" Text="{x:Static avalonia1:RS.HomePageView_DeviceBrowser_Title}"/>
             
         </DockPanel>
         
@@ -73,7 +73,7 @@
                                 IsVisible="{Binding SelectedItem, Converter={x:Static ObjectConverters.IsNull}}" 
                                 Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
                         <avalonia:MaterialIcon Kind="ArrowBack"/>
-                        <TextBlock VerticalAlignment="Center" Text="Device not selected"/>
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static avalonia1:RS.HomePageView_DeviceBrowser_NoneText}"/>
                     </StackPanel>
                     <DockPanel IsVisible="{Binding Converter={x:Static ObjectConverters.IsNotNull}}"  DataContext="{Binding SelectedItem, ElementName=PART_DeviceList}" x:DataType="avalonia1:HomePageItemDecorator"  >
                         <Grid DockPanel.Dock="Top" RowDefinitions="25, 4, *" ColumnDefinitions="40, 8, *">

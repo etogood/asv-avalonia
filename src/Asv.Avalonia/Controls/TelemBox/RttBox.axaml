@@ -137,7 +137,7 @@
                                 <Panel DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" >
                                     <Ellipse Width="5" Height="5" Fill="{DynamicResource AsvForegroundSuccessBrush}" IsVisible="{TemplateBinding IsUpdated, Converter={x:Static ObjectConverters.IsNotNull}}" Opacity="0" Classes.fadeout="{TemplateBinding IsUpdated}" Margin="4,3,3,0" />
                                     <avalonia:MaterialIcon
-                                        ToolTip.Tip="Connection error"
+                                        ToolTip.Tip="{x:Static controls:RS.RttBox_NetworkError_ToolTip}"
                                         IsVisible="{TemplateBinding IsNetworkError, Converter={x:Static ObjectConverters.IsNotNull}}" 
                                         Opacity="0" Classes.blink="{TemplateBinding IsNetworkError}" 
                                         Width="18" Height="18" Kind="CloseNetwork" 

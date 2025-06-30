@@ -6,10 +6,11 @@ namespace Asv.Avalonia;
 
 public class LanguageProperty : RoutableViewModel
 {
+    public const string ViewModelId = "language.current";
+
     private readonly ILocalizationService _svc;
     private readonly YesOrNoDialogPrefab _dialog;
     private bool _internalChange;
-    public const string ViewModelId = "language.current";
 
     public IEnumerable<ILanguageInfo> Items => _svc.AvailableLanguages;
     public BindableReactiveProperty<ILanguageInfo> SelectedItem { get; }
