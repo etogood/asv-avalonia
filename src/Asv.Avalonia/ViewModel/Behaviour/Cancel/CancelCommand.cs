@@ -13,8 +13,8 @@ public class CancelCommand : ContextCommand<ISupportCancel>
         new CommandInfo
         {
             Id = Id,
-            Name = "Cancel",
-            Description = "Cancel the current operation",
+            Name = RS.CancelCommand_CommandInfo_Name,
+            Description = RS.CancelCommand_CommandInfo_Description,
             Icon = MaterialIconKind.Cancel,
             DefaultHotKey = "Ctrl+F5",
             Source = SystemModule.Instance,

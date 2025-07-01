@@ -49,7 +49,7 @@ public class ChangeThemeFreeCommand : StatelessCommand
         }
         else
         {
-            // execute without parameter
+            // execute without a parameter
             var temp = _svc.Themes.ToList();
             var index = temp.IndexOf(_svc.CurrentTheme.Value);
             index++;

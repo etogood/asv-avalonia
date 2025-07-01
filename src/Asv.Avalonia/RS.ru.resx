@@ -807,4 +807,70 @@
     <data name="HotKeyViewModel_HotKeyCaptureDialog_Message" xml:space="preserve">
         <value>Отредактировать горячую клавишу</value>
     </data>
+    <data name="RttBox_NetworkError_ToolTip" xml:space="preserve">
+        <value>Ошибка подключения</value>
+    </data>
+    <data name="InParts_SDM_Description" xml:space="preserve">
+        <value>СГМ в частях</value>
+    </data>
+    <data name="HomePageView_DeviceBrowser_Title" xml:space="preserve">
+        <value>Браузер устройств</value>
+    </data>
+    <data name="HomePageView_DeviceBrowser_NoneText" xml:space="preserve">
+        <value>Устройство не выбрано</value>
+    </data>
+    <data name="LogViewer_CommandInfo_Name" xml:space="preserve">
+        <value>Открыть просмотр логов</value>
+    </data>
+    <data name="LogViewer_CommandInfo_Description" xml:space="preserve">
+        <value>Команда, которая открывает просмотр логов</value>
+    </data>
+    <data name="LogViewerView_LogMessagesList_Title" xml:space="preserve">
+        <value>Список логов</value>
+    </data>
+    <data name="LogViewerView_LogMessagesList_TimeSection" xml:space="preserve">
+        <value>Время</value>
+    </data>
+    <data name="LogViewerView_LogMessagesList_CategorySection" xml:space="preserve">
+        <value>Категория</value>
+    </data>
+    <data name="LogViewerView_LogMessagesList_MessageSection" xml:space="preserve">
+        <value>Сообщение</value>
+    </data>
+    <data name="LogViewerViewModel_Title" xml:space="preserve">
+        <value>Просмотр логов</value>
+    </data>
+    <data name="LogViewerViewModel_Pagination_SkippedFiltered" xml:space="preserve">
+        <value>Пропущено {0}, отфильтровано {1} сообщений из {2}</value>
+    </data>
+    <data name="LogViewerViewModel_Pagination_SkippedFilteredBy" xml:space="preserve">
+        <value>Пропущено {0}, отфильтровано {1} сообщений из {2} за {3:F0} мс</value>
+    </data>
+    <data name="ShellView_UnsplitAllTabsButton_ToolTip" xml:space="preserve">
+        <value>Убрать разделение вкладок</value>
+    </data>
+    <data name="CancelCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Отмена</value>
+    </data>
+    <data name="CancelCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда отменяет текущую операцию</value>
+    </data>
+    <data name="RefreshCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Обновить</value>
+    </data>
+    <data name="RefreshCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда, которая производит обновление</value>
+    </data>
+    <data name="FocusSearchBoxCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Перейти к строке поиска</value>
+    </data>
+    <data name="FocusSearchBoxCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда, которая фокусируется на окне поиска</value>
+    </data>
+    <data name="TextSearchCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Поиск текста</value>
+    </data>
+    <data name="TextSearchCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда для поиска текста в текущем контексте</value>
+    </data>
 </root>

@@ -14,7 +14,7 @@ public class SettingsConnectionSerialPortExtension(ILoggerFactory loggerFactory)
     {
         var menu = new MenuItem(
             SerialProtocolPort.Scheme,
-            $"{RS.SettingsConnectionSerialExtension_MenuItem_Header}",
+            RS.SettingsConnectionSerialExtension_MenuItem_Header,
             loggerFactory
         );
         menu.Icon = SerialPortViewModel.DefaultIcon;

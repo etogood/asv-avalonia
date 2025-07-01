@@ -14,8 +14,8 @@ public class FocusSearchBoxCommand : ContextCommand<IRoutable>
         new CommandInfo
         {
             Id = Id,
-            Name = "Go to search box",
-            Description = "Focus on the search box to start searching",
+            Name = RS.FocusSearchBoxCommand_CommandInfo_Name,
+            Description = RS.FocusSearchBoxCommand_CommandInfo_Description,
             Icon = MaterialIconKind.Search,
             DefaultHotKey = "Ctrl+F",
             Source = SystemModule.Instance,

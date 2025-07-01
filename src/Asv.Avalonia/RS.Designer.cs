@@ -981,144 +981,6 @@ namespace Asv.Avalonia {
             }
         }
         
-        public static string AddSerialPortCommand_CommandInfo_Name {
-            get {
-                return ResourceManager.GetString("AddSerialPortCommand_CommandInfo_Name", resourceCulture);
-            }
-        }
-        
-        public static string AddSerialPortCommand_CommandInfo_Description {
-            get {
-                return ResourceManager.GetString("AddSerialPortCommand_CommandInfo_Description", resourceCulture);
-            }
-        }
-        
-        public static string Unit_Byte_Abbreviation {
-            get {
-                return ResourceManager.GetString("Unit_Byte_Abbreviation", resourceCulture);
-            }
-        }
-        
-        public static string Unit_Kilobyte_Abbreviation {
-            get {
-                return ResourceManager.GetString("Unit_Kilobyte_Abbreviation", resourceCulture);
-            }
-        }
-        
-        public static string Unit_Megabyte_Abbreviation {
-            get {
-                return ResourceManager.GetString("Unit_Megabyte_Abbreviation", resourceCulture);
-            }
-        }
-        
-        public static string Unit_Gigabyte_Abbreviation {
-            get {
-                return ResourceManager.GetString("Unit_Gigabyte_Abbreviation", resourceCulture);
-            }
-        }
-        
-        public static string Unit_Terabyte_Abbreviation {
-            get {
-                return ResourceManager.GetString("Unit_Terabyte_Abbreviation", resourceCulture);
-            }
-        }
-        
-        public static string FileBrowserView_NewFolder_Button_Tooltip {
-            get {
-                return ResourceManager.GetString("FileBrowserView_NewFolder_Button_Tooltip", resourceCulture);
-            }
-        }
-        
-        public static string FileBrowserView_Rename_Button_Tooltip {
-            get {
-                return ResourceManager.GetString("FileBrowserView_Rename_Button_Tooltip", resourceCulture);
-            }
-        }
-        
-        public static string FileBrowserView_CRC32_Button_Tooltip {
-            get {
-                return ResourceManager.GetString("FileBrowserView_CRC32_Button_Tooltip", resourceCulture);
-            }
-        }
-        
-        public static string FileBrowserView_Delete_Button_Tooltip {
-            get {
-                return ResourceManager.GetString("FileBrowserView_Delete_Button_Tooltip", resourceCulture);
-            }
-        }
-        
-        public static string FileBrowserView_Search_Watermark {
-            get {
-                return ResourceManager.GetString("FileBrowserView_Search_Watermark", resourceCulture);
-            }
-        }
-        
-        public static string FileBrowserView_Refresh_Button_Tooltip {
-            get {
-                return ResourceManager.GetString("FileBrowserView_Refresh_Button_Tooltip", resourceCulture);
-            }
-        }
-        
-        public static string FileBrowserView_CommitRename_Button_Tooltip {
-            get {
-                return ResourceManager.GetString("FileBrowserView_CommitRename_Button_Tooltip", resourceCulture);
-            }
-        }
-        
-        public static string FileBrowserView_Upload_button_Tooltip {
-            get {
-                return ResourceManager.GetString("FileBrowserView_Upload_button_Tooltip", resourceCulture);
-            }
-        }
-        
-        public static string FileBrowserView_Download_button_Tooltip {
-            get {
-                return ResourceManager.GetString("FileBrowserView_Download_button_Tooltip", resourceCulture);
-            }
-        }
-        
-        public static string FileBrowserView_CompareSelectedItems_Button_Tooltip {
-            get {
-                return ResourceManager.GetString("FileBrowserView_CompareSelectedItems_Button_Tooltip", resourceCulture);
-            }
-        }
-        
-        public static string FileBrowserView_FindFile_Button_Tooltip {
-            get {
-                return ResourceManager.GetString("FileBrowserView_FindFile_Button_Tooltip", resourceCulture);
-            }
-        }
-        
-        public static string FileBrowserViewModel_UploadDialog_Title {
-            get {
-                return ResourceManager.GetString("FileBrowserViewModel_UploadDialog_Title", resourceCulture);
-            }
-        }
-        
-        public static string FileBrowserViewModel_UploadDialog_PrimaryButtonText {
-            get {
-                return ResourceManager.GetString("FileBrowserViewModel_UploadDialog_PrimaryButtonText", resourceCulture);
-            }
-        }
-        
-        public static string FileBrowserViewModel_DownloadDialog_Title {
-            get {
-                return ResourceManager.GetString("FileBrowserViewModel_DownloadDialog_Title", resourceCulture);
-            }
-        }
-        
-        public static string FileBrowserViewModel_DownloadDialog_SecondaryButtonText {
-            get {
-                return ResourceManager.GetString("FileBrowserViewModel_DownloadDialog_SecondaryButtonText", resourceCulture);
-            }
-        }
-        
-        public static string FileBrowserViewModel_DownloadDialog_PrimaryButtonText {
-            get {
-                return ResourceManager.GetString("FileBrowserViewModel_DownloadDialog_PrimaryButtonText", resourceCulture);
-            }
-        }
-        
         public static string ChangeStringPropertyCommand_CommandInfo_Name {
             get {
                 return ResourceManager.GetString("ChangeStringPropertyCommand_CommandInfo_Name", resourceCulture);
@@ -1158,18 +1020,6 @@ namespace Asv.Avalonia {
         public static string ChangeThemeCommand_CommandInfo_Name {
             get {
                 return ResourceManager.GetString("ChangeThemeCommand_CommandInfo_Name", resourceCulture);
-            }
-        }
-        
-        public static string Not_Available {
-            get {
-                return ResourceManager.GetString("Not_Available", resourceCulture);
-            }
-        }
-        
-        public static string DialogPageViewModel_Title {
-            get {
-                return ResourceManager.GetString("DialogPageViewModel_Title", resourceCulture);
             }
         }
         
@@ -1311,12 +1161,6 @@ namespace Asv.Avalonia {
             }
         }
         
-        public static string ProgressPercentUnit_Name {
-            get {
-                return ResourceManager.GetString("ProgressPercentUnit_Name", resourceCulture);
-            }
-        }
-        
         public static string Percent_Progress_Description {
             get {
                 return ResourceManager.GetString("Percent_Progress_Description", resourceCulture);
@@ -1332,30 +1176,6 @@ namespace Asv.Avalonia {
         public static string InParts_Progress_Description {
             get {
                 return ResourceManager.GetString("InParts_Progress_Description", resourceCulture);
-            }
-        }
-        
-        public static string ChangeKeyGesturePropertyCommand_CommandInfo_Name {
-            get {
-                return ResourceManager.GetString("ChangeKeyGesturePropertyCommand_CommandInfo_Name", resourceCulture);
-            }
-        }
-        
-        public static string ChangeKeyGesturePropertyCommand_CommandInfo_Description {
-            get {
-                return ResourceManager.GetString("ChangeKeyGesturePropertyCommand_CommandInfo_Description", resourceCulture);
-            }
-        }
-        
-        public static string ConfirmChangeHotKeyCommand_CommandInfo_Name {
-            get {
-                return ResourceManager.GetString("ConfirmChangeHotKeyCommand_CommandInfo_Name", resourceCulture);
-            }
-        }
-        
-        public static string ConfirmChangeHotKeyCommand_CommandInfo_Description {
-            get {
-                return ResourceManager.GetString("ConfirmChangeHotKeyCommand_CommandInfo_Description", resourceCulture);
             }
         }
         
@@ -1383,63 +1203,9 @@ namespace Asv.Avalonia {
             }
         }
         
-        public static string ResetHotKeysCommand_CommandInfo_Name {
-            get {
-                return ResourceManager.GetString("ResetHotKeysCommand_CommandInfo_Name", resourceCulture);
-            }
-        }
-        
-        public static string ResetHotKeysCommand_CommandInfo_Description {
-            get {
-                return ResourceManager.GetString("ResetHotKeysCommand_CommandInfo_Description", resourceCulture);
-            }
-        }
-        
-        public static string SettingsHotKeysListView_SearchBar_Watermark {
-            get {
-                return ResourceManager.GetString("SettingsHotKeysListView_SearchBar_Watermark", resourceCulture);
-            }
-        }
-        
         public static string SettingsHotKeysListView_ResetButton_Content {
             get {
                 return ResourceManager.GetString("SettingsHotKeysListView_ResetButton_Content", resourceCulture);
-            }
-        }
-        
-        public static string SettingsHotKeysListView_HotKey_Header {
-            get {
-                return ResourceManager.GetString("SettingsHotKeysListView_HotKey_Header", resourceCulture);
-            }
-        }
-        
-        public static string SettingsHotKeysListView_Name_Header {
-            get {
-                return ResourceManager.GetString("SettingsHotKeysListView_Name_Header", resourceCulture);
-            }
-        }
-        
-        public static string SettingsHotKeysListView_Description_Header {
-            get {
-                return ResourceManager.GetString("SettingsHotKeysListView_Description_Header", resourceCulture);
-            }
-        }
-        
-        public static string SettingsHotKeysListView_Source_Header {
-            get {
-                return ResourceManager.GetString("SettingsHotKeysListView_Source_Header", resourceCulture);
-            }
-        }
-        
-        public static string ChangeHotKeyPropertyCommand_CommandInfo_Name {
-            get {
-                return ResourceManager.GetString("ChangeHotKeyPropertyCommand_CommandInfo_Name", resourceCulture);
-            }
-        }
-        
-        public static string ChangeHotKeyPropertyCommand_CommandInfo_Description {
-            get {
-                return ResourceManager.GetString("ChangeHotKeyPropertyCommand_CommandInfo_Description", resourceCulture);
             }
         }
         
@@ -1482,6 +1248,138 @@ namespace Asv.Avalonia {
         public static string HotKeyViewModel_HotKeyCaptureDialog_Message {
             get {
                 return ResourceManager.GetString("HotKeyViewModel_HotKeyCaptureDialog_Message", resourceCulture);
+            }
+        }
+        
+        public static string RttBox_NetworkError_ToolTip {
+            get {
+                return ResourceManager.GetString("RttBox_NetworkError_ToolTip", resourceCulture);
+            }
+        }
+        
+        public static string InParts_SDM_Description {
+            get {
+                return ResourceManager.GetString("InParts_SDM_Description", resourceCulture);
+            }
+        }
+        
+        public static string HomePageView_DeviceBrowser_Title {
+            get {
+                return ResourceManager.GetString("HomePageView_DeviceBrowser_Title", resourceCulture);
+            }
+        }
+        
+        public static string HomePageView_DeviceBrowser_NoneText {
+            get {
+                return ResourceManager.GetString("HomePageView_DeviceBrowser_NoneText", resourceCulture);
+            }
+        }
+        
+        public static string LogViewer_CommandInfo_Name {
+            get {
+                return ResourceManager.GetString("LogViewer_CommandInfo_Name", resourceCulture);
+            }
+        }
+        
+        public static string LogViewer_CommandInfo_Description {
+            get {
+                return ResourceManager.GetString("LogViewer_CommandInfo_Description", resourceCulture);
+            }
+        }
+        
+        public static string LogViewerView_LogMessagesList_Title {
+            get {
+                return ResourceManager.GetString("LogViewerView_LogMessagesList_Title", resourceCulture);
+            }
+        }
+        
+        public static string LogViewerView_LogMessagesList_TimeSection {
+            get {
+                return ResourceManager.GetString("LogViewerView_LogMessagesList_TimeSection", resourceCulture);
+            }
+        }
+        
+        public static string LogViewerView_LogMessagesList_CategorySection {
+            get {
+                return ResourceManager.GetString("LogViewerView_LogMessagesList_CategorySection", resourceCulture);
+            }
+        }
+        
+        public static string LogViewerView_LogMessagesList_MessageSection {
+            get {
+                return ResourceManager.GetString("LogViewerView_LogMessagesList_MessageSection", resourceCulture);
+            }
+        }
+        
+        public static string LogViewerViewModel_Title {
+            get {
+                return ResourceManager.GetString("LogViewerViewModel_Title", resourceCulture);
+            }
+        }
+        
+        public static string LogViewerViewModel_Pagination_SkippedFiltered {
+            get {
+                return ResourceManager.GetString("LogViewerViewModel_Pagination_SkippedFiltered", resourceCulture);
+            }
+        }
+        
+        public static string LogViewerViewModel_Pagination_SkippedFilteredBy {
+            get {
+                return ResourceManager.GetString("LogViewerViewModel_Pagination_SkippedFilteredBy", resourceCulture);
+            }
+        }
+        
+        public static string ShellView_UnsplitAllTabsButton_ToolTip {
+            get {
+                return ResourceManager.GetString("ShellView_UnsplitAllTabsButton_ToolTip", resourceCulture);
+            }
+        }
+        
+        public static string CancelCommand_CommandInfo_Name {
+            get {
+                return ResourceManager.GetString("CancelCommand_CommandInfo_Name", resourceCulture);
+            }
+        }
+        
+        public static string CancelCommand_CommandInfo_Description {
+            get {
+                return ResourceManager.GetString("CancelCommand_CommandInfo_Description", resourceCulture);
+            }
+        }
+        
+        public static string RefreshCommand_CommandInfo_Name {
+            get {
+                return ResourceManager.GetString("RefreshCommand_CommandInfo_Name", resourceCulture);
+            }
+        }
+        
+        public static string RefreshCommand_CommandInfo_Description {
+            get {
+                return ResourceManager.GetString("RefreshCommand_CommandInfo_Description", resourceCulture);
+            }
+        }
+        
+        public static string FocusSearchBoxCommand_CommandInfo_Name {
+            get {
+                return ResourceManager.GetString("FocusSearchBoxCommand_CommandInfo_Name", resourceCulture);
+            }
+        }
+        
+        public static string FocusSearchBoxCommand_CommandInfo_Description {
+            get {
+                return ResourceManager.GetString("FocusSearchBoxCommand_CommandInfo_Description", resourceCulture);
+            }
+        }
+        
+        public static string TextSearchCommand_CommandInfo_Name {
+            get {
+                return ResourceManager.GetString("TextSearchCommand_CommandInfo_Name", resourceCulture);
+            }
+        }
+        
+        public static string TextSearchCommand_CommandInfo_Description {
+            get {
+                return ResourceManager.GetString("TextSearchCommand_CommandInfo_Description", resourceCulture);
             }
         }
     }

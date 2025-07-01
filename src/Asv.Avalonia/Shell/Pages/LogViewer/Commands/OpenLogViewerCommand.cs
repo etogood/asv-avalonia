@@ -11,11 +11,11 @@ public class OpenLogViewerCommand(INavigationService nav)
 
     public const string Id = $"{BaseId}.open.{LogViewerViewModel.PageId}";
 
-    public static readonly ICommandInfo StaticInfo = new CommandInfo // TODO: Localize
+    public static readonly ICommandInfo StaticInfo = new CommandInfo
     {
         Id = Id,
-        Name = "Log Viewer",
-        Description = "Open log viewer",
+        Name = RS.LogViewer_CommandInfo_Name,
+        Description = RS.LogViewer_CommandInfo_Description,
         Icon = LogViewerViewModel.PageIcon,
         Source = SystemModule.Instance,
         DefaultHotKey = "Ctrl+Shift+L",

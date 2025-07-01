@@ -1,5 +1,6 @@
 ﻿using System.Composition;
 using System.Diagnostics;
+using System.Globalization;
 using Asv.Common;
 using Avalonia.Threading;
 using Material.Icons;
@@ -31,7 +32,7 @@ public class LogViewerViewModel
         : base(DesignTime.Id, NullCommandService.Instance, DesignTime.LoggerFactory)
     {
         DesignTime.ThrowIfNotDesignMode();
-        Title = "Log Viewer";
+        Title = RS.LogViewerViewModel_Title;
         Icon = PageIcon;
         Search = new SearchBoxViewModel();
         Items = _itemsSource
@@ -143,7 +144,7 @@ public class LogViewerViewModel
         _logService = logService;
         _search = search;
         _loggerFactory = loggerFactory;
-        Title = "Log Viewer";
+        Title = RS.LogViewerViewModel_Title;
         Icon = PageIcon;
         Items = _itemsSource
             .ToNotifyCollectionChangedSlim()
@@ -156,7 +157,7 @@ public class LogViewerViewModel
         TextMessage = new BindableReactiveProperty<string>(string.Empty).DisposeItWith(Disposable);
 
         Search = new SearchBoxViewModel(
-            "search",
+            nameof(Search),
             loggerFactory,
             UpdateImpl,
             TimeSpan.FromMilliseconds(500)
@@ -226,7 +227,12 @@ public class LogViewerViewModel
                     {
                         ++skip;
                         veryFastMessageProperty.OnNext(
-                            $"Skipped {skip}, filtered {filtered} messages from {total}"
+                            string.Format(
+                                RS.LogViewerViewModel_Pagination_SkippedFiltered,
+                                skip,
+                                filtered,
+                                total
+                            )
                         );
                     }
                     else
@@ -234,7 +240,12 @@ public class LogViewerViewModel
                         await Dispatcher.UIThread.InvokeAsync(() => _itemsSource.Add(vm));
                         progress.Report((double)_itemsSource.Count / Take.Value);
                         veryFastMessageProperty.OnNext(
-                            $"Skipped {skip}, filtered {filtered} messages from {total}"
+                            string.Format(
+                                RS.LogViewerViewModel_Pagination_SkippedFiltered,
+                                skip,
+                                filtered,
+                                total
+                            )
                         );
                     }
 
@@ -249,14 +260,24 @@ public class LogViewerViewModel
                     if (total % 100 == 0)
                     {
                         veryFastMessageProperty.OnNext(
-                            $"Skipped {skip}, filtered {filtered} messages from {total}"
+                            string.Format(
+                                RS.LogViewerViewModel_Pagination_SkippedFiltered,
+                                skip,
+                                filtered,
+                                total
+                            )
                         );
                     }
                 }
             }
 
-            TextMessage.Value =
-                $"Skipped {skip}, filtered {filtered} messages from {total} by {sw.Elapsed.TotalMilliseconds:F0} ms";
+            TextMessage.Value = string.Format(
+                RS.LogViewerViewModel_Pagination_SkippedFilteredBy,
+                skip,
+                filtered,
+                total,
+                sw.Elapsed.TotalMilliseconds
+            );
         }
         finally
         {

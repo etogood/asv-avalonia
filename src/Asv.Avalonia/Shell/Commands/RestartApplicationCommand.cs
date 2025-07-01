@@ -1,5 +1,6 @@
 using System.Composition;
 using Material.Icons;
+using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia;
 

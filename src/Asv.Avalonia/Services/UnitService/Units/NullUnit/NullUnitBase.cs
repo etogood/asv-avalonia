@@ -8,7 +8,7 @@ public sealed class NullUnitBase(IEnumerable<IUnitItem> items) : UnitBase(items)
 
     protected override void SetUnitItem(IUnitItem unitItem)
     {
-        throw new NotImplementedException();
+        return;
     }
 
     public override MaterialIconKind Icon => MaterialIconKind.Settings;

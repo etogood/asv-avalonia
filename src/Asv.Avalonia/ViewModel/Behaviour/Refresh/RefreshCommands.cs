@@ -13,8 +13,8 @@ public class RefreshCommand : ContextCommand<ISupportRefresh>
         new CommandInfo
         {
             Id = Id,
-            Name = "Refresh",
-            Description = "Refresh the current page",
+            Name = RS.RefreshCommand_CommandInfo_Name,
+            Description = RS.RefreshCommand_CommandInfo_Description,
             Icon = MaterialIconKind.Refresh,
             DefaultHotKey = "F5",
             Source = SystemModule.Instance,

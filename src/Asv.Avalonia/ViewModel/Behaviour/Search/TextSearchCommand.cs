@@ -13,8 +13,8 @@ public class TextSearchCommand : ContextCommand<ISupportTextSearch, StringArg>
         new CommandInfo
         {
             Id = Id,
-            Name = "Search text",
-            Description = "Search for text in the current context",
+            Name = RS.TextSearchCommand_CommandInfo_Name,
+            Description = RS.TextSearchCommand_CommandInfo_Description,
             Icon = MaterialIconKind.Search,
             DefaultHotKey = null,
             Source = SystemModule.Instance,

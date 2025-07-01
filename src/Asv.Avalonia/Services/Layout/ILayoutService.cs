@@ -20,8 +20,7 @@ public interface ILayoutService
         {
             if (control.DataContext is IRoutable routable)
             {
-                return this.Get<TPocoType>(routable, defaultValue);
-                break;
+                return Get(routable, defaultValue);
             }
 
             // Try to find IRoutable DataContext in logical parent

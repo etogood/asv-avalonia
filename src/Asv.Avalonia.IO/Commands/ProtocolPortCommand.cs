@@ -15,8 +15,8 @@ public class PortCrudCommand(IDeviceManager manager) : StatelessCrudCommand<Stri
     public static readonly ICommandInfo StaticInfo = new CommandInfo
     {
         Id = Id,
-        Name = "Add/remove/change port",
-        Description = "Add/remove/change port",
+        Name = RS.PortCrudCommand_CommandInfo_Name,
+        Description = RS.PortCrudCommand_CommandInfo_Description,
         Icon = MaterialIconKind.SerialPort,
         DefaultHotKey = null,
         Source = IoModule.Instance,
@@ -82,7 +82,7 @@ public class PortCrudCommand(IDeviceManager manager) : StatelessCrudCommand<Stri
 
     protected override async ValueTask<string> Create(StringArg options)
     {
-        // this is long-running operation, so we run it in a separate task
+        // this is a long-running operation, so we run it in a separate task
         return await Task.Factory.StartNew(
             () =>
             {

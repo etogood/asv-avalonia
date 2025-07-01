@@ -9,7 +9,7 @@ public interface IDialogPrefab<in TPayload, TOutput> : ICustomDialog
     /// Shows a dialog to the user.
     /// </summary>
     /// <param name="dialogPayload">
-    /// <see cref="TPayload"/> contains data that is required for the dialog.
+    /// <see cref="TPayload"/> contains data required for the dialog.
     /// </param>
     /// <returns>
     /// A <see cref="ValueTask{TOutput}"/> that represents an asynchronous operation.

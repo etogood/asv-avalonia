@@ -103,7 +103,7 @@
             <Button Background="Transparent" DockPanel.Dock="Right" DataContext="{Binding ElementName=DockControl}" Command="{Binding UnSplitAllCommand}">
                 <avalonia1:MaterialIcon Kind="ArrowLeftBox"/>
                 <ToolTip.Tip>
-                    <TextBlock Text="Un split all tabs"/>
+                    <TextBlock Text="{x:Static avalonia:RS.ShellView_UnsplitAllTabsButton_ToolTip}"/>
                 </ToolTip.Tip>
             </Button>
 
