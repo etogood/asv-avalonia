@@ -65,6 +65,8 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
         Backward = new ReactiveCommand((_, _) => BackwardAsync()).AddTo(ref dispose);
         Forward = new ReactiveCommand((_, _) => ForwardAsync()).AddTo(ref dispose);
         GoHome = new ReactiveCommand((_, _) => GoHomeAsync()).AddTo(ref dispose);
+        SelectedControl = _selectedControl.ToReadOnlyReactiveProperty().AddTo(ref dispose);
+        SelectedControlPath = _selectedControlPath.ToReadOnlyReactiveProperty().AddTo(ref dispose);
         _host.OnShellLoaded.SubscribeAwait(LoadLayout).AddTo(ref dispose);
         _disposeIt = dispose.Build();
     }
@@ -216,8 +218,8 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
         }
     }
 
-    public ReadOnlyReactiveProperty<IRoutable?> SelectedControl => _selectedControl;
-    public ReadOnlyReactiveProperty<NavigationPath> SelectedControlPath => _selectedControlPath;
+    public ReadOnlyReactiveProperty<IRoutable?> SelectedControl { get; }
+    public ReadOnlyReactiveProperty<NavigationPath> SelectedControlPath { get; }
 
     #endregion
 

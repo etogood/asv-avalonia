@@ -36,7 +36,13 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
         MainMenuView = new MenuTree(MainMenu).DisposeItWith(Disposable);
         MainMenu.SetRoutableParent(this).DisposeItWith(Disposable);
         MainMenu.DisposeRemovedItems().DisposeItWith(Disposable);
-        SelectedPage.Subscribe(page => Navigation.ForceFocus(page)).DisposeItWith(Disposable);
+        SelectedPage
+            .Subscribe(page =>
+            {
+                Logger.LogInformation($"Navigated to {page?.Id}");
+                Navigation.ForceFocus(page);
+            })
+            .DisposeItWith(Disposable);
     }
 
     #region MainMenu
@@ -142,12 +148,34 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
                     return;
                 }
 
+                var current = SelectedPage.Value; // TODO: It looks like a crutch. We need to find another solution.
+                var removedIndex = _pages.IndexOf(close.Page);
+                if (removedIndex < 0)
+                {
+                    break;
+                }
+
                 _pages.Remove(close.Page);
                 close.Page.Parent = null;
                 close.Page.Dispose();
+
                 if (_pages.Count == 0)
                 {
                     await Navigation.GoHomeAsync();
+                    break;
+                }
+
+                if (current?.Id == close.Page.Id)
+                {
+                    SelectedPage.Value = null;
+
+                    var newIndex = removedIndex < _pages.Count ? removedIndex : 0;
+                    SelectedPage.Value = _pages[newIndex];
+                }
+                else
+                {
+                    SelectedPage.Value = null;
+                    SelectedPage.Value = current;
                 }
 
                 break;
