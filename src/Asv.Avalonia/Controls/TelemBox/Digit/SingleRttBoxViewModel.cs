@@ -30,10 +30,12 @@ public class SingleRttBoxViewModel : RttBoxViewModel
                 if (Random.Shared.NextDouble() > 0.9)
                 {
                     ValueString = Asv.Avalonia.Units.NotAvailableString;
+                    StatusText = "No data";
                 }
                 else
                 {
                     ValueString = (Random.Shared.Next(-6553500, 6553500) / 100.0).ToString("F2");
+                    StatusText = null;
                 }
 
                 Status = Enum.GetValues<RttBoxStatus>()[index++ % maxIndex];
@@ -56,6 +58,12 @@ public class SingleRttBoxViewModel : RttBoxViewModel
     }
 
     public string? ValueString
+    {
+        get;
+        set => SetField(ref field, value);
+    }
+
+    public string? StatusText
     {
         get;
         set => SetField(ref field, value);

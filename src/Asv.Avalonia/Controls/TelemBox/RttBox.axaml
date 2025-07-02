@@ -104,7 +104,7 @@
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="VerticalAlignment" Value="Top"/>
         <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
-        <Setter Property="IconBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
+        <Setter Property="IconBrush" Value="{DynamicResource SystemControlBackgroundAccentBrush}"/>
         <Setter Property="BorderThickness" Value="2"/>
         <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>

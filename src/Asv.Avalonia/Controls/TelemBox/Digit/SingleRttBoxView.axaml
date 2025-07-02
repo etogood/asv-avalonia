@@ -48,7 +48,8 @@
                 Classes.info2="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info2}"
                 Classes.info3="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info3}"
                 Classes.info4="{Binding ProgressStatus, Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, ConverterParameter=Info4}"
-                DockPanel.Dock="Bottom"/>
+                />
+            <TextBlock Margin="0,4,0,0"  HorizontalAlignment="Left" Foreground="{DynamicResource AsvForegroundUnknownBrush}" FontSize="15" IsVisible="{Binding StatusText, Converter={x:Static ObjectConverters.IsNotNull}}" Text="{Binding StatusText}"/>
         </StackPanel>
         
         

@@ -71,6 +71,12 @@ public class TwoColumnRttBoxViewModel : RttBoxViewModel
 
     public KeyValueViewModel Left { get; } = new();
     public KeyValueViewModel Right { get; } = new();
+
+    public string? StatusText
+    {
+        get;
+        set => SetField(ref field, value);
+    }
 }
 
 public class TwoColumnRttBoxViewModel<T> : TwoColumnRttBoxViewModel

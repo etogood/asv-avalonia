@@ -286,6 +286,38 @@
             />         
         </FluentTheme.Palettes>
     </FluentTheme>-->
+    <Style Selector="ProgressBar">
+        <Style Selector="^.error">
+                <Setter Property="Foreground" Value="{DynamicResource AsvForegroundErrorBrush}"/>
+            </Style>
+            <Style Selector="^.warning">
+                <Setter Property="Foreground" Value="{DynamicResource AsvForegroundWarningBrush}"/>
+            </Style>
+        
+            <Style Selector="^.unknown">
+                <Setter Property="Foreground" Value="{DynamicResource AsvForegroundUnknownBrush}"/>
+            </Style>
+            
+            <Style Selector="^.success">
+                <Setter Property="Foreground" Value="{DynamicResource AsvForegroundSuccessBrush}"/>
+            </Style>
+            
+            <Style Selector="^.info">
+                <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfoBrush}"/>
+            </Style>
+            
+            <Style Selector="^.info2">
+                <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfo2Brush}"/>
+            </Style>
+            
+            <Style Selector="^.info3">
+                <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfo3Brush}"/>
+            </Style>
+            
+            <Style Selector="^.info4">
+                <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfo4Brush}"/>
+            </Style>
+    </Style>
     <Style Selector="Ellipse.fadeout">
         <Setter Property="Fill" Value="{DynamicResource AsvForegroundSuccessBrush}"/>
         <Setter Property="Width" Value="5"/>
