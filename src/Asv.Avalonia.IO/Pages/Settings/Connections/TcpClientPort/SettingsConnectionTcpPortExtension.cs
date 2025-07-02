@@ -14,7 +14,7 @@ public class SettingsConnectionTcpPortExtension(ILoggerFactory loggerFactory)
     {
         var menu = new MenuItem(
             TcpClientProtocolPort.Scheme,
-            $"{RS.SettingsConnectionTcpExtension_MenuItem_Header}",
+            RS.SettingsConnectionTcpExtension_MenuItem_Header,
             loggerFactory
         );
         menu.Icon = TcpPortViewModel.DefaultIcon;

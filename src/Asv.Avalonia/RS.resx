@@ -697,4 +697,7 @@
     <data name="TextSearchCommand_CommandInfo_Description" xml:space="preserve">
         <value>Command for searching text in the current context</value>
     </data>
+    <data name="SearchBoxView_MainTextBox_Watermark" xml:space="preserve">
+        <value>Search</value>
+    </data>
 </root>

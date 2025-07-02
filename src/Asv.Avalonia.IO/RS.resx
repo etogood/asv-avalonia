@@ -72,4 +72,16 @@
     <data name="PortCrudCommand_CommandInfo_Description" xml:space="preserve">
         <value>Command to add/remove/change port</value>
     </data>
+    <data name="HomePageDeviceItem_Description" xml:space="preserve">
+        <value>Device {0} with address {1}</value>
+    </data>
+    <data name="HomePageDeviceItem_Info_Id" xml:space="preserve">
+        <value>StaticId</value>
+    </data>
+    <data name="HomePageDeviceItem_Info_Type" xml:space="preserve">
+        <value>Type</value>
+    </data>
+    <data name="HomePageDeviceItem_Info_Link" xml:space="preserve">
+        <value>Status</value>
+    </data>
 </root>
