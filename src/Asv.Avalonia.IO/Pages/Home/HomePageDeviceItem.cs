@@ -20,34 +20,35 @@ public class HomePageDeviceItem : HomePageItem
         IconBrush = deviceManager.GetDeviceBrush(device.Id);
         device.Name.Subscribe(x => Header = x).DisposeItWith(Disposable);
         Info.Add(
-            new HeadlinedViewModel(DesignTime.Id, DesignTime.LoggerFactory)
+            new HeadlinedViewModel("id", DesignTime.LoggerFactory)
             {
                 Icon = MaterialIconKind.IdCard,
-                Header = "StaticId",
+                Header = RS.HomePageDeviceItem_Info_Id,
                 Description = device.Id.AsString(),
             }
         );
         Info.Add(
-            new HeadlinedViewModel(DesignTime.Id, DesignTime.LoggerFactory)
+            new HeadlinedViewModel("type", DesignTime.LoggerFactory)
             {
                 Icon = MaterialIconKind.MergeType,
-                Header = "Type",
+                Header = RS.HomePageDeviceItem_Info_Type,
                 Description = device.Id.DeviceClass,
             }
         );
-        var linkInfo = new HeadlinedViewModel(DesignTime.Id, DesignTime.LoggerFactory)
+        var linkInfo = new HeadlinedViewModel("link", DesignTime.LoggerFactory)
         {
             Icon = MaterialIconKind.Network,
-            Header = "Link",
+            Header = RS.HomePageDeviceItem_Info_Link,
         };
         device
-            .Link.State.Subscribe(x =>
-            {
-                linkInfo.Description = x.ToString("G");
-            })
+            .Link.State.Subscribe(x => linkInfo.Description = x.ToString("G"))
             .DisposeItWith(Disposable);
         Info.Add(linkInfo);
-        Description = $"Device {device.Id.DeviceClass} with address {device.Id}";
+        Description = string.Format(
+            RS.HomePageDeviceItem_Description,
+            device.Id.DeviceClass,
+            device.Id
+        );
     }
 
     public IClientDevice Device { get; }

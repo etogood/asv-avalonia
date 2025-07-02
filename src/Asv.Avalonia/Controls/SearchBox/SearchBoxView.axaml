@@ -14,7 +14,7 @@
         <TextBox MinWidth="200" Padding="0" VerticalContentAlignment="Center" 
                  avalonia1:NavigationHelper.IsSelected ="{Binding IsSelected, Mode=OneWay}"
                  Text="{Binding Text.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                 Watermark="Search"
+                 Watermark="{x:Static avalonia1:RS.SearchBoxView_MainTextBox_Watermark}"
                  MinHeight="0" Height="25" >
             <TextBox.KeyBindings>
                 <KeyBinding Gesture="Enter" Command="{Binding QueryWithCommand}" CommandParameter="{Binding Text.Value}"/>

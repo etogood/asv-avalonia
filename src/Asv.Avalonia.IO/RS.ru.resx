@@ -65,4 +65,16 @@
     <data name="PortCrudCommand_CommandInfo_Description" xml:space="preserve">
         <value>Команда для добавления, удаления или изменения порта</value>
     </data>
+    <data name="HomePageDeviceItem_Description" xml:space="preserve">
+        <value>Устройство {0} с адресом {1}</value>
+    </data>
+    <data name="HomePageDeviceItem_Info_Id" xml:space="preserve">
+        <value>Статический идентификатор</value>
+    </data>
+    <data name="HomePageDeviceItem_Info_Link" xml:space="preserve">
+        <value>Статус</value>
+    </data>
+    <data name="HomePageDeviceItem_Info_Type" xml:space="preserve">
+        <value>Тип</value>
+    </data>
 </root>

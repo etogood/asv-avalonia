@@ -873,4 +873,7 @@
     <data name="TextSearchCommand_CommandInfo_Description" xml:space="preserve">
         <value>Команда для поиска текста в текущем контексте</value>
     </data>
+    <data name="SearchBoxView_MainTextBox_Watermark" xml:space="preserve">
+        <value>Искать</value>
+    </data>
 </root>
