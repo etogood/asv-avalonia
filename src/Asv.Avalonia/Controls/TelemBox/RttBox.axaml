@@ -98,7 +98,6 @@
         </Grid>
     
     </Design.PreviewWith>
-    
     <Style Selector="controls|RttBox">
         <!-- Set Defaults -->
         <Setter Property="Background" Value="Transparent"/>
