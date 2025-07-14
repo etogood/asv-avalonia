@@ -129,4 +129,10 @@
     <data name="SourcesView_Username" xml:space="preserve">
         <value>Имя пользователя</value>
     </data>
+    <data name="OpenInstalledPluginsCommand_Action_Title" xml:space="preserve">
+        <value>Установленные плагины</value>
+    </data>
+    <data name="OpenInstalledPluginsCommand_Action_Description" xml:space="preserve">
+        <value>Открыть установленные плагины</value>
+    </data>
 </root>
