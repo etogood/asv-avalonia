@@ -131,5 +131,10 @@
     <data name="PluginInstallerViewModel_InstallDialog_PrimaryButtonText" xml:space="preserve">
         <value>Install</value>
     </data>
-   
+    <data name="OpenInstalledPluginsCommand_Action_Title" xml:space="preserve">
+        <value>Installed Plugins</value>
+    </data>
+    <data name="OpenInstalledPluginsCommand_Action_Description" xml:space="preserve">
+        <value>Open Installed Plagins</value>
+    </data>
 </root>
