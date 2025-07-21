@@ -1,0 +1,30 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="AsvForegroundErrorBrush" Color="{DynamicResource AsvForegroundErrorColor}" />
+    <SolidColorBrush x:Key="AsvBackgroundErrorBrush" Color="{DynamicResource AsvBackgroundErrorColor}" />
+
+    <SolidColorBrush x:Key="AsvForegroundWarningBrush" Color="{DynamicResource AsvForegroundWarningColor}" />
+    <SolidColorBrush x:Key="AsvBackgroundWarningBrush" Color="{DynamicResource AsvBackgroundWarningColor}" />
+
+    <SolidColorBrush x:Key="AsvForegroundSuccessBrush" Color="{DynamicResource AsvForegroundSuccessColor}" />
+    <SolidColorBrush x:Key="AsvBackgroundSuccessBrush" Color="{DynamicResource AsvBackgroundSuccessColor}" />
+
+    <SolidColorBrush x:Key="AsvForegroundUnknownBrush" Color="{DynamicResource AsvForegroundUnknownColor}" />
+    <SolidColorBrush x:Key="AsvBackgroundUnknownBrush" Color="{DynamicResource AsvBackgroundUnknownColor}" />
+
+    <SolidColorBrush x:Key="AsvForegroundInfoBrush" Color="{DynamicResource AsvForegroundInfoColor}" />
+    <SolidColorBrush x:Key="AsvBackgroundInfoBrush" Color="{DynamicResource AsvBackgroundInfoColor}" />
+
+    <SolidColorBrush x:Key="AsvForegroundInfo2Brush" Color="{DynamicResource AsvForegroundInfo2Color}" />
+    <SolidColorBrush x:Key="AsvBackgroundInfo2Brush" Color="{DynamicResource AsvBackgroundInfo2Color}" />
+
+    <SolidColorBrush x:Key="AsvForegroundInfo3Brush" Color="{DynamicResource AsvForegroundInfo3Color}" />
+    <SolidColorBrush x:Key="AsvBackgroundInfo3Brush" Color="{DynamicResource AsvBackgroundInfo3Color}" />
+
+    <SolidColorBrush x:Key="AsvForegroundInfo4Brush" Color="{DynamicResource AsvForegroundInfo4Color}" />
+    <SolidColorBrush x:Key="AsvBackgroundInfo4Brush" Color="{DynamicResource AsvBackgroundInfo4Color}" />
+
+    <SolidColorBrush x:Key="AsvPopupCommonBrush" Color="{DynamicResource AsvPopupCommonColor}" />
+    
+    <SolidColorBrush x:Key="AsvSmokeFillColorDefaultBrush" Color="{DynamicResource AsvSmokeFillColorDefault}" />
+</ResourceDictionary>
