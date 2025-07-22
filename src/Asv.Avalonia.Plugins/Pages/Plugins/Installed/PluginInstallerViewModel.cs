@@ -31,14 +31,12 @@ public class PluginInstallerViewModel : DialogViewModelBase
         var config = cfg.Get<PluginInstallerViewModelConfig>();
         NugetPackageFilePath = new BindableReactiveProperty<string>(config.NugetPackageFilePath);
 
-        _sub1 = NugetPackageFilePath.EnableValidation(
+        _sub1 = NugetPackageFilePath.EnableValidationRoutable(
             value =>
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    return ValueTask.FromResult<ValidationResult>(
-                        new Exception(RS.SourceViewModel_SourceViewModel_NameIsRequired)
-                    );
+                    return new Exception("Nuget package file path cannot be empty");
                 }
 
                 return ValidationResult.Success;
@@ -53,7 +51,7 @@ public class PluginInstallerViewModel : DialogViewModelBase
         });
     }
 
-    public BindableReactiveProperty<string> NugetPackageFilePath { get; set; }
+    public BindableReactiveProperty<string> NugetPackageFilePath { get; }
 
     internal async Task InstallPluginAsync(IProgress<double> progress, CancellationToken cancel)
     {

@@ -69,5 +69,14 @@
      
     </ItemGroup>
 
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Pages\Flight\FlightPageView.axaml" />
+      <UpToDateCheckInput Remove="Pages\Flight\Widgets\UavWidget\Controls\Attitude\AttitudeIndicatorStyles.axaml" />
+      <UpToDateCheckInput Remove="Pages\Flight\Widgets\UavWidget\Controls\RouteIndicator\RouteIndicatorStyles.axaml" />
+      <UpToDateCheckInput Remove="Pages\Flight\Widgets\UavWidget\Dialogs\SetAltitudeDialog.axaml" />
+      <UpToDateCheckInput Remove="Pages\Flight\Widgets\UavWidget\MissionProgress\MissionProgressView.axaml" />
+      <UpToDateCheckInput Remove="Pages\Flight\Widgets\UavWidget\UavWidgetView.axaml" />
+    </ItemGroup>
+
    
 </Project>

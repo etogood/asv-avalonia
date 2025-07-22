@@ -11,7 +11,7 @@
     </Design.DataContext>
     <DockPanel>
         <StackPanel DockPanel.Dock="Left" VerticalAlignment="Top" HorizontalAlignment="Left">
-            <Grid RowDefinitions="*, Auto, Auto, Auto, Auto" ColumnDefinitions="*,*">
+            <Grid RowDefinitions="*, Auto, Auto, Auto, Auto, Auto" ColumnDefinitions="*,*">
                 <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Speed: " />
                 <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Speed.ViewValue.Value, UpdateSourceTrigger=LostFocus}" />
                 <TextBlock Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" Text="StringWithoutValidation: " />
@@ -22,6 +22,15 @@
                 <TextBox Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" Text="{Binding StringPropWithManyValidations.ViewValue.Value, UpdateSourceTrigger=LostFocus}" />
                 <TextBlock Grid.Column="0" Grid.Row="4" VerticalAlignment="Center" Text="HistoricalBool: " />
                 <Button Grid.Column="1" Grid.Row="4" VerticalAlignment="Center" Content="{Binding IsTurnedOn.ViewValue.Value}" Command="{CompiledBinding TurnOn}"/>
+                <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
+                            Orientation="Horizontal" Spacing="8">
+                    <TextBox Width="120"
+                             Text="{Binding GeoPointProperty.Latitude.ViewValue.Value, UpdateSourceTrigger=LostFocus}" />
+                    <TextBox Width="120"
+                             Text="{Binding GeoPointProperty.Longitude.ViewValue.Value, UpdateSourceTrigger=LostFocus}" />
+                    <TextBox Width="120"
+                             Text="{Binding GeoPointProperty.Altitude.ViewValue.Value, UpdateSourceTrigger=LostFocus}" />
+                </StackPanel>
             </Grid>
         </StackPanel>
     </DockPanel>

@@ -24,9 +24,7 @@ public class SourceViewModel : DialogViewModelBase
         {
             if (string.IsNullOrWhiteSpace(x))
             {
-                Name.OnErrorResume(
-                    new Exception(RS.SourceViewModel_SourceViewModel_NameIsRequired)
-                );
+                Name.OnErrorResume(new Exception(RS.SourceViewModel_NameValidation_NameIsRequired));
             }
         });
         _sub2 = SourceUri.Subscribe(x =>
@@ -34,7 +32,7 @@ public class SourceViewModel : DialogViewModelBase
             if (string.IsNullOrWhiteSpace(x))
             {
                 SourceUri.OnErrorResume(
-                    new Exception(RS.SourceViewModel_SourceViewModel_SourceUriIsRequired)
+                    new Exception(RS.SourceViewModel_SourceUriValidation_SourceUriIsRequired)
                 );
             }
         });
@@ -57,14 +55,12 @@ public class SourceViewModel : DialogViewModelBase
         Username = new BindableReactiveProperty<string?>(_viewModel?.Model.Username);
         Password = new BindableReactiveProperty<string>();
 
-        _sub1 = Name.EnableValidation(
+        _sub1 = Name.EnableValidationRoutable(
             value =>
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    return ValueTask.FromResult<ValidationResult>(
-                        new Exception(RS.SourceViewModel_SourceViewModel_NameIsRequired)
-                    );
+                    return new Exception(RS.SourceViewModel_NameValidation_NameIsRequired);
                 }
 
                 return ValidationResult.Success;
@@ -73,13 +69,13 @@ public class SourceViewModel : DialogViewModelBase
             true
         );
 
-        _sub2 = SourceUri.EnableValidation(
+        _sub2 = SourceUri.EnableValidationRoutable(
             x =>
             {
                 if (string.IsNullOrWhiteSpace(x))
                 {
-                    return ValueTask.FromResult<ValidationResult>(
-                        new Exception(RS.SourceViewModel_SourceViewModel_SourceUriIsRequired)
+                    return new Exception(
+                        RS.SourceViewModel_SourceUriValidation_SourceUriIsRequired
                     );
                 }
 
@@ -90,10 +86,10 @@ public class SourceViewModel : DialogViewModelBase
         );
     }
 
-    public BindableReactiveProperty<string> Name { get; set; }
-    public BindableReactiveProperty<string> SourceUri { get; set; }
-    public BindableReactiveProperty<string?> Username { get; set; }
-    public BindableReactiveProperty<string> Password { get; set; }
+    public BindableReactiveProperty<string> Name { get; }
+    public BindableReactiveProperty<string> SourceUri { get; }
+    public BindableReactiveProperty<string?> Username { get; }
+    public BindableReactiveProperty<string> Password { get; }
 
     public override void ApplyDialog(ContentDialog dialog)
     {
