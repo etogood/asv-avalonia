@@ -1,0 +1,58 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:geoMap="clr-namespace:Asv.Avalonia.GeoMap"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:CompileBindings="True"
+             x:DataType="geoMap:PositionDialogViewModel"
+             x:Class="Asv.Avalonia.GeoMap.PositionDialogView">
+    
+    <Design.DataContext>
+        <geoMap:PositionDialogViewModel />
+    </Design.DataContext>
+
+    <Panel>
+        <StackPanel Spacing="10" Margin="16">
+            <!-- Карта-заглушка -->
+            <Border Background="#DDD" Height="150" CornerRadius="4" HorizontalAlignment="Stretch">
+                <TextBlock Text="Map Placeholder" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Border>
+
+            <!-- Координаты -->
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="X:" VerticalAlignment="Center"/>
+                <TextBox Width="60" Text="{CompiledBinding XCoord.Value, Mode=TwoWay}"/>
+                <TextBlock Text="Y:" VerticalAlignment="Center"/>
+                <TextBox Width="60" Text="{CompiledBinding YCoord.Value, Mode=TwoWay}"/>
+                <TextBlock Text="Z:" VerticalAlignment="Center"/>
+                <StackPanel>
+                    <Button Content="▲" Command="{CompiledBinding IncreaseZCommand}" />
+                    <TextBox Width="60" Text="{CompiledBinding ZCoord.Value, Mode=TwoWay}" HorizontalAlignment="Left"/>
+                    <Button Content="▼" Command="{CompiledBinding DecreaseZCommand}" />
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Направление -->
+            <UniformGrid Rows="3" Columns="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10">
+                <Button Content="↖️" Command="{CompiledBinding MoveTopLeftCommand}"/>
+                <Button Content="↑" Command="{CompiledBinding MoveUpCommand}"/>
+                <Button Content="↗️" Command="{CompiledBinding MoveTopRightCommand}"/>
+                <Button Content="←" Command="{CompiledBinding MoveLeftCommand}"/>
+                <Button Content="•" IsEnabled="False"/>
+                <Button Content="→" Command="{CompiledBinding MoveRightCommand}"/>
+                <Button Content="↙️" Command="{CompiledBinding MoveBottomLeftCommand}"/>
+                <Button Content="↓" Command="{CompiledBinding MoveDownCommand}"/>
+                <Button Content="↘️" Command="{CompiledBinding MoveBottomRightCommand}"/>
+            </UniformGrid>
+
+            <!-- Выбор шага -->
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="8">
+                <TextBlock Text="Step:" VerticalAlignment="Center"/>
+                <ComboBox Width="100"
+                          ItemsSource="{CompiledBinding StepOptions}"
+                          SelectedItem="{CompiledBinding SelectedStep.Value, Mode=TwoWay}" />
+            </StackPanel>
+        </StackPanel>
+    </Panel>
+</UserControl>
