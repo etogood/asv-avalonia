@@ -1,5 +1,4 @@
-﻿using Asv.Common;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
@@ -13,17 +12,6 @@ namespace Asv.Avalonia;
 /// </summary>
 public partial class DockWindow : Window
 {
-    public static readonly StyledProperty<bool> CloseRequestedProperty = AvaloniaProperty.Register<
-        DockWindow,
-        bool
-    >(nameof(CloseRequested));
-
-    public bool CloseRequested
-    {
-        get => GetValue(CloseRequestedProperty);
-        set => SetValue(CloseRequestedProperty, value);
-    }
-
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
