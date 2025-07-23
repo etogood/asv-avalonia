@@ -87,10 +87,10 @@
     <data name="PluginsMarketView_Cancel" xml:space="preserve">
         <value>Отмена</value>
     </data>
-    <data name="SourceViewModel_SourceViewModel_NameIsRequired" xml:space="preserve">
+    <data name="SourceViewModel_NameValidation_NameIsRequired" xml:space="preserve">
         <value>Имя не должно быть пустым</value>
     </data>
-    <data name="SourceViewModel_SourceViewModel_SourceUriIsRequired" xml:space="preserve">
+    <data name="SourceViewModel_SourceUriValidation_SourceUriIsRequired" xml:space="preserve">
         <value>URI сервера не может быть пустым</value>
     </data>
     <data name="PluginsSourcesViewModel_PluginsSourcesViewModel_ErrorToUpdate" xml:space="preserve">

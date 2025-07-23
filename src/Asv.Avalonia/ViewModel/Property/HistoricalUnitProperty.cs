@@ -22,30 +22,18 @@ public sealed class HistoricalUnitProperty : HistoricalPropertyBase<double, stri
         ReactiveProperty<double> modelValue,
         IUnit unit,
         ILoggerFactory loggerFactory,
+        IRoutable parent,
         string? format = null
     )
-        : base(id, loggerFactory)
+        : base(id, loggerFactory, parent)
     {
         _modelValue = modelValue;
         _unit = unit;
         _format = format;
+        ViewValue.EnableValidation(ValidateValue);
 
         _internalChange = true;
-        ViewValue.EnableValidation().ForceValidate();
-        _sub2 = ViewValue.SubscribeAwait(
-            async (value, cancel) =>
-            {
-                var error = ValidateValue(value);
-                if (error is null)
-                {
-                    await OnChangedByUser(value, cancel);
-                    return;
-                }
-
-                ViewValue.OnErrorResume(error);
-            },
-            AwaitOperation.Drop
-        );
+        _sub2 = ViewValue.SubscribeAwait(OnChangedByUser, AwaitOperation.Drop);
         _internalChange = false;
 
         _sub3 = _modelValue.Subscribe(OnChangeByModel);
@@ -55,12 +43,7 @@ public sealed class HistoricalUnitProperty : HistoricalPropertyBase<double, stri
     protected override Exception? ValidateValue(string? userValue)
     {
         var result = _unit.CurrentUnitItem.CurrentValue.ValidateValue(userValue);
-        if (result.IsSuccess)
-        {
-            return null;
-        }
-
-        return result.ValidationException;
+        return result.IsSuccess ? null : result.ValidationException;
     }
 
     protected override async ValueTask OnChangedByUser(string? userValue, CancellationToken cancel)

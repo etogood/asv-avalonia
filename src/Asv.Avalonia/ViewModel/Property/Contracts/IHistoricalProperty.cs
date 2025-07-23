@@ -2,7 +2,8 @@ using R3;
 
 namespace Asv.Avalonia;
 
-public interface IHistoricalProperty<T> : IRoutable
+public interface IHistoricalProperty<TModel> : IRoutable
 {
-    ReactiveProperty<T> ModelValue { get; }
+    ReactiveProperty<TModel> ModelValue { get; }
+    void ForceValidate();
 }

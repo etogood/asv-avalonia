@@ -14,6 +14,7 @@ public class TestHistoryPropertiesPageViewModel : PageViewModel<TestHistoryPrope
     public const string PageId = "test.history.properties";
     public const MaterialIconKind PageIcon = MaterialIconKind.TestTube;
 
+    private readonly ReactiveProperty<GeoPoint> _geoPointProperty;
     private readonly ReactiveProperty<double> _speed;
     private readonly ReactiveProperty<bool> _isTurnedOn;
     private readonly ReactiveProperty<string?> _stringWithoutValidation;
@@ -36,40 +37,33 @@ public class TestHistoryPropertiesPageViewModel : PageViewModel<TestHistoryPrope
     {
         Title = "Test History Properties";
         var un = unit.Units[VelocityBase.Id];
+        var latUnit = unit.Units[LatitudeBase.Id];
+        var lonUnit = unit.Units[LongitudeBase.Id];
+        var altUnit = unit.Units[AltitudeBase.Id];
         _speed = new ReactiveProperty<double>(double.NaN);
         _isTurnedOn = new ReactiveProperty<bool>();
         _stringWithoutValidation = new ReactiveProperty<string?>();
         _stringWithOneValidation = new ReactiveProperty<string?>();
         _stringWithManyValidations = new ReactiveProperty<string?>();
+        _geoPointProperty = new ReactiveProperty<GeoPoint>();
 
-        IsTurnedOn = new HistoricalBoolProperty(
-            $"{PageId}.{nameof(Speed)}",
-            _isTurnedOn,
-            loggerFactory
-        )
-        {
-            Parent = this,
-        };
+        IsTurnedOn = new HistoricalBoolProperty(nameof(Speed), _isTurnedOn, loggerFactory, this);
 
         TurnOn = new ReactiveCommand(_ => IsTurnedOn.ViewValue.Value = !IsTurnedOn.ViewValue.Value);
 
-        Speed = new HistoricalUnitProperty(nameof(Speed), _speed, un, loggerFactory)
-        {
-            Parent = this,
-        };
+        Speed = new HistoricalUnitProperty(nameof(Speed), _speed, un, loggerFactory, this);
         StringPropWithoutValidation = new HistoricalStringProperty(
             nameof(StringPropWithoutValidation),
             _stringWithoutValidation,
-            loggerFactory
-        )
-        {
-            Parent = this,
-        };
+            loggerFactory,
+            this
+        );
 
         StringPropWithOneValidation = new HistoricalStringProperty(
             nameof(StringPropWithOneValidation),
             _stringWithOneValidation,
             loggerFactory,
+            this,
             [
                 v =>
                 {
@@ -81,15 +75,14 @@ public class TestHistoryPropertiesPageViewModel : PageViewModel<TestHistoryPrope
                     return ValidationResult.Success;
                 },
             ]
-        )
-        {
-            Parent = this,
-        };
+        );
+        StringPropWithOneValidation.ForceValidate();
 
         StringPropWithManyValidations = new HistoricalStringProperty(
             nameof(StringPropWithManyValidations),
             _stringWithManyValidations,
             loggerFactory,
+            this,
             [
                 v =>
                 {
@@ -110,10 +103,19 @@ public class TestHistoryPropertiesPageViewModel : PageViewModel<TestHistoryPrope
                     return ValidationResult.Success;
                 },
             ]
-        )
-        {
-            Parent = this,
-        };
+        );
+        StringPropWithManyValidations.ForceValidate();
+
+        GeoPointProperty = new HistoricalGeoPointProperty(
+            nameof(GeoPointProperty),
+            _geoPointProperty,
+            latUnit,
+            lonUnit,
+            altUnit,
+            loggerFactory,
+            this
+        );
+        GeoPointProperty.ForceValidate();
     }
 
     public ReactiveCommand TurnOn { get; }
@@ -122,6 +124,7 @@ public class TestHistoryPropertiesPageViewModel : PageViewModel<TestHistoryPrope
     public HistoricalStringProperty StringPropWithoutValidation { get; }
     public HistoricalStringProperty StringPropWithOneValidation { get; }
     public HistoricalStringProperty StringPropWithManyValidations { get; }
+    public HistoricalGeoPointProperty GeoPointProperty { get; }
 
     protected override TestHistoryPropertiesPageViewModel GetContext()
     {
@@ -136,6 +139,8 @@ public class TestHistoryPropertiesPageViewModel : PageViewModel<TestHistoryPrope
         yield return Speed;
         yield return StringPropWithoutValidation;
         yield return StringPropWithOneValidation;
+        yield return StringPropWithManyValidations;
+        yield return GeoPointProperty;
     }
 
     public override IExportInfo Source => SystemModule.Instance;
@@ -144,16 +149,19 @@ public class TestHistoryPropertiesPageViewModel : PageViewModel<TestHistoryPrope
     {
         if (disposing)
         {
-            TurnOn.Dispose();
             _speed.Dispose();
             _isTurnedOn.Dispose();
+            _geoPointProperty.Dispose();
             _stringWithoutValidation.Dispose();
             _stringWithOneValidation.Dispose();
             _stringWithManyValidations.Dispose();
+
+            TurnOn.Dispose();
             Speed.Dispose();
             StringPropWithoutValidation.Dispose();
             StringPropWithOneValidation.Dispose();
             StringPropWithManyValidations.Dispose();
+            GeoPointProperty.Dispose();
         }
 
         base.Dispose(disposing);

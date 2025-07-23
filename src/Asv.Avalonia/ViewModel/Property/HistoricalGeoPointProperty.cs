@@ -14,9 +14,10 @@ public sealed class HistoricalGeoPointProperty : CompositeHistoricalPropertyBase
         IUnit latUnit,
         IUnit lonUnit,
         IUnit altUnit,
-        ILoggerFactory loggerFactory
+        ILoggerFactory loggerFactory,
+        IRoutable parent
     )
-        : base(id, loggerFactory)
+        : base(id, loggerFactory, parent)
     {
         _modelValue = modelValue;
         var modelLat = new ReactiveProperty<double>().DisposeItWith(Disposable);
@@ -55,18 +56,27 @@ public sealed class HistoricalGeoPointProperty : CompositeHistoricalPropertyBase
             })
             .DisposeItWith(Disposable);
 
-        Latitude = new HistoricalUnitProperty("lat", modelLat, latUnit, loggerFactory)
-        {
-            Parent = this,
-        }.DisposeItWith(Disposable);
-        Longitude = new HistoricalUnitProperty("lon", modelLon, lonUnit, loggerFactory)
-        {
-            Parent = this,
-        }.DisposeItWith(Disposable);
-        Altitude = new HistoricalUnitProperty("alt", modelAlt, altUnit, loggerFactory)
-        {
-            Parent = this,
-        }.DisposeItWith(Disposable);
+        Latitude = new HistoricalUnitProperty(
+            nameof(Latitude),
+            modelLat,
+            latUnit,
+            loggerFactory,
+            this
+        ).DisposeItWith(Disposable);
+        Longitude = new HistoricalUnitProperty(
+            nameof(Longitude),
+            modelLon,
+            lonUnit,
+            loggerFactory,
+            this
+        ).DisposeItWith(Disposable);
+        Altitude = new HistoricalUnitProperty(
+            nameof(Altitude),
+            modelAlt,
+            altUnit,
+            loggerFactory,
+            this
+        ).DisposeItWith(Disposable);
 
         _modelValue
             .Subscribe(x =>
@@ -76,6 +86,13 @@ public sealed class HistoricalGeoPointProperty : CompositeHistoricalPropertyBase
                 modelAlt.Value = x.Altitude;
             })
             .DisposeItWith(Disposable);
+    }
+
+    public override void ForceValidate()
+    {
+        Latitude.ForceValidate();
+        Longitude.ForceValidate();
+        Altitude.ForceValidate();
     }
 
     public override IEnumerable<IRoutable> GetRoutableChildren()

@@ -177,15 +177,15 @@ namespace Asv.Avalonia.Plugins {
             }
         }
         
-        public static string SourceViewModel_SourceViewModel_NameIsRequired {
+        public static string SourceViewModel_NameValidation_NameIsRequired {
             get {
-                return ResourceManager.GetString("SourceViewModel_SourceViewModel_NameIsRequired", resourceCulture);
+                return ResourceManager.GetString("SourceViewModel_NameValidation_NameIsRequired", resourceCulture);
             }
         }
         
-        public static string SourceViewModel_SourceViewModel_SourceUriIsRequired {
+        public static string SourceViewModel_SourceUriValidation_SourceUriIsRequired {
             get {
-                return ResourceManager.GetString("SourceViewModel_SourceViewModel_SourceUriIsRequired", resourceCulture);
+                return ResourceManager.GetString("SourceViewModel_SourceUriValidation_SourceUriIsRequired", resourceCulture);
             }
         }
         

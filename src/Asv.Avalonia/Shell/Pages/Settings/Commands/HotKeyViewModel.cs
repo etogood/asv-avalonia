@@ -34,11 +34,9 @@ public sealed class HotKeyViewModel : RoutableViewModel
         EditedHotKey = new HistoricalStringProperty(
             nameof(EditedHotKey),
             editedHotkey,
-            loggerFactory
-        )
-        {
-            Parent = this,
-        };
+            loggerFactory,
+            this
+        );
 
         SyncConflict(EditedHotKey.ModelValue.Value);
 
