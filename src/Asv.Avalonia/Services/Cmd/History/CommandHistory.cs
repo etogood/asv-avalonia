@@ -38,15 +38,23 @@ public class CommandHistory : ICommandHistory
         var dispose = Disposable.CreateBuilder();
         cmd.OnCommand.Subscribe(TryAddToHistory).AddTo(ref dispose);
         HistoryOwner = historyOwner;
+
         Undo = new ReactiveCommand((_, token) => UndoAsync(token)).AddTo(ref dispose);
         Redo = new ReactiveCommand((_, token) => RedoAsync(token)).AddTo(ref dispose);
+
+        _undoStack
+            .ObserveCountChanged(true)
+            .Subscribe(c => Undo.ChangeCanExecute(c != 0))
+            .AddTo(ref dispose);
+        _redoStack
+            .ObserveCountChanged(true)
+            .Subscribe(c => Redo.ChangeCanExecute(c != 0))
+            .AddTo(ref dispose);
 
         historyOwner
             .ObservePropertyChanged(x => x.Id)
             .Subscribe(TryLoadHistoryFromFile)
             .AddTo(ref dispose);
-
-        CheckUndoRedoCanExecute();
     }
 
     private void GetFilePath(NavigationId navigationId, out string undoPath, out string redoPath)
@@ -133,7 +141,6 @@ public class CommandHistory : ICommandHistory
         {
             _undoStack.Push(snapshot);
             _redoStack.Clear();
-            CheckUndoRedoCanExecute();
         }
     }
 
@@ -148,14 +155,7 @@ public class CommandHistory : ICommandHistory
         {
             await _cmd.Undo(command, cancel);
             _redoStack.Push(command);
-            CheckUndoRedoCanExecute();
         }
-    }
-
-    private void CheckUndoRedoCanExecute()
-    {
-        Undo.ChangeCanExecute(_undoStack.Count != 0);
-        Redo.ChangeCanExecute(_redoStack.Count != 0);
     }
 
     public ReactiveCommand Redo { get; }
@@ -166,7 +166,6 @@ public class CommandHistory : ICommandHistory
         {
             await _cmd.Redo(command, cancel);
             _undoStack.Push(command);
-            CheckUndoRedoCanExecute();
         }
     }
 
