@@ -13,32 +13,17 @@ public sealed class HistoricalBoolProperty : HistoricalPropertyBase<bool, bool>
     public HistoricalBoolProperty(
         NavigationId id,
         ReactiveProperty<bool> modelValue,
-        ILoggerFactory loggerFactory
+        ILoggerFactory loggerFactory,
+        IRoutable parent
     )
-        : base(id, loggerFactory)
+        : base(id, loggerFactory, parent)
     {
         _modelValue = modelValue;
         ViewValue = new BindableReactiveProperty<bool>().DisposeItWith(Disposable);
-
-        // TODO: remove async validation cause it is not needed: all validation is done at UI thread!!!
-        ViewValue
-            .EnableValidation(
-                value =>
-                {
-                    var error = ValidateValue(value);
-                    return error ?? ValidationResult.Success;
-                },
-                this,
-                true,
-                AwaitOperation.Drop
-            )
-            .DisposeItWith(Disposable);
-
         IsSelected = new BindableReactiveProperty<bool>().DisposeItWith(Disposable);
+        ViewValue.EnableValidation(ValidateValue);
 
         _internalChange = true;
-
-        // TODO: remove async validation cause it is not needed: all validation is done at UI thread!!!
         ViewValue.SubscribeAwait(OnChangedByUser, AwaitOperation.Drop).DisposeItWith(Disposable);
         _internalChange = false;
 
@@ -81,7 +66,6 @@ public sealed class HistoricalBoolProperty : HistoricalPropertyBase<bool, bool>
     }
 
     public override BindableReactiveProperty<bool> ViewValue { get; }
-
     public override BindableReactiveProperty<bool> IsSelected { get; }
     public override ReactiveProperty<bool> ModelValue => _modelValue;
 }

@@ -84,10 +84,10 @@
     <data name="InstalledPluginsView_Tab_AdditionalInfo_Tags" xml:space="preserve">
         <value>Tags: </value>
     </data>
-    <data name="SourceViewModel_SourceViewModel_NameIsRequired" xml:space="preserve">
+    <data name="SourceViewModel_NameValidation_NameIsRequired" xml:space="preserve">
         <value>Name is required</value>
     </data>
-    <data name="SourceViewModel_SourceViewModel_SourceUriIsRequired" xml:space="preserve">
+    <data name="SourceViewModel_SourceUriValidation_SourceUriIsRequired" xml:space="preserve">
         <value>Server URI is required</value>
     </data>
     <data name="PluginsSourcesViewModel_PluginsSourcesViewModel_ErrorToUpdate" xml:space="preserve">
@@ -131,5 +131,10 @@
     <data name="PluginInstallerViewModel_InstallDialog_PrimaryButtonText" xml:space="preserve">
         <value>Install</value>
     </data>
-   
+    <data name="OpenInstalledPluginsCommand_Action_Title" xml:space="preserve">
+        <value>Installed Plugins</value>
+    </data>
+    <data name="OpenInstalledPluginsCommand_Action_Description" xml:space="preserve">
+        <value>Open Installed Plagins</value>
+    </data>
 </root>

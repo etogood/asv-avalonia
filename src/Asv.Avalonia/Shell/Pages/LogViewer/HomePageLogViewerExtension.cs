@@ -13,7 +13,11 @@ public sealed class HomePageLogViewerExtension(ILoggerFactory loggerFactory)
     {
         context.Tools.Add(
             OpenLogViewerCommand
-                .StaticInfo.CreateAction(loggerFactory)
+                .StaticInfo.CreateAction(
+                    loggerFactory,
+                    RS.OpenLogViewerCommand_Action_Title,
+                    RS.OpenLogViewerCommand_Action_Description
+                )
                 .DisposeItWith(contextDispose)
         );
     }

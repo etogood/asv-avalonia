@@ -9,7 +9,7 @@ using R3;
 
 namespace Asv.Avalonia.GeoMap;
 
-public class PolygonLayer : Control
+public partial class PolygonLayer : Control
 {
     static PolygonLayer()
     {
@@ -118,15 +118,6 @@ public class PolygonLayer : Control
             .ThrottleLastFrame(1)
             .Subscribe(_ => InvalidateVisual())
             .AddTo(ref disposeBuilder);
-    }
-
-    public static readonly StyledProperty<MapItemsControl?> SourceProperty =
-        AvaloniaProperty.Register<PolygonLayer, MapItemsControl?>(nameof(Source));
-
-    public MapItemsControl? Source
-    {
-        get => GetValue(SourceProperty);
-        set => SetValue(SourceProperty, value);
     }
 
     public override void Render(DrawingContext context)

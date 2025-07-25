@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:Asv.Avalonia">
     <Design.PreviewWith>
-        <Border Width="800" Height="1200" Margin="20">
+        <Border Width="800" Height="1200" Margin="20" ClipToBounds="True">
             <controls:DockControl>
                 <controls:SettingsPageViewModel />
                 <controls:SettingsPageViewModel />
@@ -13,9 +13,10 @@
     </Design.PreviewWith>
     <Style Selector="controls|DockControl">
         <!-- Set Defaults -->
+        <Setter Property="ClipToBounds" Value="True" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Grid ColumnDefinitions="*,*,*" RowDefinitions="*,*,*">
+                <Grid ColumnDefinitions="*,*,*" RowDefinitions="*,*,*" ClipToBounds="True">
                         <Grid Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="0" Grid.RowSpan="3"
                               x:Name="PART_DockSelectivePart">
                         </Grid>

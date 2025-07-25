@@ -1,14 +1,13 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 
 namespace Asv.Avalonia;
 
-public sealed class HotKeyBox : TemplatedControl
+public sealed partial class HotKeyBox : TemplatedControl
 {
     private readonly HashSet<Key> _pressedSymbols = [];
     private readonly TimeSpan _chordTimeout = TimeSpan.FromSeconds(1);
@@ -32,28 +31,6 @@ public sealed class HotKeyBox : TemplatedControl
             _timer?.Stop();
             _sub1?.Dispose();
         };
-    }
-
-    public static readonly StyledProperty<bool> AutoFocusProperty = AvaloniaProperty.Register<
-        HotKeyBox,
-        bool
-    >(nameof(AutoFocus), defaultValue: true);
-
-    public bool AutoFocus
-    {
-        get => GetValue(AutoFocusProperty);
-        set => SetValue(AutoFocusProperty, value);
-    }
-
-    public static readonly StyledProperty<HotKeyInfo?> HotKeyProperty = AvaloniaProperty.Register<
-        HotKeyBox,
-        HotKeyInfo?
-    >(nameof(HotKey), defaultBindingMode: BindingMode.TwoWay);
-
-    public HotKeyInfo? HotKey
-    {
-        get => GetValue(HotKeyProperty);
-        set => SetValue(HotKeyProperty, value);
     }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)

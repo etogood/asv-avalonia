@@ -19,29 +19,17 @@ public sealed class HistoricalStringProperty : HistoricalPropertyBase<string?, s
         string id,
         ReactiveProperty<string?> modelValue,
         ILoggerFactory loggerFactory,
+        IRoutable parent,
         IList<Func<string?, ValidationResult>>? validationRules = null
     )
-        : base(id, loggerFactory)
+        : base(id, loggerFactory, parent)
     {
         InternalInitValidationRules(validationRules);
         _modelValue = modelValue;
+        ViewValue.EnableValidation(ValidateValue);
 
         _internalChange = true;
-        ViewValue.EnableValidation().ForceValidate();
-        _sub2 = ViewValue.SubscribeAwait(
-            async (value, cancel) =>
-            {
-                var error = ValidateValue(value);
-                if (error is null)
-                {
-                    await OnChangedByUser(value, cancel);
-                    return;
-                }
-
-                ViewValue.OnErrorResume(error);
-            },
-            AwaitOperation.Drop
-        );
+        _sub2 = ViewValue.SubscribeAwait(OnChangedByUser, AwaitOperation.Drop);
         _internalChange = false;
 
         _sub3 = _modelValue.Subscribe(OnChangeByModel);
@@ -68,6 +56,11 @@ public sealed class HistoricalStringProperty : HistoricalPropertyBase<string?, s
 
     protected override async ValueTask OnChangedByUser(string? userValue, CancellationToken cancel)
     {
+        if (ViewValue.HasErrors)
+        {
+            return;
+        }
+
         if (_internalChange)
         {
             return;

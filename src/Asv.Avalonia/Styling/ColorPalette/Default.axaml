@@ -1,0 +1,30 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Color x:Key="AsvForegroundErrorColor">#A21E24</Color>
+    <Color x:Key="AsvBackgroundErrorColor">#FDECEA</Color>
+
+    <Color x:Key="AsvForegroundWarningColor">#B36100</Color>
+    <Color x:Key="AsvBackgroundWarningColor">#FFF5E5</Color>
+
+    <Color x:Key="AsvForegroundSuccessColor">#1E846B</Color>
+    <Color x:Key="AsvBackgroundSuccessColor">#E5F6F3</Color>
+
+    <Color x:Key="AsvForegroundUnknownColor">#666666</Color>
+    <Color x:Key="AsvBackgroundUnknownColor">#F5F5F5</Color>
+
+    <Color x:Key="AsvForegroundInfoColor">#2553A3</Color>
+    <Color x:Key="AsvBackgroundInfoColor">#E7ECFC</Color>
+
+    <Color x:Key="AsvForegroundInfo2Color">#6E3E99</Color>
+    <Color x:Key="AsvBackgroundInfo2Color">#F2E9FA</Color>
+
+    <Color x:Key="AsvForegroundInfo3Color">#1E9898</Color>
+    <Color x:Key="AsvBackgroundInfo3Color">#E5FAFA</Color>
+
+    <Color x:Key="AsvForegroundInfo4Color">#7B932F</Color>
+    <Color x:Key="AsvBackgroundInfo4Color">#F3F6E5</Color>
+
+    <Color x:Key="AsvPopupCommonColor">#C3C3C3</Color>
+    
+    <Color x:Key="AsvSmokeFillColorDefault">#4DFFFFFF</Color>
+</ResourceDictionary>
