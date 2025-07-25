@@ -47,20 +47,23 @@
                         CornerRadius="{TemplateBinding CornerRadius}"
                         Background="{TemplateBinding Background}"
                         HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                        VerticalAlignment="{TemplateBinding VerticalAlignment}">
+                        VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                        >
                     <DockPanel>
-                        <ScrollViewer HorizontalScrollBarVisibility="Auto" DockPanel.Dock="Top"
-                                      Width="{Binding Width, RelativeSource={RelativeSource TemplatedParent}}">
-                            <ItemsPresenter Name="PART_ItemsPresenter">
-                            </ItemsPresenter>
+                        <ScrollViewer 
+                            HorizontalScrollBarVisibility="Auto"
+                            VerticalScrollBarVisibility="Disabled"
+                            DockPanel.Dock="Top"
+                            Width="{Binding Width, RelativeSource={RelativeSource TemplatedParent}}">
+                            <ItemsPresenter Name="PART_ItemsPresenter" />
                         </ScrollViewer>
-                                <ContentPresenter Name="PART_SelectedContentHost"
-                                                  MinWidth="100"
-                                                  Margin="{TemplateBinding Padding}"
-                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                  Content="{TemplateBinding SelectedContent}"
-                                                  ContentTemplate="{TemplateBinding SelectedContentTemplate}" />     
+                        <ContentPresenter DockPanel.Dock="Bottom" Name="PART_SelectedContentHost"
+                                          MinWidth="100"
+                                          Margin="{TemplateBinding Padding}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Content="{TemplateBinding SelectedContent}"
+                                          ContentTemplate="{TemplateBinding SelectedContentTemplate}" />
                     </DockPanel>
                 </Border>
             </ControlTemplate>
