@@ -122,19 +122,25 @@
             </StackPanel>
             
         </DockPanel>
-        <Border Classes="status" DockPanel.Dock="Bottom"
-                BorderThickness="0, 1, 0, 0"
-                Classes.normal="{Binding ErrorState, 
-              Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, 
-              ConverterParameter={x:Static avalonia:ShellErrorState.Normal} }"
-                Classes.error="{Binding ErrorState, 
-              Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, 
-              ConverterParameter={x:Static avalonia:ShellErrorState.Error} }"
-                Classes.warning="{Binding ErrorState, 
-              Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, 
-              ConverterParameter={x:Static avalonia:ShellErrorState.Warning} }"
+        <Border 
+            Classes="status" 
+            DockPanel.Dock="Bottom"
+            Background="{StaticResource SystemBaseHighColor}"
+            BorderThickness="0, 1, 0, 0"
+            Classes.normal="{Binding ErrorState, 
+            Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, 
+            ConverterParameter={x:Static avalonia:ShellErrorState.Normal} }"
+            Classes.error="{Binding ErrorState, 
+            Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, 
+            ConverterParameter={x:Static avalonia:ShellErrorState.Error} }"
+            Classes.warning="{Binding ErrorState, 
+            Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, 
+            ConverterParameter={x:Static avalonia:ShellErrorState.Warning} }"
         >
-           
+            <DockPanel Margin="8,0">
+                <!-- Placeholder field for future status items -->
+                <TextBlock Text="Status" VerticalAlignment="Center"/>
+            </DockPanel>
         </Border>
         
         
