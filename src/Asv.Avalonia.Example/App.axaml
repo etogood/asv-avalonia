@@ -3,7 +3,7 @@
              x:Class="Asv.Avalonia.Example.App"
              RequestedThemeVariant="Dark">
     <Application.Styles>
-        <StyleInclude Source="avares://Asv.Avalonia/Theme.axaml"/>
+        <StyleInclude Source="avares://Asv.Avalonia/Styling/Theme.axaml"/>
         <StyleInclude Source="avares://Asv.Avalonia.GeoMap/Theme.axaml"/>
     </Application.Styles>
 </Application>

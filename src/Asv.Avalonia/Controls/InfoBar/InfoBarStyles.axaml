@@ -3,48 +3,6 @@
                     xmlns:avalonia="clr-namespace:Asv.Avalonia"
                     xmlns:avalonia1="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                     x:CompileBindings="True">
-    <!-- Dark theme colors -->
-    <Color x:Key="SystemFillColorCautionBackground">#433519</Color>
-    <Color x:Key="SystemFillColorCriticalBackground">#442726</Color>
-    <Color x:Key="SystemFillColorSuccessBackground">#393D1B</Color>
-    <Color x:Key="SystemFillColorAttentionBackground">#08FFFFFF</Color>
-    <Color x:Key="SystemFillColorCritical">#FF99A4</Color>
-    <Color x:Key="SystemFillColorCaution">#FCE100</Color>
-    <Color x:Key="SystemFillColorSuccess">#6CCB5F</Color>
-    <Color x:Key="TextFillColorInverse">#E4000000</Color>
-    
-    <!-- Regular Brushes -->
-    <SolidColorBrush x:Key="SystemFillColorCriticalBackgroundBrush" Color="{StaticResource SystemFillColorCriticalBackground}" />
-    <SolidColorBrush x:Key="SystemFillColorCautionBackgroundBrush" Color="{StaticResource SystemFillColorCautionBackground}" />
-    <SolidColorBrush x:Key="SystemFillColorSuccessBackgroundBrush" Color="{StaticResource SystemFillColorSuccessBackground}" />
-    <SolidColorBrush x:Key="SystemFillColorAttentionBackgroundBrush" Color="{StaticResource SystemFillColorAttentionBackground}" />
-    <SolidColorBrush x:Key="SystemFillColorCriticalBrush" Color="{StaticResource SystemFillColorCritical}" />
-    <SolidColorBrush x:Key="SystemFillColorCautionBrush" Color="{StaticResource SystemFillColorCaution}" />
-    <SolidColorBrush x:Key="SystemFillColorSuccessBrush" Color="{StaticResource SystemFillColorSuccess}" />
-    <SolidColorBrush x:Key="SystemFillColorAttentionBrush" Color="{DynamicResource SystemAccentColor}" />
-    <SolidColorBrush x:Key="TextFillColorInverseBrush" Color="{StaticResource TextFillColorInverse}" />
-    <SolidColorBrush x:Key="AccentTextFillColorPrimaryBrush" Color="{DynamicResource SystemAccentColorDark2}" />
-    
-    <!-- Info Bar Brushes -->
-    <StaticResource x:Key="InfoBarErrorSeverityBackgroundBrush" ResourceKey="SystemFillColorCriticalBackgroundBrush" />
-    <StaticResource x:Key="InfoBarWarningSeverityBackgroundBrush" ResourceKey="SystemFillColorCautionBackgroundBrush" />
-    <StaticResource x:Key="InfoBarSuccessSeverityBackgroundBrush" ResourceKey="SystemFillColorSuccessBackgroundBrush" />
-    <StaticResource x:Key="InfoBarInformationalSeverityBackgroundBrush" ResourceKey="SystemFillColorAttentionBackgroundBrush" />
-    <StaticResource x:Key="InfoBarErrorSeverityIconBackground" ResourceKey="SystemFillColorCriticalBrush" />
-    <StaticResource x:Key="InfoBarWarningSeverityIconBackground" ResourceKey="SystemFillColorCautionBrush" />
-    <StaticResource x:Key="InfoBarSuccessSeverityIconBackground" ResourceKey="SystemFillColorSuccessBrush" />
-    <StaticResource x:Key="InfoBarInformationalSeverityIconBackground" ResourceKey="SystemFillColorAttentionBrush" />
-    <StaticResource x:Key="InfoBarErrorSeverityIconForeground" ResourceKey="TextFillColorInverseBrush" />
-    <StaticResource x:Key="InfoBarWarningSeverityIconForeground" ResourceKey="TextFillColorInverseBrush" />
-    <StaticResource x:Key="InfoBarSuccessSeverityIconForeground" ResourceKey="TextFillColorInverseBrush" />
-    <StaticResource x:Key="InfoBarInformationalSeverityIconForeground" ResourceKey="TextFillColorInverseBrush" />
-    <StaticResource x:Key="InfoBarTitleForeground" ResourceKey="TextFillColorPrimaryBrush" />
-    <StaticResource x:Key="InfoBarMessageForeground" ResourceKey="TextFillColorPrimaryBrush" />
-    <StaticResource x:Key="InfoBarHyperlinkButtonForeground" ResourceKey="AccentTextFillColorPrimaryBrush" />
-    <StaticResource x:Key="InfoBarBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
-    
-    <Thickness x:Key="InfoBarBorderThickness">1</Thickness>
-
     <Design.PreviewWith>
         <Border Padding="40">
             <StackPanel Spacing="10">
@@ -74,11 +32,11 @@
                 <avalonia:InfoBar IsOpen="True" Title="Title" Message="asdf">
                     <CheckBox Content="Custom Content" />
                 </avalonia:InfoBar>
-
             </StackPanel>
         </Border>
     </Design.PreviewWith>
 
+    <Thickness x:Key="InfoBarBorderThickness">1</Thickness>
     <x:Double x:Key="InfoBarTitleFontSize">14</x:Double>
     <FontWeight x:Key="InfoBarTitleFontWeight">SemiBold</FontWeight>
     <x:Double x:Key="InfoBarMessageFontSize">14</x:Double>
@@ -100,7 +58,6 @@
     <Thickness x:Key="InfoBarMessageVerticalOrientationMargin">0,4,0,0</Thickness>
     <Thickness x:Key="InfoBarActionHorizontalOrientationMargin">16,8,0,0</Thickness>
     <Thickness x:Key="InfoBarActionVerticalOrientationMargin">0,12,0,0</Thickness>
-
     
     <ControlTheme x:Key="InfoBarCloseButtonStyle"
                   BasedOn="{StaticResource TransparentButton}"
@@ -121,7 +78,7 @@
             <ControlTemplate>
                 <Border Name="ContentRoot"
                         VerticalAlignment="Top"
-                        BorderBrush="{DynamicResource InfoBarBorderBrush}"
+                        BorderBrush="{DynamicResource AsvBackgroundInfoBrush}"
                         BorderThickness="{DynamicResource InfoBarBorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         BackgroundSizing="{TemplateBinding BackgroundSizing}">
@@ -165,7 +122,7 @@
                                                    VerticalOrientationPadding="{StaticResource InfoBarPanelVerticalOrientationPadding}">
 
                                 <TextBlock Name="Title"
-                                           Foreground="{DynamicResource InfoBarTitleForeground}"
+                                           Foreground="{DynamicResource TextControlForeground}"
                                            Text="{TemplateBinding Title}"
                                            avalonia:InfoBarPanel.HorizontalOrientationMargin="{StaticResource InfoBarTitleHorizontalOrientationMargin}"
                                            avalonia:InfoBarPanel.VerticalOrientationMargin="{StaticResource InfoBarTitleVerticalOrientationMargin}"
@@ -174,7 +131,7 @@
                                            FontSize="{StaticResource InfoBarTitleFontSize}" />
 
                                 <TextBlock x:Name="Message"
-                                           Foreground="{DynamicResource InfoBarMessageForeground}"
+                                           Foreground="{DynamicResource TextControlForeground}"
                                            Text="{TemplateBinding Message}"
                                            avalonia:InfoBarPanel.HorizontalOrientationMargin="{StaticResource InfoBarMessageHorizontalOrientationMargin}"
                                            avalonia:InfoBarPanel.VerticalOrientationMargin="{StaticResource InfoBarMessageVerticalOrientationMargin}"
@@ -221,54 +178,54 @@
 
         <Style Selector="^:informational">
             <Style Selector="^ /template/ Border#ContentRoot">
-                <Setter Property="Background" Value="{DynamicResource InfoBarInformationalSeverityBackgroundBrush}" />
+                <Setter Property="Background" Value="{DynamicResource AsvBackgroundInfoBrush}" />
             </Style>
             <Style Selector="^ /template/ Ellipse#IconBackground">
-                <Setter Property="Fill" Value="{DynamicResource InfoBarInformationalSeverityIconBackground}" />
+                <Setter Property="Fill" Value="{DynamicResource AsvForegroundInfoBrush}" />
             </Style>
             <Style Selector="^ /template/ avalonia1|MaterialIcon#StandardIcon">
                 <Setter Property="FontSize" Value="10" />
-                <Setter Property="Foreground" Value="{DynamicResource InfoBarInformationalSeverityIconForeground}" />
+                <Setter Property="Foreground" Value="{DynamicResource TextControlForeground}" />
             </Style>
         </Style>
 
         <Style Selector="^:error">
             <Style Selector="^ /template/ Border#ContentRoot">
-                <Setter Property="Background" Value="{DynamicResource InfoBarErrorSeverityBackgroundBrush}" />
+                <Setter Property="Background" Value="{DynamicResource AsvBackgroundErrorBrush}" />
             </Style>
             <Style Selector="^ /template/ Ellipse#IconBackground">
-                <Setter Property="Fill" Value="{DynamicResource InfoBarErrorSeverityIconBackground}" />
+                <Setter Property="Fill" Value="{DynamicResource AsvForegroundErrorBrush}" />
             </Style>
             <Style Selector="^ /template/ avalonia1|MaterialIcon#StandardIcon">
                 <Setter Property="FontSize" Value="10" />
-                <Setter Property="Foreground" Value="{DynamicResource InfoBarInformationalSeverityIconForeground}" />
+                <Setter Property="Foreground" Value="{DynamicResource TextControlForeground}" />
                 <Setter Property="Margin" Value="0,19,14,0" />
             </Style>
         </Style>
 
         <Style Selector="^:warning">
             <Style Selector="^ /template/ Border#ContentRoot">
-                <Setter Property="Background" Value="{DynamicResource InfoBarWarningSeverityBackgroundBrush}" />
+                <Setter Property="Background" Value="{DynamicResource AsvBackgroundWarningBrush}" />
             </Style>
             <Style Selector="^ /template/ Ellipse#IconBackground">
-                <Setter Property="Fill" Value="{DynamicResource InfoBarWarningSeverityIconBackground}" />
+                <Setter Property="Fill" Value="{DynamicResource AsvForegroundWarningBrush}" />
             </Style>
             <Style Selector="^ /template/ avalonia1|MaterialIcon#StandardIcon">
                 <Setter Property="FontSize" Value="10" />
-                <Setter Property="Foreground" Value="{DynamicResource InfoBarInformationalSeverityIconForeground}" />
+                <Setter Property="Foreground" Value="{DynamicResource TextControlForeground}" />
             </Style>
         </Style>
 
         <Style Selector="^:success">
             <Style Selector="^ /template/ Border#ContentRoot">
-                <Setter Property="Background" Value="{DynamicResource InfoBarSuccessSeverityBackgroundBrush}" />
+                <Setter Property="Background" Value="{DynamicResource AsvBackgroundSuccessBrush}" />
             </Style>
             <Style Selector="^ /template/ Ellipse#IconBackground">
-                <Setter Property="Fill" Value="{DynamicResource InfoBarSuccessSeverityIconBackground}" />
+                <Setter Property="Fill" Value="{DynamicResource AsvForegroundSuccessBrush}" />
             </Style>
             <Style Selector="^ /template/ avalonia1|MaterialIcon#StandardIcon">
                 <Setter Property="FontSize" Value="10" />
-                <Setter Property="Foreground" Value="{DynamicResource InfoBarInformationalSeverityIconForeground}" />
+                <Setter Property="Foreground" Value="{DynamicResource TextControlForeground}" />
                 <Setter Property="Margin" Value="0,19,14,0" />
             </Style>
         </Style>

@@ -10,43 +10,22 @@
         </Border>
     </Design.PreviewWith>
     
-    <Color x:Key="TextFillColorPrimary">#E4000000</Color>
-    <Color x:Key="CardStrokeColorDefault">#0F000000</Color>
-    <Color x:Key="SolidBackgroundFillColorBase">DarkGray</Color>
-    <Color x:Key="SmokeFillColorDefault">#4D000000</Color>
-    <Color x:Key="LayerFillColorAlt">Gray</Color>
-    <Color x:Key="SurfaceStrokeColorDefault">#66757575</Color>
-    
-    <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="{StaticResource TextFillColorPrimary}" />
-    <SolidColorBrush x:Key="SolidBackgroundFillColorBaseBrush" Color="{StaticResource SolidBackgroundFillColorBase}" />
-    <SolidColorBrush x:Key="SmokeFillColorDefaultBrush" Color="{StaticResource SmokeFillColorDefault}" />
-    <SolidColorBrush x:Key="LayerFillColorAltBrush" Color="{StaticResource LayerFillColorAlt}" />
-    <SolidColorBrush x:Key="SurfaceStrokeColorDefaultBrush" Color="{StaticResource SurfaceStrokeColorDefault}" />
-    <SolidColorBrush x:Key="CardStrokeColorDefaultBrush" Color="{StaticResource CardStrokeColorDefault}" />
-    
-    <StaticResource x:Key="ContentDialogForeground" ResourceKey="TextFillColorPrimaryBrush" />
-    <StaticResource x:Key="ContentDialogBackground" ResourceKey="SolidBackgroundFillColorBaseBrush" />
-    <StaticResource x:Key="ContentDialogSmokeFill" ResourceKey="SmokeFillColorDefaultBrush" />
-    <StaticResource x:Key="ContentDialogTopOverlay" ResourceKey="LayerFillColorAltBrush" />
-    <StaticResource x:Key="ContentDialogBorderBrush" ResourceKey="SurfaceStrokeColorDefaultBrush" />
-    <StaticResource x:Key="ContentDialogSeparatorBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
-    <Thickness x:Key="ContentDialogBorderWidth">1</Thickness>
-
     <x:Double x:Key="ContentDialogMinWidth">320</x:Double>
     <x:Double x:Key="ContentDialogMaxWidth">548</x:Double>
     <x:Double x:Key="ContentDialogMinHeight">184</x:Double>
     <x:Double x:Key="ContentDialogMaxHeight">756</x:Double>
     
     <x:Double x:Key="ContentDialogButtonSpacing">8</x:Double>
+    
     <Thickness x:Key="ContentDialogTitleMargin">0,0,0,12</Thickness>
+    <Thickness x:Key="ContentDialogBorderWidth">1</Thickness>
     <Thickness x:Key="ContentDialogPadding">24</Thickness>
     <Thickness x:Key="ContentDialogSeparatorThickness">0,0,0,1</Thickness>
-
-
+    
     <ControlTheme x:Key="{x:Type ui:ContentDialog}" TargetType="ui:ContentDialog">
-        <Setter Property="Foreground" Value="{DynamicResource ContentDialogForeground}"/>
-        <Setter Property="Background" Value="{DynamicResource ContentDialogBackground}"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource ContentDialogBorderBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextControlForeground}"/>
+        <Setter Property="Background" Value="{DynamicResource AsvBackgroundUnknownBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource AsvBackgroundUnknownBrush}"/>
         <Setter Property="BorderThickness" Value="{DynamicResource ContentDialogBorderWidth}" />
         <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
         <Setter Property="BackgroundSizing" Value="InnerBorderEdge" />
@@ -54,7 +33,7 @@
             <ControlTemplate>
                 <Border Name="Container">
                     <Panel Name="LayoutRoot"
-                           Background="{DynamicResource ContentDialogSmokeFill}">
+                           Background="{DynamicResource AsvSmokeFillColorDefaultBrush}">
                         <Border Name="BackgroundElement"
                                 Background="{TemplateBinding Background}"
                                 BorderThickness="{StaticResource ContentDialogBorderWidth}"
@@ -79,10 +58,10 @@
                                     <ScrollViewer Name="ContentScrollViewer"
                                                   HorizontalScrollBarVisibility="Disabled"
                                                   VerticalScrollBarVisibility="Auto">
-                                        <Border Background="{DynamicResource ContentDialogTopOverlay}"
+                                        <Border Background="{DynamicResource AsvPopupCommonBrush}"
                                                 Padding="{DynamicResource ContentDialogPadding}"
                                                 BorderThickness="{StaticResource ContentDialogSeparatorThickness}"
-                                                BorderBrush="{DynamicResource ContentDialogSeparatorBorderBrush}">
+                                                BorderBrush="{DynamicResource AsvBackgroundUnknownBrush}">
                                             <Grid RowDefinitions="Auto,*" >
                                                 <Grid.Styles>
                                                     <!--Make sure text wrapping is on-->
@@ -245,7 +224,6 @@
         <Style Selector="^:fullsize /template/ Border#BackgroundElement">
             <Setter Property="VerticalAlignment" Value="Stretch"/>
         </Style>
-
         
         <!-- Primary Button Only -->
         <Style Selector="^:primary /template/ Button#PrimaryButton">
@@ -355,8 +333,7 @@
             <Setter Property="Grid.ColumnSpan" Value="2" />
             <Setter Property="Margin" Value="4 0 0 0" />
         </Style>
-
-
+        
         <!-- All Buttons -->
         <Style Selector="^:primary:secondary:close /template/ Button#PrimaryButton">
             <Setter Property="IsVisible" Value="True"/>
