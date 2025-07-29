@@ -59,5 +59,7 @@
         <DependentUpon>MapViewItem.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Remove="Diialog\TestDialogItemTextViewModel.cs" />
+      <Compile Remove="Diialog\TestDialogItemTextView.axaml.cs" />
     </ItemGroup>
 </Project>
