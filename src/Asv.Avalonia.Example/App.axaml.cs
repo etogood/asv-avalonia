@@ -7,6 +7,7 @@ using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Reflection;
 using Asv.Avalonia.Example.Api;
+using Asv.Avalonia.GeoMap;
 using Asv.Avalonia.IO;
 using Asv.Avalonia.Plugins;
 using Asv.Cfg;
@@ -81,9 +82,10 @@ public partial class App : Application, IContainerHost, IShellHost
         {
             yield return GetType().Assembly; // Asv.Avalonia.Example
             yield return typeof(AppHost).Assembly; // Asv.Avalonia
-            yield return typeof(DeviceManager).Assembly; // Asv.Avalonia.IO
+            yield return typeof(IoModule).Assembly; // Asv.Avalonia.IO
+            yield return typeof(GeoMapModule).Assembly; // Asv.Avalonia.GeoMap
             yield return typeof(ApiModule).Assembly; // Asv.Avalonia.Example.Api
-            yield return typeof(IPluginManager).Assembly; // Asv.Avalonia.Plugins
+            yield return typeof(PluginManagerModule).Assembly; // Asv.Avalonia.Plugins
         }
     }
 
