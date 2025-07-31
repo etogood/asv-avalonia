@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <FileVersion>$(ProductVersion)</FileVersion>
         <Version>$(ProductVersion)</Version>
         <PackageVersion>$(ProductVersion)</PackageVersion>
@@ -40,7 +40,7 @@
         <ProjectReference Include="..\Asv.Avalonia\Asv.Avalonia.csproj" />
         <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="$(DotNetVersion)" />
-        <PackageReference Include="Roslynator.Analyzers" Version="4.13.1">
+        <PackageReference Include="Roslynator.Analyzers" Version="4.14.0">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
