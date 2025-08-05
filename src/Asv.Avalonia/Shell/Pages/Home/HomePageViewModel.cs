@@ -9,7 +9,6 @@ namespace Asv.Avalonia;
 [ExportPage(PageId)]
 public class HomePageViewModel : PageViewModel<IHomePage>, IHomePage
 {
-    private IAppInfo _appInfo;
     public const string PageId = "home";
 
     public HomePageViewModel()
@@ -122,8 +121,8 @@ public class HomePageViewModel : PageViewModel<IHomePage>, IHomePage
 
     public IAppInfo AppInfo
     {
-        get => _appInfo;
-        set => SetField(ref _appInfo, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public NotifyCollectionChangedSynchronizedViewList<HomePageItemDecorator> ItemsView { get; }
