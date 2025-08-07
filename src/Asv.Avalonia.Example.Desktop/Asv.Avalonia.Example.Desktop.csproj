@@ -25,6 +25,7 @@
             CA1851
         </WarningsAsErrors>
         <LangVersion>preview</LangVersion>
+        <ApplicationIcon>icon.ico</ApplicationIcon>
     </PropertyGroup>
 
     <PropertyGroup>

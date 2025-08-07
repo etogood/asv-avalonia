@@ -42,7 +42,6 @@ public class ThemeService : AsyncDisposableOnce, IThemeService
         [
             new ThemeItem(DarkTheme, RS.ThemeService_Dark, ThemeVariant.Dark),
             new ThemeItem(LightTheme, RS.ThemeService_Light, ThemeVariant.Light),
-            new ThemeItem(DefaultTheme, RS.ThemeService_System, ThemeVariant.Default),
         ];
         _config = cfgSvc.Get<ThemeServiceConfig>();
 

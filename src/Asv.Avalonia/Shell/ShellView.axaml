@@ -15,31 +15,34 @@
     <UserControl.Styles>
         <Style Selector="Border.status">
             <Style Selector="^.normal">
-                <Setter Property="BorderBrush" Value="{DynamicResource SystemAltHighColor}" />
-                <Setter Property="Background" Value="{StaticResource AsvBackgroundInfoBrush}"/>
-            </Style>
-            <Style Selector="^.error">
-                <Setter Property="BorderBrush" Value="{DynamicResource AsvForegroundErrorBrush}" />
-                <Setter Property="Background" Value="{StaticResource AsvBackgroundErrorBrush}"/>
-            </Style>
-            <Style Selector="^.warning">
-                <Setter Property="BorderBrush" Value="{DynamicResource AsvForegroundWarningBrush}" />
-                <Setter Property="Background" Value="{StaticResource AsvBackgroundWarningBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"/>
             </Style>
         </Style>
         <Style Selector="Border.frame">
             <Style Selector="^.normal">
-                <Setter Property="BorderBrush" Value="{DynamicResource SystemAltHighColor}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
+                <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"/>
             </Style>
             <Style Selector="^.error">
-                <Setter Property="BorderBrush" Value="{DynamicResource AsvForegroundErrorBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
+                <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"/>
             </Style>
             <Style Selector="^.warning">
-                <Setter Property="BorderBrush" Value="{DynamicResource AsvForegroundWarningBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
+                <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"/>
             </Style>
         </Style>
         
         
+        <Style Selector="DockPanel#Header avalonia1|MaterialIcon">
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        </Style>
+        <Style Selector="DockPanel#Status avalonia1|MaterialIcon">
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        </Style>
+        <Style Selector="DockPanel#Status TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        </Style>
         <Style Selector="DropDownButton#WindowControlButton /template/ PathIcon">
             <Setter Property="IsVisible" Value="False" />
         </Style>
@@ -56,12 +59,11 @@
               ConverterParameter={x:Static avalonia:ShellErrorState.Warning} }"
           >
     <DockPanel>
-        
-        <DockPanel Background="{StaticResource SystemBaseHighColor}" Dock="Top"
+        <DockPanel x:Name="Header" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Dock="Top"
                    avalonia:WindowHelper.EnableDrag="True"
                    avalonia:WindowHelper.DoubleTappedWindowState="True">
-            <DropDownButton Background="Transparent">
-                <avalonia1:MaterialIcon Kind="Menu" Foreground="White"/>
+            <DropDownButton Background="Transparent"  Foreground="{DynamicResource SystemControlForegroundAccentBrush}">
+                <avalonia1:MaterialIcon Kind="Menu" Foreground="{DynamicResource SystemControlForegroundAccentBrush}" />
                 <DropDownButton.Flyout>
                     <MenuFlyout ItemsSource="{Binding MainMenuView.Items}">
                         <MenuFlyout.ItemContainerTheme>
@@ -82,51 +84,52 @@
                 </DropDownButton.Flyout>
             </DropDownButton>
             
-            <DropDownButton Name="WindowControlButton" Background="Transparent" DockPanel.Dock="Right">
-                <avalonia1:MaterialIcon Kind="DotsVertical" Foreground="White"/>
-                <DropDownButton.Flyout>
-                    <MenuFlyout>
-                        <MenuItem 
-                            Icon="{avalonia1:MaterialIconExt Kind=Close}" Command="{Binding Close}" 
-                            Header="{x:Static avalonia:RS.ShellView_WindowControlButton_Close}"/>
-                        <MenuItem 
-                            Icon="{Binding WindowSateIconKind.Value, Converter={StaticResource MaterialIconConverter}}" 
-                            Command="{Binding ChangeWindowState}" 
-                            Header="{Binding WindowStateHeader.Value}" />
-                        <MenuItem 
-                            Icon="{avalonia1:MaterialIconExt Kind=Minimize}" 
-                            Command="{Binding Collapse}" 
-                            Header="{x:Static avalonia:RS.ShellView_WindowControlButton_Collapse}"/>
-                    </MenuFlyout>
-                </DropDownButton.Flyout>
-            </DropDownButton>
-            <Button Background="Transparent" DockPanel.Dock="Right" DataContext="{Binding ElementName=DockControl}" Command="{Binding UnSplitAllCommand}">
-                <avalonia1:MaterialIcon Kind="ArrowLeftBox" Foreground="White"/>
+            <Button Theme="{DynamicResource TransparentButton}" DockPanel.Dock="Right" Command="{Binding Close}">
+                <avalonia1:MaterialIcon Kind="Close" />
                 <ToolTip.Tip>
-                    <TextBlock Text="{x:Static avalonia:RS.ShellView_UnsplitAllTabsButton_ToolTip}"/>
+                    <TextBlock Text="{x:Static avalonia:RS.ShellView_WindowControlButton_Close}"/>
+                </ToolTip.Tip>
+            </Button>
+            <Button Theme="{DynamicResource TransparentButton}" DockPanel.Dock="Right" Command="{Binding ChangeWindowState}">
+                <avalonia1:MaterialIcon Kind="{Binding WindowSateIconKind.Value}" />
+                <ToolTip.Tip>
+                    <TextBlock Text="{Binding WindowStateHeader.Value}"/>
+                </ToolTip.Tip>
+            </Button>
+            <Button Theme="{DynamicResource TransparentButton}" DockPanel.Dock="Right" Command="{Binding Collapse}">
+                <avalonia1:MaterialIcon Kind="Minimize" />
+                <ToolTip.Tip>
+                    <TextBlock Text="{x:Static avalonia:RS.ShellView_WindowControlButton_Collapse}"/>
                 </ToolTip.Tip>
             </Button>
 
-            <Button Background="Transparent" DockPanel.Dock="Right">
-                <avalonia1:MaterialIcon Kind="Cog" Foreground="White"/>
+            <Button Theme="{DynamicResource TransparentButton}" DockPanel.Dock="Right" Command="{Binding OpenSettings}">
+                <avalonia1:MaterialIcon Kind="Cog" />
+            </Button>
+            <Button Theme="{DynamicResource TransparentButton}" DockPanel.Dock="Right" Command="{Binding ChangeTheme}">
+                <avalonia1:MaterialIcon Kind="ThemeLightDark" />
             </Button>
             
             <StackPanel Spacing="4" HorizontalAlignment="Center" Orientation="Horizontal">
-                <Button Background="Transparent" Command="{Binding Navigation.Backward}">
-                    <avalonia1:MaterialIcon Kind="ArrowLeft" Foreground="White"/>
+                <Button Theme="{DynamicResource TransparentButton}" Command="{Binding Navigation.Backward}">
+                    <avalonia1:MaterialIcon Kind="ArrowLeft" />
                 </Button>
-                <Button Background="Transparent" Command="{Binding Navigation.Forward}">
-                    <avalonia1:MaterialIcon Kind="ArrowRight" Foreground="White"/>
+                <Button Theme="{DynamicResource TransparentButton}" Command="{Binding Navigation.Forward}">
+                    <avalonia1:MaterialIcon Kind="ArrowRight" />
                 </Button>
-                <AutoCompleteBox VerticalAlignment="Center" Width="200"></AutoCompleteBox>
+                <Viewbox Height="25" >
+                    <AutoCompleteBox Watermark="Search" Width="300" VerticalAlignment="Center" BorderBrush="{DynamicResource SystemControlBackgroundBaseLowBrush}" >
+                        <AutoCompleteBox.InnerRightContent>
+                            <avalonia1:MaterialIcon Margin="4,0,4,0" Kind="Search"/>
+                        </AutoCompleteBox.InnerRightContent>
+                    </AutoCompleteBox>
+                </Viewbox>
             </StackPanel>
-            
         </DockPanel>
         <Border 
             Classes="status" 
             DockPanel.Dock="Bottom"
-            Background="{StaticResource SystemBaseHighColor}"
-            BorderThickness="0, 1, 0, 0"
+            Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
             Classes.normal="{Binding ErrorState, 
             Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, 
             ConverterParameter={x:Static avalonia:ShellErrorState.Normal} }"
@@ -137,23 +140,14 @@
             Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, 
             ConverterParameter={x:Static avalonia:ShellErrorState.Warning} }"
         >
-            <DockPanel Margin="8,0">
+            <DockPanel x:Name="Status">
                 <!-- Placeholder field for future status items -->
-                <TextBlock Text="Status" VerticalAlignment="Center"/>
+                <TextBlock Margin="8,0" Text="Status" VerticalAlignment="Center"/>
             </DockPanel>
         </Border>
         
         
-        <Border BorderThickness="0, 1, 0, 0" Classes="frame" 
-                Classes.normal="{Binding ErrorState, 
-              Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, 
-              ConverterParameter={x:Static avalonia:ShellErrorState.Normal} }"
-                Classes.error="{Binding ErrorState, 
-              Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, 
-              ConverterParameter={x:Static avalonia:ShellErrorState.Error} }"
-                Classes.warning="{Binding ErrorState, 
-              Converter={x:Static avalonia:EnumToBooleanConverter.Instance}, 
-              ConverterParameter={x:Static avalonia:ShellErrorState.Warning} }">
+        <Border BorderThickness="0, 1, 0, 1" BorderBrush="{DynamicResource SystemControlBackgroundBaseLowBrush}" >
             <avalonia:DockControl 
                 x:Name="DockControl"
                 MaxSplitAmount="3" 

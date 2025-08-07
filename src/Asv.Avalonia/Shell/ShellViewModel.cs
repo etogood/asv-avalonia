@@ -27,7 +27,7 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
         _cmd = ioc.GetExport<ICommandService>();
         Navigation = ioc.GetExport<INavigationService>();
         _pages = new ObservableList<IPage>();
-        PagesView = _pages.ToNotifyCollectionChangedSlim();
+        PagesView = _pages.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
         Close = new ReactiveCommand((_, c) => CloseAsync(c));
         ChangeWindowState = new ReactiveCommand((_, c) => ChangeWindowModeAsync(c));
         Collapse = new ReactiveCommand((_, c) => CollapseAsync(c));
@@ -44,6 +44,20 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
             })
             .DisposeItWith(Disposable);
     }
+
+    #region Theme command
+
+    public void ChangeTheme()
+    {
+        this.ExecuteCommand(ChangeThemeFreeCommand.Id).SafeFireAndForget();
+    }
+
+    public void OpenSettings()
+    {
+        this.ExecuteCommand(OpenSettingsCommand.Id).SafeFireAndForget();
+    }
+
+    #endregion
 
     #region MainMenu
 

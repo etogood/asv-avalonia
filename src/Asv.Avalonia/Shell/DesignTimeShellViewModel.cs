@@ -32,6 +32,7 @@ public class DesignTimeShellViewModel : ShellViewModel
 #pragma warning restore SA1117
 
         InternalPages.Add(new SettingsPageViewModel());
+        InternalPages.Add(new HomePageViewModel());
 
         var file = new FileMenu(DesignTime.LoggerFactory);
         MainMenu.Add(file);

@@ -86,4 +86,8 @@
             <DependentUpon>RS.resx</DependentUpon>
         </Compile>
     </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="icon.ico" />
+    </ItemGroup>
 </Project>
