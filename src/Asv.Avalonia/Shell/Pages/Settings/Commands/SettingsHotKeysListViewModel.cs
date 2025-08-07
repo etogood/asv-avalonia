@@ -194,9 +194,15 @@ public class SettingsHotKeysListViewModel : SettingsSubPage
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
         yield return Search;
+
         foreach (var item in Items)
         {
             yield return item;
+        }
+
+        foreach (var child in base.GetRoutableChildren())
+        {
+            yield return child;
         }
     }
 

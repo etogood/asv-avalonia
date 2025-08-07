@@ -49,6 +49,7 @@ public class SettingsAppearanceViewModel : SettingsSubPage
     {
         yield return Theme;
         yield return Language;
+
         foreach (var child in base.GetRoutableChildren())
         {
             yield return child;

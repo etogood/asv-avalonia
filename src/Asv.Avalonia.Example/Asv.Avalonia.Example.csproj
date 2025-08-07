@@ -29,9 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Asv.Mavlink" Version="$(AsvMavlinkVersion)" />
         <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)"/>
-        <PackageReference Include="Asv.IO" Version="$(AsvCommonVersion)" />
         <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)"/>
         <PackageReference Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)"/>
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
@@ -52,7 +50,6 @@
       <ProjectReference Include="..\Asv.Avalonia\Asv.Avalonia.csproj" />
     </ItemGroup>
 
-
     <ItemGroup>
       <EmbeddedResource Update="RS.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
@@ -66,17 +63,5 @@
         <AutoGen>True</AutoGen>
         <DependentUpon>RS.resx</DependentUpon>
       </Compile>
-     
     </ItemGroup>
-
-    <ItemGroup>
-      <UpToDateCheckInput Remove="Pages\Flight\FlightPageView.axaml" />
-      <UpToDateCheckInput Remove="Pages\Flight\Widgets\UavWidget\Controls\Attitude\AttitudeIndicatorStyles.axaml" />
-      <UpToDateCheckInput Remove="Pages\Flight\Widgets\UavWidget\Controls\RouteIndicator\RouteIndicatorStyles.axaml" />
-      <UpToDateCheckInput Remove="Pages\Flight\Widgets\UavWidget\Dialogs\SetAltitudeDialog.axaml" />
-      <UpToDateCheckInput Remove="Pages\Flight\Widgets\UavWidget\MissionProgress\MissionProgressView.axaml" />
-      <UpToDateCheckInput Remove="Pages\Flight\Widgets\UavWidget\UavWidgetView.axaml" />
-    </ItemGroup>
-
-   
 </Project>
