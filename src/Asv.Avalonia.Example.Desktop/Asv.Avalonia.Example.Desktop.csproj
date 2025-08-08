@@ -59,5 +59,6 @@
       <None Update="appsettings.Production.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Remove="icon.ico" />
     </ItemGroup>
 </Project>
