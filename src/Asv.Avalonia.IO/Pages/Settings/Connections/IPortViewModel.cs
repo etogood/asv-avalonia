@@ -13,4 +13,6 @@ public interface IPortViewModel : IRoutable, IExportable
     MaterialIconKind? Icon { get; }
     BindableReactiveProperty<bool> IsEnabled { get; }
     ReactiveCommand RemovePortCommand { get; }
+    ProtocolPortStatus Status { get; }
+    string? StatusMessage { get; }
 }

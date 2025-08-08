@@ -1,3 +1,5 @@
+using Asv.Common;
+
 namespace Asv.Avalonia;
 
-public class UnitException(string message) : Exception(message) { }
+public class UnitException(string message) : ValidationException(message) { }

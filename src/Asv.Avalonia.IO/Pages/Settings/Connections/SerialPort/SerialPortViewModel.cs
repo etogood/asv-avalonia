@@ -40,6 +40,9 @@ public class SerialPortViewModel : PortViewModel
             .DisposeItWith(Disposable);
 
         AddToValidation(BaudRate = new BindableReactiveProperty<string?>(), ValidateBaudRate);
+
+        TypeTag.Value = RS.SerialPortViewModel_TagViewModel_Value;
+        TypeTag.TagType = TagType.Info;
     }
 
     private static Exception? ValidatePortName(string? arg) => null;
@@ -107,21 +110,7 @@ public class SerialPortViewModel : PortViewModel
 
     private void UpdateTags(SerialProtocolPortConfig config)
     {
-        TagsSource.Clear();
-        TagsSource.Add(
-            new TagViewModel(nameof(config.Scheme), _loggerFactory)
-            {
-                Value = RS.SerialPortViewModel_TagViewModel_Value,
-                TagType = TagType.Info,
-            }
-        );
-        TagsSource.Add(
-            new TagViewModel(nameof(config.PortName), _loggerFactory)
-            {
-                Value = GetOptions(config),
-                TagType = TagType.Success,
-            }
-        );
+        ConfigTag.Value = GetOptions(config);
     }
 
     private static string GetOptions(SerialProtocolPortConfig config)

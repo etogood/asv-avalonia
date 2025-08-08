@@ -1,3 +1,4 @@
+using Asv.Common;
 using Microsoft.Extensions.Logging;
 using R3;
 
@@ -45,7 +46,7 @@ public sealed class HistoricalStringProperty : HistoricalPropertyBase<string?, s
         foreach (var rule in _validationRules)
         {
             var res = rule(userValue);
-            if (res.IsFailed)
+            if (res.IsSuccess == false)
             {
                 return res.ValidationException;
             }

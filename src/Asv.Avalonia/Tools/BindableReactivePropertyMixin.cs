@@ -1,3 +1,4 @@
+using Asv.Common;
 using R3;
 
 namespace Asv.Avalonia;
@@ -22,9 +23,11 @@ public static class BindableReactivePropertyMixin
             async (v, _) =>
             {
                 var result = validationFunc(v);
-                if (result.IsFailed)
+                if (result.IsSuccess == false)
                 {
-                    prop.OnErrorResume(result.ValidationException);
+                    prop.OnErrorResume(
+                        result.ValidationException ?? new Exception("Validation failed")
+                    );
                 }
 
                 await source.Rise(new ValidationEvent(source, prop, result));

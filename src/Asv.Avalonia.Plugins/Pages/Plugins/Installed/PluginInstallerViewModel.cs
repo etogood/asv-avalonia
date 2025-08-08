@@ -1,4 +1,5 @@
 ﻿using Asv.Cfg;
+using Asv.Common;
 using Microsoft.Extensions.Logging;
 using R3;
 
@@ -36,7 +37,13 @@ public class PluginInstallerViewModel : DialogViewModelBase
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    return new Exception("Nuget package file path cannot be empty");
+                    return new ValidationResult
+                    {
+                        IsSuccess = false,
+                        ValidationException = new ValidationException(
+                            "Nuget package file path cannot be empty"
+                        ),
+                    };
                 }
 
                 return ValidationResult.Success;

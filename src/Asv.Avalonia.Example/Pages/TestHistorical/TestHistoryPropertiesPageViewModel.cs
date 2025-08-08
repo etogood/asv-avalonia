@@ -69,7 +69,7 @@ public class TestHistoryPropertiesPageViewModel : PageViewModel<TestHistoryPrope
                 {
                     if (string.IsNullOrWhiteSpace(v))
                     {
-                        return new Exception("Value shouldn't be empty");
+                        return ValidationResult.FailAsNullOrWhiteSpace;
                     }
 
                     return ValidationResult.Success;
@@ -88,16 +88,21 @@ public class TestHistoryPropertiesPageViewModel : PageViewModel<TestHistoryPrope
                 {
                     if (string.IsNullOrWhiteSpace(v))
                     {
-                        return new Exception("Value shouldn't be empty");
+                        return ValidationResult.FailAsNullOrWhiteSpace;
                     }
-
                     return ValidationResult.Success;
                 },
                 v =>
                 {
                     if (v?.Contains('s', StringComparison.InvariantCultureIgnoreCase) ?? false)
                     {
-                        return new Exception("Value shouldn't contain \'s\'");
+                        return new ValidationResult
+                        {
+                            IsSuccess = false,
+                            ValidationException = new ValidationException(
+                                "Value shouldn't contain \'s\'"
+                            ),
+                        };
                     }
 
                     return ValidationResult.Success;

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Asv.Common;
+using Microsoft.Extensions.Logging;
 using R3;
 using Exception = System.Exception;
 
@@ -60,7 +61,13 @@ public class SourceViewModel : DialogViewModelBase
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    return new Exception(RS.SourceViewModel_NameValidation_NameIsRequired);
+                    return new ValidationResult
+                    {
+                        IsSuccess = false,
+                        ValidationException = new ValidationException(
+                            RS.SourceViewModel_NameValidation_NameIsRequired
+                        ),
+                    };
                 }
 
                 return ValidationResult.Success;
@@ -74,9 +81,13 @@ public class SourceViewModel : DialogViewModelBase
             {
                 if (string.IsNullOrWhiteSpace(x))
                 {
-                    return new Exception(
-                        RS.SourceViewModel_SourceUriValidation_SourceUriIsRequired
-                    );
+                    return new ValidationResult
+                    {
+                        IsSuccess = false,
+                        ValidationException = new ValidationException(
+                            RS.SourceViewModel_SourceUriValidation_SourceUriIsRequired
+                        ),
+                    };
                 }
 
                 return ValidationResult.Success;

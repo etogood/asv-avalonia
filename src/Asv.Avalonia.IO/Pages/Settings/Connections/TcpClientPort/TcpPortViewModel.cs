@@ -45,6 +45,8 @@ public class TcpPortViewModel : PortViewModel
         Config = _cfgSvc.Get<TcpPortViewModelConfig>();
         AddToValidation(Host = new BindableReactiveProperty<string>(), HostValidate);
         AddToValidation(PortNumber = new BindableReactiveProperty<string>(), PortValidate);
+        TypeTag.Value = RS.TcpPortViewModel_TagViewModel_Value;
+        TypeTag.TagType = TagType.Info2;
     }
 
     private Exception? PortValidate(string arg)
@@ -92,20 +94,6 @@ public class TcpPortViewModel : PortViewModel
 
     private void UpdateTags(TcpClientProtocolPortConfig config)
     {
-        TagsSource.Clear();
-        TagsSource.Add(
-            new TagViewModel(nameof(config.Scheme), _loggerFactory)
-            {
-                Value = RS.TcpPortViewModel_TagViewModel_Value,
-                TagType = TagType.Info2,
-            }
-        );
-        TagsSource.Add(
-            new TagViewModel(nameof(config.Host), _loggerFactory)
-            {
-                Value = $"{config.Host}:{config.Port}",
-                TagType = TagType.Success,
-            }
-        );
+        ConfigTag.Value = $"{config.Host}:{config.Port}";
     }
 }

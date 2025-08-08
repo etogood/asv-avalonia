@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Data;
 using System.Diagnostics;
 using Asv.Common;
 using Asv.IO;
@@ -11,11 +12,11 @@ namespace Asv.Avalonia.IO;
 
 public class PortViewModel : RoutableViewModel, IPortViewModel
 {
+    private readonly ILoggerFactory _loggerFactory;
     private MaterialIconKind? _icon;
     private readonly List<INotifyDataErrorInfo> _validateProperties = new();
     private readonly BindableReactiveProperty<bool> _hasChanges;
     private readonly BindableReactiveProperty<bool> _hasValidationError;
-    private readonly ObservableList<TagViewModel> _tagsSource = [];
 
     public PortViewModel()
         : this(DesignTime.Id, DesignTime.LoggerFactory)
@@ -23,17 +24,47 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
         DesignTime.ThrowIfNotDesignMode();
         InitArgs(Guid.NewGuid().ToString());
         Icon = MaterialIconKind.Connection;
+        var index = 0;
+        Observable
+            .Timer(TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(3))
+            .Subscribe(_ =>
+            {
+                index++;
+                Status = (index % 4) switch
+                {
+                    0 => ProtocolPortStatus.Disconnected,
+                    1 => ProtocolPortStatus.InProgress,
+                    2 => ProtocolPortStatus.Error,
+                    _ => ProtocolPortStatus.Connected,
+                };
+            })
+            .DisposeItWith(Disposable);
         TagsSource.Add(
             new TagViewModel("ip", DesignTime.LoggerFactory) { Key = "ip", Value = "127.0.0.1" }
         );
         TagsSource.Add(
             new TagViewModel("port", DesignTime.LoggerFactory) { Key = "port", Value = "7341" }
         );
+        TagsSource.Add(
+            new TagViewModel("rx", DesignTime.LoggerFactory)
+            {
+                Icon = MaterialIconKind.ArrowDownBold,
+                Value = "12kb",
+            }
+        );
+        TagsSource.Add(
+            new TagViewModel("tx", DesignTime.LoggerFactory)
+            {
+                Icon = MaterialIconKind.ArrowUpBold,
+                Value = "38kb",
+            }
+        );
     }
 
     public PortViewModel(NavigationId id, ILoggerFactory loggerFactory)
         : base(id, loggerFactory)
     {
+        _loggerFactory = loggerFactory;
         TagsView = TagsSource.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
         _hasValidationError = new BindableReactiveProperty<bool>().DisposeItWith(Disposable);
         _hasChanges = new BindableReactiveProperty<bool>().DisposeItWith(Disposable);
@@ -51,34 +82,68 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
         AddToValidation(Name = new BindableReactiveProperty<string>(), ValidateName);
 
         RemovePortCommand = new ReactiveCommand(RemovePort).DisposeItWith(Disposable);
+
+        TagsSource.Add(
+            TypeTag = new TagViewModel("type", _loggerFactory)
+            {
+                TagType = TagType.Info,
+                Key = null,
+            }
+        );
+
+        TagsSource.Add(
+            ConfigTag = new TagViewModel("cfg", _loggerFactory)
+            {
+                Icon = null,
+                TagType = TagType.Success,
+                Value = DataFormatter.ByteRate.Print(double.NaN),
+            }
+        );
+        TagsSource.Add(
+            RxTag = new TagViewModel("rx", _loggerFactory)
+            {
+                Icon = MaterialIconKind.ArrowDownBold,
+                TagType = TagType.Success,
+                Value = DataFormatter.ByteRate.Print(double.NaN),
+            }
+        );
+        TagsSource.Add(
+            TxTag = new TagViewModel("tx", _loggerFactory)
+            {
+                Icon = MaterialIconKind.ArrowUpBold,
+                TagType = TagType.Success,
+                Value = DataFormatter.ByteRate.Print(double.NaN),
+            }
+        );
+    }
+
+    #region Default tags
+
+    public TagViewModel TypeTag { get; }
+    public TagViewModel ConfigTag { get; }
+    public TagViewModel RxTag { get; }
+    public TagViewModel TxTag { get; }
+
+    #endregion
+
+    public string? StatusMessage
+    {
+        get;
+        set => SetField(ref field, value);
     }
 
     private async ValueTask ChangeEnabled(bool isEnabled, CancellationToken cancel)
     {
-        if (Port == null)
+        if (isEnabled)
         {
-            return;
+            Port?.Enable();
+            StatusMessage = null;
         }
-
-        if (Port.IsEnabled.CurrentValue == isEnabled)
+        else
         {
-            return;
+            Port?.Disable();
+            StatusMessage = "Disabled";
         }
-
-        await Task.Factory.StartNew(
-            () =>
-            {
-                if (isEnabled)
-                {
-                    Port.Enable();
-                }
-                else
-                {
-                    Port.Disable();
-                }
-            },
-            cancel
-        );
     }
 
     public ReactiveCommand CancelChangesCommand { get; }
@@ -141,9 +206,40 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
     {
         Port = protocolPort;
         Port.IsEnabled.Subscribe(IsEnabled.AsObserver()).DisposeItWith(Disposable);
+        Port.Status.Subscribe(x =>
+            {
+                UpdatePortStatus(x);
+            })
+            .DisposeItWith(Disposable);
+
+        Port.Error.Subscribe(x => StatusMessage = x?.Message).DisposeItWith(Disposable);
+        Observable
+            .Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
+            .ObserveOnUIThreadDispatcher()
+            .Subscribe(UpdateStatistic)
+            .DisposeItWith(Disposable);
         InitArgs(protocolPort.Id);
         InternalLoadChanges(protocolPort.Config);
         ResetChanges();
+    }
+
+    private void UpdatePortStatus(ProtocolPortStatus status)
+    {
+        Status = status;
+        StatusMessage = Status switch
+        {
+            ProtocolPortStatus.Connected => "Connected",
+            ProtocolPortStatus.Disconnected => "Disconnected",
+            ProtocolPortStatus.InProgress => "Connecting...",
+            ProtocolPortStatus.Error => Port?.Error.CurrentValue?.Message ?? "Error",
+            _ => null,
+        };
+    }
+
+    private void UpdateStatistic(Unit unit)
+    {
+        RxTag.Value = DataFormatter.ByteRate.Print(Port?.Statistic.RxBytes ?? 0);
+        TxTag.Value = DataFormatter.ByteRate.Print(Port?.Statistic.TxBytes ?? 0);
     }
 
     protected void AddToValidation<T>(
@@ -195,33 +291,15 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
 
     public BindableReactiveProperty<string> Name { get; }
 
-    protected ObservableList<TagViewModel> TagsSource => _tagsSource;
+    protected ObservableList<TagViewModel> TagsSource { get; } = [];
 
     public NotifyCollectionChangedSynchronizedViewList<TagViewModel> TagsView { get; }
 
-    private void UpdateStatus(ProtocolPortStatus status)
+    public ProtocolPortStatus Status
     {
-        switch (status)
-        {
-            case ProtocolPortStatus.Disconnected:
-
-                break;
-            case ProtocolPortStatus.InProgress:
-                break;
-            case ProtocolPortStatus.Connected:
-                break;
-            case ProtocolPortStatus.Error:
-                IsError = true;
-                IsSuccess = false;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(status), status, null);
-        }
+        get;
+        set => SetField(ref field, value);
     }
-
-    public bool IsError { get; set; }
-    public bool IsSuccess { get; set; }
-    public bool IsInProgress { get; set; }
 
     public MaterialIconKind? Icon
     {
