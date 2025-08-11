@@ -162,7 +162,7 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
                     return;
                 }
 
-                var current = SelectedPage.Value; // TODO: It looks like a crutch. We need to find another solution.
+                var current = SelectedPage.Value; // TODO: fix page selection
                 var removedIndex = _pages.IndexOf(close.Page);
                 if (removedIndex < 0)
                 {
