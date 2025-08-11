@@ -90,4 +90,8 @@
     <ItemGroup>
       <None Remove="icon.ico" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Shell\Status\" />
+    </ItemGroup>
 </Project>

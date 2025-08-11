@@ -37,6 +37,7 @@ public class MavlinkProtocolProvider : IDeviceManagerExtension
     {
         builder.RegisterMavlinkV2Protocol();
         builder.Features.RegisterMavlinkV2WrapFeature();
+        builder.Features.RegisterBroadcastAllFeature();
     }
 
     public void Configure(IDeviceExplorerBuilder builder)
