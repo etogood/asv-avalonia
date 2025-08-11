@@ -1,0 +1,58 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style Selector="Path">
+        <Style Selector="^.blink">
+            <Style.Animations>
+                <Animation IterationCount="Infinite" Duration="0:0:1"> 
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Opacity" Value="1.0"/>
+                    </KeyFrame>
+                    <KeyFrame Cue="50%">
+                        <Setter Property="Opacity" Value="0.0"/>
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Opacity" Value="1.0"/>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+        <Style Selector="^.error">
+            <Setter Property="Fill" Value="{DynamicResource AsvBackgroundErrorBrush}"/>
+            <Setter Property="Stroke" Value="{DynamicResource AsvForegroundErrorBrush}"/>
+        </Style>
+        <Style Selector="^.warning">
+            <Setter Property="Fill" Value="{DynamicResource AsvBackgroundWarningBrush}"/>
+            <Setter Property="Stroke" Value="{DynamicResource AsvForegroundWarningBrush}"/>
+        </Style>
+    
+        <Style Selector="^.unknown">
+            <Setter Property="Fill" Value="{DynamicResource AsvBackgroundUnknownBrush}"/>
+            <Setter Property="Stroke" Value="{DynamicResource AsvForegroundUnknownBrush}"/>
+        </Style>
+        
+        <Style Selector="^.success">
+            <Setter Property="Fill" Value="{DynamicResource AsvBackgroundSuccessBrush}"/>
+            <Setter Property="Stroke" Value="{DynamicResource AsvForegroundSuccessBrush}"/>
+        </Style>
+        
+        <Style Selector="^.info">
+            <Setter Property="Fill" Value="{DynamicResource AsvBackgroundInfoBrush}"/>
+            <Setter Property="Stroke" Value="{DynamicResource AsvForegroundInfoBrush}"/>
+        </Style>
+        
+        <Style Selector="^.info2">
+            <Setter Property="Fill" Value="{DynamicResource AsvBackgroundInfo2Brush}"/>
+            <Setter Property="Stroke" Value="{DynamicResource AsvForegroundInfo2Brush}"/>
+        </Style>
+        
+        <Style Selector="^.info3">
+            <Setter Property="Fill" Value="{DynamicResource AsvBackgroundInfo3Brush}"/>
+            <Setter Property="Stroke" Value="{DynamicResource AsvForegroundInfo3Brush}"/>
+        </Style>
+        
+        <Style Selector="^.info4">
+            <Setter Property="Fill" Value="{DynamicResource AsvBackgroundInfo4Brush}"/>
+            <Setter Property="Stroke" Value="{DynamicResource AsvForegroundInfo4Brush}"/>
+        </Style>
+    </Style>
+</Styles>

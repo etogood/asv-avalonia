@@ -21,6 +21,7 @@ public class SerialPortViewModel : PortViewModel
     {
         DesignTime.ThrowIfNotDesignMode();
         UpdateTags(SerialProtocolPortConfig.CreateDefault());
+        ConnectionString = SerialProtocolPortConfig.CreateDefault().AsUri().ToString();
     }
 
     [ImportingConstructor]
@@ -40,9 +41,6 @@ public class SerialPortViewModel : PortViewModel
             .DisposeItWith(Disposable);
 
         AddToValidation(BaudRate = new BindableReactiveProperty<string?>(), ValidateBaudRate);
-
-        TypeTag.Value = RS.SerialPortViewModel_TagViewModel_Value;
-        TypeTag.TagType = TagType.Info;
     }
 
     private static Exception? ValidatePortName(string? arg) => null;
@@ -111,6 +109,8 @@ public class SerialPortViewModel : PortViewModel
     private void UpdateTags(SerialProtocolPortConfig config)
     {
         ConfigTag.Value = GetOptions(config);
+        TypeTag.Value = RS.SerialPortViewModel_TagViewModel_Value;
+        TypeTag.TagType = TagType.Info;
     }
 
     private static string GetOptions(SerialProtocolPortConfig config)

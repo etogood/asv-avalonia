@@ -11,7 +11,17 @@
     <Design.DataContext>
         <io:SettingsConnectionViewModel/>
     </Design.DataContext>
-    <Grid ColumnDefinitions="*,5,*">
+    <Panel>
+        
+    <Panel IsVisible="{Binding !View.Count}">
+        <avalonia:MaterialIcon Width="50" Height="50" Margin="0,0,100,0" HorizontalAlignment="Right" VerticalAlignment="Top" Classes="warning blink-once" Kind="ArrowUpRightBold"/>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+            <TextBlock FontSize="30" HorizontalAlignment="Left" VerticalAlignment="Bottom" Text="No connections"/>
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="Add a new one by clicking the button."/>    
+        </StackPanel>
+        
+    </Panel>
+    <Grid IsVisible="{Binding !!View.Count}" ColumnDefinitions="*,5,*">
         <ListBox Background="Transparent" ItemsSource="{Binding View}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
             <ListBox.Styles>
                 <Style Selector="ListBoxItem">
@@ -150,5 +160,5 @@
             </Panel>
         </Panel>
     </Grid>
-    
+    </Panel>
 </UserControl>

@@ -7,54 +7,46 @@ using R3;
 
 namespace Asv.Avalonia.IO;
 
-public class TcpPortViewModelConfig
+public class TcpServerPortViewModelConfig
 {
     public Dictionary<string, string> HostHistory { get; set; } =
-        new() { { "127.0.0.1", "localhost" }, { "172.16.0.1", "Base station" } };
+        new() { { "127.0.0.1", "localhost" }, { "0.0.0.0", "All local endpoint" } };
 
     public Dictionary<string, string> PortHistory { get; set; } =
-        new()
-        {
-            { "7341", "Base station" },
-            { "5760", "SITL main" },
-            { "5762", "SITL reserved" },
-        };
+        new() { { "7341", "Base station" } };
 }
 
-[Export(TcpClientProtocolPort.Scheme, typeof(IPortViewModel))]
-public class TcpPortViewModel : PortViewModel
+[Export(TcpServerProtocolPort.Scheme, typeof(IPortViewModel))]
+public class TcpServerPortViewModel : PortViewModel
 {
     private readonly IConfiguration _cfgSvc;
-    private readonly ILoggerFactory _loggerFactory;
-    public const MaterialIconKind DefaultIcon = MaterialIconKind.UploadNetworkOutline;
+    public const MaterialIconKind DefaultIcon = MaterialIconKind.DownloadNetworkOutline;
 
-    public TcpPortViewModel()
+    public TcpServerPortViewModel()
     {
         DesignTime.ThrowIfNotDesignMode();
-        Config = new TcpPortViewModelConfig();
-        UpdateTags(TcpClientProtocolPortConfig.CreateDefault());
+        Config = new TcpServerPortViewModelConfig();
+        UpdateTags(TcpServerProtocolPortConfig.CreateDefault());
+        ConnectionString = TcpServerProtocolPortConfig.CreateDefault().AsUri().ToString();
     }
 
     [ImportingConstructor]
-    public TcpPortViewModel(IConfiguration cfgSvc, ILoggerFactory loggerFactory)
-        : base($"{TcpClientProtocolPort.Scheme}-editor", loggerFactory)
+    public TcpServerPortViewModel(IConfiguration cfgSvc, ILoggerFactory loggerFactory)
+        : base($"{TcpServerProtocolPort.Scheme}-editor", loggerFactory)
     {
         _cfgSvc = cfgSvc;
-        _loggerFactory = loggerFactory;
         Icon = DefaultIcon;
-        Config = _cfgSvc.Get<TcpPortViewModelConfig>();
+        Config = _cfgSvc.Get<TcpServerPortViewModelConfig>();
         AddToValidation(Host = new BindableReactiveProperty<string>(), HostValidate);
         AddToValidation(PortNumber = new BindableReactiveProperty<string>(), PortValidate);
-        TypeTag.Value = RS.TcpPortViewModel_TagViewModel_Value;
-        TypeTag.TagType = TagType.Info2;
     }
+
+    public TcpServerPortViewModelConfig Config { get; }
 
     private Exception? PortValidate(string arg)
     {
         return null;
     }
-
-    public TcpPortViewModelConfig Config { get; }
 
     private Exception? HostValidate(string arg)
     {
@@ -67,7 +59,7 @@ public class TcpPortViewModel : PortViewModel
     protected override void InternalLoadChanges(ProtocolPortConfig config)
     {
         base.InternalLoadChanges(config);
-        if (config is TcpClientProtocolPortConfig tcpConfig)
+        if (config is TcpServerProtocolPortConfig tcpConfig)
         {
             UpdateTags(tcpConfig);
             Host.Value = tcpConfig.Host ?? string.Empty;
@@ -78,7 +70,7 @@ public class TcpPortViewModel : PortViewModel
     protected override void InternalSaveChanges(ProtocolPortConfig config)
     {
         base.InternalSaveChanges(config);
-        if (config is TcpClientProtocolPortConfig tcpConfig)
+        if (config is TcpServerProtocolPortConfig tcpConfig)
         {
             tcpConfig.Host = Host.Value;
             tcpConfig.Port = int.Parse(PortNumber.Value);
@@ -92,8 +84,10 @@ public class TcpPortViewModel : PortViewModel
         }
     }
 
-    private void UpdateTags(TcpClientProtocolPortConfig config)
+    private void UpdateTags(TcpServerProtocolPortConfig config)
     {
         ConfigTag.Value = $"{config.Host}:{config.Port}";
+        TypeTag.Value = "TCP Server";
+        TypeTag.TagType = TagType.Info3;
     }
 }

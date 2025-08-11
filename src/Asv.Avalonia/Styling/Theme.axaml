@@ -41,6 +41,7 @@
                 <MergeResourceInclude Source="avares://Asv.Avalonia/Styling/Styles/TransparentButtonStyles.axaml"/>
                 <MergeResourceInclude Source="avares://Asv.Avalonia/Styling/Styles/TabStyles.axaml"/>
                 
+                
                 <MergeResourceInclude Source="avares://Asv.Avalonia/Controls/Items/ItemsListStyles.axaml"/>
                 <MergeResourceInclude Source="avares://Asv.Avalonia/Controls/Tools/ToolsListStyles.axaml"/>
                 <MergeResourceInclude Source="avares://Asv.Avalonia/Controls/ContentDialog/ContentDialogStyles.axaml"/>
@@ -88,6 +89,7 @@
     <StyleInclude Source="avares://Asv.Avalonia/Styling/Styles/ProgressBarStyles.axaml"/>
     <StyleInclude Source="avares://Asv.Avalonia/Styling/Styles/TextBlockStyles.axaml"/>
     <StyleInclude Source="avares://Asv.Avalonia/Styling/Styles/TextBoxStyles.axaml"/>
+    <StyleInclude Source="avares://Asv.Avalonia/Styling/Styles/PathStyles.axaml"/>
     
     <StyleInclude Source="avares://Asv.Avalonia/Controls/Dock/DockControl.axaml"/>
     <StyleInclude Source="avares://Asv.Avalonia/Controls/Workspace/Workspace.axaml"/>

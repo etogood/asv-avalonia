@@ -15,6 +15,9 @@
             <TextBlock Classes="h2" Text="{x:Static io:RS.PortView_Title}"/>
             <Separator/>
         </DockPanel>
+        <Border Margin="4" DockPanel.Dock="Top"  >
+            <SelectableTextBlock Classes="description" Text="{Binding ConnectionString}"/>    
+        </Border>
         <Grid IsVisible="{Binding HasChanges.Value}" DockPanel.Dock="Bottom" HorizontalAlignment="Left" ColumnDefinitions="*,8,*">
             <Button Width="150" HorizontalAlignment="Stretch" Grid.Column="0" Command="{Binding SaveChangesCommand}">
                 <StackPanel Orientation="Horizontal" Spacing="4">

@@ -14,33 +14,44 @@ public class SettingsConnectionViewModel
         ISettingsConnectionSubPage
 {
     private readonly IDeviceManager _deviceManager;
+    private readonly INavigationService _navigationService;
     private readonly IContainerHost _containerHost;
     private IPortViewModel? _selectedItem;
 
     public const string SubPageId = "settings.connection1";
 
     public SettingsConnectionViewModel()
-        : this(NullDeviceManager.Instance, NullContainerHost.Instance, DesignTime.LoggerFactory)
+        : this(
+            NullDeviceManager.Instance,
+            DesignTime.Navigation,
+            NullContainerHost.Instance,
+            DesignTime.LoggerFactory
+        )
     {
         DesignTime.ThrowIfNotDesignMode();
-        var port1 = new PortViewModel();
-        port1.Name.Value = "Port 1";
-        var port2 = new PortViewModel();
-        port2.Name.Value = "Port 2";
-
-        var source = new ObservableList<IPortViewModel> { port1, port2 };
+        var source = new ObservableList<IPortViewModel>();
+        Observable
+            .Timer(TimeSpan.FromSeconds(3))
+            .Subscribe(x =>
+            {
+                source.Add(new SerialPortViewModel() { Name = { Value = "Serial name" } });
+                source.Add(new TcpPortViewModel { Name = { Value = "TCP Client name" } });
+                source.Add(new TcpServerPortViewModel { Name = { Value = "TCP Server name" } });
+            });
         View = source.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
     }
 
     [ImportingConstructor]
     public SettingsConnectionViewModel(
         IDeviceManager deviceManager,
+        INavigationService navigationService,
         IContainerHost containerHost,
         ILoggerFactory loggerFactory
     )
         : base(SubPageId, loggerFactory)
     {
         _deviceManager = deviceManager;
+        _navigationService = navigationService;
         _containerHost = containerHost;
         ObservableList<IProtocolPort> source = [];
         var sourceSyncView = source.CreateView(CreatePort).DisposeItWith(Disposable);
@@ -81,9 +92,9 @@ public class SettingsConnectionViewModel
                     && viewChangedEvent.OldItems.Contains(SelectedItem)
                 )
                 {
-                    SelectedItem = View.FirstOrDefault();
+                    var item = View.FirstOrDefault();
+                    _navigationService.GoTo(item?.GetPathToRoot() ?? this.GetPathToRoot());
                 }
-
                 break;
             case NotifyCollectionChangedAction.Replace:
                 break;
@@ -94,6 +105,17 @@ public class SettingsConnectionViewModel
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+
+    public override ValueTask<IRoutable> Navigate(NavigationId id)
+    {
+        var item = View.FirstOrDefault(x => x.Id == id);
+        if (item != null)
+        {
+            SelectedItem = item;
+            return new ValueTask<IRoutable>(item);
+        }
+        return base.Navigate(id);
     }
 
     private IPortViewModel CreatePort(IProtocolPort protocolPort)
@@ -115,7 +137,7 @@ public class SettingsConnectionViewModel
     public IPortViewModel? SelectedItem
     {
         get => _selectedItem;
-        set => SetField(ref _selectedItem, value);
+        set { SetField(ref _selectedItem, value); }
     }
 
     public NotifyCollectionChangedSynchronizedViewList<IPortViewModel> View { get; }

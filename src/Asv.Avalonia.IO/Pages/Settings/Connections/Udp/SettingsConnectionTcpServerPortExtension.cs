@@ -7,20 +7,17 @@ namespace Asv.Avalonia.IO;
 
 [ExportExtensionFor<ISettingsConnectionSubPage>]
 [method: ImportingConstructor]
-public class SettingsConnectionSerialPortExtension(ILoggerFactory loggerFactory)
+public class SettingsConnectionUdpPortExtension(ILoggerFactory loggerFactory)
     : IExtensionFor<ISettingsConnectionSubPage>
 {
     public void Extend(ISettingsConnectionSubPage context, CompositeDisposable contextDispose)
     {
-        var menu = new MenuItem(
-            SerialProtocolPort.Scheme,
-            RS.SettingsConnectionSerialExtension_MenuItem_Header,
-            loggerFactory
-        );
-        menu.Icon = SerialPortViewModel.DefaultIcon;
+        var menu = new MenuItem(UdpProtocolPort.Scheme, "UDP", loggerFactory);
+        menu.Icon = UdpPortViewModel.DefaultIcon;
         menu.Command = new BindableAsyncCommand(PortCrudCommand.Id, menu);
-        var defaultConfig = SerialProtocolPortConfig.CreateDefault();
+        var defaultConfig = UdpProtocolPortConfig.CreateDefault();
         defaultConfig.IsEnabled = false;
+        defaultConfig.Name = "New UDP";
         menu.CommandParameter = PortCrudCommand.CreateAddArg(defaultConfig);
         context.Menu.Add(menu);
     }

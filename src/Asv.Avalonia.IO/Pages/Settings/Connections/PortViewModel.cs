@@ -189,6 +189,7 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
 
     protected virtual void InternalSaveChanges(ProtocolPortConfig config)
     {
+        ConnectionString = config.AsUri().ToString();
         config.IsEnabled = IsEnabled.Value;
         config.Name = Name.Value;
     }
@@ -200,17 +201,14 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
         {
             Name.Value = config.Name;
         }
+        ConnectionString = config.AsUri().ToString();
     }
 
     public virtual void Init(IProtocolPort protocolPort)
     {
         Port = protocolPort;
         Port.IsEnabled.Subscribe(IsEnabled.AsObserver()).DisposeItWith(Disposable);
-        Port.Status.Subscribe(x =>
-            {
-                UpdatePortStatus(x);
-            })
-            .DisposeItWith(Disposable);
+        Port.Status.Subscribe(UpdatePortStatus).DisposeItWith(Disposable);
 
         Port.Error.Subscribe(x => StatusMessage = x?.Message).DisposeItWith(Disposable);
         Observable
@@ -291,6 +289,12 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
 
     public BindableReactiveProperty<string> Name { get; }
 
+    public string ConnectionString
+    {
+        get;
+        set => SetField(ref field, value);
+    }
+
     protected ObservableList<TagViewModel> TagsSource { get; } = [];
 
     public NotifyCollectionChangedSynchronizedViewList<TagViewModel> TagsView { get; }
@@ -312,6 +316,12 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
         return [];
+    }
+
+    public bool IsSelected
+    {
+        get;
+        set => SetField(ref field, value);
     }
 
     public IExportInfo Source => IoModule.Instance;

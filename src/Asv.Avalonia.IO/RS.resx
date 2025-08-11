@@ -19,7 +19,7 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="SettingsConnectionTcpExtension_MenuItem_Header" xml:space="preserve">
-        <value>Add TCP port</value>
+        <value>TCP Client</value>
     </data>
     <data name="PortView_Title" xml:space="preserve">
         <value>Common Settings</value>
@@ -31,7 +31,7 @@
         <value>Port</value>
     </data>
     <data name="TcpPortView_Text_Host" xml:space="preserve">
-        <value>Host</value>
+        <value>Address</value>
     </data>
     <data name="TcpPortView_Text_Name" xml:space="preserve">
         <value>Title</value>
@@ -58,10 +58,10 @@
         <value>Off</value>
     </data>
     <data name="SettingsConnectionSerialExtension_MenuItem_Header" xml:space="preserve">
-        <value>Add Serial port</value>
+        <value>Serial port</value>
     </data>
     <data name="TcpPortViewModel_TagViewModel_Value" xml:space="preserve">
-        <value>TCP</value>
+        <value>TCP CLIENT</value>
     </data>
     <data name="SerialPortViewModel_TagViewModel_Value" xml:space="preserve">
         <value>SERIAL</value>
