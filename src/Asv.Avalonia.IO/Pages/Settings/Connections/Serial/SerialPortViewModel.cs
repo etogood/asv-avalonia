@@ -25,8 +25,8 @@ public class SerialPortViewModel : PortViewModel
     }
 
     [ImportingConstructor]
-    public SerialPortViewModel(ILoggerFactory loggerFactory)
-        : base($"{SerialProtocolPort.Scheme}-editor", loggerFactory)
+    public SerialPortViewModel(ILoggerFactory loggerFactory, TimeProvider timeProvider)
+        : base($"{SerialProtocolPort.Scheme}-editor", loggerFactory, timeProvider)
     {
         _loggerFactory = loggerFactory;
         Icon = DefaultIcon;

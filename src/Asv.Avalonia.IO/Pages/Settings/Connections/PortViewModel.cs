@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.IO.Ports;
 using Asv.Common;
 using Asv.IO;
 using Material.Icons;
@@ -12,14 +13,17 @@ namespace Asv.Avalonia.IO;
 
 public class PortViewModel : RoutableViewModel, IPortViewModel
 {
-    private readonly ILoggerFactory _loggerFactory;
-    private MaterialIconKind? _icon;
     private readonly List<INotifyDataErrorInfo> _validateProperties = new();
     private readonly BindableReactiveProperty<bool> _hasChanges;
     private readonly BindableReactiveProperty<bool> _hasValidationError;
+    private readonly ObservableList<IProtocolEndpoint> _endpoints = [];
+    private readonly IncrementalRateCounter _rxBytes;
+    private readonly IncrementalRateCounter _txBytes;
+    private readonly IncrementalRateCounter _rxPackets;
+    private readonly IncrementalRateCounter _txPackets;
 
     public PortViewModel()
-        : this(DesignTime.Id, DesignTime.LoggerFactory)
+        : this(DesignTime.Id, DesignTime.LoggerFactory, TimeProvider.System)
     {
         DesignTime.ThrowIfNotDesignMode();
         InitArgs(Guid.NewGuid().ToString());
@@ -59,12 +63,34 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
                 Value = "38kb",
             }
         );
+
+        var source = new ObservableList<EndpointViewModel>
+        {
+            new EndpointViewModel(),
+            new EndpointViewModel(),
+            new EndpointViewModel(),
+        };
+        EndpointsView = source.ToNotifyCollectionChangedSlim();
     }
 
-    public PortViewModel(NavigationId id, ILoggerFactory loggerFactory)
+    public PortViewModel(NavigationId id, ILoggerFactory loggerFactory, TimeProvider timeProvider)
         : base(id, loggerFactory)
     {
-        _loggerFactory = loggerFactory;
+        LoggerFactory = loggerFactory;
+        TimeProvider = timeProvider;
+        _rxBytes = new IncrementalRateCounter(5, timeProvider);
+        _txBytes = new IncrementalRateCounter(5, timeProvider);
+        _rxPackets = new IncrementalRateCounter(5, timeProvider);
+        _txPackets = new IncrementalRateCounter(5, timeProvider);
+
+        var view = _endpoints.CreateView(EndpointFactory).DisposeItWith(Disposable);
+        view.DisposeMany().DisposeItWith(Disposable);
+        view.SetRoutableParent(this).DisposeItWith(Disposable);
+        EndpointsView = view.ToNotifyCollectionChanged(
+                SynchronizationContextCollectionEventDispatcher.Current
+            )
+            .DisposeItWith(Disposable);
+
         TagsView = TagsSource.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
         _hasValidationError = new BindableReactiveProperty<bool>().DisposeItWith(Disposable);
         _hasChanges = new BindableReactiveProperty<bool>().DisposeItWith(Disposable);
@@ -84,15 +110,11 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
         RemovePortCommand = new ReactiveCommand(RemovePort).DisposeItWith(Disposable);
 
         TagsSource.Add(
-            TypeTag = new TagViewModel("type", _loggerFactory)
-            {
-                TagType = TagType.Info,
-                Key = null,
-            }
+            TypeTag = new TagViewModel("type", loggerFactory) { TagType = TagType.Info, Key = null }
         );
 
         TagsSource.Add(
-            ConfigTag = new TagViewModel("cfg", _loggerFactory)
+            ConfigTag = new TagViewModel("cfg", loggerFactory)
             {
                 Icon = null,
                 TagType = TagType.Success,
@@ -100,7 +122,7 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
             }
         );
         TagsSource.Add(
-            RxTag = new TagViewModel("rx", _loggerFactory)
+            RxTag = new TagViewModel("rx", loggerFactory)
             {
                 Icon = MaterialIconKind.ArrowDownBold,
                 TagType = TagType.Success,
@@ -108,7 +130,7 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
             }
         );
         TagsSource.Add(
-            TxTag = new TagViewModel("tx", _loggerFactory)
+            TxTag = new TagViewModel("tx", loggerFactory)
             {
                 Icon = MaterialIconKind.ArrowUpBold,
                 TagType = TagType.Success,
@@ -116,6 +138,16 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
             }
         );
     }
+
+    protected ILoggerFactory LoggerFactory { get; }
+    protected TimeProvider TimeProvider { get; }
+
+    protected virtual EndpointViewModel EndpointFactory(IProtocolEndpoint arg)
+    {
+        return new EndpointViewModel(arg, LoggerFactory, TimeProvider);
+    }
+
+    public NotifyCollectionChangedSynchronizedViewList<EndpointViewModel> EndpointsView { get; }
 
     #region Default tags
 
@@ -132,7 +164,7 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
         set => SetField(ref field, value);
     }
 
-    private async ValueTask ChangeEnabled(bool isEnabled, CancellationToken cancel)
+    private ValueTask ChangeEnabled(bool isEnabled, CancellationToken cancel)
     {
         if (isEnabled)
         {
@@ -144,6 +176,8 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
             Port?.Disable();
             StatusMessage = "Disabled";
         }
+
+        return ValueTask.CompletedTask;
     }
 
     public ReactiveCommand CancelChangesCommand { get; }
@@ -219,6 +253,10 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
         InitArgs(protocolPort.Id);
         InternalLoadChanges(protocolPort.Config);
         ResetChanges();
+
+        Port.EndpointAdded.Subscribe(x => _endpoints.Add(x)).DisposeItWith(Disposable);
+        Port.EndpointRemoved.Subscribe(x => _endpoints.Remove(x)).DisposeItWith(Disposable);
+        _endpoints.AddRange(_endpoints);
     }
 
     private void UpdatePortStatus(ProtocolPortStatus status)
@@ -236,8 +274,17 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
 
     private void UpdateStatistic(Unit unit)
     {
-        RxTag.Value = DataFormatter.ByteRate.Print(Port?.Statistic.RxBytes ?? 0);
-        TxTag.Value = DataFormatter.ByteRate.Print(Port?.Statistic.TxBytes ?? 0);
+        var rxBytes = DataFormatter.ByteRate.Print(
+            _rxBytes.Calculate(Port?.Statistic.RxBytes ?? 0)
+        );
+        var txBytes = DataFormatter.ByteRate.Print(
+            _txBytes.Calculate(Port?.Statistic.TxBytes ?? 0)
+        );
+        var rxPackets = _rxPackets.Calculate(Port?.Statistic.RxMessages ?? 0).ToString("F1");
+        var txPackets = _txPackets.Calculate(Port?.Statistic.TxMessages ?? 0).ToString("F1");
+        RxTag.Value = $"{rxBytes} / {rxPackets} Hz";
+        TxTag.Value = $"{txBytes} / {txPackets} Hz";
+        EndpointsView.ForEach(x => x.UpdateStatistic());
     }
 
     protected void AddToValidation<T>(
@@ -267,7 +314,7 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
 
     public IReadOnlyBindableReactiveProperty<bool> HasChanges => _hasChanges;
 
-    protected void ResetChanges()
+    private void ResetChanges()
     {
         _hasChanges.Value = false;
     }
@@ -289,7 +336,7 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
 
     public BindableReactiveProperty<string> Name { get; }
 
-    public string ConnectionString
+    public string? ConnectionString
     {
         get;
         set => SetField(ref field, value);
@@ -307,8 +354,8 @@ public class PortViewModel : RoutableViewModel, IPortViewModel
 
     public MaterialIconKind? Icon
     {
-        get => _icon;
-        set => SetField(ref _icon, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public BindableReactiveProperty<bool> IsEnabled { get; }

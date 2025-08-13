@@ -31,8 +31,12 @@ public class UdpPortViewModel : PortViewModel
     }
 
     [ImportingConstructor]
-    public UdpPortViewModel(IConfiguration cfgSvc, ILoggerFactory loggerFactory)
-        : base($"{UdpProtocolPort.Scheme}-editor", loggerFactory)
+    public UdpPortViewModel(
+        IConfiguration cfgSvc,
+        ILoggerFactory loggerFactory,
+        TimeProvider timeProvider
+    )
+        : base($"{UdpProtocolPort.Scheme}-editor", loggerFactory, timeProvider)
     {
         _cfgSvc = cfgSvc;
         Icon = DefaultIcon;
@@ -124,5 +128,10 @@ public class UdpPortViewModel : PortViewModel
         ConfigTag.Value = $"{config.Host}:{config.Port}";
         TypeTag.Value = "UDP";
         TypeTag.TagType = TagType.Info4;
+    }
+
+    protected override EndpointViewModel EndpointFactory(IProtocolEndpoint arg)
+    {
+        return new UdpEndpointViewModel(arg, LoggerFactory, TimeProvider);
     }
 }

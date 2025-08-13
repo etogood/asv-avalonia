@@ -25,7 +25,6 @@ public class TcpPortViewModelConfig
 public class TcpPortViewModel : PortViewModel
 {
     private readonly IConfiguration _cfgSvc;
-    private readonly ILoggerFactory _loggerFactory;
     public const MaterialIconKind DefaultIcon = MaterialIconKind.UploadNetworkOutline;
 
     public TcpPortViewModel()
@@ -37,11 +36,14 @@ public class TcpPortViewModel : PortViewModel
     }
 
     [ImportingConstructor]
-    public TcpPortViewModel(IConfiguration cfgSvc, ILoggerFactory loggerFactory)
-        : base($"{TcpClientProtocolPort.Scheme}-editor", loggerFactory)
+    public TcpPortViewModel(
+        IConfiguration cfgSvc,
+        ILoggerFactory loggerFactory,
+        TimeProvider timeProvider
+    )
+        : base($"{TcpClientProtocolPort.Scheme}-editor", loggerFactory, timeProvider)
     {
         _cfgSvc = cfgSvc;
-        _loggerFactory = loggerFactory;
         Icon = DefaultIcon;
         Config = _cfgSvc.Get<TcpPortViewModelConfig>();
         AddToValidation(Host = new BindableReactiveProperty<string>(), HostValidate);

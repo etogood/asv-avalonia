@@ -31,8 +31,12 @@ public class TcpServerPortViewModel : PortViewModel
     }
 
     [ImportingConstructor]
-    public TcpServerPortViewModel(IConfiguration cfgSvc, ILoggerFactory loggerFactory)
-        : base($"{TcpServerProtocolPort.Scheme}-editor", loggerFactory)
+    public TcpServerPortViewModel(
+        IConfiguration cfgSvc,
+        ILoggerFactory loggerFactory,
+        TimeProvider timeProvider
+    )
+        : base($"{TcpServerProtocolPort.Scheme}-editor", loggerFactory, timeProvider)
     {
         _cfgSvc = cfgSvc;
         Icon = DefaultIcon;
@@ -89,5 +93,10 @@ public class TcpServerPortViewModel : PortViewModel
         ConfigTag.Value = $"{config.Host}:{config.Port}";
         TypeTag.Value = "TCP Server";
         TypeTag.TagType = TagType.Info3;
+    }
+
+    protected override EndpointViewModel EndpointFactory(IProtocolEndpoint arg)
+    {
+        return new TcpServerEndpointViewModel(arg, LoggerFactory, TimeProvider);
     }
 }
