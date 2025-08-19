@@ -8,8 +8,6 @@
              x:Class="Asv.Avalonia.ShellView"
              x:DataType="avalonia:ShellViewModel">
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <avalonia:DesignTimeShellViewModel />
     </Design.DataContext>
     <UserControl.Styles>
@@ -150,21 +148,8 @@
         <Border BorderThickness="0, 1, 0, 1" BorderBrush="{DynamicResource SystemControlBackgroundBaseLowBrush}" >
             <avalonia:DockControl 
                 x:Name="DockControl"
-                MaxSplitAmount="3" 
-                BorderHighLightColor="{DynamicResource SystemAccentColor}" 
                 ItemsSource="{CompiledBinding PagesView}" 
                 SelectedItem="{Binding SelectedPage.Value, Mode=TwoWay}">
-                 <avalonia:DockControl.TabControlStripItemTemplate> 
-                     <DataTemplate> 
-                         <StackPanel Orientation="Horizontal" Spacing="4"> 
-                             <avalonia1:MaterialIcon Width="16" Height="16" Kind="{Binding Icon}"/> 
-                             <TextBlock VerticalAlignment="Center" Text="{Binding Title}"/> 
-                             <Button Theme="{StaticResource TransparentButton}" Command="{Binding TryClose}"  Padding="0"> 
-                                 <avalonia1:MaterialIcon Kind="Close"/> 
-                             </Button> 
-                         </StackPanel> 
-                     </DataTemplate>
-                 </avalonia:DockControl.TabControlStripItemTemplate> 
             </avalonia:DockControl>
         </Border>
     </DockPanel>

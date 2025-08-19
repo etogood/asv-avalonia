@@ -1,0 +1,28 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:control="clr-namespace:Asv.Avalonia"
+                    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia">
+    <Design.PreviewWith>
+        <Border IsHitTestVisible="False">
+            <control:DockTabStripItem>
+                <control:DockTabStripItem.Content>
+                    <control:SettingsPageViewModel />
+                </control:DockTabStripItem.Content>
+            </control:DockTabStripItem>
+        </Border>
+    </Design.PreviewWith>
+    
+    <DataTemplate x:Key="DockTabStripItemHeaderTemplate" x:DataType="control:IPage">
+        <StackPanel Orientation="Horizontal" Spacing="4" Margin="2">
+            <avalonia:MaterialIcon Width="16" Height="16" Kind="{Binding Icon}" />
+            <TextBlock VerticalAlignment="Center" Text="{Binding Title}" />
+            <Button Theme="{StaticResource TransparentButton}" Command="{Binding TryClose}" Padding="0">
+                <avalonia:MaterialIcon Kind="Close" />
+            </Button>
+        </StackPanel>
+    </DataTemplate>
+    
+    <ControlTheme x:Key="{x:Type control:DockTabStripItem}" TargetType="control:DockTabStripItem">
+        <Setter Property="ContentTemplate" Value="{StaticResource DockTabStripItemHeaderTemplate}" />
+    </ControlTheme>
+</ResourceDictionary>

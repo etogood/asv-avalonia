@@ -46,7 +46,10 @@
                 <MergeResourceInclude Source="avares://Asv.Avalonia/Controls/Tools/ToolsListStyles.axaml"/>
                 <MergeResourceInclude Source="avares://Asv.Avalonia/Controls/ContentDialog/ContentDialogStyles.axaml"/>
                 <MergeResourceInclude Source="avares://Asv.Avalonia/Controls/InfoBar/InfoBarStyles.axaml"/>
-                <MergeResourceInclude Source="avares://Asv.Avalonia/Controls/AdaptiveTabControlStrip/AdaptiveTabStripTabControl.axaml" />
+                <MergeResourceInclude Source="avares://Asv.Avalonia/Controls/Dock/TabControl/DockTabControlStyles.axaml" />
+                <MergeResourceInclude Source="avares://Asv.Avalonia/Controls/Dock/DockControlStyles.axaml"/>
+                <MergeResourceInclude Source="avares://Asv.Avalonia/Controls/Dock/Item/DockTabStripItemStyles.axaml"/>
+                <MergeResourceInclude Source="avares://Asv.Avalonia/Controls/Dock/Item/DockTabItemStyles.axaml"/>
             </ResourceDictionary.MergedDictionaries>
             
             <ResourceDictionary.ThemeDictionaries>
@@ -82,7 +85,7 @@
     <avalonia:MaterialIconStyles />
     <FluentTheme></FluentTheme>
     <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
-    
+
     <StyleInclude Source="avares://Asv.Avalonia/Styling/Styles/BorderStyles.axaml"/>
     <StyleInclude Source="avares://Asv.Avalonia/Styling/Styles/EllipseStyles.axaml"/>
     <StyleInclude Source="avares://Asv.Avalonia/Styling/Styles/MaterialIconStyles.axaml"/>
@@ -91,7 +94,6 @@
     <StyleInclude Source="avares://Asv.Avalonia/Styling/Styles/TextBoxStyles.axaml"/>
     <StyleInclude Source="avares://Asv.Avalonia/Styling/Styles/PathStyles.axaml"/>
     
-    <StyleInclude Source="avares://Asv.Avalonia/Controls/Dock/DockControl.axaml"/>
     <StyleInclude Source="avares://Asv.Avalonia/Controls/Workspace/Workspace.axaml"/>
     <StyleInclude Source="avares://Asv.Avalonia/Controls/Workspace/WorkspaceItem.axaml"/>
     <StyleInclude Source="avares://Asv.Avalonia/Controls/Indicators/BatteryIndicator.axaml"/>

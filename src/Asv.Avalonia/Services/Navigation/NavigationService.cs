@@ -5,7 +5,6 @@ using Asv.Common;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.LogicalTree;
-using DotNext.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;
@@ -15,7 +14,7 @@ namespace Asv.Avalonia;
 
 public class NavigationServiceConfig
 {
-    public HashSet<string> Pages { get; } = [];
+    public IList<string> Pages { get; } = [];
 }
 
 [Export(typeof(INavigationService))]
@@ -152,14 +151,16 @@ public class NavigationService : AsyncDisposableOnce, INavigationService
         try
         {
             var cfg = new NavigationServiceConfig();
-            cfg.Pages.Clear();
-            cfg.Pages.AddAll(_host.Shell.Pages.Select(x => x.Id.ToString()));
+            foreach (var page in _host.Shell.Pages)
+            {
+                cfg.Pages.Add(page.Id.ToString());
+            }
             _logger.ZLogTrace($"Save layout: {string.Join(",", cfg.Pages)}");
             _cfgSvc.Set(cfg);
         }
         catch (Exception e)
         {
-            _logger.LogError(e, $"Error saving layout: {e.Message}");
+            _logger.LogError(e, "Error saving layout: {EMessage}", e.Message);
             Debug.Assert(false, $"Error saving layout: {e.Message}");
         }
         finally
