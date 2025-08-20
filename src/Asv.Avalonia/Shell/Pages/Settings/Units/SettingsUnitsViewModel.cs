@@ -87,7 +87,10 @@ public class SettingsUnitsViewModel : SettingsSubPage
             yield return model;
         }
 
-        base.GetRoutableChildren();
+        foreach (var child in base.GetRoutableChildren())
+        {
+            yield return child;
+        }
     }
 
     public override IExportInfo Source => SystemModule.Instance;
