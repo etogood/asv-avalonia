@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Asv.Avalonia;
 
-public class DesignTimeDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValue>
+public sealed class DesignTimeDictionary<TKey, TValue> : IReadOnlyDictionary<TKey, TValue>
 {
     private readonly KeyValuePair<TKey, TValue> _value;
 
