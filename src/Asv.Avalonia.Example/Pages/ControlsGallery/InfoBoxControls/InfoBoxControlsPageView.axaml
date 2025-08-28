@@ -38,7 +38,7 @@
                                  IsOpen="True"
                                  IsIconVisible="True"
                                  IsClosable="False"
-                                 Severity="{Binding Severity.Value}"
+                                 Severity="{Binding Severity.ViewValue.Value}"
                                  Title="{Binding InfoBoxTitle.ViewValue.Value}"
                                  Message="{Binding InfoBoxMessage.ViewValue.Value}" />
 
@@ -47,7 +47,7 @@
                                  IsOpen="True"
                                  IsIconVisible="True"
                                  IsClosable="False"
-                                 Severity="{Binding Severity.Value}"
+                                 Severity="{Binding Severity.ViewValue.Value}"
                                  Title="{Binding InfoBoxTitle.ViewValue.Value}"
                                  Message="{Binding InfoBoxMessage.ViewValue.Value}">
                         <asv:InfoBar.ActionButton>
@@ -60,7 +60,7 @@
                                  IsOpen="True"
                                  IsIconVisible="True"
                                  IsClosable="True"
-                                 Severity="{Binding Severity.Value}"
+                                 Severity="{Binding Severity.ViewValue.Value}"
                                  Title="{Binding InfoBoxTitle.ViewValue.Value}"
                                  Message="{Binding InfoBoxMessage.ViewValue.Value}" />
                 </Panel>
@@ -91,8 +91,8 @@
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Right" />
                         <ComboBox Grid.Row="0" Grid.Column="1"
-                                  ItemsSource="{Binding Severities}"
-                                  SelectedItem="{Binding Severity.Value, Mode=TwoWay}"
+                                  ItemsSource="{Binding Severity.EnumItems}"
+                                  SelectedItem="{Binding Severity.ViewValue.Value, Mode=TwoWay}"
                                   HorizontalAlignment="Stretch">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>

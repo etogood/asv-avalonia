@@ -14,12 +14,14 @@ public class HistoricalControlsPageViewModel : ControlsGallerySubPage
     public const string PageId = "historical_controls";
     public const MaterialIconKind PageIcon = MaterialIconKind.History;
 
-    private readonly ReactiveProperty<GeoPoint> _geoPointProperty;
     private readonly ReactiveProperty<bool> _isTurnedOn;
     private readonly ReactiveProperty<double> _speed;
     private readonly ReactiveProperty<string?> _stringWithManyValidations;
     private readonly ReactiveProperty<string?> _stringWithOneValidation;
     private readonly ReactiveProperty<string?> _stringWithoutValidation;
+    private readonly ReactiveProperty<GeoPoint> _geoPointProperty;
+    private readonly ReactiveProperty<Enum> _tagTypeProp;
+    private readonly ReactiveProperty<Enum> _rttBoxStatusProp;
 
     public HistoricalControlsPageViewModel()
         : this(DesignTime.UnitService, DesignTime.LoggerFactory)
@@ -42,6 +44,10 @@ public class HistoricalControlsPageViewModel : ControlsGallerySubPage
         _stringWithOneValidation = new ReactiveProperty<string?>().DisposeItWith(Disposable);
         _stringWithManyValidations = new ReactiveProperty<string?>().DisposeItWith(Disposable);
         _geoPointProperty = new ReactiveProperty<GeoPoint>().DisposeItWith(Disposable);
+        _tagTypeProp = new ReactiveProperty<Enum>(TagType.Error).DisposeItWith(Disposable);
+        _rttBoxStatusProp = new ReactiveProperty<Enum>(RttBoxStatus.Normal).DisposeItWith(
+            Disposable
+        );
 
         IsTurnedOn = new HistoricalBoolProperty(
             nameof(IsTurnedOn),
@@ -131,6 +137,20 @@ public class HistoricalControlsPageViewModel : ControlsGallerySubPage
             this
         ).DisposeItWith(Disposable);
         GeoPointProperty.ForceValidate();
+
+        TagTypeProp = new HistoricalEnumProperty<TagType>(
+            nameof(TagTypeProp),
+            _tagTypeProp,
+            loggerFactory,
+            this
+        ).DisposeItWith(Disposable);
+
+        RttBoxStatusProp = new HistoricalEnumProperty<RttBoxStatus>(
+            nameof(RttBoxStatusProp),
+            _rttBoxStatusProp,
+            loggerFactory,
+            this
+        ).DisposeItWith(Disposable);
     }
 
     public ReactiveCommand TurnOn { get; }
@@ -140,6 +160,8 @@ public class HistoricalControlsPageViewModel : ControlsGallerySubPage
     public HistoricalStringProperty StringPropWithOneValidation { get; }
     public HistoricalStringProperty StringPropWithManyValidations { get; }
     public HistoricalGeoPointProperty GeoPointProperty { get; }
+    public HistoricalEnumProperty<TagType> TagTypeProp { get; }
+    public HistoricalEnumProperty<RttBoxStatus> RttBoxStatusProp { get; }
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
@@ -149,6 +171,8 @@ public class HistoricalControlsPageViewModel : ControlsGallerySubPage
         yield return StringPropWithOneValidation;
         yield return StringPropWithManyValidations;
         yield return GeoPointProperty;
+        yield return TagTypeProp;
+        yield return RttBoxStatusProp;
 
         foreach (var child in base.GetRoutableChildren())
         {

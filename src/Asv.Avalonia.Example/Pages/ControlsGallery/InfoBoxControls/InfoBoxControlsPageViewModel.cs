@@ -14,8 +14,9 @@ public class InfoBoxControlsPageViewModel : ControlsGallerySubPage
 {
     public const string PageId = "info_box_controls";
     public const MaterialIconKind PageIcon = MaterialIconKind.InfoBox;
-    private readonly ReactiveProperty<string?> _infoBoxMessage;
 
+    private readonly ReactiveProperty<Enum> _severity;
+    private readonly ReactiveProperty<string?> _infoBoxMessage;
     private readonly ReactiveProperty<string?> _infoBoxTitle;
 
     public InfoBoxControlsPageViewModel()
@@ -28,10 +29,9 @@ public class InfoBoxControlsPageViewModel : ControlsGallerySubPage
     public InfoBoxControlsPageViewModel(ILoggerFactory loggerFactory)
         : base(PageId, loggerFactory)
     {
-        Severity = new BindableReactiveProperty<InfoBarSeverity>(
-            InfoBarSeverity.Informational
-        ).DisposeItWith(Disposable);
-
+        _severity = new ReactiveProperty<Enum>(InfoBarSeverity.Informational).DisposeItWith(
+            Disposable
+        );
         _infoBoxTitle = new ReactiveProperty<string?>(
             RS.InfoBoxControlsPageViewModel_Example_Title
         ).DisposeItWith(Disposable);
@@ -39,6 +39,12 @@ public class InfoBoxControlsPageViewModel : ControlsGallerySubPage
             RS.InfoBoxControlsPageViewModel_Example_Message
         ).DisposeItWith(Disposable);
 
+        Severity = new HistoricalEnumProperty<InfoBarSeverity>(
+            nameof(Severity),
+            _severity,
+            loggerFactory,
+            this
+        ).DisposeItWith(Disposable);
         InfoBoxTitle = new HistoricalStringProperty(
             nameof(InfoBoxTitle),
             _infoBoxTitle,
@@ -53,15 +59,13 @@ public class InfoBoxControlsPageViewModel : ControlsGallerySubPage
         ).DisposeItWith(Disposable);
     }
 
+    public HistoricalEnumProperty<InfoBarSeverity> Severity { get; }
     public HistoricalStringProperty InfoBoxTitle { get; }
     public HistoricalStringProperty InfoBoxMessage { get; }
 
-    // TODO: use historical property after it is implemented
-    public BindableReactiveProperty<InfoBarSeverity> Severity { get; }
-    public InfoBarSeverity[] Severities { get; } = Enum.GetValues<InfoBarSeverity>();
-
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
+        yield return Severity;
         yield return InfoBoxTitle;
         yield return InfoBoxMessage;
 
