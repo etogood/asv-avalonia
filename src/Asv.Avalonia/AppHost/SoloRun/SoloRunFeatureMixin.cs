@@ -12,6 +12,7 @@ public static class SoloRunFeatureMixin
     {
         var options = builder
             .Services.AddSingleton<ISoloRunFeature, SoloRunFeature>()
+            .AddHostedService(x => x.GetRequiredService<ISoloRunFeature>())
             .AddOptions<SoloRunFeatureConfig>()
             .Bind(builder.Configuration.GetSection(SoloRunFeatureConfig.Section))
             .PostConfigure<IAppInfo>(

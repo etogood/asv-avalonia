@@ -1,6 +1,7 @@
 using System.Composition;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices;
+using Asv.Avalonia.FileAssociation;
 using Asv.Cfg;
 using Avalonia;
 using Avalonia.Controls;
@@ -19,16 +20,19 @@ public class DesktopShellViewModelConfig { }
 public class DesktopShellViewModel : ShellViewModel
 {
     public const string ShellId = "shell.desktop";
+    private readonly IFileAssociationService _fileService;
     private readonly IContainerHost _ioc;
 
     [ImportingConstructor]
     public DesktopShellViewModel(
+        IFileAssociationService fileService,
         IConfiguration cfg,
         IContainerHost ioc,
         ILoggerFactory loggerFactory
     )
         : base(ioc, loggerFactory, cfg, ShellId)
     {
+        _fileService = fileService;
         _ioc = ioc;
         var wnd = ioc.GetExport<ShellWindow>();
         wnd.DataContext = this;
@@ -42,8 +46,6 @@ public class DesktopShellViewModel : ShellViewModel
             );
         }
 
-        OpenFileCommand = new ReactiveCommand<string>(OpenFile);
-
         // Set window as the drop target
         DragDrop.SetAllowDrop(wnd, true);
         wnd.AddHandler(DragDrop.DropEvent, OnFileDrop);
@@ -53,12 +55,6 @@ public class DesktopShellViewModel : ShellViewModel
         lifetime.MainWindow = wnd;
         lifetime.MainWindow.Show();
     }
-
-    #region Drop
-
-    private ReactiveCommand<string> OpenFileCommand { get; }
-
-    #endregion
 
     private void OnFileDrop(object? sender, DragEventArgs e)
     {
@@ -74,7 +70,7 @@ public class DesktopShellViewModel : ShellViewModel
                     var path = file.TryGetLocalPath();
                     if (Path.Exists(path))
                     {
-                        OpenFileCommand.Execute(path);
+                        _fileService.OpenFile(path);
                     }
                 }
             }

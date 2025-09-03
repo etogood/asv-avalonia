@@ -1869,20 +1869,20 @@ namespace Asv.Avalonia {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File.
-        /// </summary>
-        public static string ShellView_Toolbar_File {
-            get {
-                return ResourceManager.GetString("ShellView_Toolbar_File", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Help.
         /// </summary>
         public static string ShellView_Toolbar_Help {
             get {
                 return ResourceManager.GetString("ShellView_Toolbar_Help", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open.
+        /// </summary>
+        public static string ShellView_Toolbar_Open {
+            get {
+                return ResourceManager.GetString("ShellView_Toolbar_Open", resourceCulture);
             }
         }
         

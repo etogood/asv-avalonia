@@ -125,8 +125,8 @@
     <data name="ShellView_Toolbar_Edit" xml:space="preserve">
         <value>Правка</value>
     </data>
-    <data name="ShellView_Toolbar_File" xml:space="preserve">
-        <value>Файл</value>
+    <data name="ShellView_Toolbar_Open" xml:space="preserve">
+        <value>Открыть</value>
     </data>
     <data name="ShellView_Toolbar_Help" xml:space="preserve">
         <value>Помощь</value>

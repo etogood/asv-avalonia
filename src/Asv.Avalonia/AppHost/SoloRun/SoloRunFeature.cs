@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.IO.Pipes;
 using Asv.Common;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using R3;
@@ -110,5 +111,15 @@ public class SoloRunFeature : AsyncDisposableWithCancel, ISoloRunFeature
                 $"Failed to send arguments to the running instance through the named pipe {pipeName}."
             );
         }
+    }
+
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
     }
 }

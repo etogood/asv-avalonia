@@ -120,8 +120,8 @@
         <value>Collapse</value>
     </data>
     
-    <data name="ShellView_Toolbar_File" xml:space="preserve">
-        <value>File</value>
+    <data name="ShellView_Toolbar_Open" xml:space="preserve">
+        <value>Open</value>
     </data>
     <data name="ShellView_Toolbar_Edit" xml:space="preserve">
         <value>Edit</value>

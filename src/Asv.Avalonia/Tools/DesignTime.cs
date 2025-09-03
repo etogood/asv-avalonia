@@ -1,3 +1,4 @@
+using Asv.Avalonia.FileAssociation;
 using Asv.Cfg;
 using Avalonia.Controls;
 using Microsoft.Extensions.Logging;
@@ -8,6 +9,8 @@ namespace Asv.Avalonia;
 public static class DesignTime
 {
     public static NavigationId Id => NavigationId.GenerateRandom();
+    public static IFileAssociationService FileAssociation { get; } =
+        new NullFileAssociationService();
 
     public static void ThrowIfNotDesignMode()
     {

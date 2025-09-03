@@ -34,7 +34,7 @@ public class DesignTimeShellViewModel : ShellViewModel
         InternalPages.Add(new SettingsPageViewModel());
         InternalPages.Add(new HomePageViewModel());
 
-        var file = new FileMenu(DesignTime.LoggerFactory);
+        var file = new OpenMenu(DesignTime.LoggerFactory, DesignTime.FileAssociation);
         MainMenu.Add(file);
         MainMenu.Add(new MenuItem("open", "Open", DesignTime.LoggerFactory, file.Id.Id));
         MainMenu.Add(new EditMenu(DesignTime.LoggerFactory));
