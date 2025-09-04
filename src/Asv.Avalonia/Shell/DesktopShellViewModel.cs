@@ -70,7 +70,7 @@ public class DesktopShellViewModel : ShellViewModel
                     var path = file.TryGetLocalPath();
                     if (Path.Exists(path))
                     {
-                        _fileService.OpenFile(path);
+                        _fileService.Open(path);
                     }
                 }
             }

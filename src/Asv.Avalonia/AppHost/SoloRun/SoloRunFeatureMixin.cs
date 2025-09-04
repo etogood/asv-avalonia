@@ -29,12 +29,12 @@ public static class SoloRunFeatureMixin
         return builder;
     }
 
-    public static ISoloRunFeature GetSoloRunFeature(this AppHost host)
+    public static ISoloRunFeature GetSoloRunFeature(this IHost host)
     {
-        return host.GetService<ISoloRunFeature>();
+        return host.Services.GetRequiredService<ISoloRunFeature>();
     }
 
-    public static AppHost ExitIfNotFirstInstance(this AppHost host)
+    public static IHost ExitIfNotFirstInstance(this IHost host)
     {
         if (host.GetSoloRunFeature().IsFirstInstance == false)
         {

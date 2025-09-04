@@ -12,6 +12,7 @@ public class ToolsSettingsMenu : MenuItem
     public ToolsSettingsMenu(ILoggerFactory loggerFactory)
         : base(MenuId, RS.ToolsMenu_Settings, loggerFactory, ToolsMenu.MenuId)
     {
+        Icon = OpenSettingsCommand.StaticInfo.Icon;
         Command = new BindableAsyncCommand(OpenSettingsCommand.Id, this);
     }
 }

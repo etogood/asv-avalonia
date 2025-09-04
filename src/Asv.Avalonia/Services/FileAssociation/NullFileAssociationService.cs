@@ -4,11 +4,16 @@ namespace Asv.Avalonia.FileAssociation;
 
 public class NullFileAssociationService : IFileAssociationService
 {
-    public bool HasAnyHandlersForOpenFile { get; } = true;
-    public ImmutableHashSet<string> OpenFileTypeFilters => ImmutableHashSet<string>.Empty;
+    public IEnumerable<FileTypeInfo> SupportedFiles { get; } = [];
 
-    public void OpenFile(string path)
+    public ValueTask Open(string path)
     {
         // do nothing
+        return ValueTask.CompletedTask;
+    }
+
+    public ValueTask Create(string path, FileTypeInfo type)
+    {
+        return ValueTask.CompletedTask;
     }
 }

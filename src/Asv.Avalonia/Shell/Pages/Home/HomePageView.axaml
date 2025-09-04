@@ -29,7 +29,7 @@
                    Foreground="{DynamicResource  ButtonForegroundDisabled}"
                    Text="{Binding AppInfo.Description}" />
         
-        <Grid RowDefinitions="2*,3*">
+        <Grid RowDefinitions="Auto,*">
             <asv:ToolsList Grid.Row="0" Margin="0" ItemsSource="{Binding ToolsView}" />
             <asv:ItemsList Grid.Row="1" ItemsSource="{Binding ItemsView}" />
         </Grid>

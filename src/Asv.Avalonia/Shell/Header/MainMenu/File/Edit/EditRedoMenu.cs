@@ -12,6 +12,7 @@ public class EditRedoMenu : MenuItem
     public EditRedoMenu(ILoggerFactory loggerFactory)
         : base(MenuId, RS.RedoCommand_CommandInfo_Name, loggerFactory, EditMenu.MenuId)
     {
+        Icon = RedoCommand.StaticInfo.Icon;
         Command = new BindableAsyncCommand(RedoCommand.Id, this);
         Order = 1;
     }

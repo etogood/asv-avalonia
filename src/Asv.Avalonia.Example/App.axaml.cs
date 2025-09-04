@@ -7,6 +7,7 @@ using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Reflection;
 using Asv.Avalonia.Example.Api;
+using Asv.Avalonia.FileAssociation;
 using Asv.Avalonia.GeoMap;
 using Asv.Avalonia.Plugins;
 using Asv.Cfg;
@@ -16,6 +17,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using R3;
@@ -61,6 +63,7 @@ public class App : Application, IContainerHost, IShellHost
                 .WithExport(AppHost.Instance.GetService<IAppPath>())
                 .WithExport(AppHost.Instance.GetService<IAppInfo>())
                 .WithExport(AppHost.Instance.GetService<IMeterFactory>())
+                .WithExport(AppHost.Instance.GetService<ISoloRunFeature>())
                 .WithExport(TimeProvider.System)
                 .WithExport(logReader)
                 .WithExport<IDataTemplateHost>(this)
@@ -73,6 +76,8 @@ public class App : Application, IContainerHost, IShellHost
         // TODO: load plugin manager before creating container
         _container = containerCfg.CreateContainer();
         DataTemplates.Add(new CompositionViewLocator(_container));
+        
+        
     }
 
     private IEnumerable<Assembly> DefaultAssemblies
@@ -85,7 +90,7 @@ public class App : Application, IContainerHost, IShellHost
             yield return typeof(ApiModule).Assembly; // Asv.Avalonia.Example.Api
 
             // TODO: use it when plugin manager implementation will be finished
-            // yield return typeof(PluginManagerModule).Assembly; // Asv.Avalonia.Plugins
+            //yield return typeof(PluginManagerModule).Assembly; // Asv.Avalonia.Plugins
         }
     }
 
@@ -125,6 +130,11 @@ public class App : Application, IContainerHost, IShellHost
 #if DEBUG
         this.AttachDevTools();
 #endif
+        var svc = _container.GetExport<IFileAssociationService>();
+        AppHost.Instance.Services.GetRequiredService<ISoloRunFeature>().Args.Where(x => x.Tags.Count > 1 ).Subscribe(x =>
+        {
+            svc.Open(x.Tags.Skip(1).First());
+        });
     }
 
     public T GetExport<T>()

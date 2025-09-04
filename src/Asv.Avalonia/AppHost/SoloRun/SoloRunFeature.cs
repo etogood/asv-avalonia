@@ -64,14 +64,14 @@ public class SoloRunFeature : AsyncDisposableWithCancel, ISoloRunFeature
                     server.WaitForConnection();
 
                     using var reader = new StreamReader(server);
-                    var args = reader.ReadLine();
+                    var args = reader.ReadToEnd();
 
-                    if (args != null)
+                    if (!string.IsNullOrWhiteSpace(args))
                     {
                         logger.ZLogInformation(
                             $"Received arguments from the named pipe {pipeName}."
                         );
-                        _args.OnNext(_args.Value);
+                        _args.OnNext(AppArgs.DeserializeFromString(args));
                     }
                 }
                 catch (Exception ex)
