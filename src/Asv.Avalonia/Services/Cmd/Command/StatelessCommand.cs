@@ -99,14 +99,14 @@ public abstract class StatelessCommand<TArg1, TArg2> : StatelessCommand
             TArg1 arg1 => await InternalExecute(arg1, cancel),
             TArg2 arg2 => await InternalExecute(arg2, cancel),
             _ => throw new ArgumentException(
-                $"Invalid command argument type. Expected {typeof(TArg1).Name} or {typeof(TArg2).Name} , but got {newValue.GetType().Name}")
+                $"Invalid command argument type. Expected {typeof(TArg1).Name} or {typeof(TArg2).Name} , but got {newValue.GetType().Name}"
+            ),
         };
     }
 
     protected abstract ValueTask<TArg1?> InternalExecute(TArg1 arg, CancellationToken cancel);
     protected abstract ValueTask<TArg2?> InternalExecute(TArg2 arg, CancellationToken cancel);
 }
-
 
 public abstract class StatelessCommand<TArg1, TArg2, TArg3> : StatelessCommand
     where TArg1 : CommandArg
@@ -145,7 +145,8 @@ public abstract class StatelessCommand<TArg1, TArg2, TArg3> : StatelessCommand
             TArg2 arg2 => await InternalExecute(arg2, cancel),
             TArg3 arg3 => await InternalExecute(arg3, cancel),
             _ => throw new ArgumentException(
-                $"Invalid command argument type. Expected {typeof(TArg1).Name} or {typeof(TArg2).Name} , but got {newValue.GetType().Name}")
+                $"Invalid command argument type. Expected {typeof(TArg1).Name} or {typeof(TArg2).Name} , but got {newValue.GetType().Name}"
+            ),
         };
     }
 

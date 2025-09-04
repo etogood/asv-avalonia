@@ -1,6 +1,5 @@
 ﻿using System.Composition;
 using System.Diagnostics;
-using System.Globalization;
 using Asv.Cfg;
 using Asv.Common;
 using Avalonia.Threading;
@@ -8,7 +7,6 @@ using Material.Icons;
 using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;
-using ZLogger;
 
 namespace Asv.Avalonia;
 
@@ -20,16 +18,15 @@ public class LogViewerViewModelConfig : PageConfig { }
 public class LogViewerViewModel
     : PageViewModel<ILogViewerViewModel, LogViewerViewModelConfig>,
         ILogViewerViewModel,
-        ISupportPagination,
-        ISupportCancel,
-        ISupportRefresh
+        ISupportPagination
 {
+    public const string PageId = "log";
+    public const MaterialIconKind PageIcon = MaterialIconKind.Journal;
+
     private readonly ILogReaderService _logReaderService;
     private readonly ISearchService _search;
     private readonly ILoggerFactory _loggerFactory;
     private readonly ObservableList<LogMessageViewModel> _itemsSource = new();
-    public const string PageId = "log";
-    public const MaterialIconKind PageIcon = MaterialIconKind.Journal;
 
     public LogViewerViewModel()
         : base(
@@ -184,7 +181,7 @@ public class LogViewerViewModel
 
     public SearchBoxViewModel Search { get; }
 
-    public async Task UpdateImpl(
+    private async Task UpdateImpl(
         string? query,
         IProgress<double> progress,
         CancellationToken cancel
@@ -205,7 +202,7 @@ public class LogViewerViewModel
             var filtered = 0;
             var total = 0;
             var skip = 0;
-            Logger.ZLogTrace($"Start filtering log messages with filter: '{text}'");
+
             progress.Report(double.NaN);
 
             await foreach (
@@ -307,34 +304,6 @@ public class LogViewerViewModel
         {
             yield return item;
         }
-    }
-
-    public void Refresh()
-    {
-        Search.Refresh();
-    }
-
-    public void Cancel()
-    {
-        Search.Cancel();
-    }
-
-    public override ValueTask<IRoutable> Navigate(NavigationId id)
-    {
-        if (id == Search.Id)
-        {
-            Search.Navigate(NavigationId.Empty);
-            return new ValueTask<IRoutable>(Search);
-        }
-
-        var item = Items.FirstOrDefault(x => x.Id == id);
-        if (item == null)
-        {
-            return ValueTask.FromResult<IRoutable>(this);
-        }
-
-        SelectedItem = item;
-        return ValueTask.FromResult<IRoutable>(item);
     }
 
     protected override void AfterLoadExtensions() { }

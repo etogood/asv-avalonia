@@ -8,7 +8,7 @@ namespace Asv.Avalonia;
 public class ViewMenu : MenuItem
 {
     [method: ImportingConstructor]
-    public ViewMenu(ILoggerFactory loggerFactory) 
+    public ViewMenu(ILoggerFactory loggerFactory)
         : base(MenuId, RS.ShellView_Toolbar_View, loggerFactory)
     {
         Order = 80;

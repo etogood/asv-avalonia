@@ -5,28 +5,28 @@ namespace Asv.Avalonia;
 
 [ExportCommand]
 [Shared]
-public class CancelCommand : ContextCommand<ISupportCancel>
+public class ClearCommand : ContextCommand<ISupportClear>
 {
-    public const string Id = $"{BaseId}.cancel";
+    public const string Id = $"{BaseId}.clear";
 
     public override ICommandInfo Info =>
         new CommandInfo
         {
             Id = Id,
-            Name = RS.CancelCommand_CommandInfo_Name,
-            Description = RS.CancelCommand_CommandInfo_Description,
-            Icon = MaterialIconKind.Cancel,
-            DefaultHotKey = "Ctrl+F5", // TODO: fix hotkey
+            Name = RS.ClearCommand_CommandInfo_Name,
+            Description = RS.ClearCommand_CommandInfo_Description,
+            Icon = MaterialIconKind.Clear,
+            DefaultHotKey = "Ctrl+Escape", // TODO: fix hotkey
             Source = SystemModule.Instance,
         };
 
     protected override ValueTask<CommandArg?> InternalExecute(
-        ISupportCancel context,
+        ISupportClear context,
         CommandArg newValue,
         CancellationToken cancel
     )
     {
-        context.Cancel();
+        context.Clear();
         return CommandArg.Null;
     }
 }

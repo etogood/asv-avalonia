@@ -10,17 +10,21 @@ public class FileCommandConfig
     public string? LastDirectory { get; set; }
 }
 
-
 [ExportCommand]
 [Shared]
 [method: ImportingConstructor]
-public class OpenFileCommand(IFileAssociationService svc, IDialogService dialogs, IAppPath path, IConfiguration config)
-    : StatelessCommand<EmptyArg, DictArg>
+public class OpenFileCommand(
+    IFileAssociationService svc,
+    IDialogService dialogs,
+    IAppPath path,
+    IConfiguration config
+) : StatelessCommand<EmptyArg, DictArg>
 {
     public const string DialogTitleArgKey = "title";
     public const string InitialDirectoryArgKey = "dir";
     public const string FilePathArgKey = "file";
     public const string TypeFiltersArgKey = "ext";
+
     #region Static
 
     public const string Id = $"{BaseId}.file.open";
@@ -49,7 +53,12 @@ public class OpenFileCommand(IFileAssociationService svc, IDialogService dialogs
         return true;
     }
 
-    public static DictArg CreateArg(string? initialDirectory = null, string? filePath = null, string[]? typeFilters = null, string? title = null)
+    public static DictArg CreateArg(
+        string? initialDirectory = null,
+        string? filePath = null,
+        string[]? typeFilters = null,
+        string? title = null
+    )
     {
         var arg = new DictArg();
         if (title != null)
@@ -73,17 +82,24 @@ public class OpenFileCommand(IFileAssociationService svc, IDialogService dialogs
         return arg;
     }
 
-    protected override async ValueTask<EmptyArg?> InternalExecute(EmptyArg arg, CancellationToken cancel)
+    protected override async ValueTask<EmptyArg?> InternalExecute(
+        EmptyArg arg,
+        CancellationToken cancel
+    )
     {
-         await InternalExecute(new DictArg(), cancel);
-         return null;
+        await InternalExecute(new DictArg(), cancel);
+        return null;
     }
 
-    protected override async ValueTask<DictArg?> InternalExecute(DictArg arg, CancellationToken cancel)
+    protected override async ValueTask<DictArg?> InternalExecute(
+        DictArg arg,
+        CancellationToken cancel
+    )
     {
-        var filePath = arg.TryGetValue(FilePathArgKey, out var filePathArg) && filePathArg is StringArg strArg
-            ? strArg.Value
-            : null;
+        var filePath =
+            arg.TryGetValue(FilePathArgKey, out var filePathArg) && filePathArg is StringArg strArg
+                ? strArg.Value
+                : null;
 
         if (filePath == null)
         {
@@ -94,28 +110,36 @@ public class OpenFileCommand(IFileAssociationService svc, IDialogService dialogs
                 lastDirectory = cfg.LastDirectory;
             }
 
-            if (arg.TryGetValue(InitialDirectoryArgKey, out var initialDirectory) && initialDirectory is StringArg dir)
+            if (
+                arg.TryGetValue(InitialDirectoryArgKey, out var initialDirectory)
+                && initialDirectory is StringArg dir
+            )
             {
                 lastDirectory = dir.Value;
             }
 
-            var typeFilter = string.Join(",", svc.SupportedFiles.Select(x => x.Extension).Distinct().Append("*"));
+            var typeFilter = string.Join(
+                ",",
+                svc.SupportedFiles.Select(x => x.Extension).Distinct().Append("*")
+            );
             if (arg.TryGetValue(TypeFiltersArgKey, out var filters) && filters is ListArg list)
             {
-                var filterStrings = list.OfType<StringArg>().Select(x => x.Value).Where(x => !string.IsNullOrWhiteSpace(x))
+                var filterStrings = list.OfType<StringArg>()
+                    .Select(x => x.Value)
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
                     .ToArray();
                 if (filterStrings.Length > 0)
                 {
                     typeFilter = string.Join(",", filterStrings.Append("*"));
                 }
             }
-            
+
             var dialogTitle = "Select file";
             if (arg.TryGetValue(DialogTitleArgKey, out var title) && title is StringArg titleArg)
             {
                 dialogTitle = titleArg.Value;
             }
-            
+
             var dlg = dialogs.GetDialogPrefab<OpenFileDialogDesktopPrefab>();
             filePath = await dlg.ShowDialogAsync(
                 new OpenFileDialogPayload
@@ -126,15 +150,12 @@ public class OpenFileCommand(IFileAssociationService svc, IDialogService dialogs
                 }
             );
         }
-        
+
         if (string.IsNullOrWhiteSpace(filePath))
         {
             return null;
         }
-        config.Set(new FileCommandConfig
-        {
-            LastDirectory = Path.GetDirectoryName(filePath),
-        });
+        config.Set(new FileCommandConfig { LastDirectory = Path.GetDirectoryName(filePath) });
         await svc.Open(filePath);
         return null;
     }

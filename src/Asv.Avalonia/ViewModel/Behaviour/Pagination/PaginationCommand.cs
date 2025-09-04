@@ -12,8 +12,8 @@ public class PaginationCommand : ContextCommand<ISupportPagination, ListArg>
     public static readonly ICommandInfo StaticInfo = new CommandInfo
     {
         Id = Id,
-        Name = "Change pagination",
-        Description = "Change pagination parameters",
+        Name = RS.PaginationCommand_CommandInfo_Name,
+        Description = RS.PaginationCommand_CommandInfo_Description,
         Icon = MaterialIconKind.ViewList,
         DefaultHotKey = null,
         Source = SystemModule.Instance,

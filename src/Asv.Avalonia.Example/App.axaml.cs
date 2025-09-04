@@ -76,8 +76,6 @@ public class App : Application, IContainerHost, IShellHost
         // TODO: load plugin manager before creating container
         _container = containerCfg.CreateContainer();
         DataTemplates.Add(new CompositionViewLocator(_container));
-        
-        
     }
 
     private IEnumerable<Assembly> DefaultAssemblies
@@ -131,10 +129,13 @@ public class App : Application, IContainerHost, IShellHost
         this.AttachDevTools();
 #endif
         var svc = _container.GetExport<IFileAssociationService>();
-        AppHost.Instance.Services.GetRequiredService<ISoloRunFeature>().Args.Where(x => x.Tags.Count > 1 ).Subscribe(x =>
-        {
-            svc.Open(x.Tags.Skip(1).First());
-        });
+        AppHost
+            .Instance.Services.GetRequiredService<ISoloRunFeature>()
+            .Args.Where(x => x.Tags.Count > 1)
+            .Subscribe(x =>
+            {
+                svc.Open(x.Tags.Skip(1).First());
+            });
     }
 
     public T GetExport<T>()
