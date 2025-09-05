@@ -221,4 +221,7 @@
     <data name="OpenControlsGalleryPageCommand_Action_Description" xml:space="preserve">
         <value>Open controls gallery</value>
     </data>
+    <data name="HistoricalControlsPageView_Enum" xml:space="preserve">
+        <value>Enum:</value>
+    </data>
 </root>

@@ -507,6 +507,12 @@
     <data name="LanguageProperty_RestartDialog_Message" xml:space="preserve">
         <value>Чтобы изменения вступили в силу, требуется перезапустить приложение</value>
     </data>
+    <data name="AddSerialPortCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Добавить последовательный порт</value>
+    </data>
+    <data name="AddSerialPortCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда, которая добавляет последовательный порт</value>
+    </data>
     <data name="Unit_Terabyte_Abbreviation" xml:space="preserve">
         <value>ТБ</value>
     </data>
@@ -591,6 +597,9 @@
     <data name="ChangeThemeCommand_CommandInfo_Name" xml:space="preserve">
         <value>Сменить тему</value>
     </data>
+    <data name="Not_Available" xml:space="preserve">
+        <value>Н/А</value>
+    </data>
     <data name="Mah_UnitItem_Symbol" xml:space="preserve">
         <value>мА*ч</value>
     </data>
@@ -669,18 +678,6 @@
     <data name="InParts_Progress_Description" xml:space="preserve">
         <value>Прогресс в частях</value>
     </data>
-    <data name="ChangeKeyGesturePropertyCommand_CommandInfo_Name" xml:space="preserve">
-        <value>Изменить свойство типа KeyGesture</value>
-    </data>
-    <data name="ChangeKeyGesturePropertyCommand_CommandInfo_Description" xml:space="preserve">
-        <value>Команда меняет значение свойства с типом KeyGesture</value>
-    </data>
-    <data name="ConfirmChangeHotKeyCommand_CommandInfo_Name" xml:space="preserve">
-        <value>Подтвердить изменение горячей клавиши</value>
-    </data>
-    <data name="ConfirmChangeHotKeyCommand_CommandInfo_Description" xml:space="preserve">
-        <value>Команда подтверждает изменение горячих клавиш</value>
-    </data>
     <data name="OpenSettingsCommand_CommandInfo_Description" xml:space="preserve">
         <value>Команда, которая открывает настройки</value>
     </data>
@@ -716,12 +713,6 @@
     </data>
     <data name="SettingsHotKeysListView_Source_Header" xml:space="preserve">
         <value>Источник</value>
-    </data>
-    <data name="ChangeHotKeyPropertyCommand_CommandInfo_Name" xml:space="preserve">
-        <value>Изменить свойство типа "Горячая клавиша"</value>
-    </data>
-    <data name="ChangeHotKeyPropertyCommand_CommandInfo_Description" xml:space="preserve">
-        <value>Команда меняет значение свойства типа "Горячая клавиша"</value>
     </data>
     <data name="SettingsHotKeysListView_DataGrid_Command_Header" xml:space="preserve">
         <value>Команда</value>
@@ -836,5 +827,11 @@
     </data>
     <data name="PaginationCommand_CommandInfo_Description" xml:space="preserve">
         <value>Команда изменяет параметры пагинации</value>
+    </data>
+    <data name="ChangeEnumPropertyCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Изменить свойство типа перечисления</value>
+    </data>
+    <data name="ChangeEnumPropertyCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда изменяет свойство типа перечисления</value>
     </data>
 </root>

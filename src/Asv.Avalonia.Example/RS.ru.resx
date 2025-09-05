@@ -209,4 +209,7 @@
     <data name="OpenControlsGalleryPageCommand_Action_Title" xml:space="preserve">
         <value>Список примеров контролов</value>
     </data>
+    <data name="HistoricalControlsPageView_Enum" xml:space="preserve">
+        <value>Перечисление:</value>
+    </data>
 </root>

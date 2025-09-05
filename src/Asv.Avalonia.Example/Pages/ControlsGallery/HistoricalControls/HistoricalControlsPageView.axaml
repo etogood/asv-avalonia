@@ -33,7 +33,7 @@
                     CornerRadius="6">
                 <StackPanel Spacing="10">
                     <TextBlock Classes="h2" Text="{x:Static example:RS.HistoricalControlsPageView_Basic}" />
-                    <Grid ColumnDefinitions="Auto,8,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="8">
+                    <Grid ColumnDefinitions="Auto,8,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="8">
                         <TextBlock Grid.Row="0" Grid.Column="0"
                                    Text="{x:Static example:RS.HistoricalControlsPageView_Unit}"
                                    VerticalAlignment="Center" />
@@ -63,6 +63,32 @@
                                      Text="{Binding GeoPointProperty.Longitude.ViewValue.Value, UpdateSourceTrigger=LostFocus}" />
                             <TextBox Grid.Column="2" HorizontalAlignment="Stretch"
                                      Text="{Binding GeoPointProperty.Altitude.ViewValue.Value, UpdateSourceTrigger=LostFocus}" />
+                        </Grid>
+                        
+                        <TextBlock Grid.Row="4" Grid.Column="0"
+                                   Text="{x:Static example:RS.HistoricalControlsPageView_Enum}"
+                                   VerticalAlignment="Center" />
+                        <Grid Grid.Row="4" Grid.Column="2" ColumnDefinitions="*,*" ColumnSpacing="8">
+                            <ComboBox Grid.Column="0"
+                                      ItemsSource="{Binding TagTypeProp.EnumItems}"
+                                      SelectedItem="{Binding TagTypeProp.ViewValue.Value, Mode=TwoWay}"
+                                      HorizontalAlignment="Stretch">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" VerticalAlignment="Center" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <ComboBox Grid.Column="1"
+                                      ItemsSource="{Binding RttBoxStatusProp.EnumItems}"
+                                      SelectedItem="{Binding RttBoxStatusProp.ViewValue.Value, Mode=TwoWay}"
+                                      HorizontalAlignment="Stretch">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" VerticalAlignment="Center" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
                         </Grid>
                     </Grid>
                 </StackPanel>

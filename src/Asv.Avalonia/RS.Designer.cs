@@ -1436,5 +1436,17 @@ namespace Asv.Avalonia {
                 return ResourceManager.GetString("PaginationCommand_CommandInfo_Description", resourceCulture);
             }
         }
+        
+        public static string ChangeEnumPropertyCommand_CommandInfo_Name {
+            get {
+                return ResourceManager.GetString("ChangeEnumPropertyCommand_CommandInfo_Name", resourceCulture);
+            }
+        }
+        
+        public static string ChangeEnumPropertyCommand_CommandInfo_Description {
+            get {
+                return ResourceManager.GetString("ChangeEnumPropertyCommand_CommandInfo_Description", resourceCulture);
+            }
+        }
     }
 }
