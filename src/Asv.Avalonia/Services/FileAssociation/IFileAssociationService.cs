@@ -3,9 +3,17 @@ using System.Collections.Immutable;
 using Material.Icons;
 
 namespace Asv.Avalonia.FileAssociation;
+
 public record FileTypeInfo
 {
-    public FileTypeInfo(string id, string title, string extension, bool canOpen, bool canCreate, MaterialIconKind? icon)
+    public FileTypeInfo(
+        string id,
+        string title,
+        string extension,
+        bool canOpen,
+        bool canCreate,
+        MaterialIconKind? icon
+    )
     {
         Id = id;
         Title = title;
@@ -38,5 +46,3 @@ public interface IFileAssociationService
     ValueTask Open(string path);
     ValueTask Create(string path, FileTypeInfo type);
 }
-
-

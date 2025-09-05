@@ -8,7 +8,7 @@ namespace Asv.Avalonia;
 public class HelpMenu : MenuItem
 {
     [method: ImportingConstructor]
-    public HelpMenu(ILoggerFactory loggerFactory) 
+    public HelpMenu(ILoggerFactory loggerFactory)
         : base(MenuId, RS.ShellView_Toolbar_Help, loggerFactory)
     {
         Order = 100;

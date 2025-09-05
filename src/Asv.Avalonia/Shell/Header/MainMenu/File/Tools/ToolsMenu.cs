@@ -8,7 +8,7 @@ namespace Asv.Avalonia;
 public class ToolsMenu : MenuItem
 {
     [method: ImportingConstructor]
-    public ToolsMenu(ILoggerFactory loggerFactory) 
+    public ToolsMenu(ILoggerFactory loggerFactory)
         : base(MenuId, RS.ToolsMenu_Name, loggerFactory)
     {
         Order = 50;

@@ -3,14 +3,17 @@ using Asv.Avalonia.FileAssociation;
 using Asv.Cfg;
 using Material.Icons;
 
-
 namespace Asv.Avalonia;
 
 [ExportCommand]
 [Shared]
 [method: ImportingConstructor]
-public class CreateFileCommand(IFileAssociationService svc, IDialogService dialogs, IAppPath path, IConfiguration config)
-    : StatelessCommand<DictArg>
+public class CreateFileCommand(
+    IFileAssociationService svc,
+    IDialogService dialogs,
+    IAppPath path,
+    IConfiguration config
+) : StatelessCommand<DictArg>
 {
     #region Static
 
@@ -18,7 +21,7 @@ public class CreateFileCommand(IFileAssociationService svc, IDialogService dialo
     public const string InitialDirectoryArgKey = "dir";
     public const string FilePathArgKey = "file";
     public const string FileTypeIdArgKey = "type";
-    
+
     public const string Id = $"{BaseId}.file.create";
 
     public static readonly ICommandInfo StaticInfo = new CommandInfo
@@ -35,13 +38,15 @@ public class CreateFileCommand(IFileAssociationService svc, IDialogService dialo
 
     public override ICommandInfo Info => StaticInfo;
 
-    public static DictArg CreateArg(FileTypeInfo fileInfo, string? initialDirectory = null, string? filePath = null, string? title = null)
+    public static DictArg CreateArg(
+        FileTypeInfo fileInfo,
+        string? initialDirectory = null,
+        string? filePath = null,
+        string? title = null
+    )
     {
         ArgumentNullException.ThrowIfNull(fileInfo);
-        var arg = new DictArg
-        {
-            [FileTypeIdArgKey] = new StringArg(fileInfo.Id),
-        };
+        var arg = new DictArg { [FileTypeIdArgKey] = new StringArg(fileInfo.Id) };
         if (title != null)
         {
             arg[DialogTitleArgKey] = new StringArg(title);
@@ -64,11 +69,16 @@ public class CreateFileCommand(IFileAssociationService svc, IDialogService dialo
         return arg.TryGetValue(FileTypeIdArgKey, out var fileTypeId) && fileTypeId is StringArg;
     }
 
-    protected override async ValueTask<DictArg?> InternalExecute(DictArg arg, CancellationToken cancel)
+    protected override async ValueTask<DictArg?> InternalExecute(
+        DictArg arg,
+        CancellationToken cancel
+    )
     {
-        var fileTypeId = arg.TryGetValue(FileTypeIdArgKey, out var fileTypeIdArg) && fileTypeIdArg is StringArg fileTypeArg
-            ? fileTypeArg.Value
-            : null;
+        var fileTypeId =
+            arg.TryGetValue(FileTypeIdArgKey, out var fileTypeIdArg)
+            && fileTypeIdArg is StringArg fileTypeArg
+                ? fileTypeArg.Value
+                : null;
         if (fileTypeId == null)
         {
             throw new InvalidOperationException("File type id is not specified");
@@ -79,10 +89,13 @@ public class CreateFileCommand(IFileAssociationService svc, IDialogService dialo
         {
             throw new InvalidOperationException($"File type {fileTypeId} is not supported");
         }
-        
+
         string? filePath = null;
 
-        if (arg.TryGetValue(FilePathArgKey, out var filePathArg) && filePathArg is StringArg filePathStringArg)
+        if (
+            arg.TryGetValue(FilePathArgKey, out var filePathArg)
+            && filePathArg is StringArg filePathStringArg
+        )
         {
             filePath = filePathStringArg.Value;
         }
@@ -100,7 +113,10 @@ public class CreateFileCommand(IFileAssociationService svc, IDialogService dialo
             {
                 lastDirectory = cfg.LastDirectory;
             }
-            if (arg.TryGetValue(InitialDirectoryArgKey, out var initialDirectory) && initialDirectory is StringArg dir)
+            if (
+                arg.TryGetValue(InitialDirectoryArgKey, out var initialDirectory)
+                && initialDirectory is StringArg dir
+            )
             {
                 lastDirectory = dir.Value;
             }
@@ -114,12 +130,12 @@ public class CreateFileCommand(IFileAssociationService svc, IDialogService dialo
                 }
             );
         }
-        
+
         if (string.IsNullOrWhiteSpace(filePath))
         {
             return null;
         }
-        
+
         await svc.Create(filePath, fileType);
         return null;
     }

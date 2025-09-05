@@ -14,17 +14,21 @@ public class FileAssociationService : IFileAssociationService
     public FileAssociationService([ImportMany] IEnumerable<IFileHandler> handlers)
     {
         _handlers = [.. handlers.OrderBy(x => x.Priority)];
-        
+
         // check file id is unique
-        var differentId = _handlers.SelectMany(x => x.SupportedFiles).GroupBy(x => x.Id).FirstOrDefault(x => x.Count() > 1);
+        var differentId = _handlers
+            .SelectMany(x => x.SupportedFiles)
+            .GroupBy(x => x.Id)
+            .FirstOrDefault(x => x.Count() > 1);
         if (differentId != null)
         {
-            throw new InvalidOperationException($"File handlers have non-unique id {differentId.Key}");
+            throw new InvalidOperationException(
+                $"File handlers have non-unique id {differentId.Key}"
+            );
         }
     }
 
-    public IEnumerable<FileTypeInfo> SupportedFiles => _handlers
-        .SelectMany(x => x.SupportedFiles);
+    public IEnumerable<FileTypeInfo> SupportedFiles => _handlers.SelectMany(x => x.SupportedFiles);
 
     public ValueTask Open(string path)
     {
@@ -43,7 +47,7 @@ public class FileAssociationService : IFileAssociationService
         {
             throw new InvalidOperationException($"File type {type.Id} is not supported");
         }
-        
+
         return handler.Create(path, type);
     }
 }
