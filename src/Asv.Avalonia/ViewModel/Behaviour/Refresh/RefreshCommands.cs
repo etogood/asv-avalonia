@@ -27,6 +27,6 @@ public class RefreshCommand : ContextCommand<ISupportRefresh>
     )
     {
         context.Refresh();
-        return ValueTask.FromResult<CommandArg?>(null);
+        return CommandArg.Null;
     }
 }

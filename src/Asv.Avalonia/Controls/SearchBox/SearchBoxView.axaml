@@ -13,12 +13,11 @@
     <Panel>
         <TextBox MinWidth="200" Padding="0" VerticalContentAlignment="Center" 
                  avalonia1:NavigationHelper.IsSelected ="{Binding IsSelected, Mode=OneWay}"
-                 Text="{Binding Text.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 Text="{Binding Text.ViewValue.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  Watermark="{x:Static avalonia1:RS.SearchBoxView_MainTextBox_Watermark}"
                  MinHeight="0" Height="25" >
             <TextBox.KeyBindings>
-                <KeyBinding Gesture="Enter" Command="{Binding QueryWithCommand}" CommandParameter="{Binding Text.Value}"/>
-                <KeyBinding Gesture="Escape" Command="{Binding Clear}"/>
+                <KeyBinding Gesture="Escape" Command="{Binding ClearCommandCall}"/> <!-- TODO: Remove when clear hotkey fixed  -->
             </TextBox.KeyBindings>
             <TextBox.InnerLeftContent>
                 <avalonia:MaterialIcon Kind="Magnify" Width="20" Height="20" Margin="4,0"/>
@@ -27,12 +26,12 @@
                 <Panel>
                     <Button IsVisible="{Binding IsExecuting.Value}"
                             Command="{Binding Cancel}"
-                            CommandParameter="{Binding Text.Value}"
                             Padding="0" Theme="{StaticResource TransparentButton}">
                         <avalonia:MaterialIcon Kind="Cancel" Width="20" Height="20" Margin="4,0"/>
                     </Button>    
                     <Button IsVisible="{Binding !IsExecuting.Value}" 
-                            Command="{Binding Query}" CommandParameter="{Binding Text.Value}" Padding="0" Theme="{StaticResource TransparentButton}">
+                            Command="{Binding Refresh}" 
+                            Padding="0" Theme="{StaticResource TransparentButton}">
                         <avalonia:MaterialIcon Kind="CircleArrows" Width="20" Height="20" Margin="4,0"/>
                     </Button>
                 </Panel>
@@ -43,7 +42,8 @@
                      Background="Transparent" Margin="0,0,30,0" 
                      Height="20" Opacity="0.5" VerticalAlignment="Center" HorizontalAlignment="Stretch" 
                      Minimum="0" Maximum="1"
-                     IsIndeterminate="{Binding Progress.Value, Converter={x:Static avalonia1:DoubleTrueIfNanConverter.Instance}}"
+                     IsIndeterminate="{Binding Progress.Value, 
+                     Converter={x:Static avalonia1:DoubleTrueIfNanConverter.Instance}}"
                      Value="{Binding Progress.Value}"/>
     </Panel>
     

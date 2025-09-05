@@ -712,4 +712,16 @@
     <data name="OpenSettingsCommand_Action_Description" xml:space="preserve">
         <value>Open Settings</value>
     </data>
+    <data name="ClearCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Clear</value>
+    </data>
+    <data name="ClearCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Command that clears</value>
+    </data>
+    <data name="PaginationCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Change pagination</value>
+    </data>
+    <data name="PaginationCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Command that changes pagination parameters</value>
+    </data>
 </root>

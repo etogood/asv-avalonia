@@ -1,7 +1,6 @@
 ﻿using Asv.Common;
 using Microsoft.Extensions.Logging;
 using R3;
-using ZLogger;
 
 namespace Asv.Avalonia;
 
@@ -11,7 +10,13 @@ public delegate Task SearchDelegate(
     CancellationToken cancel
 );
 
-public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgress<double>
+public class SearchBoxViewModel
+    : RoutableViewModel,
+        ISupportTextSearch,
+        ISupportRefresh,
+        ISupportCancel,
+        ISupportClear,
+        IProgress<double>
 {
     private readonly SearchDelegate _searchCallback;
 
@@ -19,7 +24,6 @@ public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgre
     private readonly BindableReactiveProperty<bool> _canExecute;
     private readonly BindableReactiveProperty<double> _progress;
 
-    private string _searchText = string.Empty;
     private CancellationTokenSource? _cancellationTokenSource;
 
     public SearchBoxViewModel()
@@ -38,18 +42,28 @@ public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgre
     {
         _searchCallback = searchCallback;
 
-        Text = new BindableReactiveProperty<string>(string.Empty).DisposeItWith(Disposable);
+        var text = new ReactiveProperty<string?>(string.Empty).DisposeItWith(Disposable);
+        Text = new HistoricalStringProperty(nameof(Text), text, loggerFactory, this).DisposeItWith(
+            Disposable
+        );
 
         _isExecuting = new BindableReactiveProperty<bool>().DisposeItWith(Disposable);
         _canExecute = new BindableReactiveProperty<bool>(true).DisposeItWith(Disposable);
         _progress = new BindableReactiveProperty<double>().DisposeItWith(Disposable);
 
-        if (throttleTime != null)
+        if (throttleTime is not null)
         {
-            Text.Skip(1)
+            Text.ViewValue.Skip(1)
                 .Debounce(throttleTime.Value)
+                .DistinctUntilChanged()
+                .WhereNotNull()
                 .SubscribeAwait(
-                    (x, _) => TextSearchCommand.Execute(this, x),
+                    async (x, c) =>
+                        await this.ExecuteCommand(
+                            TextSearchCommand.Id,
+                            CommandArg.CreateString(x),
+                            cancel: c
+                        ),
                     AwaitOperation.Parallel
                 )
                 .DisposeItWith(Disposable);
@@ -58,7 +72,7 @@ public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgre
         Disposable.AddAction(() => _cancellationTokenSource?.Cancel(false));
     }
 
-    public BindableReactiveProperty<string> Text { get; }
+    public HistoricalStringProperty Text { get; }
 
     public bool IsSelected
     {
@@ -66,16 +80,8 @@ public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgre
         set => SetField(ref field, value);
     }
 
-    public string SearchText => _searchText;
-
-    public void QueryWithCommand(string? text)
-    {
-        TextSearchCommand.Execute(this, text);
-    }
-
     public void Query(string? text)
     {
-        Logger.ZLogDebug($"Begin search '{Id}' with text '{text}'");
         if (_isExecuting.Value)
         {
             Cancel();
@@ -86,7 +92,7 @@ public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgre
 
     private void ErrorHandler(Exception err)
     {
-        Logger.LogError(err, $"Error in search '{Id}': {err.Message}");
+        Logger.LogError(err, "Error in search '{NavigationId}': {ErrMessage}", Id, err.Message);
         _isExecuting.Value = false;
         _canExecute.Value = true;
         _progress.Value = 1;
@@ -94,8 +100,6 @@ public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgre
 
     private async Task InternalExecuteAsync(string text)
     {
-        Text.Value = text;
-        _searchText = text;
         _isExecuting.Value = true;
         _canExecute.Value = false;
         _progress.Value = double.NaN;
@@ -118,17 +122,17 @@ public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgre
             _isExecuting.Value = false;
             _canExecute.Value = true;
             _progress.Value = 1;
+            _cancellationTokenSource.Dispose();
+            _cancellationTokenSource = null;
         }
     }
 
-    public BindableReactiveProperty<bool> CanExecute => _canExecute;
-    public BindableReactiveProperty<bool> IsExecuting => _isExecuting;
-    public BindableReactiveProperty<double> Progress => _progress;
-
-    public void Clear()
-    {
-        Text.Value = string.Empty;
-    }
+    public IReadOnlyBindableReactiveProperty<bool> CanExecute =>
+        _canExecute.ToReadOnlyBindableReactiveProperty().DisposeItWith(Disposable);
+    public IReadOnlyBindableReactiveProperty<bool> IsExecuting =>
+        _isExecuting.ToReadOnlyBindableReactiveProperty().DisposeItWith(Disposable);
+    public IReadOnlyBindableReactiveProperty<double> Progress =>
+        _progress.ToReadOnlyBindableReactiveProperty().DisposeItWith(Disposable);
 
     public void Cancel()
     {
@@ -137,12 +141,22 @@ public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgre
         _isExecuting.Value = false;
         _canExecute.Value = true;
         _progress.Value = 1;
-        Logger.LogWarning($"Search '{Id}' was cancelled");
+        Logger.LogWarning("Search '{NavigationId}' was cancelled", Id);
     }
 
     public void Refresh()
     {
-        Query(Text.Value);
+        Query(Text.ViewValue.Value);
+    }
+
+    public void Clear()
+    {
+        Text.ViewValue.Value = string.Empty;
+    }
+
+    public async ValueTask ClearCommandCall()
+    {
+        await this.ExecuteCommand(ClearCommand.Id);
     }
 
     public void Focus()
@@ -153,7 +167,7 @@ public class SearchBoxViewModel : RoutableViewModel, ISupportTextSearch, IProgre
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
-        return [];
+        yield return Text;
     }
 
     public override ValueTask<IRoutable> Navigate(NavigationId id)

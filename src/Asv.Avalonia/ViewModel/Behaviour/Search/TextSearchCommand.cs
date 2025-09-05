@@ -26,13 +26,7 @@ public class TextSearchCommand : ContextCommand<ISupportTextSearch, StringArg>
         CancellationToken cancel
     )
     {
-        var oldValue = context.SearchText;
         context.Query(arg.Value);
-        return ValueTask.FromResult<StringArg?>(CommandArg.CreateString(oldValue));
-    }
-
-    public static ValueTask Execute(SearchBoxViewModel owner, string? value)
-    {
-        return owner.ExecuteCommand(Id, CommandArg.CreateString(value ?? string.Empty));
+        return ValueTask.FromResult<StringArg?>(null);
     }
 }

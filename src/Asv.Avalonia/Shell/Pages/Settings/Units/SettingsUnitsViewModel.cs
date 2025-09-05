@@ -82,6 +82,7 @@ public class SettingsUnitsViewModel : SettingsSubPage
 
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
+        yield return Search;
         foreach (var model in _view)
         {
             yield return model;
