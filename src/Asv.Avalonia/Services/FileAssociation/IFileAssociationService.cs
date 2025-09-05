@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Immutable;
-using Material.Icons;
+﻿using Material.Icons;
 
-namespace Asv.Avalonia.FileAssociation;
+namespace Asv.Avalonia;
 
 public record FileTypeInfo
 {

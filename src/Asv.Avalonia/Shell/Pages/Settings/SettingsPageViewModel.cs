@@ -1,3 +1,4 @@
+using System.Collections.Specialized;
 using System.Composition;
 using Asv.Cfg;
 using Material.Icons;
@@ -38,6 +39,11 @@ public class SettingsPageViewModel
         : base(PageId, svc, host, configuration, loggerFactory)
     {
         Title = RS.SettingsPageViewModel_Title;
+    }
+
+    protected override void InternalInitArgs(NameValueCollection args)
+    {
+        base.InternalInitArgs(args);
     }
 
     public override IExportInfo Source => SystemModule.Instance;

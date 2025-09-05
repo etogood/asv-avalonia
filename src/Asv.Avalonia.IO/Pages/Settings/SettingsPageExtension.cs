@@ -16,7 +16,7 @@ public class SettingsPageExtension(ILoggerFactory loggerFactory) : IExtensionFor
             new TreePage(
                 SettingsConnectionViewModel.SubPageId,
                 RS.SettingsPageExtension_TreePage_Title,
-                MaterialIconKind.Connection,
+                SettingsConnectionViewModel.Icon,
                 SettingsConnectionViewModel.SubPageId,
                 NavigationId.Empty,
                 loggerFactory

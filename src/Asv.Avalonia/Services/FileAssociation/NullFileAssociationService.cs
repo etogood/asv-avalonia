@@ -1,9 +1,8 @@
-using System.Collections.Immutable;
-
-namespace Asv.Avalonia.FileAssociation;
+namespace Asv.Avalonia;
 
 public class NullFileAssociationService : IFileAssociationService
 {
+    public static IFileAssociationService Instance { get; } = new NullFileAssociationService();
     public IEnumerable<FileTypeInfo> SupportedFiles { get; } = [];
 
     public ValueTask Open(string path)

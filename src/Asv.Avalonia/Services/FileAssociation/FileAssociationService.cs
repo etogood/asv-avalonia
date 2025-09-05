@@ -1,8 +1,7 @@
 using System.Collections.Immutable;
 using System.Composition;
-using Microsoft.Extensions.Hosting;
 
-namespace Asv.Avalonia.FileAssociation;
+namespace Asv.Avalonia;
 
 [Export(typeof(IFileAssociationService))]
 [Shared]

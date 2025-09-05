@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Composition;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Asv.Avalonia.FileAssociation;
 using Material.Icons;
 
 namespace Asv.Avalonia.Example.Plugin.PluginExample;

@@ -1,5 +1,4 @@
 using System.Composition;
-using Asv.Avalonia.FileAssociation;
 using Microsoft.Extensions.Logging;
 using R3;
 

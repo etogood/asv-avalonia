@@ -2,6 +2,7 @@
 using System.Composition;
 using Asv.Common;
 using Asv.IO;
+using Material.Icons;
 using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;
@@ -18,7 +19,8 @@ public class SettingsConnectionViewModel
     private readonly IContainerHost _containerHost;
     private IPortViewModel? _selectedItem;
 
-    public const string SubPageId = "settings.connection1";
+    public const string SubPageId = "settings.connection";
+    public const MaterialIconKind Icon = MaterialIconKind.Connection;
 
     public SettingsConnectionViewModel()
         : this(

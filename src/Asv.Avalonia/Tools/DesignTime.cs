@@ -1,4 +1,3 @@
-using Asv.Avalonia.FileAssociation;
 using Asv.Cfg;
 using Avalonia.Controls;
 using Microsoft.Extensions.Logging;
@@ -9,8 +8,6 @@ namespace Asv.Avalonia;
 public static class DesignTime
 {
     public static NavigationId Id => NavigationId.GenerateRandom();
-    public static IFileAssociationService FileAssociation { get; } =
-        new NullFileAssociationService();
 
     public static void ThrowIfNotDesignMode()
     {
@@ -20,6 +17,7 @@ public static class DesignTime
         }
     }
 
+    public static IAppStartupService AppStartupService => NullAppStartupService.Instance;
     public static IConfiguration Configuration { get; } = new InMemoryConfiguration();
     public static ILoggerFactory LoggerFactory => NullLoggerFactory.Instance;
     public static IShellHost ShellHost => NullShellHost.Instance;
@@ -30,4 +28,5 @@ public static class DesignTime
     public static ILocalizationService LocalizationService => NullLocalizationService.Instance;
     public static ILogReaderService LogReaderService => NullLogReaderService.Instance;
     public static ICommandService CommandService => NullCommandService.Instance;
+    public static IFileAssociationService FileAssociation => NullFileAssociationService.Instance;
 }

@@ -1,7 +1,6 @@
 using System.Composition;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices;
-using Asv.Avalonia.FileAssociation;
 using Asv.Cfg;
 using Avalonia;
 using Avalonia.Controls;

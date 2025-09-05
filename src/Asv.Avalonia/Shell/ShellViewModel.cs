@@ -43,6 +43,16 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
                 Navigation.ForceFocus(page);
             })
             .DisposeItWith(Disposable);
+
+        StatusItems = [];
+        StatusItemsView = StatusItems.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
+        StatusItems.Sort(StatusItemComparer.Instance);
+        StatusItems
+            .ObserveAdd()
+            .Subscribe(_ => StatusItems.Sort(StatusItemComparer.Instance))
+            .DisposeItWith(Disposable);
+        StatusItems.SetRoutableParent(this).DisposeItWith(Disposable);
+        StatusItems.DisposeRemovedItems().DisposeItWith(Disposable);
     }
 
     #region Theme command
@@ -216,6 +226,13 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
         get;
         set => SetField(ref field, value);
     }
+
+    #region Status bar
+
+    public ObservableList<IStatusItem> StatusItems { get; }
+    public NotifyCollectionChangedSynchronizedViewList<IStatusItem> StatusItemsView { get; }
+
+    #endregion
 
     #region Dispose
 
