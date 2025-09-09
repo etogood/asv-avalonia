@@ -20,7 +20,9 @@ public sealed class HistoricalGeoPointProperty : CompositeHistoricalPropertyBase
         : base(id, loggerFactory, parent)
     {
         _modelValue = modelValue;
-        var modelLat = new ReactiveProperty<double>().DisposeItWith(Disposable);
+        var modelLat = new ReactiveProperty<double>(modelValue.CurrentValue.Latitude).DisposeItWith(
+            Disposable
+        );
         modelLat
             .Subscribe(x =>
             {
@@ -32,7 +34,9 @@ public sealed class HistoricalGeoPointProperty : CompositeHistoricalPropertyBase
             })
             .DisposeItWith(Disposable);
 
-        var modelLon = new ReactiveProperty<double>().DisposeItWith(Disposable);
+        var modelLon = new ReactiveProperty<double>(
+            modelValue.CurrentValue.Longitude
+        ).DisposeItWith(Disposable);
         modelLon
             .Subscribe(x =>
             {
@@ -44,7 +48,9 @@ public sealed class HistoricalGeoPointProperty : CompositeHistoricalPropertyBase
             })
             .DisposeItWith(Disposable);
 
-        var modelAlt = new ReactiveProperty<double>().DisposeItWith(Disposable);
+        var modelAlt = new ReactiveProperty<double>(modelValue.CurrentValue.Altitude).DisposeItWith(
+            Disposable
+        );
         modelAlt
             .Subscribe(x =>
             {
