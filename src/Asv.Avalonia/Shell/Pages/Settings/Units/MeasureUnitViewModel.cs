@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia;
@@ -6,8 +7,8 @@ public class MeasureUnitViewModel : RoutableViewModel
 {
     private bool _internalChange;
 
-    public MeasureUnitViewModel(IUnit item)
-        : base(item.UnitId)
+    public MeasureUnitViewModel(IUnit item, ILoggerFactory loggerFactory)
+        : base(item.UnitId, loggerFactory)
     {
         SelectedItem = new BindableReactiveProperty<IUnitItem>(item.CurrentUnitItem.CurrentValue);
         Base = item;
@@ -27,12 +28,8 @@ public class MeasureUnitViewModel : RoutableViewModel
         }
 
         _internalChange = true;
-        var newValue = new ActionCommandArg(
-            Base.UnitId,
-            userValue.UnitItemId,
-            CommandParameterActionType.Change
-        );
-        await this.ExecuteCommand(ChangeCurrentUnitItemCommand.Id, newValue);
+        await ChangeMeasureUnitCommand.ExecuteCommand(this, Base, userValue);
+
         _internalChange = false;
     }
 

@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Composition;
+using System.Diagnostics;
 using Asv.Cfg;
 using Asv.Common;
 using Avalonia.Controls;
@@ -24,16 +25,21 @@ public class CommandService : AsyncDisposableOnce, ICommandService
     private readonly IConfiguration _cfg;
     private readonly ILoggerFactory _loggerFactory;
     private readonly ImmutableDictionary<string, IAsyncCommand> _commands;
-    private ImmutableDictionary<string, KeyGesture> _commandsVsGesture;
-    private ImmutableDictionary<KeyGesture, IAsyncCommand> _gestureVsCommand;
+    private ImmutableDictionary<string, HotKeyInfo?> _commandsVsGesture;
+    private ImmutableDictionary<HotKeyInfo, ImmutableArray<IAsyncCommand>> _gestureVsCommand;
     private readonly ILogger<CommandService> _logger;
     private readonly IDisposable _disposeId;
-    private readonly Subject<CommandEventArgs> _onCommand;
+    private readonly Subject<CommandSnapshot> _onCommand;
+    private KeyGesture? _prevKeyGesture;
+    private readonly IAppPath _path;
+    private readonly Subject<HotKeyInfo> _hotKeySubject;
+    private readonly ReactiveProperty<bool> _isHotKeyRecognitionEnabled;
 
     [ImportingConstructor]
     public CommandService(
         INavigationService nav,
         IConfiguration cfg,
+        IAppPath path,
         [ImportMany] IEnumerable<IAsyncCommand> factories,
         ILoggerFactory loggerFactory
     )
@@ -42,6 +48,7 @@ public class CommandService : AsyncDisposableOnce, ICommandService
 
         _nav = nav;
         _cfg = cfg;
+        _path = path;
         _loggerFactory = loggerFactory;
         _logger = loggerFactory.CreateLogger<CommandService>();
         _commands = factories.ToImmutableDictionary(x => x.Info.Id);
@@ -52,7 +59,10 @@ public class CommandService : AsyncDisposableOnce, ICommandService
             .KeyDownEvent.AddClassHandler<TopLevel>(OnKeyDownHandler, handledEventsToo: true)
             .AddTo(ref dispose);
 
-        _onCommand = new Subject<CommandEventArgs>().AddTo(ref dispose);
+        _onCommand = new Subject<CommandSnapshot>().AddTo(ref dispose);
+
+        _hotKeySubject = new Subject<HotKeyInfo>().AddTo(ref dispose);
+        _isHotKeyRecognitionEnabled = new ReactiveProperty<bool>(true).AddTo(ref dispose);
 
         _disposeId = dispose.Build();
     }
@@ -66,29 +76,89 @@ public class CommandService : AsyncDisposableOnce, ICommandService
                 return;
             }
 
-            if (keyEventArgs.KeyModifiers == KeyModifiers.None)
+            if (keyEventArgs.Key == Key.None)
             {
-                // we don't want to handle key events without modifiers
                 return;
             }
 
             if (_nav.SelectedControl.CurrentValue is null)
             {
+                Debug.Assert(false, "SelectedControl should never be null");
                 return;
             }
 
-            var gesture = new KeyGesture(keyEventArgs.Key, keyEventArgs.KeyModifiers);
-            var command = _gestureVsCommand.GetValueOrDefault(gesture);
-            if (command == null)
+            HotKeyInfo keyInfo;
+
+            if (keyEventArgs.KeyModifiers == KeyModifiers.None)
+            {
+                if (_prevKeyGesture != null)
+                {
+                    // we have a gesture, but no key modifiers => maybe this is additional key for previous the gesture
+                    keyInfo = new HotKeyInfo(_prevKeyGesture, keyEventArgs.Key);
+                }
+                else if (keyEventArgs.Key is >= Key.F1 and <= Key.F12)
+                {
+                    // we have a function key without modifiers, so we can treat it as a gesture
+                    keyInfo = new HotKeyInfo(keyEventArgs.Key);
+                }
+                else
+                {
+                    // no previous gesture, so it's not a command gesture
+                    return;
+                }
+            }
+            else
+            {
+                keyInfo = new HotKeyInfo(keyEventArgs.Key, keyEventArgs.KeyModifiers);
+            }
+
+            // publish the hot key event
+            _hotKeySubject.OnNext(keyInfo);
+
+            if (_isHotKeyRecognitionEnabled.CurrentValue == false)
             {
                 return;
             }
 
-            // TODO: check if we need to request params through the QuickPick dialog
-            await _nav.SelectedControl.CurrentValue.ExecuteCommand(
-                command.Info.Id,
-                CommandArg.Empty
-            );
+            var matchedCommands = _commandsVsGesture
+                .Where(kvp => kvp.Value == keyInfo)
+                .Select(kvp => _commands[kvp.Key])
+                .ToImmutableArray();
+
+            if (matchedCommands == default)
+            {
+                // we cant find a command for this gesture, but maybe we need additional key after this gesture
+                _prevKeyGesture = keyInfo.Gesture;
+                return;
+            }
+
+            if (matchedCommands.Length == 1)
+            {
+                // only one command for this gesture, so we can execute it immediately
+                await _nav.SelectedControl.CurrentValue.ExecuteCommand(
+                    matchedCommands[0].Info.Id,
+                    CommandArg.Empty
+                );
+                _prevKeyGesture = null; // reset previous gesture after execution
+                keyEventArgs.Handled = true;
+            }
+            else
+            {
+                // we have multiple commands for this gesture, so we need check can execute for each command
+                foreach (var item in matchedCommands)
+                {
+                    // we execute first command that can be executed in the current context
+                    // TODO: ask user which command to execute if multiple commands can be executed
+                    if (item.CanExecute(_nav.SelectedControl.CurrentValue, CommandArg.Empty, out _))
+                    {
+                        await _nav.SelectedControl.CurrentValue.ExecuteCommand(
+                            matchedCommands[0].Info.Id,
+                            CommandArg.Empty
+                        );
+                        break;
+                    }
+                }
+            }
         }
         catch (Exception e)
         {
@@ -102,21 +172,21 @@ public class CommandService : AsyncDisposableOnce, ICommandService
     private async ValueTask InternalExecute(
         IAsyncCommand factory,
         IRoutable context,
-        ICommandArg param,
+        CommandArg param,
         CancellationToken cancel
     )
     {
         if (factory.CanExecute(context, param, out var target))
         {
+            // we save here the path to the context, because it can be changed during command execution
+            var navPath = context.GetPathToRoot();
+
             var backup = await factory.Execute(target, param, cancel);
-            var snapShot = new CommandSnapshot(
-                factory.Info.Id,
-                context.GetPathToRoot(),
-                param,
-                backup
+            var snapShot = new CommandSnapshot(factory.Info.Id, navPath, param, backup);
+            _onCommand.OnNext(snapShot);
+            _logger.ZLogTrace(
+                $"Execute command {factory.Info.Id}(context: {target.Id}, arg: {param.ToString()}, rollback: {backup?.ToString()})"
             );
-            _onCommand.OnNext(new CommandEventArgs(context, factory, snapShot));
-            _logger.ZLogTrace($"Execute command '{backup}'(context: {context}, param: {param})");
             return;
         }
 
@@ -127,51 +197,43 @@ public class CommandService : AsyncDisposableOnce, ICommandService
     }
 
     private void ReloadHotKeys(
-        out ImmutableDictionary<string, KeyGesture> commandVsGesture,
-        out ImmutableDictionary<KeyGesture, IAsyncCommand> gestureVsCommand,
-        Action<IDictionary<string, string?>>? modifyConfig = null
+        out ImmutableDictionary<string, HotKeyInfo?> commandVsGesture,
+        out ImmutableDictionary<HotKeyInfo, ImmutableArray<IAsyncCommand>> gestureVsCommand
     )
     {
-        var keyVsCommandBuilder = ImmutableDictionary.CreateBuilder<KeyGesture, IAsyncCommand>();
-        var commandVsKeyBuilder = ImmutableDictionary.CreateBuilder<string, KeyGesture>();
+        var keyVsCommandBuilder = ImmutableDictionary.CreateBuilder<
+            HotKeyInfo,
+            ImmutableArray<IAsyncCommand>
+        >();
+        var commandVsKeyBuilder = ImmutableDictionary.CreateBuilder<string, HotKeyInfo?>();
 
-        // define hotkeys according to loaded CommandInfo
+        // define hotkeys by default values
         foreach (var value in _commands.Values)
         {
-            if (value.Info.HotKeyInfo.DefaultHotKey == null)
-            {
-                continue;
-            }
-
-            keyVsCommandBuilder.Add(value.Info.HotKeyInfo.DefaultHotKey, value);
-            commandVsKeyBuilder.Add(value.Info.Id, value.Info.HotKeyInfo.DefaultHotKey);
+            SetKeyGesture(
+                ref keyVsCommandBuilder,
+                ref commandVsKeyBuilder,
+                value,
+                value.Info.DefaultHotKey
+            );
         }
 
         var config = _cfg.Get<CommandServiceConfig>();
         var configChanged = false;
-        if (modifyConfig != null)
-        {
-            modifyConfig(config.HotKeys);
-            configChanged = true;
-        }
 
         // load hotkeys from config
         foreach (var (commandId, hotKey) in config.HotKeys)
         {
             if (string.IsNullOrWhiteSpace(hotKey))
             {
-                if (keyVsCommandBuilder.Remove(commandVsKeyBuilder[commandId]))
-                {
-                    commandVsKeyBuilder.Remove(commandId);
-                }
-
+                // if custom key is null => load default value
                 continue;
             }
 
-            KeyGesture keyGesture;
+            HotKeyInfo hotKeyInfo;
             try
             {
-                keyGesture = KeyGesture.Parse(hotKey); // ensure a value from config is valid
+                hotKeyInfo = HotKeyInfo.Parse(hotKey); // ensure a value from config is valid
             }
             catch (Exception)
             {
@@ -196,30 +258,7 @@ public class CommandService : AsyncDisposableOnce, ICommandService
                 continue;
             }
 
-            if (keyVsCommandBuilder.Keys.Any(c => c == keyGesture))
-            {
-                _logger.LogWarning(
-                    "Hot key {hotKey} is used by another command. Can't apply it for command {commandId}",
-                    hotKey,
-                    commandId
-                );
-                config.HotKeys.Remove(commandId);
-                configChanged = true;
-                continue;
-            }
-
-            command.Info.HotKeyInfo.CustomHotKey.Value = keyGesture; // set the custom value manually
-
-            if (command.Info.HotKeyInfo.CustomHotKey.Value == keyGesture)
-            {
-                if (command.Info.HotKeyInfo.DefaultHotKey is not null)
-                {
-                    keyVsCommandBuilder.Remove(command.Info.HotKeyInfo.DefaultHotKey); // remove command with default key value
-                }
-            }
-
-            commandVsKeyBuilder[commandId] = keyGesture;
-            keyVsCommandBuilder[keyGesture] = command;
+            SetKeyGesture(ref keyVsCommandBuilder, ref commandVsKeyBuilder, command, hotKeyInfo);
         }
 
         gestureVsCommand = keyVsCommandBuilder.ToImmutable();
@@ -231,18 +270,77 @@ public class CommandService : AsyncDisposableOnce, ICommandService
         }
     }
 
+    private static void SetKeyGesture(
+        ref ImmutableDictionary<
+            HotKeyInfo,
+            ImmutableArray<IAsyncCommand>
+        >.Builder keyVsCommandBuilder,
+        ref ImmutableDictionary<string, HotKeyInfo?>.Builder builder,
+        IAsyncCommand command,
+        HotKeyInfo? key
+    )
+    {
+        if (key == null)
+        {
+            // remove key gesture for the command
+            if (builder.TryGetValue(command.Info.Id, out var existKey) == false)
+            {
+                builder[command.Info.Id] = null;
+                return;
+            }
+
+            if (existKey == null)
+            {
+                return;
+            }
+
+            if (!keyVsCommandBuilder.TryGetValue(existKey, out var commands))
+            {
+                return;
+            }
+
+            // key already exists, remove command from the list
+            if (commands.Length > 1)
+            {
+                keyVsCommandBuilder[existKey] = commands.Remove(command);
+            }
+            else
+            {
+                // last command with this key, remove it
+                keyVsCommandBuilder.Remove(existKey);
+            }
+        }
+        else
+        {
+            // add or update key gesture for the command
+            if (keyVsCommandBuilder.TryGetValue(key, out var commands))
+            {
+                // key already exists, add command to the list
+                keyVsCommandBuilder[key] = commands.Add(command);
+            }
+            else
+            {
+                // key does not exist, create new array with command
+                keyVsCommandBuilder[key] = [command];
+            }
+
+            // add command to the dictionary
+            builder[command.Info.Id] = key;
+        }
+    }
+
     public IEnumerable<ICommandInfo> Commands => _commands.Values.Select(x => x.Info);
 
     public ICommandHistory CreateHistory(IRoutable? owner)
     {
-        var history = new CommandHistory(owner, this, _loggerFactory);
+        var history = new CommandHistory(owner, this, _path, _loggerFactory);
         return history;
     }
 
     public ValueTask Execute(
         string commandId,
         IRoutable context,
-        ICommandArg param,
+        CommandArg param,
         CancellationToken cancel = default
     )
     {
@@ -251,25 +349,35 @@ public class CommandService : AsyncDisposableOnce, ICommandService
             return InternalExecute(factory, context, param, cancel);
         }
 
+        _logger.ZLogError($"Command with id '{commandId}' not found.");
         return ValueTask.FromException(new CommandNotFoundException(commandId));
     }
 
-    public void SetHotKey(string commandId, KeyGesture hotKey)
+    public Observable<HotKeyInfo> OnHotKey => _hotKeySubject;
+
+    public ReactiveProperty<bool> IsHotKeyRecognitionEnabled => _isHotKeyRecognitionEnabled;
+
+    public void ResetAllHotKeys()
     {
-        ArgumentNullException.ThrowIfNull(hotKey);
+        var config = _cfg.Get<CommandServiceConfig>();
+        config.HotKeys.Clear();
+        _cfg.Set(config);
+        ReloadHotKeys(out _commandsVsGesture, out _gestureVsCommand);
+    }
+
+    public void SetHotKey(string commandId, HotKeyInfo? hotKey)
+    {
         if (!_commands.ContainsKey(commandId))
         {
             throw new CommandNotFoundException(commandId);
         }
-
-        ReloadHotKeys(
-            out _commandsVsGesture,
-            out _gestureVsCommand,
-            config => config[commandId] = hotKey?.ToString()
-        );
+        var config = _cfg.Get<CommandServiceConfig>();
+        config.HotKeys[commandId] = hotKey?.ToString();
+        _cfg.Set(config);
+        ReloadHotKeys(out _commandsVsGesture, out _gestureVsCommand);
     }
 
-    public KeyGesture GetHotKey(string commandId)
+    public HotKeyInfo? GetHotKey(string commandId)
     {
         if (_commandsVsGesture.TryGetValue(commandId, out var gesture))
         {
@@ -279,17 +387,26 @@ public class CommandService : AsyncDisposableOnce, ICommandService
         throw new CommandNotFoundException(commandId);
     }
 
-    public Observable<CommandEventArgs> OnCommand => _onCommand;
+    public Observable<CommandSnapshot> OnCommand => _onCommand;
 
     public async ValueTask Undo(CommandSnapshot command, CancellationToken cancel)
     {
         var context = await _nav.GoTo(command.ContextPath);
         if (_commands.TryGetValue(command.CommandId, out var factory) && command.OldValue != null)
         {
-            await factory.Execute(context, command.OldValue, cancel);
-            _logger.ZLogTrace(
-                $"Undo command {factory.Info.Id}: context: {context}, param: {command.NewValue}"
-            );
+            if (factory.CanExecute(context, command.OldValue, out var target))
+            {
+                await factory.Execute(target, command.OldValue, cancel);
+                _logger.ZLogTrace(
+                    $"Undo command {factory.Info.Id}: context: {context}, param: {command.NewValue}"
+                );
+            }
+            else
+            {
+                _logger.ZLogWarning(
+                    $"Can't undo command {factory.Info.Id} in context {context}: {nameof(factory.CanExecute)} check failed."
+                );
+            }
         }
     }
 
@@ -298,10 +415,19 @@ public class CommandService : AsyncDisposableOnce, ICommandService
         var context = await _nav.GoTo(command.ContextPath);
         if (_commands.TryGetValue(command.CommandId, out var factory))
         {
-            await factory.Execute(context, command.NewValue, cancel);
-            _logger.ZLogTrace(
-                $"Redo command {factory.Info.Id}: context: {context}, param: {command.NewValue}"
-            );
+            if (factory.CanExecute(context, command.NewValue, out var target))
+            {
+                await factory.Execute(target, command.NewValue, cancel);
+                _logger.ZLogTrace(
+                    $"Redo command {factory.Info.Id}: context: {context}, param: {command.NewValue}"
+                );
+            }
+            else
+            {
+                _logger.ZLogWarning(
+                    $"Can't redo command {factory.Info.Id} in context {context}: {nameof(factory.CanExecute)} check failed."
+                );
+            }
         }
     }
 

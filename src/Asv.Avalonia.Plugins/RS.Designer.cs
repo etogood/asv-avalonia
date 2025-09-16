@@ -195,6 +195,24 @@ namespace Asv.Avalonia.Plugins {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open Installed Plagins.
+        /// </summary>
+        public static string OpenInstalledPluginsCommand_Action_Description {
+            get {
+                return ResourceManager.GetString("OpenInstalledPluginsCommand_Action_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Installed Plugins.
+        /// </summary>
+        public static string OpenInstalledPluginsCommand_Action_Title {
+            get {
+                return ResourceManager.GetString("OpenInstalledPluginsCommand_Action_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Install.
         /// </summary>
         public static string PluginInstallerViewModel_InstallDialog_PrimaryButtonText {
@@ -330,6 +348,15 @@ namespace Asv.Avalonia.Plugins {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Plugins Sources.
+        /// </summary>
+        public static string PluginsSourcesViewModel_Name {
+            get {
+                return ResourceManager.GetString("PluginsSourcesViewModel_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error to remove plugin server.
         /// </summary>
         public static string PluginsSourcesViewModel_PluginsSourcesViewModel_ErrorToRemove {
@@ -386,18 +413,18 @@ namespace Asv.Avalonia.Plugins {
         /// <summary>
         ///   Looks up a localized string similar to Name is required.
         /// </summary>
-        public static string SourceViewModel_SourceViewModel_NameIsRequired {
+        public static string SourceViewModel_NameValidation_NameIsRequired {
             get {
-                return ResourceManager.GetString("SourceViewModel_SourceViewModel_NameIsRequired", resourceCulture);
+                return ResourceManager.GetString("SourceViewModel_NameValidation_NameIsRequired", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Server URI is required.
         /// </summary>
-        public static string SourceViewModel_SourceViewModel_SourceUriIsRequired {
+        public static string SourceViewModel_SourceUriValidation_SourceUriIsRequired {
             get {
-                return ResourceManager.GetString("SourceViewModel_SourceViewModel_SourceUriIsRequired", resourceCulture);
+                return ResourceManager.GetString("SourceViewModel_SourceUriValidation_SourceUriIsRequired", resourceCulture);
             }
         }
     }

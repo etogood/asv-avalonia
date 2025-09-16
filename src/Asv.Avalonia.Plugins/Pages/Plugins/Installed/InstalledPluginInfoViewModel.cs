@@ -14,7 +14,7 @@ public class InstalledPluginInfoViewModel : DisposableViewModel
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public InstalledPluginInfoViewModel()
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        : base(string.Empty)
+        : base(DesignTime.Id, DesignTime.LoggerFactory)
     {
         DesignTime.ThrowIfNotDesignMode();
         Uninstall = new ReactiveCommand(_ => { });
@@ -25,9 +25,9 @@ public class InstalledPluginInfoViewModel : DisposableViewModel
         string id,
         IPluginManager manager,
         ILocalPluginInfo pluginInfo,
-        ILoggerFactory? loggerFactory = null
+        ILoggerFactory loggerFactory
     )
-        : base(id)
+        : base(id, loggerFactory)
     {
         _loggerFactory = loggerFactory;
         _manager = manager;

@@ -89,7 +89,11 @@ public class DeviceManager : IDeviceManager, IDisposable, IAsyncDisposable
             Router.AddPort(cs);
         }
 
-        _sub1 = Router.PortUpdated.Subscribe(_ => SaveConfig());
+        // this is needed to save config after port changes
+        _sub1 = Router
+            .PortUpdated.Merge(Router.PortAdded)
+            .Merge(Router.PortRemoved)
+            .Subscribe(_ => SaveConfig());
     }
 
     private void SaveConfig()

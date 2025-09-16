@@ -1,4 +1,5 @@
 using System.Globalization;
+using Asv.Common;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 
@@ -8,17 +9,25 @@ public class EnumToBooleanConverter : IValueConverter
 {
     public static EnumToBooleanConverter Instance { get; } = new();
 
-    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (parameter is string str && value != null)
+        if (value == null)
         {
+            return false;
+        }
+        if (parameter is string str)
+        {
+            if (str.IsNullOrWhiteSpace())
+            {
+                return false;
+            }
             if (Enum.TryParse(value.GetType(), str, out var result))
             {
                 parameter = result;
             }
         }
 
-        return value?.Equals(parameter);
+        return value.Equals(parameter);
     }
 
     public object? ConvertBack(

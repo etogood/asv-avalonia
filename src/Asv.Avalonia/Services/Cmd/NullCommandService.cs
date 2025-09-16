@@ -1,4 +1,3 @@
-using Avalonia.Input;
 using R3;
 
 namespace Asv.Avalonia;
@@ -8,7 +7,12 @@ public class NullCommandService : ICommandService
     private NullCommandService()
     {
         DesignTime.ThrowIfNotDesignMode();
-        Commands = [ChangeThemeCommand.StaticInfo, UndoCommand.StaticInfo, RedoCommand.StaticInfo];
+        Commands =
+        [
+            ChangeThemeFreeCommand.StaticInfo,
+            UndoCommand.StaticInfo,
+            RedoCommand.StaticInfo,
+        ];
     }
 
     public static ICommandService Instance { get; } = new NullCommandService();
@@ -22,21 +26,29 @@ public class NullCommandService : ICommandService
     public ValueTask Execute(
         string commandId,
         IRoutable context,
-        ICommandArg param,
+        CommandArg param,
         CancellationToken cancel = default
     )
     {
         return ValueTask.CompletedTask;
     }
 
-    public void SetHotKey(string commandId, KeyGesture hotKey)
+    public Observable<HotKeyInfo> OnHotKey { get; } = new Subject<HotKeyInfo>();
+    public ReactiveProperty<bool> IsHotKeyRecognitionEnabled { get; } = new();
+
+    public void ResetAllHotKeys()
     {
         // Do nothing
     }
 
-    public KeyGesture? GetHotKey(string commandId)
+    public void SetHotKey(string commandId, HotKeyInfo hotKey)
     {
-        return KeyGesture.Parse("Ctrl + X");
+        // Do nothing
+    }
+
+    public HotKeyInfo? GetHotKey(string commandId)
+    {
+        return HotKeyInfo.Parse("Ctrl + X ; K");
     }
 
     public ValueTask Undo(CommandSnapshot command, CancellationToken cancel = default)
@@ -49,6 +61,6 @@ public class NullCommandService : ICommandService
         return ValueTask.CompletedTask;
     }
 
-    public Observable<CommandEventArgs> OnCommand { get; } = new Subject<CommandEventArgs>();
+    public Observable<CommandSnapshot> OnCommand { get; } = new Subject<CommandSnapshot>();
     public IExportInfo Source => SystemModule.Instance;
 }

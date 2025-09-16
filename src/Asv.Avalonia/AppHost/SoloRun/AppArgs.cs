@@ -86,13 +86,14 @@ public partial class AppArgs : IAppArgs
 
     public string SerializeToString()
     {
-        return JsonConvert.SerializeObject(
+        var result = JsonConvert.SerializeObject(
             new SerializationModel
             {
                 Keys = _args.ToDictionary(x => x.Key, x => x.Value),
                 Tags = _tags.ToList(),
             },
-            Formatting.Indented
+            Formatting.None
         );
+        return result;
     }
 }

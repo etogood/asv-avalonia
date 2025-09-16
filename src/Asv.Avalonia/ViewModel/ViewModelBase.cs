@@ -1,5 +1,8 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Microsoft.Extensions.Logging;
+using ZLogger;
 
 namespace Asv.Avalonia;
 
@@ -8,15 +11,32 @@ namespace Asv.Avalonia;
 /// property change notifications and a proper disposal mechanism.
 /// This class is designed to be inherited by other view models.
 /// </summary>
-public abstract class ViewModelBase(NavigationId id) : IViewModel
+public abstract class ViewModelBase : IViewModel
 {
+    protected ILogger Logger { get; }
     private volatile int _isDisposed;
 
-    public NavigationId Id { get; private set; } = id;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ViewModelBase"/> class.
+    /// Represents the base implementation of a view model that provides
+    /// property change notifications and a proper disposal mechanism.
+    /// This class is designed to be inherited by other view models.
+    /// </summary>
+    protected ViewModelBase(NavigationId id, ILoggerFactory loggerFactory)
+    {
+        Logger = loggerFactory.CreateLogger(GetType());
+        Id = id;
+    }
+
+    public NavigationId Id
+    {
+        get;
+        private set => SetField(ref field, value);
+    }
 
     public override string ToString()
     {
-        return $"{this.GetType().Name}[{Id}]";
+        return $"{GetType().Name}[{Id}]";
     }
 
     public void InitArgs(string? args)
@@ -27,10 +47,18 @@ public abstract class ViewModelBase(NavigationId id) : IViewModel
         }
 
         Id = Id.ChangeArgs(args);
-        InternalInitArgs(args);
+        try
+        {
+            InternalInitArgs(NavigationId.ParseArgs(args));
+        }
+        catch (Exception e)
+        {
+            Logger.ZLogError(e, $"Failed to init {Id.Id} args '{args}': {e.Message}");
+            throw;
+        }
     }
 
-    protected virtual void InternalInitArgs(string? args) { }
+    protected virtual void InternalInitArgs(NameValueCollection args) { }
 
     #region Dispose
 
@@ -96,7 +124,7 @@ public abstract class ViewModelBase(NavigationId id) : IViewModel
     /// <param name="propertyName">
     /// The name of the property that changed. Automatically set by the caller if not provided.
     /// </param>
-    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }

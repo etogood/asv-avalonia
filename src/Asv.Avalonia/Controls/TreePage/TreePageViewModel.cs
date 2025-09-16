@@ -1,27 +1,38 @@
-﻿using Asv.Common;
+﻿using Asv.Cfg;
+using Asv.Common;
+using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;
 
 namespace Asv.Avalonia;
 
-public abstract class TreePageViewModel<TContext, TSubPage>
-    : PageViewModel<TContext>,
+public abstract class TreePageViewModel<TContext, TSubPage, TConfig>
+    : PageViewModel<TContext, TConfig>,
         IDesignTimeTreePage
     where TContext : class, IPage
     where TSubPage : ITreeSubpage<TContext>
+    where TConfig : PageConfig, new()
 {
     private readonly ReactiveProperty<ITreeSubpage?> _selectedPage;
     private readonly IContainerHost _container;
+    private readonly ILoggerFactory _loggerFactory;
     private readonly ObservableList<BreadCrumbItem> _breadCrumbSource;
     private bool _internalNavigate;
-    private bool _isMenuVisible = true;
 
-    public TreePageViewModel(NavigationId id, ICommandService cmd, IContainerHost container)
-        : base(id, cmd)
+    protected TreePageViewModel(
+        NavigationId id,
+        ICommandService cmd,
+        IContainerHost container,
+        IConfiguration cfg,
+        ILoggerFactory loggerFactory
+    )
+        : base(id, cmd, cfg, loggerFactory)
     {
         _container = container;
+        _loggerFactory = loggerFactory;
         Nodes = [];
-        Nodes.SetRoutableParent(this, true);
+        Nodes.SetRoutableParent(this).DisposeItWith(Disposable);
+        Nodes.DisposeRemovedItems().DisposeItWith(Disposable);
         TreeView = new TreePageMenu(Nodes).DisposeItWith(Disposable);
         SelectedNode = new BindableReactiveProperty<ObservableTreeNode<
             ITreePage,
@@ -48,9 +59,9 @@ public abstract class TreePageViewModel<TContext, TSubPage>
 
     public bool IsMenuVisible
     {
-        get => _isMenuVisible;
-        set => SetField(ref _isMenuVisible, value);
-    }
+        get;
+        set => SetField(ref field, value);
+    } = true;
 
     #endregion
 
@@ -80,7 +91,7 @@ public abstract class TreePageViewModel<TContext, TSubPage>
     protected virtual ITreeSubpage? CreateDefaultPage()
     {
         return SelectedNode.Value != null
-            ? new GroupTreePageItemViewModel(SelectedNode.Value, Navigate)
+            ? new GroupTreePageItemViewModel(SelectedNode.Value, Navigate, _loggerFactory)
             : null;
     }
 

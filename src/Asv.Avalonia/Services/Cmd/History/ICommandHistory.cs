@@ -1,5 +1,4 @@
-﻿using System.Windows.Input;
-using ObservableCollections;
+﻿using ObservableCollections;
 using R3;
 
 namespace Asv.Avalonia;

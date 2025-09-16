@@ -1,4 +1,5 @@
 using System.Composition;
+using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia;
 
@@ -24,12 +25,15 @@ public sealed class InputDialogPayload
 [ExportDialogPrefab]
 [Shared]
 [method: ImportingConstructor]
-public sealed class InputDialogPrefab(INavigationService nav)
+public sealed class InputDialogPrefab(INavigationService nav, ILoggerFactory loggerFactory)
     : IDialogPrefab<InputDialogPayload, string?>
 {
     public async Task<string?> ShowDialogAsync(InputDialogPayload dialogPayload)
     {
-        using var vm = new DialogItemTextBoxViewModel { Message = dialogPayload.Message };
+        using var vm = new DialogItemTextBoxViewModel(loggerFactory)
+        {
+            Message = dialogPayload.Message,
+        };
         var dialogContent = new ContentDialog(vm, nav)
         {
             Title = dialogPayload.Title,
@@ -43,11 +47,6 @@ public sealed class InputDialogPrefab(INavigationService nav)
         if (result == ContentDialogResult.Primary)
         {
             return vm.Input.CurrentValue;
-        }
-
-        if (vm.Parent is not null)
-        {
-            await vm.Navigate(vm.Parent.Id);
         }
 
         return null;

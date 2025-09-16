@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <LangVersion>latest</LangVersion>
+        <TargetFramework>net9.0</TargetFramework>
+        <LangVersion>preview</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <CodeAnalysisRuleSet>../CodeStyle.ruleset</CodeAnalysisRuleSet>
@@ -26,8 +26,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Asv.Mavlink" Version="$(AsvMavlinkVersion)" />
-      <PackageReference Include="Roslynator.Analyzers" Version="4.13.1">
+        
+        <ProjectReference Include="..\Asv.Avalonia.GeoMap\Asv.Avalonia.GeoMap.csproj" />
+        <ProjectReference Include="..\Asv.Avalonia.Plugins\Asv.Avalonia.Plugins.csproj" />
+        <ProjectReference Include="..\Asv.Avalonia\Asv.Avalonia.csproj" />
+
+      
+      <PackageReference Include="Roslynator.Analyzers" Version="4.14.0">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
@@ -35,10 +40,7 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <ProjectReference Include="..\Asv.Avalonia.IO\Asv.Avalonia.IO.csproj" />
-      <ProjectReference Include="..\Asv.Avalonia.Map\Asv.Avalonia.Map.csproj" />
-      <ProjectReference Include="..\Asv.Avalonia.Plugins\Asv.Avalonia.Plugins.csproj" />
-      <ProjectReference Include="..\Asv.Avalonia\Asv.Avalonia.csproj" />
+
     </ItemGroup>
 
 </Project>

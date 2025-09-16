@@ -1,4 +1,5 @@
 ﻿using System.Composition;
+using Microsoft.Extensions.Logging;
 using ObservableCollections;
 using R3;
 
@@ -11,17 +12,28 @@ public class DebugWindowViewModel : ViewModelBase, IDebugWindow
     private readonly ISynchronizedView<IPage, DebugPageViewModel> _pageView;
 
     public DebugWindowViewModel()
-        : this(DesignTime.Navigation, DesignTime.ShellHost) { }
+        : this(
+            DesignTime.Navigation,
+            DesignTime.ShellHost,
+            DesignTime.CommandService,
+            DesignTime.LoggerFactory
+        ) { }
 
     [ImportingConstructor]
-    public DebugWindowViewModel(INavigationService nav, IShellHost host)
-        : base(ModelId)
+    public DebugWindowViewModel(
+        INavigationService nav,
+        IShellHost host,
+        ICommandService cmd,
+        ILoggerFactory loggerFactory
+    )
+        : base(ModelId, loggerFactory)
     {
         SelectedControlPath = nav.SelectedControlPath.ToReadOnlyBindableReactiveProperty();
-        _pageView = host.Shell.Pages.CreateView(x => new DebugPageViewModel(x));
+        _pageView = host.Shell.Pages.CreateView(x => new DebugPageViewModel(x, loggerFactory));
         Pages = _pageView.ToNotifyCollectionChanged();
         BackwardStack = nav.BackwardStack.ToNotifyCollectionChanged();
         ForwardStack = nav.ForwardStack.ToNotifyCollectionChanged();
+        HotKey = cmd.OnHotKey.ToReadOnlyBindableReactiveProperty();
     }
 
     public NotifyCollectionChangedSynchronizedViewList<NavigationPath> ForwardStack { get; }
@@ -30,6 +42,8 @@ public class DebugWindowViewModel : ViewModelBase, IDebugWindow
 
     public NotifyCollectionChangedSynchronizedViewList<DebugPageViewModel> Pages { get; }
     public IReadOnlyBindableReactiveProperty<NavigationPath> SelectedControlPath { get; }
+
+    public IReadOnlyBindableReactiveProperty<HotKeyInfo?> HotKey { get; }
 
     protected override void Dispose(bool disposing)
     {
@@ -40,18 +54,14 @@ public class DebugWindowViewModel : ViewModelBase, IDebugWindow
     }
 }
 
-public class DebugPageViewModel : ViewModelBase
+public class DebugPageViewModel(IPage page, ILoggerFactory loggerFactory)
+    : ViewModelBase(page.Id, loggerFactory)
 {
-    public DebugPageViewModel(IPage page)
-        : base(page.Id)
-    {
-        UndoStack = page.History.UndoStack.ToNotifyCollectionChanged();
-        RedoStack = page.History.RedoStack.ToNotifyCollectionChanged();
-    }
+    public NotifyCollectionChangedSynchronizedViewList<CommandSnapshot> RedoStack { get; } =
+        page.History.RedoStack.ToNotifyCollectionChanged();
 
-    public NotifyCollectionChangedSynchronizedViewList<CommandSnapshot> RedoStack { get; }
-
-    public NotifyCollectionChangedSynchronizedViewList<CommandSnapshot> UndoStack { get; }
+    public NotifyCollectionChangedSynchronizedViewList<CommandSnapshot> UndoStack { get; } =
+        page.History.UndoStack.ToNotifyCollectionChanged();
 
     protected override void Dispose(bool disposing)
     {

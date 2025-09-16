@@ -1,3 +1,5 @@
+using Asv.Common;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia;
@@ -6,28 +8,26 @@ public sealed class HistoricalBoolProperty : HistoricalPropertyBase<bool, bool>
 {
     private readonly ReactiveProperty<bool> _modelValue;
     private bool _internalChange;
+    private bool _externalChange;
 
-    public HistoricalBoolProperty(NavigationId id, ReactiveProperty<bool> modelValue)
-        : base(id)
+    public HistoricalBoolProperty(
+        NavigationId id,
+        ReactiveProperty<bool> modelValue,
+        ILoggerFactory loggerFactory,
+        IRoutable parent
+    )
+        : base(id, loggerFactory, parent)
     {
         _modelValue = modelValue;
-
-        _sub1 = ViewValue.EnableValidation(
-            value =>
-            {
-                var error = ValidateValue(value);
-                return error ?? ValidationResult.Success;
-            },
-            this,
-            true,
-            AwaitOperation.Drop
-        );
+        ViewValue = new BindableReactiveProperty<bool>().DisposeItWith(Disposable);
+        IsSelected = new BindableReactiveProperty<bool>().DisposeItWith(Disposable);
+        ViewValue.EnableValidation(ValidateValue);
 
         _internalChange = true;
-        _sub2 = ViewValue.SubscribeAwait(OnChangedByUser, AwaitOperation.Drop);
+        ViewValue.SubscribeAwait(OnChangedByUser, AwaitOperation.Drop).DisposeItWith(Disposable);
         _internalChange = false;
 
-        _sub3 = _modelValue.Subscribe(OnChangeByModel);
+        _modelValue.Subscribe(OnChangeByModel).DisposeItWith(Disposable);
     }
 
     protected override Exception? ValidateValue(bool userValue)
@@ -42,12 +42,19 @@ public sealed class HistoricalBoolProperty : HistoricalPropertyBase<bool, bool>
             return;
         }
 
-        var newValue = new BoolCommandArg(userValue);
-        await this.ExecuteCommand(ChangeBoolPropertyCommand.Id, newValue);
+        _externalChange = true;
+        var newValue = new BoolArg(userValue);
+        await this.ExecuteCommand(ChangeBoolPropertyCommand.Id, newValue, cancel: cancel);
+        _externalChange = false;
     }
 
     protected override void OnChangeByModel(bool modelValue)
     {
+        if (_externalChange)
+        {
+            return;
+        }
+
         _internalChange = true;
         ViewValue.OnNext(modelValue);
         _internalChange = false;
@@ -58,30 +65,7 @@ public sealed class HistoricalBoolProperty : HistoricalPropertyBase<bool, bool>
         return [];
     }
 
-    public override BindableReactiveProperty<bool> ViewValue { get; } = new();
-    public override BindableReactiveProperty<bool> IsSelected { get; } = new();
+    public override BindableReactiveProperty<bool> ViewValue { get; }
+    public override BindableReactiveProperty<bool> IsSelected { get; }
     public override ReactiveProperty<bool> ModelValue => _modelValue;
-
-    #region Dispose
-
-    private readonly IDisposable _sub1;
-    private readonly IDisposable _sub2;
-    private readonly IDisposable _sub3;
-
-    protected override void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            _sub1.Dispose();
-            _sub2.Dispose();
-            _sub3.Dispose();
-            IsSelected.Dispose();
-            ViewValue.Dispose();
-            ModelValue.Dispose();
-        }
-
-        base.Dispose(disposing);
-    }
-
-    #endregion
 }

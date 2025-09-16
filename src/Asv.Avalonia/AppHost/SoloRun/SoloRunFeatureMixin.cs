@@ -12,6 +12,7 @@ public static class SoloRunFeatureMixin
     {
         var options = builder
             .Services.AddSingleton<ISoloRunFeature, SoloRunFeature>()
+            .AddHostedService(x => x.GetRequiredService<ISoloRunFeature>())
             .AddOptions<SoloRunFeatureConfig>()
             .Bind(builder.Configuration.GetSection(SoloRunFeatureConfig.Section))
             .PostConfigure<IAppInfo>(
@@ -21,18 +22,19 @@ public static class SoloRunFeatureMixin
                     config.Pipe ??= info.Name;
                 }
             );
+
         var subBuilder = new SoloRunFeatureBuilder();
         configure?.Invoke(subBuilder);
         subBuilder.Build(options);
         return builder;
     }
 
-    public static ISoloRunFeature GetSoloRunFeature(this AppHost host)
+    public static ISoloRunFeature GetSoloRunFeature(this IHost host)
     {
-        return host.GetService<ISoloRunFeature>();
+        return host.Services.GetRequiredService<ISoloRunFeature>();
     }
 
-    public static AppHost ExitIfNotFirstInstance(this AppHost host)
+    public static IHost ExitIfNotFirstInstance(this IHost host)
     {
         if (host.GetSoloRunFeature().IsFirstInstance == false)
         {

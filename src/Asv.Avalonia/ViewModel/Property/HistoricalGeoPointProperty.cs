@@ -1,4 +1,5 @@
 using Asv.Common;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia;
@@ -8,16 +9,20 @@ public sealed class HistoricalGeoPointProperty : CompositeHistoricalPropertyBase
     private readonly ReactiveProperty<GeoPoint> _modelValue;
 
     public HistoricalGeoPointProperty(
-        string id,
+        NavigationId id,
         ReactiveProperty<GeoPoint> modelValue,
         IUnit latUnit,
         IUnit lonUnit,
-        IUnit altUnit
+        IUnit altUnit,
+        ILoggerFactory loggerFactory,
+        IRoutable parent
     )
-        : base(id)
+        : base(id, loggerFactory, parent)
     {
         _modelValue = modelValue;
-        var modelLat = new ReactiveProperty<double>().DisposeItWith(Disposable);
+        var modelLat = new ReactiveProperty<double>(modelValue.CurrentValue.Latitude).DisposeItWith(
+            Disposable
+        );
         modelLat
             .Subscribe(x =>
             {
@@ -29,7 +34,9 @@ public sealed class HistoricalGeoPointProperty : CompositeHistoricalPropertyBase
             })
             .DisposeItWith(Disposable);
 
-        var modelLon = new ReactiveProperty<double>().DisposeItWith(Disposable);
+        var modelLon = new ReactiveProperty<double>(
+            modelValue.CurrentValue.Longitude
+        ).DisposeItWith(Disposable);
         modelLon
             .Subscribe(x =>
             {
@@ -41,7 +48,9 @@ public sealed class HistoricalGeoPointProperty : CompositeHistoricalPropertyBase
             })
             .DisposeItWith(Disposable);
 
-        var modelAlt = new ReactiveProperty<double>().DisposeItWith(Disposable);
+        var modelAlt = new ReactiveProperty<double>(modelValue.CurrentValue.Altitude).DisposeItWith(
+            Disposable
+        );
         modelAlt
             .Subscribe(x =>
             {
@@ -53,18 +62,27 @@ public sealed class HistoricalGeoPointProperty : CompositeHistoricalPropertyBase
             })
             .DisposeItWith(Disposable);
 
-        Latitude = new HistoricalUnitProperty("lat", modelLat, latUnit)
-        {
-            Parent = this,
-        }.DisposeItWith(Disposable);
-        Longitude = new HistoricalUnitProperty("lon", modelLon, lonUnit)
-        {
-            Parent = this,
-        }.DisposeItWith(Disposable);
-        Altitude = new HistoricalUnitProperty("alt", modelAlt, altUnit)
-        {
-            Parent = this,
-        }.DisposeItWith(Disposable);
+        Latitude = new HistoricalUnitProperty(
+            nameof(Latitude),
+            modelLat,
+            latUnit,
+            loggerFactory,
+            this
+        ).DisposeItWith(Disposable);
+        Longitude = new HistoricalUnitProperty(
+            nameof(Longitude),
+            modelLon,
+            lonUnit,
+            loggerFactory,
+            this
+        ).DisposeItWith(Disposable);
+        Altitude = new HistoricalUnitProperty(
+            nameof(Altitude),
+            modelAlt,
+            altUnit,
+            loggerFactory,
+            this
+        ).DisposeItWith(Disposable);
 
         _modelValue
             .Subscribe(x =>
@@ -74,6 +92,13 @@ public sealed class HistoricalGeoPointProperty : CompositeHistoricalPropertyBase
                 modelAlt.Value = x.Altitude;
             })
             .DisposeItWith(Disposable);
+    }
+
+    public override void ForceValidate()
+    {
+        Latitude.ForceValidate();
+        Longitude.ForceValidate();
+        Altitude.ForceValidate();
     }
 
     public override IEnumerable<IRoutable> GetRoutableChildren()

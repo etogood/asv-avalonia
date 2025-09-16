@@ -1,6 +1,4 @@
-﻿using ObservableCollections;
-
-namespace Asv.Avalonia;
+﻿namespace Asv.Avalonia;
 
 public interface ITreeViewModel : IViewModel
 {

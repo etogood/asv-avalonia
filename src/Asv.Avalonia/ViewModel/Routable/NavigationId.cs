@@ -1,13 +1,82 @@
+using System.Collections.Specialized;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
+using Asv.IO;
+using DotNext;
+using Newtonsoft.Json;
 
 namespace Asv.Avalonia;
 
 /// <summary>
 /// Represents a unique identifier for navigation, consisting of a type identifier and optional arguments.
 /// </summary>
-public readonly partial struct NavigationId : IEquatable<NavigationId>, IComparable<NavigationId>
+public readonly partial struct NavigationId
+    : IEquatable<NavigationId>,
+        IComparable<NavigationId>,
+        ISizedSpanSerializable,
+        IJsonSerializable
 {
+    #region Generation
+
+    private const string AllowedCharacters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-.";
+
+    public static string GenerateRandomAsString(int length = 16) =>
+        Random.Shared.NextString(AllowedCharacters, length);
+
+    public static NavigationId GenerateRandom(int length = 16) => GenerateRandomAsString(length);
+
+    public static string GenerateByHashAsString<T1>(T1 value1) =>
+        HashCode.Combine(value1).ToString();
+
+    public static string GenerateByHashAsString<T1, T2>(T1 value1, T2 value2) =>
+        HashCode.Combine(value1, value2).ToString();
+
+    public static string GenerateByHashAsString<T1, T2, T3>(T1 value1, T2 value2, T3 value3) =>
+        HashCode.Combine(value1, value2, value3).ToString();
+
+    public static string GenerateByHashAsString<T1, T2, T3, T4>(
+        T1 value1,
+        T2 value2,
+        T3 value3,
+        T4 value4
+    ) => HashCode.Combine(value1, value2, value3, value4).ToString();
+
+    public static string GenerateByHashAsString<T1, T2, T3, T4, T5>(
+        T1 value1,
+        T2 value2,
+        T3 value3,
+        T4 value4,
+        T5 value5
+    ) => HashCode.Combine(value1, value2, value3, value4, value5).ToString();
+
+    public static NavigationId GenerateByHash<T1>(T1 value1) =>
+        new(GenerateByHashAsString(value1), (string?)null);
+
+    public static NavigationId GenerateByHash<T1, T2>(T1 value1, T2 value2) =>
+        new(GenerateByHashAsString(value1, value2), (string?)null);
+
+    public static NavigationId GenerateByHash<T1, T2, T3>(T1 value1, T2 value2, T3 value3) =>
+        new(GenerateByHashAsString(value1, value2, value3), (string?)null);
+
+    public static NavigationId GenerateByHash<T1, T2, T3, T4>(
+        T1 value1,
+        T2 value2,
+        T3 value3,
+        T4 value4
+    ) => new(GenerateByHashAsString(value1, value2, value3, value4), (string?)null);
+
+    public static NavigationId GenerateByHash<T1, T2, T3, T4, T5>(
+        T1 value1,
+        T2 value2,
+        T3 value3,
+        T4 value4,
+        T5 value5
+    ) => new(GenerateByHashAsString(value1, value2, value3, value4, value5), (string?)null);
+
+    #endregion
+
     private const string TypeIdRegexString = "^[a-zA-Z0-9\\._\\-]+$";
 
     [GeneratedRegex(TypeIdRegexString, RegexOptions.Compiled)]
@@ -32,7 +101,7 @@ public readonly partial struct NavigationId : IEquatable<NavigationId>, ICompara
     /// <param name="args">The optional arguments associated with the navigation identifier.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeId"/> is null.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="typeId"/> contains invalid characters.</exception>
-    public NavigationId(string typeId, string? args = null)
+    public NavigationId(string typeId, string? args)
     {
         if (typeId == null)
         {
@@ -51,6 +120,47 @@ public readonly partial struct NavigationId : IEquatable<NavigationId>, ICompara
         Args = args;
     }
 
+    public NavigationId(string typeId, NameValueCollection args)
+        : this(typeId, CreateArgs(args)) { }
+
+    public NavigationId(string value)
+    {
+        Parse(value, out var typeId, out var args);
+        Id = typeId;
+        Args = args;
+    }
+
+    public NavigationId(ref ReadOnlySpan<byte> buffer)
+    {
+        Id = BinSerialize.ReadString(ref buffer);
+        Args = BinSerialize.ReadBool(ref buffer) ? BinSerialize.ReadString(ref buffer) : null;
+
+        if (!TypeIdRegex.IsMatch(Id))
+        {
+            throw new ArgumentException(
+                $"{nameof(Id)} must contain only Latin letters, dots, and hyphens.",
+                nameof(Id)
+            );
+        }
+    }
+
+    public NavigationId(JsonReader reader)
+    {
+        ArgumentNullException.ThrowIfNull(reader);
+        var str = reader.ReadAsString();
+        if (str == null)
+        {
+            throw new ArgumentNullException(
+                nameof(reader),
+                "String value expected in JSON reader."
+            );
+        }
+
+        Parse(str, out var typeId, out var args);
+        Id = typeId;
+        Args = args;
+    }
+
     /// <summary>
     /// Implicitly converts a string to a <see cref="NavigationId"/> instance by parsing it into a type identifier and optional arguments.
     /// The string should be in the format "typeId?args", where "typeId" must contain only Latin letters, dots, and hyphens.
@@ -59,24 +169,97 @@ public readonly partial struct NavigationId : IEquatable<NavigationId>, ICompara
     /// <returns>A new <see cref="NavigationId"/> instance parsed from the string.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
     /// <exception cref="ArgumentException">Thrown when the type identifier part of <paramref name="value"/> contains invalid characters.</exception>
-    public static implicit operator NavigationId(string? value)
+    public static implicit operator NavigationId(string value)
+    {
+        return new NavigationId(value);
+    }
+
+    public static void Parse(string? value, out string id, out string? args)
     {
         if (value == null)
         {
-            return Empty;
+            id = string.Empty;
+            args = null;
+            return;
         }
 
-        int separatorIndex = value.IndexOf(Separator);
+        var separatorIndex = value.IndexOf(Separator);
         if (separatorIndex == -1)
         {
             // Если нет 'Separator', вся строка — это typeId
-            return new NavigationId(value);
+            id = value;
+            args = null;
+            return;
         }
 
-        var typeId = value.Substring(0, separatorIndex);
-        var args = separatorIndex < value.Length - 1 ? value[(separatorIndex + 1)..] : null;
+        id = value[..separatorIndex];
+        args = separatorIndex < value.Length - 1 ? value[(separatorIndex + 1)..] : null;
+    }
 
-        return new NavigationId(typeId, args);
+    public static NameValueCollection ParseArgs(string? args)
+    {
+        return string.IsNullOrWhiteSpace(args)
+            ? new NameValueCollection()
+            : HttpUtility.ParseQueryString(args);
+    }
+
+    public static string CreateArgs(params IEnumerable<KeyValuePair<string, string>> args)
+    {
+        var sb = new StringBuilder();
+        foreach (var kvp in args)
+        {
+            if (sb.Length > 0)
+            {
+                sb.Append('&');
+            }
+
+            sb.Append(HttpUtility.UrlEncode(kvp.Key));
+            sb.Append('=');
+            sb.Append(HttpUtility.UrlEncode(kvp.Value));
+        }
+
+        return sb.ToString();
+    }
+
+    public static string CreateArgs(IReadOnlyDictionary<string, string> args)
+    {
+        var sb = new StringBuilder();
+        foreach (var kvp in args)
+        {
+            if (sb.Length > 0)
+            {
+                sb.Append('&');
+            }
+
+            sb.Append(HttpUtility.UrlEncode(kvp.Key));
+            sb.Append('=');
+            sb.Append(HttpUtility.UrlEncode(kvp.Value));
+        }
+
+        return sb.ToString();
+    }
+
+    public static string CreateArgs(NameValueCollection args)
+    {
+        if (args.Count == 0)
+        {
+            return string.Empty;
+        }
+
+        var sb = new StringBuilder();
+        foreach (var key in args.AllKeys)
+        {
+            if (sb.Length > 0)
+            {
+                sb.Append('&');
+            }
+
+            sb.Append(HttpUtility.UrlEncode(key));
+            sb.Append('=');
+            sb.Append(HttpUtility.UrlEncode(args[key] ?? string.Empty));
+        }
+
+        return sb.ToString();
     }
 
     /// <summary>
@@ -158,7 +341,7 @@ public readonly partial struct NavigationId : IEquatable<NavigationId>, ICompara
     /// </returns>
     public int CompareTo(NavigationId other)
     {
-        // First, compare the Id
+        // First, compare the StaticId
         int idComparison = StringComparer.InvariantCultureIgnoreCase.Compare(Id, other.Id);
         if (idComparison != 0)
         {
@@ -218,5 +401,45 @@ public readonly partial struct NavigationId : IEquatable<NavigationId>, ICompara
         }
 
         return $"{Id}{Separator}{Args}";
+    }
+
+    public void Deserialize(ref ReadOnlySpan<byte> buffer)
+    {
+        throw new NotImplementedException(
+            "This is readonly struct. Use constructor with ReadOnlySpan<byte> parameter instead"
+        );
+    }
+
+    public void Serialize(ref Span<byte> buffer)
+    {
+        BinSerialize.WriteString(ref buffer, Id);
+        if (Args != null)
+        {
+            BinSerialize.WriteBool(ref buffer, true);
+            BinSerialize.WriteString(ref buffer, Args);
+        }
+        else
+        {
+            BinSerialize.WriteBool(ref buffer, false);
+        }
+    }
+
+    public int GetByteSize()
+    {
+        return BinSerialize.GetSizeForString(Id)
+            + sizeof(bool) // for the bool indicating Args presence
+            + (Args != null ? BinSerialize.GetSizeForString(Args) : 0);
+    }
+
+    public void Serialize(JsonWriter writer)
+    {
+        writer.WriteValue(ToString());
+    }
+
+    public void Deserialize(JsonReader reader)
+    {
+        throw new NotImplementedException(
+            "This is readonly struct. Use constructor with ReadOnlySpan<byte> parameter instead"
+        );
     }
 }

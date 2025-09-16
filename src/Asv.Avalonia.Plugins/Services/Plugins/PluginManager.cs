@@ -39,7 +39,6 @@ public class PluginManager : IPluginManager
     private readonly SourceCacheContext _cache;
     private readonly List<AssemblyLoadContext> _pluginContexts = [];
 
-    [ImportingConstructor]
     public PluginManager(
         IOptions<PluginManagerOptions> options,
         IConfiguration userConfig,
@@ -166,7 +165,7 @@ public class PluginManager : IPluginManager
 
         _cache = new SourceCacheContext
         {
-            /*GeneratedTempFolder = _nugetCache,
+            /*GeneratedTempFolder = nuget_cache,
             SessionId = Guid.Empty,
             DirectDownload = true,
             NoCache = true,
@@ -414,7 +413,7 @@ public class PluginManager : IPluginManager
             query.Sources.Count == 0
                 ? _repositories.ToArray()
                 : _repositories
-                    .Where(_ => query.Sources.Contains(_.PackageSource.Source))
+                    .Where(r => query.Sources.Contains(r.PackageSource.Source))
                     .ToArray();
         _repositoriesLock.ExitReadLock();
 
@@ -448,7 +447,15 @@ public class PluginManager : IPluginManager
                             _nugetLogger,
                             cancel
                         );
-                        if (dependencyInfo == null)
+                        if (
+                            !dependencyInfo.Dependencies.Any(x =>
+                                string.Equals(
+                                    x.Id,
+                                    _apiPackageId,
+                                    StringComparison.OrdinalIgnoreCase
+                                )
+                            )
+                        )
                         {
                             continue;
                         }
@@ -568,19 +575,64 @@ public class PluginManager : IPluginManager
             );
             var findPackageByIdResource =
                 await repository.GetResourceAsync<FindPackageByIdResource>(cancel);
-            await using (var file = File.OpenWrite(packageFile))
+
+            var tmpFile = Path.Combine(
+                currentPluginFolder,
+                $"{packageIdentity.Id}.{packageIdentity.Version}.nupkg.tmp"
+            );
+
+            _cache.DirectDownload = true;
+            await using (
+                var fs = new FileStream(
+                    tmpFile,
+                    FileMode.Create,
+                    FileAccess.Write,
+                    FileShare.None,
+                    bufferSize: 81920,
+                    useAsync: true
+                )
+            )
             {
-                await findPackageByIdResource.CopyNupkgToStreamAsync(
+                var ok = await findPackageByIdResource.CopyNupkgToStreamAsync(
                     packageIdentity.Id,
                     packageIdentity.Version,
-                    file,
+                    fs,
                     _cache,
                     _nugetLogger,
                     cancel
                 );
-                file.Flush(true);
+
+                await fs.FlushAsync(cancel);
+
+                if (!ok)
+                {
+                    TryDelete(tmpFile);
+
+                    throw new Exception(
+                        $"Failed to download package {packageIdentity.Id} {packageIdentity.Version} "
+                            + $"from source {source.SourceUri}. CopyNupkgToStreamAsync returned false."
+                    );
+                }
+            }
+            try
+            {
+                using var validationReader = new PackageArchiveReader(tmpFile);
+
+                // Attempt to read identity forces zip central directory read (quick integrity check)
+                _ = await validationReader.GetIdentityAsync(cancel);
+            }
+            catch (Exception ex)
+            {
+                TryDelete(tmpFile);
+                throw new Exception(
+                    $"Downloaded package is invalid: {packageIdentity.Id} {packageIdentity.Version}. "
+                        + $"Source: {source.SourceUri}. Details: {ex.Message}",
+                    ex
+                );
             }
 
+            TryDelete(packageFile);
+            File.Move(tmpFile, packageFile, overwrite: true);
             using var packageArchiveReader = new PackageArchiveReader(packageFile);
             var platform = NugetHelper.GetPlatform(packageArchiveReader);
             if (platform == null)
@@ -699,6 +751,23 @@ public class PluginManager : IPluginManager
             }
 
             throw;
+        }
+
+        return;
+
+        static void TryDelete(string path)
+        {
+            try
+            {
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+            }
+            catch
+            {
+                // ignore
+            }
         }
     }
 
@@ -1206,6 +1275,16 @@ public class PluginManager : IPluginManager
     }
 
     #endregion
+
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
 }
 
 public class PluginState

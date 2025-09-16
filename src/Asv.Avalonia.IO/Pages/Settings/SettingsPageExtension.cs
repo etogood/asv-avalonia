@@ -1,13 +1,14 @@
 ﻿using System.Composition;
 using Asv.Common;
 using Material.Icons;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia.IO;
 
 [ExportExtensionFor<ISettingsPage>]
 [method: ImportingConstructor]
-public class SettingsPageExtension() : IExtensionFor<ISettingsPage>
+public class SettingsPageExtension(ILoggerFactory loggerFactory) : IExtensionFor<ISettingsPage>
 {
     public void Extend(ISettingsPage context, CompositeDisposable contextDispose)
     {
@@ -15,9 +16,10 @@ public class SettingsPageExtension() : IExtensionFor<ISettingsPage>
             new TreePage(
                 SettingsConnectionViewModel.SubPageId,
                 RS.SettingsPageExtension_TreePage_Title,
-                MaterialIconKind.Connection,
+                SettingsConnectionViewModel.Icon,
                 SettingsConnectionViewModel.SubPageId,
-                NavigationId.Empty
+                NavigationId.Empty,
+                loggerFactory
             ).DisposeItWith(contextDispose)
         );
     }

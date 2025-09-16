@@ -1,36 +1,38 @@
 ﻿using System.Composition;
+using Asv.Cfg;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
 using ObservableCollections;
 using R3;
+using IConfiguration = Asv.Cfg.IConfiguration;
 
 namespace Asv.Avalonia.Plugins;
 
-[ExportPage(PageId)]
-public class PluginsSourcesViewModel : PageViewModel<PluginsSourcesViewModel>
+[ExportSettings(PageId)]
+public class PluginsSourcesViewModel : SettingsSubPage
 {
     public const string PageId = "plugins.sources";
 
     private readonly IPluginManager _mng;
     private readonly INavigationService _navigation;
     private readonly ILoggerFactory _loggerFactory;
-    private readonly ILogger _logger;
     private readonly ReactiveCommand _update;
-    private readonly ObservableList<IPluginServerInfo> _items;
     private readonly ISynchronizedView<IPluginServerInfo, PluginSourceViewModel> _view;
 
     public PluginsSourcesViewModel()
         : this(
             DesignTime.CommandService,
             NullPluginManager.Instance,
-            NullLoggerFactory.Instance,
-            NullNavigationService.Instance
+            DesignTime.Configuration,
+            DesignTime.LoggerFactory,
+            DesignTime.Navigation
         )
     {
         DesignTime.ThrowIfNotDesignMode();
-        _items = new ObservableList<IPluginServerInfo>(
+        var items = new ObservableList<IPluginServerInfo>(
             [
                 new SourceInfo(
                     new SourceRepository(
@@ -46,7 +48,7 @@ public class PluginsSourcesViewModel : PageViewModel<PluginsSourcesViewModel>
                 ),
             ]
         );
-        Items = _items.ToNotifyCollectionChanged(x => new PluginSourceViewModel(
+        Items = items.ToNotifyCollectionChanged(x => new PluginSourceViewModel(
             x,
             NullLoggerFactory.Instance,
             this
@@ -57,35 +59,35 @@ public class PluginsSourcesViewModel : PageViewModel<PluginsSourcesViewModel>
     public PluginsSourcesViewModel(
         ICommandService cmd,
         IPluginManager mng,
+        IConfiguration cfg,
         ILoggerFactory loggerFactory,
         INavigationService navigationService
     )
-        : base(PageId, cmd)
+        : base(PageId, loggerFactory)
     {
         _mng = mng;
         _navigation = navigationService;
         _loggerFactory = loggerFactory;
-        _logger = loggerFactory.CreateLogger<PluginsSourcesViewModel>();
-        _items = new ObservableList<IPluginServerInfo>();
-        _view = _items.CreateView(info => new PluginSourceViewModel(info, loggerFactory, this));
+        var items = new ObservableList<IPluginServerInfo>();
+        _view = items.CreateView(info => new PluginSourceViewModel(info, loggerFactory, this));
         SelectedItem = new BindableReactiveProperty<PluginSourceViewModel?>();
         Items = _view.ToNotifyCollectionChanged();
 
         _update = new ReactiveCommand(_ =>
         {
-            _items.Clear();
-            _items.AddRange(mng.Servers);
+            items.Clear();
+            items.AddRange(mng.Servers);
         });
         _update.IgnoreOnErrorResume(ex =>
-            _logger.LogError(
-                $"RS.PluginsSourcesViewModel_PluginsSourcesViewModel_ErrorToUpdate\nWith error:{ex.Message}"
+            Logger.LogError(
+                $"{RS.PluginsSourcesViewModel_PluginsSourcesViewModel_ErrorToUpdate}\nWith error:{ex.Message}"
             )
         );
         _update.Execute(Unit.Default);
 
         Add = new ReactiveCommand(AddImpl);
         Add.IgnoreOnErrorResume(ex =>
-            _logger.LogError(
+            Logger.LogError(
                 $"{RS.PluginsSourcesViewModel_PluginsSourcesViewModel_ErrorToUpdate}\nWith error:{ex.Message}"
             )
         );
@@ -112,17 +114,13 @@ public class PluginsSourcesViewModel : PageViewModel<PluginsSourcesViewModel>
 
         if (result == ContentDialogResult.Primary)
         {
+            await viewModel.Update();
             _update.Execute(Unit.Default);
         }
     }
 
     public async ValueTask EditImpl(PluginSourceViewModel arg, CancellationToken token)
     {
-        if (SelectedItem.CurrentValue?.Id != arg.Id)
-        {
-            return;
-        }
-
         using var viewModel = new SourceViewModel(_mng, _loggerFactory, arg);
         var dialog = new ContentDialog(viewModel, _navigation)
         {
@@ -137,17 +135,13 @@ public class PluginsSourcesViewModel : PageViewModel<PluginsSourcesViewModel>
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary)
         {
+            await viewModel.Update();
             _update.Execute(Unit.Default);
         }
     }
 
     public void RemoveImpl(PluginSourceViewModel arg)
     {
-        if (SelectedItem.CurrentValue?.Id != arg.Id)
-        {
-            return;
-        }
-
         _mng.RemoveServer(arg.Model);
         _update.Execute(Unit.Default);
     }
@@ -169,9 +163,7 @@ public class PluginsSourcesViewModel : PageViewModel<PluginsSourcesViewModel>
         return [];
     }
 
-    protected override void AfterLoadExtensions() { }
-
-    public override IExportInfo Source => PluginsModule.Instance;
+    public override IExportInfo Source => SystemModule.Instance;
 
     protected override void Dispose(bool disposing)
     {

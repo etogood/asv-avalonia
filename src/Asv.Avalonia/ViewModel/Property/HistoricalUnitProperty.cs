@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia;
@@ -9,6 +10,7 @@ public sealed class HistoricalUnitProperty : HistoricalPropertyBase<double, stri
     private readonly string? _format;
 
     private bool _internalChange;
+    private bool _externalChange;
 
     public override ReactiveProperty<double> ModelValue => _modelValue;
     public override BindableReactiveProperty<string?> ViewValue { get; } = new();
@@ -19,30 +21,19 @@ public sealed class HistoricalUnitProperty : HistoricalPropertyBase<double, stri
         string id,
         ReactiveProperty<double> modelValue,
         IUnit unit,
+        ILoggerFactory loggerFactory,
+        IRoutable parent,
         string? format = null
     )
-        : base(id)
+        : base(id, loggerFactory, parent)
     {
         _modelValue = modelValue;
         _unit = unit;
         _format = format;
+        ViewValue.EnableValidation(ValidateValue);
 
         _internalChange = true;
-        ViewValue.EnableValidation().ForceValidate();
-        _sub2 = ViewValue.SubscribeAwait(
-            async (value, cancel) =>
-            {
-                var error = ValidateValue(value);
-                if (error is null)
-                {
-                    await OnChangedByUser(value, cancel);
-                    return;
-                }
-
-                ViewValue.OnErrorResume(error);
-            },
-            AwaitOperation.Drop
-        );
+        _sub2 = ViewValue.SubscribeAwait(OnChangedByUser, AwaitOperation.Drop);
         _internalChange = false;
 
         _sub3 = _modelValue.Subscribe(OnChangeByModel);
@@ -52,12 +43,7 @@ public sealed class HistoricalUnitProperty : HistoricalPropertyBase<double, stri
     protected override Exception? ValidateValue(string? userValue)
     {
         var result = _unit.CurrentUnitItem.CurrentValue.ValidateValue(userValue);
-        if (result.IsSuccess)
-        {
-            return null;
-        }
-
-        return result.ValidationException;
+        return result.IsSuccess ? null : result.ValidationException;
     }
 
     protected override async ValueTask OnChangedByUser(string? userValue, CancellationToken cancel)
@@ -67,13 +53,20 @@ public sealed class HistoricalUnitProperty : HistoricalPropertyBase<double, stri
             return;
         }
 
+        _externalChange = true;
         var value = _unit.CurrentUnitItem.CurrentValue.ParseToSi(userValue);
-        var newValue = new DoubleCommandArg(value);
-        await this.ExecuteCommand(ChangeDoublePropertyCommand.Id, newValue);
+        var newValue = new DoubleArg(value);
+        await this.ExecuteCommand(ChangeDoublePropertyCommand.Id, newValue, cancel);
+        _externalChange = false;
     }
 
     protected override void OnChangeByModel(double modelValue)
     {
+        if (_externalChange)
+        {
+            return;
+        }
+
         _internalChange = true;
         ViewValue.OnNext(_unit.CurrentUnitItem.CurrentValue.PrintFromSi(modelValue, _format));
         _internalChange = false;

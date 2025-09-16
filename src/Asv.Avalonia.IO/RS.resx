@@ -19,16 +19,10 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="SettingsConnectionTcpExtension_MenuItem_Header" xml:space="preserve">
-        <value>Add TCP port</value>
+        <value>TCP Client</value>
     </data>
     <data name="PortView_Title" xml:space="preserve">
         <value>Common Settings</value>
-    </data>
-    <data name="PortViewModel_ValidateName_PortNameRequiredException" xml:space="preserve">
-        <value>Port name is required</value>
-    </data>
-    <data name="PortViewModel_ValidateName_PortNameTooLongException" xml:space="preserve">
-        <value>Port name is too long. Max length is 50 characters</value>
     </data>
     <data name="SettingsPageExtension_TreePage_Title" xml:space="preserve">
         <value>Connection</value>
@@ -37,7 +31,7 @@
         <value>Port</value>
     </data>
     <data name="TcpPortView_Text_Host" xml:space="preserve">
-        <value>Host</value>
+        <value>Address</value>
     </data>
     <data name="TcpPortView_Text_Name" xml:space="preserve">
         <value>Title</value>
@@ -64,12 +58,36 @@
         <value>Off</value>
     </data>
     <data name="SettingsConnectionSerialExtension_MenuItem_Header" xml:space="preserve">
-        <value>Add Serial port</value>
+        <value>Serial port</value>
     </data>
     <data name="TcpPortViewModel_TagViewModel_Value" xml:space="preserve">
-        <value>TCP</value>
+        <value>TCP CLIENT</value>
     </data>
     <data name="SerialPortViewModel_TagViewModel_Value" xml:space="preserve">
         <value>SERIAL</value>
+    </data>
+    <data name="PortCrudCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Add/Remove/Change port</value>
+    </data>
+    <data name="PortCrudCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Command to add/remove/change port</value>
+    </data>
+    <data name="HomePageDeviceItem_Description" xml:space="preserve">
+        <value>Device {0} with address {1}</value>
+    </data>
+    <data name="HomePageDeviceItem_Info_Id" xml:space="preserve">
+        <value>StaticId</value>
+    </data>
+    <data name="HomePageDeviceItem_Info_Type" xml:space="preserve">
+        <value>Type</value>
+    </data>
+    <data name="HomePageDeviceItem_Info_Link" xml:space="preserve">
+        <value>Status</value>
+    </data>
+    <data name="OpenSettingsCommand_Action_Title" xml:space="preserve">
+        <value>Settings</value>
+    </data>
+    <data name="OpenSettingsCommand_Action_Description" xml:space="preserve">
+        <value>Open Settings</value>
     </data>
 </root>

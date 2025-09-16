@@ -1,15 +1,15 @@
+using Asv.Common;
 using R3;
 
 namespace Asv.Avalonia;
 
 public static class BindableReactivePropertyMixin
 {
-    public static IDisposable EnableValidation<T>(
+    public static IDisposable EnableValidationRoutable<T>(
         this BindableReactiveProperty<T> prop,
-        Func<T, ValueTask<ValidationResult>> validationFunc,
+        Func<T, ValidationResult> validationFunc,
         IRoutable source,
-        bool isForceValidation = false,
-        AwaitOperation awaitOperation = AwaitOperation.Sequential
+        bool isForceValidation = false
     )
     {
         prop.EnableValidation();
@@ -22,15 +22,16 @@ public static class BindableReactivePropertyMixin
         return prop.SubscribeAwait(
             async (v, _) =>
             {
-                var result = await validationFunc(v);
-                if (result.IsFailed)
+                var result = validationFunc(v);
+                if (result.IsSuccess == false)
                 {
-                    prop.OnErrorResume(result.ValidationException);
+                    prop.OnErrorResume(
+                        result.ValidationException ?? new Exception("Validation failed")
+                    );
                 }
 
                 await source.Rise(new ValidationEvent(source, prop, result));
-            },
-            awaitOperation
+            }
         );
     }
 }

@@ -11,7 +11,7 @@ public interface IUnit : IDisposable
     IReadOnlyDictionary<string, IUnitItem> AvailableUnits { get; }
     ReactiveProperty<IUnitItem> CurrentUnitItem { get; }
     IUnitItem InternationalSystemUnit { get; }
-    public MaterialIconKind Icon { get; }
+    MaterialIconKind Icon { get; }
     IUnitItem this[string unitItemId] =>
         AvailableUnits.GetValueOrDefault(unitItemId) ?? InternationalSystemUnit;
 }

@@ -79,14 +79,14 @@
     <data name="RedoCommand_CommandInfo_Description" xml:space="preserve">
         <value>Повторить последнее действие</value>
     </data>
-    <data name="SettingsCommandListMapView_Header_Name" xml:space="preserve">
+    <data name="SettingsKeyMapView_Header_Name" xml:space="preserve">
         <value>Имя</value>
     </data>
-    <data name="SettingsCommandListMapView_Header_Description" xml:space="preserve">
+    <data name="SettingsKeyMapView_Header_Description" xml:space="preserve">
         <value>Описание</value>
     </data>
    
-    <data name="SettingsCommandListMapView_Header_DefaultHotKey" xml:space="preserve">
+    <data name="SettingsKeyMapView_Header_DefaultHotKey" xml:space="preserve">
         <value>Горячая клавиша по умолчанию</value>
     </data>
     
@@ -106,7 +106,7 @@
         <value>Единицы измерения</value>
     </data>
     
-    <data name="SettingsCommandListViewModel_Name" xml:space="preserve">
+    <data name="SettingsHotKeysListViewModel_Name" xml:space="preserve">
         <value>Список команд</value>
     </data>
     <data name="ShellView_WindowControlButton_Close" xml:space="preserve">
@@ -125,20 +125,14 @@
     <data name="ShellView_Toolbar_Edit" xml:space="preserve">
         <value>Правка</value>
     </data>
-    <data name="ShellView_Toolbar_File" xml:space="preserve">
-        <value>Файл</value>
+    <data name="ShellView_Toolbar_Open" xml:space="preserve">
+        <value>Открыть</value>
     </data>
     <data name="ShellView_Toolbar_Help" xml:space="preserve">
         <value>Помощь</value>
     </data>
     <data name="ShellView_Toolbar_View" xml:space="preserve">
         <value>Вид</value>
-    </data>
-    <data name="SettingsCommandListMapView_Header_CustomHotKey" xml:space="preserve">
-        <value>Пользовательская горячая клавиша</value>
-    </data>
-    <data name="SettingsCommandListView_Action_ResetCustomHotKeys" xml:space="preserve">
-        <value>Сбросить всё по умолчанию</value>
     </data>
     <data name="NauticalMile_UnitItem_Name" xml:space="preserve">
         <value>Морская миля</value>
@@ -487,7 +481,7 @@
         <value>Расстояние в метрах</value>
     </data>
     <data name="DialogButton_DontSave" xml:space="preserve">
-        <value>Не сохраняй</value>
+        <value>Не сохранять</value>
     </data>
     <data name="DialogButton_No" xml:space="preserve">
         <value>Нет</value>
@@ -594,6 +588,9 @@
     <data name="ToolsMenu_Settings" xml:space="preserve">
         <value>Настройки</value>
     </data>
+    <data name="ToolsMenu_Home" xml:space="preserve">
+        <value>Главная</value>
+    </data>
     <data name="ChangeThemeCommand_CommandInfo_Description" xml:space="preserve">
         <value>Сменить тему приложения</value>
     </data>
@@ -675,26 +672,11 @@
     <data name="Percent_Progress_Description" xml:space="preserve">
         <value>Значение прогресса в процентах</value>
     </data>
-    <data name="ProgressPercentUnit_Name" xml:space="preserve">
-        <value>Проценты</value>
-    </data>
     <data name="Mah_Capacity_Description" xml:space="preserve">
         <value>Емкость в миллиамперах в час</value>
     </data>
     <data name="InParts_Progress_Description" xml:space="preserve">
         <value>Прогресс в частях</value>
-    </data>
-    <data name="ChangeKeyGesturePropertyCommand_CommandInfo_Name" xml:space="preserve">
-        <value>Изменить свойство типа KeyGesture</value>
-    </data>
-    <data name="ChangeKeyGesturePropertyCommand_CommandInfo_Description" xml:space="preserve">
-        <value>Команда меняет значение свойства с типом KeyGesture</value>
-    </data>
-    <data name="ConfirmChangeHotKeyCommand_CommandInfo_Name" xml:space="preserve">
-        <value>Подтвердить изменение горячей клавиши</value>
-    </data>
-    <data name="ConfirmChangeHotKeyCommand_CommandInfo_Description" xml:space="preserve">
-        <value>Команда подтверждает изменение горячих клавиш</value>
     </data>
     <data name="OpenSettingsCommand_CommandInfo_Description" xml:space="preserve">
         <value>Команда, которая открывает настройки</value>
@@ -702,10 +684,154 @@
     <data name="OpenSettingsCommand_CommandInfo_Name" xml:space="preserve">
         <value>Открыть настройки</value>
     </data>
+    <data name="OpenHomePageCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда, которая открывает настройки</value>
+    </data>
+    <data name="OpenHomePageCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Команда, которая открывает домашнюю страницу</value>
+    </data>
     <data name="ResetHotKeysCommand_CommandInfo_Name" xml:space="preserve">
         <value>Сбросить горячие клавиши</value>
     </data>
     <data name="ResetHotKeysCommand_CommandInfo_Description" xml:space="preserve">
         <value>Команда, которая сбрасывает горячие клавиши к значениям по умолчанию</value>
+    </data>
+    <data name="SettingsHotKeysListView_SearchBar_Watermark" xml:space="preserve">
+        <value>Поиск</value>
+    </data>
+    <data name="SettingsHotKeysListView_ResetButton_Content" xml:space="preserve">
+        <value>Сбросить всё</value>
+    </data>
+    <data name="SettingsHotKeysListView_HotKey_Header" xml:space="preserve">
+        <value>Горячая клавиша</value>
+    </data>
+    <data name="SettingsHotKeysListView_Name_Header" xml:space="preserve">
+        <value>Команда</value>
+    </data>
+    <data name="SettingsHotKeysListView_Description_Header" xml:space="preserve">
+        <value>Описание</value>
+    </data>
+    <data name="SettingsHotKeysListView_Source_Header" xml:space="preserve">
+        <value>Источник</value>
+    </data>
+    <data name="SettingsHotKeysListView_DataGrid_Command_Header" xml:space="preserve">
+        <value>Команда</value>
+    </data>
+    <data name="SettingsHotKeysListView_DataGrid_CustomHotKey_Header" xml:space="preserve">
+        <value>Своя комбинация</value>
+    </data>
+    <data name="SettingsHotKeysListView_DataGrid_DefaultHotKey_Header" xml:space="preserve">
+        <value>По умолчанию</value>
+    </data>
+    <data name="SettingsHotKeysListView_DataGrid_Description_Header" xml:space="preserve">
+        <value>Описание</value>
+    </data>
+    <data name="SettingsHotKeysListView_DataGrid_Source_Header" xml:space="preserve">
+        <value>Источник</value>
+    </data>
+    <data name="HotKeyViewModel_HotKeyCaptureDialog_Title" xml:space="preserve">
+        <value>Редактировать</value>
+    </data>
+    <data name="HotKeyViewModel_HotKeyCaptureDialog_Message" xml:space="preserve">
+        <value>Отредактировать горячую клавишу</value>
+    </data>
+    <data name="RttBox_NetworkError_ToolTip" xml:space="preserve">
+        <value>Ошибка подключения</value>
+    </data>
+    <data name="InParts_SDM_Description" xml:space="preserve">
+        <value>СГМ в частях</value>
+    </data>
+    <data name="HomePageView_DeviceBrowser_Title" xml:space="preserve">
+        <value>Браузер устройств</value>
+    </data>
+    <data name="HomePageView_DeviceBrowser_NoneText" xml:space="preserve">
+        <value>Устройство не выбрано</value>
+    </data>
+    <data name="LogViewer_CommandInfo_Name" xml:space="preserve">
+        <value>Открыть просмотр логов</value>
+    </data>
+    <data name="LogViewer_CommandInfo_Description" xml:space="preserve">
+        <value>Команда, которая открывает просмотр логов</value>
+    </data>
+    <data name="LogViewerView_LogMessagesList_Title" xml:space="preserve">
+        <value>Список логов</value>
+    </data>
+    <data name="LogViewerView_LogMessagesList_TimeSection" xml:space="preserve">
+        <value>Время</value>
+    </data>
+    <data name="LogViewerView_LogMessagesList_CategorySection" xml:space="preserve">
+        <value>Категория</value>
+    </data>
+    <data name="LogViewerView_LogMessagesList_MessageSection" xml:space="preserve">
+        <value>Сообщение</value>
+    </data>
+    <data name="LogViewerViewModel_Title" xml:space="preserve">
+        <value>Просмотр логов</value>
+    </data>
+    <data name="LogViewerViewModel_Pagination_SkippedFiltered" xml:space="preserve">
+        <value>Пропущено {0}, отфильтровано {1} сообщений из {2}</value>
+    </data>
+    <data name="LogViewerViewModel_Pagination_SkippedFilteredBy" xml:space="preserve">
+        <value>Пропущено {0}, отфильтровано {1} сообщений из {2} за {3:F0} мс</value>
+    </data>
+    <data name="ShellView_UnsplitAllTabsButton_ToolTip" xml:space="preserve">
+        <value>Убрать разделение вкладок</value>
+    </data>
+    <data name="CancelCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Отмена</value>
+    </data>
+    <data name="CancelCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда отменяет текущую операцию</value>
+    </data>
+    <data name="RefreshCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Обновить</value>
+    </data>
+    <data name="RefreshCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда, которая производит обновление</value>
+    </data>
+    <data name="FocusSearchBoxCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Перейти к строке поиска</value>
+    </data>
+    <data name="FocusSearchBoxCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда, которая фокусируется на окне поиска</value>
+    </data>
+    <data name="TextSearchCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Поиск текста</value>
+    </data>
+    <data name="TextSearchCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда для поиска текста в текущем контексте</value>
+    </data>
+    <data name="SearchBoxView_MainTextBox_Watermark" xml:space="preserve">
+        <value>Искать</value>
+    </data>
+    <data name="OpenLogViewerCommand_Action_Title" xml:space="preserve">
+        <value>Просмотр логов</value>
+    </data>
+    <data name="OpenLogViewerCommand_Action_Description" xml:space="preserve">
+        <value>Открыть просмотр логов</value>
+    </data>
+    <data name="OpenSettingsCommand_Action_Title" xml:space="preserve">
+        <value>Настройки</value>
+    </data>
+    <data name="OpenSettingsCommand_Action_Description" xml:space="preserve">
+        <value>Открыть настройки</value>
+    </data>
+    <data name="ClearCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Очистка</value>
+    </data>
+    <data name="ClearCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда выполняет очистку</value>
+    </data>
+    <data name="PaginationCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Изменить пагинацию</value>
+    </data>
+    <data name="PaginationCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда изменяет параметры пагинации</value>
+    </data>
+    <data name="ChangeEnumPropertyCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Изменить свойство типа перечисления</value>
+    </data>
+    <data name="ChangeEnumPropertyCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда изменяет свойство типа перечисления</value>
     </data>
 </root>

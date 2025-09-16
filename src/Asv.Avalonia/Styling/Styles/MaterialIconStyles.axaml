@@ -1,0 +1,84 @@
+<Styles xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia">
+     <Style Selector="avalonia|MaterialIcon">
+        <Style Selector="^.blink">
+            <Style.Animations>
+                <Animation IterationCount="Infinite" Duration="0:0:1"> 
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Opacity" Value="1.0"/>
+                    </KeyFrame>
+                    <KeyFrame Cue="50%">
+                        <Setter Property="Opacity" Value="0.0"/>
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Opacity" Value="1.0"/>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+         <Style Selector="^.blink-once">
+             <Style.Animations>
+                 <Animation IterationCount="3" Duration="0:0:0.5"> 
+                     <KeyFrame Cue="0%">
+                         <Setter Property="Opacity" Value="1.0"/>
+                     </KeyFrame>
+                     <KeyFrame Cue="50%">
+                         <Setter Property="Opacity" Value="0.0"/>
+                     </KeyFrame>
+                     <KeyFrame Cue="100%">
+                         <Setter Property="Opacity" Value="1.0"/>
+                     </KeyFrame>
+                 </Animation>
+             </Style.Animations>
+         </Style>
+        <Style Selector="^.accent">
+            <Setter Property="Foreground" Value="{DynamicResource  SystemAccentColorLight1}"/>
+        </Style>
+        <Style Selector="^.big">
+            <Setter Property="Width" Value="{StaticResource  AsvIconBigSize}"/>
+            <Setter Property="Height" Value="{DynamicResource  AsvIconBigSize}"/>
+        </Style>
+        <Style Selector="^.medium">
+            <Setter Property="Width" Value="{StaticResource  AsvIconMediumSize}"/>
+            <Setter Property="Height" Value="{DynamicResource  AsvIconMediumSize}"/>
+        </Style>
+        <Style Selector="^.small">
+            <Setter Property="Width" Value="{StaticResource  AsvIconSmallSize}"/>
+            <Setter Property="Height" Value="{DynamicResource  AsvIconSmallSize}"/>
+        </Style>
+        <Setter Property="Width" Value="{DynamicResource  IconElementThemeWidth}"/>
+        <Setter Property="Height" Value="{DynamicResource  IconElementThemeHeight}"/>
+        <Setter Property="Foreground" Value="{DynamicResource  TextControlForeground}"/>
+        <Style Selector="^.error">
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundErrorBrush}"/>
+        </Style>
+        <Style Selector="^.warning">
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundWarningBrush}"/>
+        </Style>
+        
+        <Style Selector="^.unknown">
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundUnknownBrush}"/>
+        </Style>
+            
+        <Style Selector="^.success">
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundSuccessBrush}"/>
+        </Style>
+            
+        <Style Selector="^.info">
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfoBrush}"/>
+        </Style>
+            
+        <Style Selector="^.info2">
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfo2Brush}"/>
+        </Style>
+            
+        <Style Selector="^.info3">
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfo3Brush}"/>
+        </Style>
+            
+        <Style Selector="^.info4">
+            <Setter Property="Foreground" Value="{DynamicResource AsvForegroundInfo4Brush}"/>
+        </Style>
+    </Style>
+</Styles>

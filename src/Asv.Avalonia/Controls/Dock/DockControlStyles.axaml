@@ -1,0 +1,23 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:control="clr-namespace:Asv.Avalonia">
+    <Design.PreviewWith>
+        <Border Width="800" Height="1200" Margin="20" ClipToBounds="True">
+            <control:DockControl>
+                <control:HomePageViewModel />
+                <control:SettingsPageViewModel />
+            </control:DockControl>
+        </Border>
+    </Design.PreviewWith>
+    
+    <ControlTheme x:Key="{x:Type control:DockControl}" TargetType="control:DockControl">
+        <Setter Property="ClipToBounds" Value="True" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid>
+                    <control:DockTabControl x:Name="PART_MainTabControl"/>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

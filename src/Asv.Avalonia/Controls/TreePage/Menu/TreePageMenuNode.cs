@@ -22,4 +22,10 @@ public class TreePageMenuNode : ObservableTreeNode<ITreePage, NavigationId>
             createNodeFactory,
             parentNode
         ) { }
+
+    public bool IsExpanded
+    {
+        get;
+        set => SetField(ref field, value);
+    } = true;
 }

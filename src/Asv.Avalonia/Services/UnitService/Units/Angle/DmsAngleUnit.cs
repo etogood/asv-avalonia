@@ -30,14 +30,18 @@ public class DmsAngleUnit() : UnitItemBase(1)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return new UnitItemValueIsNullOrEmptyError();
+            return ValidationResult.FailAsNullOrWhiteSpace;
         }
 
         var msg = Angle.GetErrorMessage(value);
 
         if (msg is not null)
         {
-            return new UnitException(msg);
+            return new ValidationResult
+            {
+                IsSuccess = false,
+                ValidationException = new UnitException(msg),
+            };
         }
 
         return ValidationResult.Success;

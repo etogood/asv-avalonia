@@ -1,6 +1,7 @@
 ﻿using System.Composition;
 using Asv.Common;
 using Asv.IO;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia.IO;
@@ -9,12 +10,14 @@ namespace Asv.Avalonia.IO;
 public class HomePageDeviceListExtension : IExtensionFor<IHomePage>
 {
     private readonly IDeviceManager _svc;
+    private readonly ILoggerFactory _loggerFactory;
 
     [ImportingConstructor]
-    public HomePageDeviceListExtension(IDeviceManager svc)
+    public HomePageDeviceListExtension(IDeviceManager svc, ILoggerFactory loggerFactory)
     {
         ArgumentNullException.ThrowIfNull(svc);
         _svc = svc;
+        _loggerFactory = loggerFactory;
     }
 
     public void Extend(IHomePage context, CompositeDisposable contextDispose)
@@ -30,6 +33,6 @@ public class HomePageDeviceListExtension : IExtensionFor<IHomePage>
 
     private HomePageDeviceItem TryAdd(IClientDevice device)
     {
-        return new HomePageDeviceItem(device, _svc);
+        return new HomePageDeviceItem(device, _svc, _loggerFactory);
     }
 }

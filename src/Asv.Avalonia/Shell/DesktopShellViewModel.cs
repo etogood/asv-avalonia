@@ -1,5 +1,7 @@
 using System.Composition;
+using System.Reactive.Linq;
 using System.Runtime.InteropServices;
+using Asv.Cfg;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -17,12 +19,19 @@ public class DesktopShellViewModelConfig { }
 public class DesktopShellViewModel : ShellViewModel
 {
     public const string ShellId = "shell.desktop";
+    private readonly IFileAssociationService _fileService;
     private readonly IContainerHost _ioc;
 
     [ImportingConstructor]
-    public DesktopShellViewModel(IContainerHost ioc, ILoggerFactory loggerFactory)
-        : base(ioc, loggerFactory, ShellId)
+    public DesktopShellViewModel(
+        IFileAssociationService fileService,
+        IConfiguration cfg,
+        IContainerHost ioc,
+        ILoggerFactory loggerFactory
+    )
+        : base(ioc, loggerFactory, cfg, ShellId)
     {
+        _fileService = fileService;
         _ioc = ioc;
         var wnd = ioc.GetExport<ShellWindow>();
         wnd.DataContext = this;
@@ -36,23 +45,15 @@ public class DesktopShellViewModel : ShellViewModel
             );
         }
 
-        OpenFileCommand = new ReactiveCommand<string>(OpenFile);
-
         // Set window as the drop target
         DragDrop.SetAllowDrop(wnd, true);
         wnd.AddHandler(DragDrop.DropEvent, OnFileDrop);
 
-        UpdateWindowStateUI(wnd.WindowState);
+        UpdateWindowStateUi(wnd.WindowState);
 
         lifetime.MainWindow = wnd;
         lifetime.MainWindow.Show();
     }
-
-    #region Drop
-
-    private ReactiveCommand<string> OpenFileCommand { get; }
-
-    #endregion
 
     private void OnFileDrop(object? sender, DragEventArgs e)
     {
@@ -68,7 +69,7 @@ public class DesktopShellViewModel : ShellViewModel
                     var path = file.TryGetLocalPath();
                     if (Path.Exists(path))
                     {
-                        OpenFileCommand.Execute(path);
+                        _fileService.Open(path);
                     }
                 }
             }
@@ -118,7 +119,7 @@ public class DesktopShellViewModel : ShellViewModel
                     ? WindowState.Normal
                     : WindowState.Maximized;
 
-            UpdateWindowStateUI(window.WindowState);
+            UpdateWindowStateUi(window.WindowState);
         }
 
         return ValueTask.CompletedTask;
@@ -139,7 +140,7 @@ public class DesktopShellViewModel : ShellViewModel
         return ValueTask.CompletedTask;
     }
 
-    public void UpdateWindowStateUI(WindowState state)
+    public void UpdateWindowStateUi(WindowState state)
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {

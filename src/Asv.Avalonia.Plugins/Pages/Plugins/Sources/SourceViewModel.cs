@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Asv.Common;
+using Microsoft.Extensions.Logging;
 using R3;
 using Exception = System.Exception;
 
@@ -7,13 +8,15 @@ namespace Asv.Avalonia.Plugins;
 // TODO: add validation
 public class SourceViewModel : DialogViewModelBase
 {
-    public const string ViewModelId = "plugins.sources.source.dialog";
+    public const string ViewModelId = $"{BaseId}.plugins.sources.source";
 
     private readonly IPluginManager _mng;
     private readonly PluginSourceViewModel? _viewModel;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public SourceViewModel()
-        : base(ViewModelId)
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+        : base(DesignTime.Id, DesignTime.LoggerFactory)
     {
         DesignTime.ThrowIfNotDesignMode();
         Name = new BindableReactiveProperty<string>("Github").EnableValidation();
@@ -22,9 +25,7 @@ public class SourceViewModel : DialogViewModelBase
         {
             if (string.IsNullOrWhiteSpace(x))
             {
-                Name.OnErrorResume(
-                    new Exception(RS.SourceViewModel_SourceViewModel_NameIsRequired)
-                );
+                Name.OnErrorResume(new Exception(RS.SourceViewModel_NameValidation_NameIsRequired));
             }
         });
         _sub2 = SourceUri.Subscribe(x =>
@@ -32,7 +33,7 @@ public class SourceViewModel : DialogViewModelBase
             if (string.IsNullOrWhiteSpace(x))
             {
                 SourceUri.OnErrorResume(
-                    new Exception(RS.SourceViewModel_SourceViewModel_SourceUriIsRequired)
+                    new Exception(RS.SourceViewModel_SourceUriValidation_SourceUriIsRequired)
                 );
             }
         });
@@ -43,7 +44,7 @@ public class SourceViewModel : DialogViewModelBase
         ILoggerFactory loggerFactory,
         PluginSourceViewModel? viewModel
     )
-        : base(ViewModelId)
+        : base(ViewModelId, loggerFactory)
     {
         _mng = mng;
         _viewModel = viewModel;
@@ -55,14 +56,18 @@ public class SourceViewModel : DialogViewModelBase
         Username = new BindableReactiveProperty<string?>(_viewModel?.Model.Username);
         Password = new BindableReactiveProperty<string>();
 
-        _sub1 = Name.EnableValidation(
+        _sub1 = Name.EnableValidationRoutable(
             value =>
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    return ValueTask.FromResult<ValidationResult>(
-                        new Exception(RS.SourceViewModel_SourceViewModel_NameIsRequired)
-                    );
+                    return new ValidationResult
+                    {
+                        IsSuccess = false,
+                        ValidationException = new ValidationException(
+                            RS.SourceViewModel_NameValidation_NameIsRequired
+                        ),
+                    };
                 }
 
                 return ValidationResult.Success;
@@ -71,14 +76,18 @@ public class SourceViewModel : DialogViewModelBase
             true
         );
 
-        _sub2 = SourceUri.EnableValidation(
+        _sub2 = SourceUri.EnableValidationRoutable(
             x =>
             {
                 if (string.IsNullOrWhiteSpace(x))
                 {
-                    return ValueTask.FromResult<ValidationResult>(
-                        new Exception(RS.SourceViewModel_SourceViewModel_SourceUriIsRequired)
-                    );
+                    return new ValidationResult
+                    {
+                        IsSuccess = false,
+                        ValidationException = new ValidationException(
+                            RS.SourceViewModel_SourceUriValidation_SourceUriIsRequired
+                        ),
+                    };
                 }
 
                 return ValidationResult.Success;
@@ -88,22 +97,19 @@ public class SourceViewModel : DialogViewModelBase
         );
     }
 
-    public BindableReactiveProperty<string> Name { get; set; }
-    public BindableReactiveProperty<string> SourceUri { get; set; }
-    public BindableReactiveProperty<string?> Username { get; set; }
-    public BindableReactiveProperty<string> Password { get; set; }
+    public BindableReactiveProperty<string> Name { get; }
+    public BindableReactiveProperty<string> SourceUri { get; }
+    public BindableReactiveProperty<string?> Username { get; }
+    public BindableReactiveProperty<string> Password { get; }
 
     public override void ApplyDialog(ContentDialog dialog)
     {
         ArgumentNullException.ThrowIfNull(dialog);
 
-        _sub3 = IsValid.Subscribe(b =>
-        {
-            dialog.IsPrimaryButtonEnabled = b;
-        });
+        _sub3 = IsValid.Subscribe(b => dialog.IsPrimaryButtonEnabled = b);
     }
 
-    private ValueTask Update()
+    public ValueTask Update()
     {
         if (_viewModel != null)
         {

@@ -1,7 +1,5 @@
 using System.Composition;
-using Asv.Common;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using ZLogger;
 
 namespace Asv.Avalonia;
@@ -20,8 +18,9 @@ public abstract class ExtendableViewModel<TSelfInterface> : RoutableViewModel
     /// Initializes a new instance of the <see cref="ExtendableViewModel{TSelfInterface}"/> class.
     /// </summary>
     /// <param name="id">A unique identifier for the view model.</param>
-    protected ExtendableViewModel(NavigationId id)
-        : base(id) { }
+    /// <param name="loggerFactory"> The factory used to create loggers for error handling and debugging.</param>
+    protected ExtendableViewModel(NavigationId id, ILoggerFactory loggerFactory)
+        : base(id, loggerFactory) { }
 
     /// <summary>
     /// Gets the current instance as <typeparamref name="TSelfInterface"/> or throws an exception if not implemented.
@@ -50,12 +49,6 @@ public abstract class ExtendableViewModel<TSelfInterface> : RoutableViewModel
     public IEnumerable<Lazy<IExtensionFor<TSelfInterface>>>? Extensions { get; set; }
 
     /// <summary>
-    /// Gets or sets the logger factory used to create loggers for error handling and debugging.
-    /// </summary>
-    [Import]
-    public ILoggerFactory? LoggerFactory { get; set; }
-
-    /// <summary>
     /// Called when MEF2 has completed importing dependencies.
     /// This method initializes and applies all available extensions to the current instance.
     /// </summary>
@@ -66,8 +59,6 @@ public abstract class ExtendableViewModel<TSelfInterface> : RoutableViewModel
         {
             if (Extensions != null)
             {
-                var logger = LoggerFactory?.CreateLogger(GetType()) ?? NullLogger.Instance;
-
                 var context = GetContext();
                 foreach (var extension in Extensions)
                 {
@@ -79,11 +70,11 @@ public abstract class ExtendableViewModel<TSelfInterface> : RoutableViewModel
                             Disposable.Add(disposable);
                         }
 
-                        logger.ZLogTrace($"Applying extension {extension} to {GetType().Name}");
+                        Logger.ZLogTrace($"Applying extension {extension} to {this}");
                     }
                     catch (Exception e)
                     {
-                        logger.ZLogError(
+                        Logger.ZLogError(
                             e,
                             $"Error while loading extension {extension.Value.GetType().FullName} for {GetType().FullName}"
                         );
@@ -95,9 +86,7 @@ public abstract class ExtendableViewModel<TSelfInterface> : RoutableViewModel
         }
         catch (Exception e)
         {
-            LoggerFactory
-                ?.CreateLogger(GetType())
-                .ZLogError(e, $"Error while loading extensions for {GetType().FullName}");
+            Logger.ZLogError(e, $"Error while loading extensions for {this}: {e.Message}");
         }
     }
 

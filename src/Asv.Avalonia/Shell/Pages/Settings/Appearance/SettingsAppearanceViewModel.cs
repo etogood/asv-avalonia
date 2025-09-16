@@ -1,5 +1,6 @@
 ﻿using System.Composition;
 using Asv.Common;
+using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia;
 
@@ -11,7 +12,12 @@ public class SettingsAppearanceViewModel : SettingsSubPage
     #region DesignTime
 
     public SettingsAppearanceViewModel()
-        : this(DesignTime.ThemeService, DesignTime.LocalizationService, null!)
+        : this(
+            DesignTime.ThemeService,
+            DesignTime.LocalizationService,
+            null!,
+            DesignTime.LoggerFactory
+        )
     {
         DesignTime.ThrowIfNotDesignMode();
     }
@@ -22,12 +28,15 @@ public class SettingsAppearanceViewModel : SettingsSubPage
     public SettingsAppearanceViewModel(
         IThemeService themeService,
         ILocalizationService localizationService,
-        IDialogService dialog
+        IDialogService dialog,
+        ILoggerFactory loggerFactory
     )
-        : base(PageId)
+        : base(PageId, loggerFactory)
     {
-        Theme = new ThemeProperty(themeService) { Parent = this }.DisposeItWith(Disposable);
-        Language = new LanguageProperty(localizationService, dialog)
+        Theme = new ThemeProperty(themeService, loggerFactory) { Parent = this }.DisposeItWith(
+            Disposable
+        );
+        Language = new LanguageProperty(localizationService, dialog, loggerFactory)
         {
             Parent = this,
         }.DisposeItWith(Disposable);
@@ -40,6 +49,7 @@ public class SettingsAppearanceViewModel : SettingsSubPage
     {
         yield return Theme;
         yield return Language;
+
         foreach (var child in base.GetRoutableChildren())
         {
             yield return child;

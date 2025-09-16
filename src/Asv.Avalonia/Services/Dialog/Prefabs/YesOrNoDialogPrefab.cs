@@ -1,4 +1,5 @@
 using System.Composition;
+using Microsoft.Extensions.Logging;
 
 namespace Asv.Avalonia;
 
@@ -24,12 +25,15 @@ public sealed class YesOrNoDialogPayload
 [ExportDialogPrefab]
 [Shared]
 [method: ImportingConstructor]
-public sealed class YesOrNoDialogPrefab(INavigationService nav)
+public sealed class YesOrNoDialogPrefab(INavigationService nav, ILoggerFactory loggerFactory)
     : IDialogPrefab<YesOrNoDialogPayload, bool>
 {
     public async Task<bool> ShowDialogAsync(YesOrNoDialogPayload dialogPayload)
     {
-        using var vm = new DialogItemTextViewModel { Message = dialogPayload.Message };
+        using var vm = new DialogItemTextViewModel(loggerFactory)
+        {
+            Message = dialogPayload.Message,
+        };
 
         var dialogContent = new ContentDialog(vm, nav)
         {

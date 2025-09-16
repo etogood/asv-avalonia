@@ -1,4 +1,5 @@
-﻿using ObservableCollections;
+﻿using Asv.Common;
+using ObservableCollections;
 using R3;
 
 namespace Asv.Avalonia;
@@ -109,6 +110,18 @@ public static class ObservableMixin
         return src.ObserveRemove().Subscribe(x => x.Value.View.Dispose());
     }
 
+    public static ISynchronizedView<TModel, TView> DisposeMany<TModel, TView>(
+        this ISynchronizedView<TModel, TView> src,
+        CompositeDisposable subscriptionDispose
+    )
+        where TView : IDisposable
+    {
+        src.ObserveRemove()
+            .Subscribe(x => x.Value.View.Dispose())
+            .DisposeItWith(subscriptionDispose);
+        return src;
+    }
+
     public static IDisposable DisposeRemovedItems<T>(this IObservableCollection<T> src)
         where T : IDisposable
     {
@@ -135,6 +148,13 @@ public static class ObservableMixin
     }
 
     public static void ClearWithItemsDispose<T>(this ObservableQueue<T> src)
+        where T : IDisposable
+    {
+        src.CollectionItemsDispose();
+        src.Clear();
+    }
+
+    public static void ClearWithItemsDispose<T>(this ObservableHashSet<T> src)
         where T : IDisposable
     {
         src.CollectionItemsDispose();
@@ -181,6 +201,22 @@ public static class ObservableMixin
     public static void RemoveAll<TKey, TValue>(this ObservableList<KeyValuePair<TKey, TValue>> src)
     {
         src.RemoveRange(0, src.Count);
+    }
+
+    public static void RemoveAll<T>(this ObservableRingBuffer<T> src)
+    {
+        while (src.Count > 0)
+        {
+            src.RemoveLast();
+        }
+    }
+
+    public static void RemoveAll<T>(this ObservableFixedSizeRingBuffer<T> src)
+    {
+        while (src.Count > 0)
+        {
+            src.RemoveLast();
+        }
     }
 
     public static void PopAll<T>(this ObservableStack<T> src)

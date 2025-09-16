@@ -1,4 +1,5 @@
 using Asv.Common;
+using Microsoft.Extensions.Logging;
 using ObservableCollections;
 
 namespace Asv.Avalonia;
@@ -17,10 +18,11 @@ public interface ITreeSubpage<in TContext> : ITreeSubpage
 
 public abstract class TreeSubpage : RoutableViewModel, ITreeSubpage
 {
-    protected TreeSubpage(NavigationId id)
-        : base(id)
+    protected TreeSubpage(NavigationId id, ILoggerFactory loggerFactory)
+        : base(id, loggerFactory)
     {
-        Menu.SetRoutableParent(this, true).DisposeItWith(Disposable);
+        Menu.SetRoutableParent(this).DisposeItWith(Disposable);
+        Menu.DisposeRemovedItems().DisposeItWith(Disposable);
         MenuView = new MenuTree(Menu).DisposeItWith(Disposable);
     }
 
@@ -41,8 +43,8 @@ public abstract class TreeSubpage : RoutableViewModel, ITreeSubpage
     }
 }
 
-public abstract class TreeSubpage<TContext>(NavigationId id)
-    : TreeSubpage(id),
+public abstract class TreeSubpage<TContext>(NavigationId id, ILoggerFactory loggerFactory)
+    : TreeSubpage(id, loggerFactory),
         ITreeSubpage<TContext>
     where TContext : class, IPage
 {

@@ -1,9 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <LangVersion>latest</LangVersion>
+        <TargetFramework>net9.0</TargetFramework>
+
+        <FileVersion>$(ProductVersion)</FileVersion>
         <Version>$(ProductVersion)</Version>
+        <PackageVersion>$(ProductVersion)</PackageVersion>
+
+        <Authors>https://github.com/asv-soft</Authors>
+        <Company>https://github.com/asv-soft</Company>
+        <Copyright>https://github.com/asv-soft</Copyright>
+
+        <PackageProjectUrl>https://github.com/asv-soft/asv-avalonia</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/asv-soft/asv-avalonia</RepositoryUrl>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        
+        <LangVersion>preview</LangVersion>
+        
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <CodeAnalysisRuleSet>../CodeStyle.ruleset</CodeAnalysisRuleSet>
@@ -27,24 +40,23 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Asv.Avalonia.DC\Asv.Avalonia.DC.csproj" />
       <ProjectReference Include="..\Asv.Avalonia\Asv.Avalonia.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Pages\Settings\Connections\TcpClientPort\TcpPortView.axaml.cs">
-        <DependentUpon>TcpClientPortView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
       <Compile Update="RS.Designer.cs">
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
         <DependentUpon>RS.resx</DependentUpon>
       </Compile>
+      <Compile Update="Controls\StatisticView.axaml.cs">
+        <DependentUpon>StatisticView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Roslynator.Analyzers" Version="4.13.1">
+      <PackageReference Include="Roslynator.Analyzers" Version="4.14.0">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>

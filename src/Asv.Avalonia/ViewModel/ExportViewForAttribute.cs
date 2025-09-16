@@ -22,3 +22,19 @@ public class ExportViewForAttribute : ExportAttribute
         }
     }
 }
+
+[MetadataAttribute]
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+public class ExportViewForAttribute<T> : ExportAttribute
+{
+    public ExportViewForAttribute()
+        : base(typeof(T).FullName, typeof(Control))
+    {
+        if (typeof(T).IsSubclassOf(typeof(Control)))
+        {
+            throw new ArgumentException(
+                $"{typeof(T)} cannot be a _view type. It must be ViewModel type"
+            );
+        }
+    }
+}

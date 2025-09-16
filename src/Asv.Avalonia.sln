@@ -17,6 +17,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\.gitignore = ..\.gitignore
 		..\LICENSE = ..\LICENSE
 		..\README.md = ..\README.md
+		..\.github\workflows\example-release-windows.yml = ..\.github\workflows\example-release-windows.yml
+		..\.github\workflows\release.yml = ..\.github\workflows\release.yml
+		..\.github\workflows\release-debug-version.yml = ..\.github\workflows\release-debug-version.yml
+		CodeStyle.ruleset = CodeStyle.ruleset
+		..\.github\workflows\docs.yml = ..\.github\workflows\docs.yml
+		..\.github\workflows\plugin-example.yml = ..\.github\workflows\plugin-example.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Example", "Example", "{873C01F8-85A8-424D-8970-30EE19011C33}"
@@ -25,7 +31,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asv.Avalonia", "Asv.Avaloni
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asv.Avalonia.DC", "Asv.Avalonia.DC\Asv.Avalonia.DC.csproj", "{A12DF215-AB31-4151-98E7-16308D025A93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asv.Avalonia.Map", "Asv.Avalonia.Map\Asv.Avalonia.Map.csproj", "{A520D70B-5A72-4AF3-AC39-2C74DBA6E977}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asv.Avalonia.GeoMap", "Asv.Avalonia.GeoMap\Asv.Avalonia.GeoMap.csproj", "{A520D70B-5A72-4AF3-AC39-2C74DBA6E977}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asv.Avalonia.Plugins", "Asv.Avalonia.Plugins\Asv.Avalonia.Plugins.csproj", "{F4E3CF4F-F062-4EA6-816C-358536D81181}"
 EndProject
@@ -36,6 +42,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asv.Avalonia.Example.Plugin.PluginExample", "Asv.Avalonia.Example.Plugin.PluginExample\Asv.Avalonia.Example.Plugin.PluginExample.csproj", "{29DA28C4-8B9A-481E-9230-675DCC406FFA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platforms", "Platforms", "{99A208E6-34DC-428D-BCBB-DEC7B9438115}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asv.Avalonia.Test", "Asv.Avalonia.Test\Asv.Avalonia.Test.csproj", "{876401F8-64DC-4FA7-844B-8D3EEE050CFC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +95,10 @@ Global
 		{29DA28C4-8B9A-481E-9230-675DCC406FFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29DA28C4-8B9A-481E-9230-675DCC406FFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29DA28C4-8B9A-481E-9230-675DCC406FFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{876401F8-64DC-4FA7-844B-8D3EEE050CFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{876401F8-64DC-4FA7-844B-8D3EEE050CFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{876401F8-64DC-4FA7-844B-8D3EEE050CFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{876401F8-64DC-4FA7-844B-8D3EEE050CFC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

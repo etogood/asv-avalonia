@@ -1,3 +1,4 @@
+using Asv.Cfg;
 using Asv.Common;
 using Material.Icons;
 using Microsoft.Extensions.Logging;
@@ -12,30 +13,61 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
     private readonly ObservableList<IPage> _pages;
     private readonly IContainerHost _container;
     private readonly ICommandService _cmd;
-    private readonly ILogger<ShellViewModel> _logger;
 
-    protected ShellViewModel(IContainerHost ioc, ILoggerFactory loggerFactory, string id)
-        : base(id)
+    protected ShellViewModel(
+        IContainerHost ioc,
+        ILoggerFactory loggerFactory,
+        IConfiguration cfg,
+        string id
+    )
+        : base(id, loggerFactory)
     {
         ArgumentNullException.ThrowIfNull(ioc);
         _container = ioc;
         _cmd = ioc.GetExport<ICommandService>();
         Navigation = ioc.GetExport<INavigationService>();
         _pages = new ObservableList<IPage>();
-        _logger = loggerFactory.CreateLogger<ShellViewModel>();
-        PagesView = _pages.ToNotifyCollectionChangedSlim();
-        ErrorState = new BindableReactiveProperty<ShellErrorState>(ShellErrorState.Normal);
+        PagesView = _pages.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
         Close = new ReactiveCommand((_, c) => CloseAsync(c));
         ChangeWindowState = new ReactiveCommand((_, c) => ChangeWindowModeAsync(c));
         Collapse = new ReactiveCommand((_, c) => CollapseAsync(c));
-        Title = new BindableReactiveProperty<string>();
-
         SelectedPage = new BindableReactiveProperty<IPage?>();
         MainMenu = new ObservableList<IMenuItem>();
         MainMenuView = new MenuTree(MainMenu).DisposeItWith(Disposable);
-        MainMenu.SetRoutableParent(this, true).DisposeItWith(Disposable);
-        SelectedPage.Subscribe(page => Navigation.ForceFocus(page)).DisposeItWith(Disposable);
+        MainMenu.SetRoutableParent(this).DisposeItWith(Disposable);
+        MainMenu.DisposeRemovedItems().DisposeItWith(Disposable);
+        SelectedPage
+            .Subscribe(page =>
+            {
+                Logger.LogInformation($"Navigated to {page?.Id}");
+                Navigation.ForceFocus(page);
+            })
+            .DisposeItWith(Disposable);
+
+        StatusItems = [];
+        StatusItemsView = StatusItems.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
+        StatusItems.Sort(StatusItemComparer.Instance);
+        StatusItems
+            .ObserveAdd()
+            .Subscribe(_ => StatusItems.Sort(StatusItemComparer.Instance))
+            .DisposeItWith(Disposable);
+        StatusItems.SetRoutableParent(this).DisposeItWith(Disposable);
+        StatusItems.DisposeRemovedItems().DisposeItWith(Disposable);
     }
+
+    #region Theme command
+
+    public void ChangeTheme()
+    {
+        this.ExecuteCommand(ChangeThemeFreeCommand.Id).SafeFireAndForget();
+    }
+
+    public void OpenSettings()
+    {
+        this.ExecuteCommand(OpenSettingsCommand.Id).SafeFireAndForget();
+    }
+
+    #endregion
 
     #region MainMenu
 
@@ -75,15 +107,6 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
     public ReactiveCommand Collapse { get; }
 
     protected virtual ValueTask CollapseAsync(CancellationToken cancellationToken)
-    {
-        return ValueTask.CompletedTask;
-    }
-
-    #endregion
-
-    #region SaveLayout
-
-    public virtual ValueTask SaveLayout()
     {
         return ValueTask.CompletedTask;
     }
@@ -134,14 +157,14 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
         switch (e)
         {
             case ExecuteCommandEvent cmd:
-                await _cmd.Execute(cmd.CommandId, cmd.Source, cmd.CommandArg);
+                await _cmd.Execute(cmd.CommandId, cmd.Source, cmd.CommandArg, cmd.Cancel);
                 break;
             case RestartApplicationEvent:
                 Environment.Exit(0);
                 break;
             case PageCloseRequestedEvent close:
             {
-                _logger.ZLogInformation($"Close page [{close.Page.Id}]");
+                Logger.ZLogInformation($"Close page [{close.Page.Id}]");
 
                 // TODO: save page layout
                 if (_pages is [HomePageViewModel])
@@ -149,25 +172,67 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
                     return;
                 }
 
+                var current = SelectedPage.Value; // TODO: fix page selection
+                var removedIndex = _pages.IndexOf(close.Page);
+                if (removedIndex < 0)
+                {
+                    break;
+                }
+
                 _pages.Remove(close.Page);
                 close.Page.Parent = null;
                 close.Page.Dispose();
+
                 if (_pages.Count == 0)
                 {
                     await Navigation.GoHomeAsync();
+                    break;
+                }
+
+                if (current?.Id == close.Page.Id)
+                {
+                    SelectedPage.Value = null;
+
+                    var newIndex = removedIndex < _pages.Count ? removedIndex : 0;
+                    SelectedPage.Value = _pages[newIndex];
+                }
+                else
+                {
+                    SelectedPage.Value = null;
+                    SelectedPage.Value = current;
                 }
 
                 break;
             }
+
+            default:
+                await base.InternalCatchEvent(e);
+                break;
         }
     }
 
     #endregion
 
-    public INavigationService Navigation { get; }
+    public virtual INavigationService Navigation { get; }
 
-    public BindableReactiveProperty<ShellErrorState> ErrorState { get; }
-    public BindableReactiveProperty<string> Title { get; }
+    public ShellErrorState ErrorState
+    {
+        get;
+        set => SetField(ref field, value);
+    }
+
+    public string Title
+    {
+        get;
+        set => SetField(ref field, value);
+    }
+
+    #region Status bar
+
+    public ObservableList<IStatusItem> StatusItems { get; }
+    public NotifyCollectionChangedSynchronizedViewList<IStatusItem> StatusItemsView { get; }
+
+    #endregion
 
     #region Dispose
 
@@ -180,8 +245,6 @@ public class ShellViewModel : ExtendableViewModel<IShell>, IShell
     {
         if (disposing)
         {
-            Title.Dispose();
-            ErrorState.Dispose();
             Close.Dispose();
             SelectedPage.Dispose();
             WindowSateIconKind.Dispose();

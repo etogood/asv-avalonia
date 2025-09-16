@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Input;
 using ObservableCollections;
 using R3;
 
@@ -32,9 +31,10 @@ public enum ShellErrorState
 
 public interface IShell : IRoutable
 {
+    string Title { get; set; }
+    ShellErrorState ErrorState { get; set; }
     ObservableList<IMenuItem> MainMenu { get; }
     IReadOnlyObservableList<IPage> Pages { get; }
     BindableReactiveProperty<IPage?> SelectedPage { get; }
-    BindableReactiveProperty<ShellErrorState> ErrorState { get; }
-    BindableReactiveProperty<string> Title { get; }
+    ObservableList<IStatusItem> StatusItems { get; }
 }

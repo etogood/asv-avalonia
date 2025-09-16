@@ -12,22 +12,16 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="SettingsConnectionTcpExtension_MenuItem_Header" xml:space="preserve">
-        <value>Добавить TCP порт</value>
+        <value>TCP Client</value>
     </data>
     <data name="PortView_Title" xml:space="preserve">
         <value>Общие Настройки</value>
-    </data>
-    <data name="PortViewModel_ValidateName_PortNameTooLongException" xml:space="preserve">
-        <value>Имя порта слишком длинное. Максимальная длина 50 символов</value>
-    </data>
-    <data name="PortViewModel_ValidateName_PortNameRequiredException" xml:space="preserve">
-        <value>Имя порта обязательно</value>
     </data>
     <data name="SettingsPageExtension_TreePage_Title" xml:space="preserve">
         <value>Подключение</value>
     </data>
     <data name="TcpPortView_Text_Host" xml:space="preserve">
-        <value>Хост</value>
+        <value>Адрес</value>
     </data>
     <data name="TcpPortView_Text_PortNumber" xml:space="preserve">
         <value>Порт</value>
@@ -57,12 +51,36 @@
         <value>Вкл</value>
     </data>
     <data name="SettingsConnectionSerialExtension_MenuItem_Header" xml:space="preserve">
-        <value>Добавить Последовательный порт</value>
+        <value>Serial port</value>
     </data>
     <data name="TcpPortViewModel_TagViewModel_Value" xml:space="preserve">
-        <value>TCP</value>
+        <value>TCP CLIENT</value>
     </data>
     <data name="SerialPortViewModel_TagViewModel_Value" xml:space="preserve">
-        <value>СЕРИЙНЫЙ</value>
+        <value>SERIAL</value>
+    </data>
+    <data name="PortCrudCommand_CommandInfo_Name" xml:space="preserve">
+        <value>Добавить/Убрать/Изменить порт</value>
+    </data>
+    <data name="PortCrudCommand_CommandInfo_Description" xml:space="preserve">
+        <value>Команда для добавления, удаления или изменения порта</value>
+    </data>
+    <data name="HomePageDeviceItem_Description" xml:space="preserve">
+        <value>Устройство {0} с адресом {1}</value>
+    </data>
+    <data name="HomePageDeviceItem_Info_Id" xml:space="preserve">
+        <value>Статический идентификатор</value>
+    </data>
+    <data name="HomePageDeviceItem_Info_Link" xml:space="preserve">
+        <value>Статус</value>
+    </data>
+    <data name="HomePageDeviceItem_Info_Type" xml:space="preserve">
+        <value>Тип</value>
+    </data>
+    <data name="OpenSettingsCommand_Action_Title" xml:space="preserve">
+        <value>Настройки</value>
+    </data>
+    <data name="OpenSettingsCommand_Action_Description" xml:space="preserve">
+        <value>Открыть настройки</value>
     </data>
 </root>

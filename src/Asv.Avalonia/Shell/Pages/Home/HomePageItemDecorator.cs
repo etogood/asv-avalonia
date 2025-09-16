@@ -1,12 +1,17 @@
 using Asv.Common;
+using Microsoft.Extensions.Logging;
 using ObservableCollections;
 
 namespace Asv.Avalonia;
 
 public class HomePageItemDecorator : ExtendableViewModel<IHomePageItem>
 {
-    public HomePageItemDecorator(IHomePageItem homePageItem, IContainerHost container)
-        : base($"decorator_{homePageItem.Id}")
+    public HomePageItemDecorator(
+        IHomePageItem homePageItem,
+        IContainerHost container,
+        ILoggerFactory loggerFactory
+    )
+        : base($"decorator_{homePageItem.Id}", loggerFactory)
     {
         homePageItem.Parent = this;
         HomePageItem = homePageItem;

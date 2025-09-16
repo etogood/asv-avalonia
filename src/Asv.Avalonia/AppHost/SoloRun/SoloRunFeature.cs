@@ -1,5 +1,7 @@
-﻿using System.IO.Pipes;
+﻿using System.ComponentModel.DataAnnotations;
+using System.IO.Pipes;
 using Asv.Common;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using R3;
@@ -62,14 +64,14 @@ public class SoloRunFeature : AsyncDisposableWithCancel, ISoloRunFeature
                     server.WaitForConnection();
 
                     using var reader = new StreamReader(server);
-                    var args = reader.ReadLine();
+                    var args = reader.ReadToEnd();
 
-                    if (args != null)
+                    if (!string.IsNullOrWhiteSpace(args))
                     {
                         logger.ZLogInformation(
                             $"Received arguments from the named pipe {pipeName}."
                         );
-                        _args.OnNext(_args.Value);
+                        _args.OnNext(AppArgs.DeserializeFromString(args));
                     }
                 }
                 catch (Exception ex)
@@ -109,5 +111,15 @@ public class SoloRunFeature : AsyncDisposableWithCancel, ISoloRunFeature
                 $"Failed to send arguments to the running instance through the named pipe {pipeName}."
             );
         }
+    }
+
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
     }
 }

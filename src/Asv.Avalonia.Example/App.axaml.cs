@@ -6,28 +6,28 @@ using System.Composition.Hosting;
 using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Reflection;
+using Asv.Avalonia.Example.Api;
+using Asv.Avalonia.GeoMap;
 using Asv.Avalonia.IO;
 using Asv.Avalonia.Plugins;
 using Asv.Cfg;
 using Asv.Common;
-using Asv.Mavlink;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using R3;
-using Class1 = Asv.Avalonia.Example.Api.Class1;
 
 namespace Asv.Avalonia.Example;
 
-public partial class App : Application, IContainerHost, IShellHost
+public class App : Application, IContainerHost, IShellHost
 {
     private readonly CompositionHost _container;
-    private IShell _shell;
-    private readonly Subject<IShell> _onShellLoaded = new Subject<IShell>();
+    private readonly Subject<IShell> _onShellLoaded = new();
 
     public App()
     {
@@ -42,6 +42,7 @@ public partial class App : Application, IContainerHost, IShellHost
                 .WithExport(NullLoggerFactory.Instance)
                 .WithExport(NullAppPath.Instance)
                 .WithExport(NullPluginManager.Instance)
+                .WithExport(NullLogReaderService.Instance)
                 .WithExport(NullAppInfo.Instance)
                 .WithExport<IMeterFactory>(new DefaultMeterFactory())
                 .WithExport(TimeProvider.System)
@@ -51,7 +52,10 @@ public partial class App : Application, IContainerHost, IShellHost
         }
         else
         {
+            // TODO: use it when plugin manager implementation will be finished
             var pluginManager = AppHost.Instance.GetService<IPluginManager>();
+            var logReader = AppHost.Instance.GetService<ILogReaderService>();
+
             containerCfg
                 .WithExport<IContainerHost>(this)
                 .WithExport(AppHost.Instance.GetService<IConfiguration>())
@@ -59,9 +63,10 @@ public partial class App : Application, IContainerHost, IShellHost
                 .WithExport(AppHost.Instance.GetService<IAppPath>())
                 .WithExport(AppHost.Instance.GetService<IAppInfo>())
                 .WithExport(AppHost.Instance.GetService<IMeterFactory>())
+                .WithExport(AppHost.Instance.GetService<ISoloRunFeature>())
                 .WithExport(TimeProvider.System)
+                .WithExport(logReader)
                 .WithExport(pluginManager)
-                .WithAssemblies(pluginManager.PluginsAssemblies)
                 .WithExport<IDataTemplateHost>(this)
                 .WithExport<IShellHost>(this)
                 .WithDefaultConventions(conventions);
@@ -72,23 +77,34 @@ public partial class App : Application, IContainerHost, IShellHost
         // TODO: load plugin manager before creating container
         _container = containerCfg.CreateContainer();
         DataTemplates.Add(new CompositionViewLocator(_container));
+        if (!Design.IsDesignMode)
+        {
+            _container.GetExport<IAppStartupService>().AppCtor();
+        }
     }
 
     private IEnumerable<Assembly> DefaultAssemblies
     {
         get
         {
-            yield return GetType().Assembly;
-            yield return typeof(AppHost).Assembly;
-            yield return typeof(DeviceManager).Assembly;
-            yield return typeof(Class1).Assembly;
-            yield return typeof(IPluginManager).Assembly;
+            yield return GetType().Assembly; // Asv.Avalonia.Example
+            yield return typeof(AppHost).Assembly; // Asv.Avalonia
+            yield return typeof(GeoMapModule).Assembly; // Asv.Avalonia.GeoMap
+            yield return typeof(ApiModule).Assembly; // Asv.Avalonia.Example.Api
+            yield return typeof(IoModule).Assembly; // Asv.Avalonia.IO
+
+            // TODO: use it when plugin manager implementation will be finished
+            yield return typeof(PluginManagerModule).Assembly; // Asv.Avalonia.Plugins
         }
     }
 
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+        if (!Design.IsDesignMode)
+        {
+            _container.GetExport<IAppStartupService>().Initialize();
+        }
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -122,6 +138,10 @@ public partial class App : Application, IContainerHost, IShellHost
 #if DEBUG
         this.AttachDevTools();
 #endif
+        if (!Design.IsDesignMode)
+        {
+            _container.GetExport<IAppStartupService>().OnFrameworkInitializationCompleted();
+        }
     }
 
     public T GetExport<T>()
@@ -149,16 +169,15 @@ public partial class App : Application, IContainerHost, IShellHost
 
     public IShell Shell
     {
-        get => _shell;
+        get;
         private set
         {
-            _shell = value;
+            field = value;
             _onShellLoaded.OnNext(value);
         }
     }
 
     public Observable<IShell> OnShellLoaded => _onShellLoaded;
-
-    public TopLevel TopLevel { get; private set; }
     public IExportInfo Source => SystemModule.Instance;
+    public TopLevel TopLevel { get; private set; }
 }

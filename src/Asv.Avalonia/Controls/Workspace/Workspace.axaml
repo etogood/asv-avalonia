@@ -1,9 +1,10 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:avalonia="clr-namespace:Asv.Avalonia">
+        xmlns:avalonia="clr-namespace:Asv.Avalonia"
+        >
     <Design.PreviewWith>
         <Panel Width="1024" Height="500">
-            <avalonia:Workspace BorderBrush="Red" BorderThickness="3" >
+            <avalonia:Workspace BorderThickness="3" >
                 <avalonia:WorkspaceItem Header="HEADER1" Position="Right">
                     <StackPanel>
                         <TextBlock Text="AAAA"/>
@@ -28,11 +29,18 @@
                         <TextBox></TextBox>
                     </StackPanel>
                 </avalonia:WorkspaceItem>
-                <avalonia:WorkspaceItem Header="HEADER3" Position="Bottom">
+                <avalonia:WorkspaceItem Header="HEADER4" Position="Bottom">
                     <StackPanel>
                         <TextBlock Text="AAAA"/>
                         <TextBox></TextBox>
                     </StackPanel>
+                </avalonia:WorkspaceItem>
+                
+                <avalonia:WorkspaceItem Header="Central" Position="Center">
+                    <DockPanel>
+                        <TextBlock Text="AAAA"/>
+                        <TextBox></TextBox>
+                    </DockPanel>
                 </avalonia:WorkspaceItem>
             </avalonia:Workspace>
         </Panel>
@@ -43,7 +51,7 @@
         <!-- Set Defaults -->
         <Setter Property="ItemsPanel">
             <ItemsPanelTemplate>
-                <avalonia:WorkspacePanel/>
+                <avalonia:WorkspacePanel LeftWidth="*" CentralWidth="4*" RightWidth="2*" />
             </ItemsPanelTemplate>
         </Setter>
         <Setter Property="Template">

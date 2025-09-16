@@ -1,25 +1,34 @@
 ﻿using System.Composition;
+using Asv.Cfg;
 using Asv.Common;
 using Material.Icons;
+using Microsoft.Extensions.Logging;
 using ObservableCollections;
 
 namespace Asv.Avalonia;
 
+public sealed class HomePageViewModelConfig : PageConfig { }
+
 [ExportPage(PageId)]
-public class HomePageViewModel : PageViewModel<IHomePage>, IHomePage
+public class HomePageViewModel : PageViewModel<IHomePage, HomePageViewModelConfig>, IHomePage
 {
-    private IAppInfo _appInfo;
     public const string PageId = "home";
 
     public HomePageViewModel()
-        : this(NullCommandService.Instance, NullAppInfo.Instance, NullContainerHost.Instance)
+        : this(
+            NullCommandService.Instance,
+            NullAppInfo.Instance,
+            NullContainerHost.Instance,
+            DesignTime.Configuration,
+            DesignTime.LoggerFactory
+        )
     {
         DesignTime.ThrowIfNotDesignMode();
         var items = Enum.GetValues<MaterialIconKind>();
         for (int i = 0; i < 5; i++)
         {
             Tools.Add(
-                new ActionViewModel($"cmd{i}")
+                new ActionViewModel($"cmd{i}", DesignTime.LoggerFactory)
                 {
                     Icon = (MaterialIconKind)Random.Shared.Next(1, items.Length),
                     Header = $"Tool {i}",
@@ -33,7 +42,7 @@ public class HomePageViewModel : PageViewModel<IHomePage>, IHomePage
 
         for (int i = 0; i < 5; i++)
         {
-            var d = new HomePageItem($"dev{i}")
+            var d = new HomePageItem($"dev{i}", DesignTime.LoggerFactory)
             {
                 Icon = MaterialIconKind.Drone,
                 Header = $"Device {i}",
@@ -41,15 +50,15 @@ public class HomePageViewModel : PageViewModel<IHomePage>, IHomePage
                 Order = 0,
             };
             d.Info.Add(
-                new HeadlinedViewModel("prop1")
+                new HeadlinedViewModel("prop1", DesignTime.LoggerFactory)
                 {
                     Icon = MaterialIconKind.IdCard,
-                    Header = "Id",
+                    Header = "StaticId",
                     Description = "Mavlink(1.1)",
                 }
             );
             d.Info.Add(
-                new HeadlinedViewModel("prop2")
+                new HeadlinedViewModel("prop2", DesignTime.LoggerFactory)
                 {
                     Icon = MaterialIconKind.MergeType,
                     Header = "Type",
@@ -57,7 +66,7 @@ public class HomePageViewModel : PageViewModel<IHomePage>, IHomePage
                 }
             );
             d.Info.Add(
-                new HeadlinedViewModel("prop3")
+                new HeadlinedViewModel("prop3", DesignTime.LoggerFactory)
                 {
                     Icon = MaterialIconKind.SerialPort,
                     Header = "Port",
@@ -68,7 +77,7 @@ public class HomePageViewModel : PageViewModel<IHomePage>, IHomePage
             for (int j = 0; j < 5; j++)
             {
                 d.Actions.Add(
-                    new ActionViewModel($"cmd{i}")
+                    new ActionViewModel($"cmd{i}", DesignTime.LoggerFactory)
                     {
                         Icon = (MaterialIconKind)Random.Shared.Next(1, items.Length),
                         Header = $"Device tool {i}",
@@ -85,33 +94,40 @@ public class HomePageViewModel : PageViewModel<IHomePage>, IHomePage
     }
 
     [ImportingConstructor]
-    public HomePageViewModel(ICommandService cmd, IAppInfo appInfo, IContainerHost container)
-        : base(PageId, cmd)
+    public HomePageViewModel(
+        ICommandService cmd,
+        IAppInfo appInfo,
+        IContainerHost container,
+        IConfiguration cfg,
+        ILoggerFactory loggerFactory
+    )
+        : base(PageId, cmd, cfg, loggerFactory)
     {
         AppInfo = appInfo;
-        Icon.Value = MaterialIconKind.Home;
-        Title.Value = "Home";
+        Icon = MaterialIconKind.Home;
+        Title = RS.HomePageViewModel_Title;
 
         Tools = [];
-        Tools.SetRoutableParent(this, true).DisposeItWith(Disposable);
+        Tools.SetRoutableParent(this).DisposeItWith(Disposable);
+        Tools.DisposeRemovedItems().DisposeItWith(Disposable);
         ToolsView = Tools.ToNotifyCollectionChangedSlim().DisposeItWith(Disposable);
 
         Items = [];
 
         ItemsList = Items
-            .CreateView(x => new HomePageItemDecorator(x, container))
+            .CreateView(x => new HomePageItemDecorator(x, container, loggerFactory))
             .DisposeItWith(Disposable);
 
         ItemsList.DisposeMany().DisposeItWith(Disposable);
-        ItemsList.SetRoutableParentForView(this).DisposeItWith(Disposable);
+        ItemsList.SetRoutableParent(this).DisposeItWith(Disposable);
 
         ItemsView = ItemsList.ToNotifyCollectionChanged().DisposeItWith(Disposable);
     }
 
     public IAppInfo AppInfo
     {
-        get => _appInfo;
-        set => SetField(ref _appInfo, value);
+        get;
+        set => SetField(ref field, value);
     }
 
     public NotifyCollectionChangedSynchronizedViewList<HomePageItemDecorator> ItemsView { get; }

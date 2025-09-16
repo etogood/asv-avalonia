@@ -1,6 +1,6 @@
-using R3;
-
 namespace Asv.Avalonia;
+
+public delegate ValueTask RoutedEventHandler(IRoutable owner, AsyncRoutedEvent e);
 
 /// <summary>
 /// Represents a routable view model that supports navigation, hierarchical structure, and event propagation.
@@ -20,6 +20,19 @@ public interface IRoutable : IViewModel
     /// <param name="e">The routed event to be raised.</param>
     /// <returns>A <see cref="ValueTask"/> representing the asynchronous operation.</returns>
     ValueTask Rise(AsyncRoutedEvent e);
+
+    /// <summary>
+    /// Allows adding an event handler for routed events.
+    /// </summary>
+    /// <param name="handler">Callback to be invoked when the event is raised.</param>
+    /// <returns> An <see cref="IDisposable"/> that can be used to remove the event handler.</returns>
+    IDisposable AddEventHandler(RoutedEventHandler handler);
+
+    /// <summary>
+    /// Removes an event handler for routed events.
+    /// </summary>
+    /// <param name="handler">Callback to be removed from the event invocation list.</param>
+    void RemoveEventHandler(RoutedEventHandler handler);
 
     /// <summary>
     /// Navigates to a child routable element based on its identifier.
@@ -43,16 +56,13 @@ public interface IRoutable : IViewModel
 /// Represents an asynchronous routed event that propagates through a hierarchical structure of <see cref="IRoutable"/> components.
 /// This event supports different routing strategies such as bubbling, tunneling, and direct invocation.
 /// </summary>
-public abstract class AsyncRoutedEvent(
-    IRoutable source,
-    RoutingStrategy routingStrategy = RoutingStrategy.Bubble
-)
+public abstract class AsyncRoutedEvent(IRoutable source, RoutingStrategy routingStrategy)
 {
     /// <summary>
-    /// Gets or sets the routing strategy used for this event.
+    /// Gets the routing strategy used for this event.
     /// The strategy determines how the event propagates through the hierarchy.
     /// </summary>
-    public RoutingStrategy RoutingStrategy { get; set; } = routingStrategy;
+    public RoutingStrategy RoutingStrategy => routingStrategy;
 
     /// <summary>
     /// Gets the source <see cref="IRoutable"/> that initially raised the event.

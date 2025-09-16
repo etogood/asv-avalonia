@@ -1,3 +1,5 @@
+using Asv.Common;
+using Microsoft.Extensions.Logging;
 using R3;
 
 namespace Asv.Avalonia;
@@ -8,6 +10,7 @@ public sealed class HistoricalStringProperty : HistoricalPropertyBase<string?, s
     private readonly IList<Func<string?, ValidationResult>> _validationRules = [];
 
     private bool _internalChange;
+    private bool _externalChange;
 
     public override ReactiveProperty<string?> ModelValue => _modelValue;
     public override BindableReactiveProperty<string?> ViewValue { get; } = new();
@@ -16,29 +19,18 @@ public sealed class HistoricalStringProperty : HistoricalPropertyBase<string?, s
     public HistoricalStringProperty(
         string id,
         ReactiveProperty<string?> modelValue,
+        ILoggerFactory loggerFactory,
+        IRoutable parent,
         IList<Func<string?, ValidationResult>>? validationRules = null
     )
-        : base(id)
+        : base(id, loggerFactory, parent)
     {
         InternalInitValidationRules(validationRules);
         _modelValue = modelValue;
+        ViewValue.EnableValidation(ValidateValue);
 
         _internalChange = true;
-        ViewValue.EnableValidation().ForceValidate();
-        _sub2 = ViewValue.SubscribeAwait(
-            async (value, cancel) =>
-            {
-                var error = ValidateValue(value);
-                if (error is null)
-                {
-                    await OnChangedByUser(value, cancel);
-                    return;
-                }
-
-                ViewValue.OnErrorResume(error);
-            },
-            AwaitOperation.Drop
-        );
+        _sub2 = ViewValue.SubscribeAwait(OnChangedByUser, AwaitOperation.Drop);
         _internalChange = false;
 
         _sub3 = _modelValue.Subscribe(OnChangeByModel);
@@ -54,7 +46,7 @@ public sealed class HistoricalStringProperty : HistoricalPropertyBase<string?, s
         foreach (var rule in _validationRules)
         {
             var res = rule(userValue);
-            if (res.IsFailed)
+            if (res.IsSuccess == false)
             {
                 return res.ValidationException;
             }
@@ -65,17 +57,29 @@ public sealed class HistoricalStringProperty : HistoricalPropertyBase<string?, s
 
     protected override async ValueTask OnChangedByUser(string? userValue, CancellationToken cancel)
     {
+        if (ViewValue.HasErrors)
+        {
+            return;
+        }
+
         if (_internalChange)
         {
             return;
         }
 
-        var newValue = new StringCommandArg(userValue ?? string.Empty);
-        await this.ExecuteCommand(ChangeStringPropertyCommand.Id, newValue);
+        _externalChange = true;
+        var newValue = new StringArg(userValue ?? string.Empty);
+        await this.ExecuteCommand(ChangeStringPropertyCommand.Id, newValue, cancel);
+        _externalChange = false;
     }
 
     protected override void OnChangeByModel(string? modelValue)
     {
+        if (_externalChange)
+        {
+            return;
+        }
+
         _internalChange = true;
         ViewValue.OnNext(modelValue);
         _internalChange = false;
@@ -84,11 +88,6 @@ public sealed class HistoricalStringProperty : HistoricalPropertyBase<string?, s
     public override IEnumerable<IRoutable> GetRoutableChildren()
     {
         return [];
-    }
-
-    protected override ValueTask InternalCatchEvent(AsyncRoutedEvent e)
-    {
-        return ValueTask.CompletedTask;
     }
 
     private void InternalInitValidationRules(

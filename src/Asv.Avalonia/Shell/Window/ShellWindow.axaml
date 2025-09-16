@@ -9,7 +9,7 @@
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
         ExtendClientAreaTitleBarHeightHint="-1"
-        Title="{Binding Title.Value}"
+        Title="{Binding Title}"
         PositionChanged="WindowBase_OnPositionChanged"
         SizeChanged="Control_OnSizeChanged"
         MinWidth="800"

@@ -1,4 +1,5 @@
 ﻿using Asv.Cfg;
+using Asv.Common;
 using Microsoft.Extensions.Logging;
 using R3;
 
@@ -11,37 +12,38 @@ public class PluginInstallerViewModelConfig
 
 public class PluginInstallerViewModel : DialogViewModelBase
 {
-    public const string ViewModelId = "plugins.installed.installer.dialog";
-
-    private readonly ILoggerFactory _loggerFactory;
+    public const string ViewModelId = $"{BaseId}.plugins.installed.installer";
     private readonly IPluginManager _manager;
-    private readonly ILogger _logger;
 
     public PluginInstallerViewModel()
-        : base(ViewModelId) { }
+        : base(DesignTime.Id, DesignTime.LoggerFactory)
+    {
+        DesignTime.ThrowIfNotDesignMode();
+    }
 
     public PluginInstallerViewModel(
         IConfiguration cfg,
         ILoggerFactory loggerFactory,
         IPluginManager manager
     )
-        : base(ViewModelId)
+        : base(ViewModelId, loggerFactory)
     {
-        _loggerFactory = loggerFactory;
-        _logger = loggerFactory.CreateLogger<PluginInstallerViewModel>();
-
         _manager = manager;
         var config = cfg.Get<PluginInstallerViewModelConfig>();
         NugetPackageFilePath = new BindableReactiveProperty<string>(config.NugetPackageFilePath);
 
-        _sub1 = NugetPackageFilePath.EnableValidation(
+        _sub1 = NugetPackageFilePath.EnableValidationRoutable(
             value =>
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    return ValueTask.FromResult<ValidationResult>(
-                        new Exception(RS.SourceViewModel_SourceViewModel_NameIsRequired)
-                    );
+                    return new ValidationResult
+                    {
+                        IsSuccess = false,
+                        ValidationException = new ValidationException(
+                            "Nuget package file path cannot be empty"
+                        ),
+                    };
                 }
 
                 return ValidationResult.Success;
@@ -56,7 +58,7 @@ public class PluginInstallerViewModel : DialogViewModelBase
         });
     }
 
-    public BindableReactiveProperty<string> NugetPackageFilePath { get; set; }
+    public BindableReactiveProperty<string> NugetPackageFilePath { get; }
 
     internal async Task InstallPluginAsync(IProgress<double> progress, CancellationToken cancel)
     {
@@ -65,7 +67,7 @@ public class PluginInstallerViewModel : DialogViewModelBase
             new Progress<ProgressMessage>(m => progress.Report(m.Progress)),
             cancel
         );
-        _logger.LogInformation("Plugin installed successfully");
+        Logger.LogInformation("Plugin installed successfully");
     }
 
     public override void ApplyDialog(ContentDialog dialog)

@@ -7,103 +7,95 @@ namespace Asv.Avalonia.IO;
 [ExportCommand]
 [Shared]
 [method: ImportingConstructor]
-public class ProtocolPortCommand(IDeviceManager manager) : NoContextCommand
+public class PortCrudCommand(IDeviceManager manager) : StatelessCrudCommand<StringArg>
 {
+    #region Static
+
     public const string Id = $"{BaseId}.port.change";
     public static readonly ICommandInfo StaticInfo = new CommandInfo
     {
         Id = Id,
-        Name = "Add/remove/change port",
-        Description = "Add/remove/change port",
+        Name = RS.PortCrudCommand_CommandInfo_Name,
+        Description = RS.PortCrudCommand_CommandInfo_Description,
         Icon = MaterialIconKind.SerialPort,
-        HotKeyInfo = new HotKeyInfo { DefaultHotKey = null },
+        DefaultHotKey = null,
         Source = IoModule.Instance,
     };
 
+    public static ValueTask ExecuteRemove(IRoutable context, string portId)
+    {
+        return context.ExecuteCommand(Id, CommandArg.RemoveAction(portId));
+    }
+
+    public static ValueTask ExecuteChange(IRoutable context, string portId, ProtocolPortConfig cfg)
+    {
+        return context.ExecuteCommand(
+            Id,
+            CommandArg.ChangeAction(portId, new StringArg(cfg.AsUri().ToString()))
+        );
+    }
+
+    public static ActionArg CreateAddArg(ProtocolPortConfig options)
+    {
+        return CommandArg.AddAction(new StringArg(options.AsUri().ToString()));
+    }
+
+    #endregion
+
     public override ICommandInfo Info => StaticInfo;
 
-    public static ICommandArg CreateAddArg(ProtocolPortConfig config)
+    protected override async ValueTask<string> Update(string subjectId, StringArg options)
     {
-        return CommandArg.FromAddAction(config.AsUri().ToString());
-    }
-
-    public static ICommandArg CreateRemoveArg(IProtocolPort port)
-    {
-        return CommandArg.FromRemoveAction(port.Id);
-    }
-
-    public static ICommandArg CreateChangeArg(IProtocolPort port, ProtocolPortConfig newConfig)
-    {
-        return CommandArg.FromChangeAction(port.Id, newConfig.AsUri().ToString());
-    }
-
-    protected override ValueTask<ICommandArg?> InternalExecute(
-        ICommandArg newValue,
-        CancellationToken cancel
-    )
-    {
-        if (newValue is ActionCommandArg action)
-        {
-            return action.Action switch
+        // this is long-running operation, so we run it in a separate task
+        return await Task.Factory.StartNew(
+            () =>
             {
-                CommandParameterActionType.Add => AddPort(action),
-                CommandParameterActionType.Remove => Remove(action),
-                CommandParameterActionType.Change => Change(action),
-                _ => throw new ArgumentOutOfRangeException(),
-            };
-        }
+                var id = subjectId;
+                var portToDelete = manager.Router.Ports.First(x => x.Id == id);
 
-        return ValueTask.FromResult<ICommandArg?>(null);
+                if (string.IsNullOrWhiteSpace(options.Value))
+                {
+                    throw new ArgumentException("Invalid port configuration");
+                }
+
+                var newConfig = new ProtocolPortConfig(new Uri(options.Value));
+
+                manager.Router.RemovePort(portToDelete);
+                return manager.Router.AddPort(newConfig.AsUri()).Id;
+            },
+            TaskCreationOptions.LongRunning
+        );
     }
 
-    private ValueTask<ICommandArg?> Change(ActionCommandArg action)
+    protected override async ValueTask Delete(string subjectId)
     {
-        ICommandArg? rollback = null;
-        var portToDelete = manager.Router.Ports.FirstOrDefault(x => x.Id == action.Id);
-        if (portToDelete != null)
-        {
-            rollback = CreateChangeArg(portToDelete, portToDelete.Config);
-            manager.Router.RemovePort(portToDelete);
-        }
-
-        if (string.IsNullOrWhiteSpace(action.Value))
-        {
-            throw new ArgumentException("Invalid port configuration");
-        }
-
-        var newConfig = new ProtocolPortConfig(new Uri(action.Value));
-        manager.Router.AddPort(newConfig.AsUri());
-        return ValueTask.FromResult(rollback);
+        // this is long-running operation, so we run it in a separate task
+        await Task.Factory.StartNew(
+            () =>
+            {
+                var portToDelete = manager.Router.Ports.First(x => x.Id == subjectId);
+                manager.Router.RemovePort(portToDelete);
+            },
+            TaskCreationOptions.LongRunning
+        );
     }
 
-    private ValueTask<ICommandArg?> AddPort(ActionCommandArg action)
+    protected override async ValueTask<string> Create(StringArg options)
     {
-        if (string.IsNullOrWhiteSpace(action.Value))
-        {
-            throw new ArgumentException("Invalid port configuration");
-        }
-
-        var config = new ProtocolPortConfig(new Uri(action.Value));
-        if (string.IsNullOrWhiteSpace(config.Name))
-        {
-            config.Name = $"New {config.Scheme} port {manager.Router.Ports.Length + 1}";
-        }
-
-        var newPort = manager.Router.AddPort(config.AsUri());
-        return new ValueTask<ICommandArg?>(CreateRemoveArg(newPort));
+        // this is a long-running operation, so we run it in a separate task
+        return await Task.Factory.StartNew(
+            () =>
+            {
+                var newConfig = new ProtocolPortConfig(new Uri(options.Value));
+                return manager.Router.AddPort(newConfig.AsUri()).Id;
+            },
+            TaskCreationOptions.LongRunning
+        );
     }
 
-    private ValueTask<ICommandArg?> Remove(ActionCommandArg action)
+    protected override ValueTask<StringArg> Read(string subjectId)
     {
-        var portToDelete = manager.Router.Ports.FirstOrDefault(x => x.Id == action.Id);
-        if (portToDelete != null)
-        {
-            var rollback = CreateAddArg(portToDelete.Config);
-            portToDelete.Disable();
-            manager.Router.RemovePort(portToDelete);
-            return new ValueTask<ICommandArg?>(rollback);
-        }
-
-        return ValueTask.FromResult<ICommandArg?>(null);
+        var options = manager.Router.Ports.First(x => x.Id == subjectId).Config.AsUri().ToString();
+        return ValueTask.FromResult(new StringArg(options));
     }
 }
